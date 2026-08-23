@@ -2,30 +2,30 @@ module.exports = async (req, res) => {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // 1. Phân giải toàn bộ query string thủ công để tránh mất mát ký tự đặc biệt
-  const fullUrl = req.url || "";
+  // 1. Phân giải URL lấy chính xác Target và Auth Cookie/Token
+  const rawUrl = req.url || "";
   let queryTarget = "";
   let userAuth = "";
 
-  if (fullUrl.includes("?")) {
-    const searchParams = new URLSearchParams(fullUrl.slice(fullUrl.indexOf("?")));
+  if (rawUrl.includes("?")) {
+    const queryPart = rawUrl.substring(rawUrl.indexOf("?") + 1);
     
-    // Lấy query chính (vị trí đầu tiên hoặc key "")
-    for (const [key, value] of searchParams.entries()) {
-      if (key === "" || key === "url" || key === "user" || key === "id") {
-        if (!queryTarget) queryTarget = value || key;
-      } else if (key === "code" || key === "token" || key === "cookie") {
-        userAuth = value;
-      }
+    // Bóc tách code/cookie/token
+    const codeIndex = queryPart.indexOf("&code=");
+    if (codeIndex !== -1) {
+      queryTarget = decodeURIComponent(queryPart.substring(0, codeIndex).replace(/^=/, "").trim());
+      userAuth = decodeURIComponent(queryPart.substring(codeIndex + 6).trim());
+    } else {
+      queryTarget = decodeURIComponent(queryPart.replace(/^=/, "").trim());
     }
+  }
 
-    // Fallback cắt chuỗi thuần túy nếu dùng cú pháp ?=value&code=...
-    if (!queryTarget) {
-      const rawQuery = fullUrl.split("?")[1] || "";
-      const parts = rawQuery.split("&code=");
-      queryTarget = decodeURIComponent(parts[0].replace(/^=/, "").trim());
-      if (parts[1]) userAuth = decodeURIComponent(parts[1].trim());
-    }
+  // Fallback nếu người dùng dùng query params chuẩn
+  if (!queryTarget && req.query) {
+    queryTarget = req.query.url || req.query.user || req.query.id || req.query[""] || "";
+  }
+  if (!userAuth && req.query) {
+    userAuth = req.query.code || req.query.cookie || req.query.token || "";
   }
 
   if (!queryTarget) {
@@ -44,14 +44,26 @@ module.exports = async (req, res) => {
                   cleanTarget.includes("fb.watch/") ||
                   cleanTarget.includes("/posts/");
 
-  const browserHeaders = {
+  // Cấu hình headers giả lập phiên đăng nhập máy tính / mobile
+  const sessionHeaders = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Sec-Ch-Ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\", \"Google Chrome\";v=\"124\"",
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "\"Windows\"",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1"
   };
 
-  if (userAuth && (userAuth.includes("c_user=") || userAuth.includes("datr="))) {
-    browserHeaders["Cookie"] = userAuth;
+  const isCookie = userAuth.includes("c_user=") || userAuth.includes("datr=");
+  const isToken = userAuth.startsWith("EA") || userAuth.startsWith("EAA");
+
+  if (isCookie) {
+    sessionHeaders["Cookie"] = userAuth;
   }
 
   try {
@@ -61,10 +73,12 @@ module.exports = async (req, res) => {
     if (isVideo) {
       let downloadData = null;
 
-      if (userAuth && browserHeaders["Cookie"]) {
+      // Xác thực tải bằng Cookie/Session
+      if (isCookie) {
         try {
-          const videoRes = await fetch(cleanTarget, { headers: browserHeaders });
+          const videoRes = await fetch(cleanTarget, { headers: sessionHeaders });
           const html = await videoRes.text();
+
           const hdMatch = html.match(/"browser_native_hd_url":"([^"]+)"/) || html.match(/"playable_url_quality_hd":"([^"]+)"/);
           const sdMatch = html.match(/"browser_native_sd_url":"([^"]+)"/) || html.match(/"playable_url":"([^"]+)"/);
           const thumbMatch = html.match(/"preferred_thumbnail":{"image":{"uri":"([^"]+)"/);
@@ -72,7 +86,7 @@ module.exports = async (req, res) => {
 
           if (hdMatch || sdMatch) {
             downloadData = {
-              phuong_thuc: "Xác thực qua Cookie/Session trực tiếp",
+              phuong_thuc: "Xác thực Cookie thành công",
               anh_thumbnail: decodeUrl(thumbMatch?.[1]),
               video_mp4_hd: decodeUrl(hdMatch?.[1]),
               video_mp4_sd: decodeUrl(sdMatch?.[1]) || decodeUrl(hdMatch?.[1])
@@ -81,6 +95,7 @@ module.exports = async (req, res) => {
         } catch (e) {}
       }
 
+      // Snapsave Engine fallback
       if (!downloadData) {
         try {
           const snapRes = await fetch("https://snapsave.app/action.php", {
@@ -108,7 +123,7 @@ module.exports = async (req, res) => {
       if (!downloadData) {
         return res.status(404).json({
           trang_thai: "that_bai",
-          thong_bao: "Không tìm thấy video. Hãy đính kèm &code={cookie_hoac_token} nếu video ở chế độ riêng tư."
+          thong_bao: "Không thể lấy link video. Vui lòng kiểm tra lại Cookie/Token hoặc link bài đăng."
         });
       }
 
@@ -121,7 +136,7 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: PROFILE / UID / USERNAME FACEBOOK
+    // TRƯỜNG HỢP 2: PROFILE / UID / USERNAME CHECK (HỖ TRỢ COOKIE & TOKEN)
     // -------------------------------------------------------------
     let cleanInput = cleanTarget
       .replace(/^https?:\/\/(?:www\.|m\.|mobile\.|touch\.)?facebook\.com\//, "")
@@ -133,63 +148,84 @@ module.exports = async (req, res) => {
 
     let uid = /^\d{5,25}$/.test(cleanInput) ? cleanInput : null;
     let fullName = null;
-    let verifiedViaToken = false;
+    let authMethod = "Khách (Công khai)";
 
-    // A. NẾU USER TRUYỀN TOKEN (EAAG...) -> GỌI THẲNG GRAPH API CHÍNH CHỦ
-    if (userAuth && userAuth.startsWith("EA")) {
+    // 1. NẾU CÓ TOKEN (EAAG / EAAA...): GỌI TRỰC TIẾP GRAPH API
+    if (isToken) {
       try {
         const tokenRes = await fetch(`https://graph.facebook.com/v19.0/${cleanInput}?fields=id,name,username,link&access_token=${userAuth}`);
         if (tokenRes.ok) {
-          const tokenData = await tokenRes.json();
-          if (tokenData.id) {
-            uid = tokenData.id;
-            fullName = tokenData.name;
-            if (tokenData.username) cleanInput = tokenData.username;
-            verifiedViaToken = true;
+          const tData = await tokenRes.json();
+          if (tData.id) {
+            uid = tData.id;
+            fullName = tData.name;
+            if (tData.username) cleanInput = tData.username;
+            authMethod = "Facebook Access Token";
           }
         }
       } catch (e) {}
     }
 
-    // B. NẾU CHƯA CÓ UID -> SỬ DỤNG CÁC ENGINE TRA CỨU ĐA TẦNG
-    if (!uid) {
-      // 1. Cổng F-ID Lookup Engine
+    // 2. NẾU CÓ COOKIE: GỬI REQUEST TRỰC TIẾP BẰNG PHIÊN ĐĂNG NHẬP ĐỂ LẤY FULL PROFILE
+    if (isCookie) {
+      authMethod = "Facebook Cookie Session";
       try {
-        const fidRes = await fetch(`https://api.findids.net/api/get-uid-from-username?username=${encodeURIComponent(cleanInput)}`);
-        const fidData = await fidRes.json();
-        if (fidData.data?.id || fidData.id) {
-          uid = String(fidData.data?.id || fidData.id).trim();
+        const cookieUidMatch = userAuth.match(/c_user=(\d+)/);
+        
+        // Truy cập trang mbasic profile bằng Cookie
+        const checkUrl = uid 
+          ? `https://mbasic.facebook.com/profile.php?id=${uid}` 
+          : `https://mbasic.facebook.com/${cleanInput}`;
+
+        const fbRes = await fetch(checkUrl, { headers: sessionHeaders });
+        const html = await fbRes.text();
+
+        // Lấy Tên hiển thị thật từ HTML đăng nhập
+        const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+        if (titleMatch && !titleMatch[1].includes("Facebook") && !titleMatch[1].includes("Đăng nhập") && !titleMatch[1].includes("Log in")) {
+          fullName = titleMatch[1].trim();
+        }
+
+        // Bóc tách UID nếu chưa có
+        if (!uid) {
+          const uidMatch = html.match(/owner_id=(\d+)/) || 
+                           html.match(/id=(\d{5,25})/) || 
+                           html.match(/;subject_id=(\d+)/) ||
+                           html.match(/"userID":"(\d+)"/);
+          if (uidMatch) uid = uidMatch[1];
+        }
+
+        if (!uid && cleanInput === "me" && cookieUidMatch) {
+          uid = cookieUidMatch[1];
         }
       } catch (e) {}
+    }
 
-      // 2. TraoDoiSub ID Engine
-      if (!uid) {
-        try {
-          const tdsRes = await fetch("https://id.traodoisub.net/api.php", {
+    // 3. NẾU CHƯA CÓ UID -> TRA CỨU QUA CÁC CỔNG API LOOKUP
+    if (!uid) {
+      const lookupApis = [
+        async () => {
+          const r = await fetch("https://id.traodoisub.net/api.php", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `link=${encodeURIComponent(`https://facebook.com/${cleanInput}`)}`
           });
-          const tdsData = await tdsRes.json();
-          if (tdsData.code === 200 && tdsData.id) {
-            uid = String(tdsData.id).trim();
-          }
-        } catch (e) {}
-      }
+          const d = await r.json();
+          return d.code === 200 ? d.id : null;
+        },
+        async () => {
+          const r = await fetch(`https://api.findids.net/api/get-uid-from-username?username=${encodeURIComponent(cleanInput)}`);
+          const d = await r.json();
+          return d.data?.id || d.id || null;
+        }
+      ];
 
-      // 3. Quét trực tiếp qua Mobile Gateway (sử dụng Cookie nếu có)
-      if (!uid) {
+      for (const api of lookupApis) {
         try {
-          const profileRes = await fetch(`https://mbasic.facebook.com/${cleanInput}`, { headers: browserHeaders });
-          const html = await profileRes.text();
-          const uidMatch = html.match(/"userID":"(\d+)"/) || 
-                           html.match(/fb:\/\/profile\/(\d+)/) || 
-                           html.match(/entity_id=(\d+)/) ||
-                           html.match(/id=(\d{5,25})/);
-          if (uidMatch) uid = uidMatch[1];
-          const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
-          if (titleMatch && !titleMatch[1].includes("Facebook") && !titleMatch[1].includes("Đăng nhập")) {
-            fullName = titleMatch[1].trim();
+          const foundId = await api();
+          if (foundId) {
+            uid = String(foundId).trim();
+            break;
           }
         } catch (e) {}
       }
@@ -202,13 +238,13 @@ module.exports = async (req, res) => {
       });
     }
 
-    // C. LẤY TÊN HIỂN THỊ NẾU CHƯA CÓ
-    if (!fullName) {
-      const fallbackTokens = [
+    // 4. LẤY TÊN HIỂN THỊ NẾU CHƯA CÓ
+    if (!fullName || fullName === "Lỗi") {
+      const systemTokens = [
         "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662",
         "EAAAAAYsX7TsBO"
       ];
-      for (const t of fallbackTokens) {
+      for (const t of systemTokens) {
         try {
           const gRes = await fetch(`https://graph.facebook.com/v19.0/${uid}?fields=name,username&access_token=${t}`);
           if (gRes.ok) {
@@ -228,8 +264,8 @@ module.exports = async (req, res) => {
       thong_tin: {
         uid: uid,
         tai_khoan: cleanInput,
-        ten_hien_thi: fullName || `Người dùng Facebook (${uid})`,
-        xac_thuc_token_rieng: verifiedViaToken,
+        ten_hien_thi: (fullName && fullName !== "Lỗi") ? fullName : `Người dùng Facebook (${uid})`,
+        che_do_xac_thuc: authMethod,
         anh_dai_dien: {
           chat_luong_cao: `https://graph.facebook.com/${uid}/picture?width=1080&height=1080&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
           chuan_large: `https://graph.facebook.com/${uid}/picture?type=large`,
