@@ -1,25 +1,20 @@
-exports.handler = async (event, context) => {
-  const params = event.queryStringParameters || {};
-  
-  // Tự động nhận diện chuỗi tìm kiếm
-  let query = params.url || params.user || params.username || params[""] || null;
-  if (!query && event.rawQuery) {
-    query = decodeURIComponent(event.rawQuery.replace(/^=/, "").trim());
+module.exports = async (req, res) => {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
+  let rawQuery = req.url.includes("?") ? req.url.split("?")[1] : "";
+  let query = req.query.url || req.query.user || req.query.username || req.query[""] || null;
+
+  if (!query && rawQuery) {
+    query = decodeURIComponent(rawQuery.replace(/^=/, "").split("&")[0]).trim();
   }
 
   if (!query) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({
-        trang_thai: "that_bai",
-        thong_bao: "Vui lòng nhập username hoặc link video TikTok.",
-        cu_phap: "https://api-zhee.netlify.app/tiktok?={username_hoac_link}"
-      }, null, 2)
-    };
+    return res.status(400).json({
+      trang_thai: "that_bai",
+      thong_bao: "Vui lòng nhập username (@username hoặc username) hoặc link video TikTok.",
+      cu_phap: "https://{domain}/api/mxh/tiktok?={username_hoac_link}"
+    });
   }
 
   const browserHeaders = {
@@ -31,7 +26,7 @@ exports.handler = async (event, context) => {
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: TẢI VIDEO KHI TRUYỀN LINK TRỰC TIẾP
+    // TRƯỜNG HỢP 1: TẢI VIDEO TIKTOK (KHI TRUYỀN LINK)
     // -------------------------------------------------------------
     if (query.includes("tiktok.com")) {
       const oembedRes = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(query)}`);
@@ -50,26 +45,22 @@ exports.handler = async (event, context) => {
         }
       } catch (e) {}
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({
-          trang_thai: "thanh_cong",
-          loai: "video",
-          tieu_de: oembedData?.title || "Video TikTok",
-          tac_gia: {
-            ten_hien_thi: oembedData?.author_name || "TikTok User",
-            username: oembedData?.author_unique_id || null,
-            link_trang_ca_nhan: oembedData?.author_url || null
-          },
-          anh_bia: oembedData?.thumbnail_url || null,
-          link_tai: linkTai || "Không thể lấy link tải trực tiếp"
-        }, null, 2)
-      };
+      return res.status(200).json({
+        trang_thai: "thanh_cong",
+        loai: "video",
+        tieu_de: oembedData?.title || "Video TikTok",
+        tac_gia: {
+          ten_hien_thi: oembedData?.author_name || "TikTok User",
+          username: oembedData?.author_unique_id || null,
+          link_trang_ca_nhan: oembedData?.author_url || null
+        },
+        anh_bia: oembedData?.thumbnail_url || null,
+        link_tai: linkTai || "Không thể lấy link tải trực tiếp"
+      });
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: LẤY PROFILE VÀ DANH SÁCH VIDEO TỪ USERNAME
+    // TRƯỜNG HỢP 2: LẤY PROFILE VÀ VIDEO QUA USERNAME
     // -------------------------------------------------------------
     const cleanUser = query.trim().replace(/^@+/, "");
     const profileUrl = `https://www.tiktok.com/@${cleanUser}`;
@@ -100,17 +91,12 @@ exports.handler = async (event, context) => {
     }
 
     if (!userInfo) {
-      return {
-        statusCode: 404,
-        headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({
-          trang_thai: "that_bai",
-          thong_bao: `Không tìm thấy tài khoản TikTok: @${cleanUser}`
-        }, null, 2)
-      };
+      return res.status(404).json({
+        trang_thai: "that_bai",
+        thong_bao: `Không tìm thấy tài khoản TikTok: @${cleanUser}`
+      });
     }
 
-    // Bóc tách video qua API Post Feed của TikTok bằng secUid
     let videoList = [];
     if (secUid) {
       try {
@@ -127,12 +113,10 @@ exports.handler = async (event, context) => {
             anh_bia: v.video?.cover || null,
             thoi_luong_giay: v.video?.duration || 0,
             luot_xem: v.stats?.playCount || 0,
-            luot_thich: v.stats?.diggCount || 0,
-            binh_luan: v.stats?.commentCount || 0
+            luot_thich: v.stats?.diggCount || 0
           }));
         }
       } catch (e) {
-        // Fallback: Quét link video qua biểu thức chính quy trực tiếp trong HTML
         const videoRegex = new RegExp(`https:\\/\\/www\\.tiktok\\.com\\/@${cleanUser}\\/video\\/(\\d+)`, "g");
         const found = [...new Set(html.match(videoRegex) || [])];
         videoList = found.slice(0, 10).map((link, idx) => ({
@@ -167,28 +151,9 @@ exports.handler = async (event, context) => {
       payload.danh_sach_video_gan_nhat = videoList;
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
-      body: JSON.stringify(payload, null, 2)
-    };
+    return res.status(200).json(payload);
 
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({
-        trang_thai: "that_bai",
-        thong_bao: error.message
-      }, null, 2)
-    };
+    return res.status(500).json({ trang_thai: "that_bai", thong_bao: error.message });
   }
 };

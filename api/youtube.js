@@ -1,24 +1,20 @@
-exports.handler = async (event, context) => {
-  const params = event.queryStringParameters || {};
+module.exports = async (req, res) => {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-  let query = params.url || params.user || params.channel || params.username || params[""] || null;
-  if (!query && event.rawQuery) {
-    query = decodeURIComponent(event.rawQuery.replace(/^=/, "").trim());
+  let rawQuery = req.url.includes("?") ? req.url.split("?")[1] : "";
+  let query = req.query.url || req.query.user || req.query.channel || req.query.username || req.query[""] || null;
+
+  if (!query && rawQuery) {
+    query = decodeURIComponent(rawQuery.replace(/^=/, "").split("&")[0]).trim();
   }
 
   if (!query) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({
-        trang_thai: "that_bai",
-        thong_bao: "Vui lòng nhập link video hoặc handle kênh YouTube.",
-        cu_phap: "https://api-zhee.netlify.app/youtube?={link_hoac_handle}"
-      }, null, 2)
-    };
+    return res.status(400).json({
+      trang_thai: "that_bai",
+      thong_bao: "Vui lòng nhập link video hoặc handle kênh YouTube.",
+      cu_phap: "https://{domain}/api/mxh/youtube?={link_hoac_handle}"
+    });
   }
 
   const browserHeaders = {
@@ -29,7 +25,7 @@ exports.handler = async (event, context) => {
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: LINK VIDEO (BÓC TÁCH FILE MP4 / AUDIO TRỰC TIẾP)
+    // TRƯỜNG HỢP 1: LINK VIDEO YOUTUBE
     // -------------------------------------------------------------
     const isVideo = query.includes("watch?v=") || query.includes("youtu.be/") || query.includes("/shorts/");
     
@@ -44,13 +40,11 @@ exports.handler = async (event, context) => {
       }
 
       const cleanVideoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-
       let directMp4 = null;
       let directAudio = null;
       let videoTitle = "YouTube Video";
       let videoAuthor = "Chưa xác định";
 
-      // BƯỚC 1: Lấy dữ liệu trực tiếp từ YouTube Player Data
       try {
         const ytRes = await fetch(cleanVideoUrl, { headers: browserHeaders });
         const html = await ytRes.text();
@@ -64,21 +58,14 @@ exports.handler = async (event, context) => {
           const formats = playerData.streamingData?.formats || [];
           const adaptiveFormats = playerData.streamingData?.adaptiveFormats || [];
 
-          // Tìm định dạng MP4 có cả hình và tiếng
           const progressiveMp4 = formats.find(f => f.mimeType?.includes("video/mp4") && f.url);
-          if (progressiveMp4) {
-            directMp4 = progressiveMp4.url;
-          }
+          if (progressiveMp4) directMp4 = progressiveMp4.url;
 
-          // Tìm định dạng Audio trực tiếp
           const audioFormat = adaptiveFormats.find(f => f.mimeType?.includes("audio/mp4") && f.url);
-          if (audioFormat) {
-            directAudio = audioFormat.url;
-          }
+          if (audioFormat) directAudio = audioFormat.url;
         }
       } catch (err) {}
 
-      // BƯỚC 2: Fallback qua Invidious API nếu luồng YouTube mã hóa chữ ký số (Signature Cipher)
       if (!directMp4) {
         const fallbackNodes = [
           "https://invidious.jing.rocks",
@@ -96,15 +83,11 @@ exports.handler = async (event, context) => {
 
               const streams = data.formatStreams || [];
               const chosenStream = streams.find(s => s.container === "mp4") || streams[0];
-              if (chosenStream?.url) {
-                directMp4 = chosenStream.url;
-              }
+              if (chosenStream?.url) directMp4 = chosenStream.url;
 
               const adaptive = data.adaptiveFormats || [];
               const chosenAudio = adaptive.find(a => a.type?.includes("audio/mp4") || a.type?.includes("audio/webm"));
-              if (chosenAudio?.url) {
-                directAudio = chosenAudio.url;
-              }
+              if (chosenAudio?.url) directAudio = chosenAudio.url;
               break;
             }
           } catch (e) {
@@ -113,7 +96,6 @@ exports.handler = async (event, context) => {
         }
       }
 
-      // Metadata dự phòng qua OEmbed nếu các nguồn trên chưa bóc được tên
       if (videoTitle === "YouTube Video") {
         const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
         const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
@@ -123,34 +105,25 @@ exports.handler = async (event, context) => {
         }
       }
 
-      return {
-        statusCode: 200,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type"
-        },
-        body: JSON.stringify({
-          trang_thai: "thanh_cong",
-          loai: "video",
-          thong_tin_video: {
-            id_video: videoId,
-            tieu_de: videoTitle,
-            tac_gia: videoAuthor,
-            link_xem_goc: cleanVideoUrl,
-            anh_thumbnail: {
-              chuan_maxres: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-              chuan_hq: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-              mac_dinh: `https://img.youtube.com/vi/${videoId}/default.jpg`
-            }
-          },
-          link_tai_truc_tiep: {
-            file_mp4_video: directMp4 || `https://invidious.jing.rocks/latest_version?id=${videoId}&itag=18`,
-            file_mp3_audio: directAudio || `https://invidious.jing.rocks/latest_version?id=${videoId}&itag=140`
+      return res.status(200).json({
+        trang_thai: "thanh_cong",
+        loai: "video",
+        thong_tin_video: {
+          id_video: videoId,
+          tieu_de: videoTitle,
+          tac_gia: videoAuthor,
+          link_xem_goc: cleanVideoUrl,
+          anh_thumbnail: {
+            chuan_maxres: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+            chuan_hq: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+            mac_dinh: `https://img.youtube.com/vi/${videoId}/default.jpg`
           }
-        }, null, 2)
-      };
+        },
+        link_tai_truc_tiep: {
+          file_mp4_video: directMp4 || `https://invidious.jing.rocks/latest_version?id=${videoId}&itag=18`,
+          file_mp3_audio: directAudio || `https://invidious.jing.rocks/latest_version?id=${videoId}&itag=140`
+        }
+      });
     }
 
     // -------------------------------------------------------------
@@ -208,14 +181,10 @@ exports.handler = async (event, context) => {
     if (!channelInfo) {
       const channelId = html.match(/"channelId":"(UC[a-zA-Z0-9_-]{22})"/)?.[1] || null;
       if (!channelId) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
-          body: JSON.stringify({
-            trang_thai: "that_bai",
-            thong_bao: `Không tìm thấy kênh YouTube: @${cleanHandle}`
-          }, null, 2)
-        };
+        return res.status(404).json({
+          trang_thai: "that_bai",
+          thong_bao: `Không tìm thấy kênh YouTube: @${cleanHandle}`
+        });
       }
 
       channelInfo = {
@@ -238,22 +207,9 @@ exports.handler = async (event, context) => {
       payload.thong_bao_video = "Kênh này hiện chưa đăng tải video công khai nào.";
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
-      body: JSON.stringify(payload, null, 2)
-    };
+    return res.status(200).json(payload);
 
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ trang_thai: "that_bai", thong_bao: error.message }, null, 2)
-    };
+    return res.status(500).json({ trang_thai: "that_bai", thong_bao: error.message });
   }
 };
