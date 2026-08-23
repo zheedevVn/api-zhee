@@ -29,7 +29,7 @@ exports.handler = async (event, context) => {
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY TRỰC TIẾP LINK FILE MP4 & MP3)
+    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY TRỰC TIẾP FILE MP4 & MP3)
     // -------------------------------------------------------------
     const isVideo = query.includes("watch?v=") || query.includes("youtu.be/") || query.includes("/shorts/");
     
@@ -45,58 +45,50 @@ exports.handler = async (event, context) => {
 
       const cleanVideoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-      // Danh sách các Invidious instances công khai ổn định
-      const instances = [
-        "https://inv.tux.pizza",
-        "https://invidious.nerdvpn.de",
-        "https://invidious.jing.rocks",
-        "https://vid.puffyan.us"
-      ];
+      // 1. Lấy thông tin video qua OEmbed
+      const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
+      const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
 
-      let videoDetails = null;
-      let streamData = null;
+      // 2. Lấy link tải MP4 & MP3 trực tiếp bằng Cobalt Core API
+      const fetchCobaltStream = async (isAudioOnly = false) => {
+        const cobaltServers = [
+          "https://cobalt-api.kwiatekm.pl",
+          "https://api.cobalt.tools",
+          "https://co.wuk.sh"
+        ];
 
-      for (const instance of instances) {
-        try {
-          const res = await fetch(`${instance}/api/v1/videos/${videoId}`, {
-            headers: browserHeaders
-          });
-          if (res.ok) {
-            const data = await res.json();
-            videoDetails = data;
-            streamData = data.formatStreams || [];
-            break;
+        for (const server of cobaltServers) {
+          try {
+            const res = await fetch(`${server}/`, {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0"
+              },
+              body: JSON.stringify({
+                url: cleanVideoUrl,
+                videoQuality: "720",
+                audioFormat: "mp3",
+                downloadMode: isAudioOnly ? "audio" : "auto"
+              })
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              if (data.url) return data.url;
+            }
+          } catch (e) {
+            continue;
           }
-        } catch (e) {
-          continue;
         }
-      }
+        return null;
+      };
 
-      // Lọc link MP4 có kèm cả tiếng (chất lượng 720p hoặc 360p)
-      let directMp4 = null;
-      if (streamData && streamData.length > 0) {
-        const mp4Stream = streamData.find(s => s.resolution === "720p" && s.container === "mp4") ||
-                          streamData.find(s => s.container === "mp4") ||
-                          streamData[0];
-        directMp4 = mp4Stream?.url || null;
-      }
-
-      // Lọc link Audio MP3 / M4A stream
-      let directAudio = null;
-      if (videoDetails?.adaptiveFormats) {
-        const audioStream = videoDetails.adaptiveFormats.find(f => f.type?.includes("audio/mp4") || f.type?.includes("audio/webm"));
-        directAudio = audioStream?.url || null;
-      }
-
-      // Lấy thông tin dự phòng qua OEmbed nếu không có videoDetails
-      let title = videoDetails?.title;
-      let author = videoDetails?.author;
-      if (!title) {
-        const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
-        const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
-        title = oembedData?.title || "YouTube Video";
-        author = oembedData?.author_name || "Chưa xác định";
-      }
+      const [linkMp4, linkMp3] = await Promise.all([
+        fetchCobaltStream(false),
+        fetchCobaltStream(true)
+      ]);
 
       return {
         statusCode: 200,
@@ -111,20 +103,19 @@ exports.handler = async (event, context) => {
           loai: "video",
           thong_tin_video: {
             id_video: videoId,
-            tieu_de: title,
-            tac_gia: author,
-            thoi_luong_giay: videoDetails?.lengthSeconds || 0,
-            luot_xem: videoDetails?.viewCount || 0,
-            link_goc: cleanVideoUrl,
+            tieu_de: oembedData?.title || "YouTube Video",
+            tac_gia: oembedData?.author_name || "Chưa xác định",
+            link_kenh: oembedData?.author_url || null,
+            link_xem_goc: cleanVideoUrl,
             anh_thumbnail: {
               chuan_maxres: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
               chuan_hq: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-              mac_dinh: `https://img.youtube.com/vi/${videoId}/default.jpg`
+              mac_dinh: oembedData?.thumbnail_url || `https://img.youtube.com/vi/${videoId}/default.jpg`
             }
           },
           link_tai_truc_tiep: {
-            file_mp4_video: directMp4 || `https://yewtu.be/latest_version?id=${videoId}&itag=22`,
-            file_audio_nhac: directAudio || `https://yewtu.be/latest_version?id=${videoId}&itag=140`
+            file_mp4_video: linkMp4 || "Đang tạo luồng video trực tiếp...",
+            file_mp3_am_thanh: linkMp3 || "Đang tạo luồng audio trực tiếp..."
           }
         }, null, 2)
       };
