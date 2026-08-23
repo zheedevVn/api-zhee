@@ -1,14 +1,14 @@
 exports.handler = async (event, context) => {
   const params = event.queryStringParameters || {};
   
-  // Hỗ trợ bắt: ?user=..., ?username=..., ?=..., hoặc ?<username>
+  // Tự động nhận diện username từ: ?={username}, ?user={username}, hoặc ?{username}
   let username = params.user || params.username || params[""] || null;
 
   if (!username && event.rawQuery) {
     username = event.rawQuery.replace(/^=/, "").trim();
   }
 
-  // Nếu không truyền username -> Trả về JSON hướng dẫn
+  // Báo lỗi cú pháp nếu thiếu username
   if (!username) {
     return {
       statusCode: 400,
@@ -18,26 +18,27 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         status: "error",
-        message: "Thiếu tên tài khoản GitHub (username).",
+        message: "Vui lòng cung cấp username GitHub.",
         usage: {
-          standard: "https://api-zhee.netlify.app/github?user={username}",
-          shorthand: "https://api-zhee.netlify.app/github?={username}",
-          example: "https://api-zhee.netlify.app/github?user=torvalds"
+          syntax: "https://api-zhee.netlify.app/github?={username}",
+          alternative: "https://api-zhee.netlify.app/github?user={username}"
         }
       }, null, 2)
     };
   }
 
-  try {
-    const response = await fetch(`https://api.github.com/users/${username}`, {
-      headers: {
-        "User-Agent": "Netlify-Serverless-Function"
-      }
-    });
+  const headers = { "User-Agent": "Netlify-Serverless-Function" };
 
-    if (!response.ok) {
+  try {
+    // Gọi song song Profile và Repositories
+    const [userRes, reposRes] = await Promise.all([
+      fetch(`https://api.github.com/users/${username}`, { headers }),
+      fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`, { headers })
+    ]);
+
+    if (!userRes.ok) {
       return {
-        statusCode: response.status,
+        statusCode: userRes.status,
         headers: {
           "Content-Type": "application/json; charset=utf-8",
           "Access-Control-Allow-Origin": "*"
@@ -49,27 +50,74 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const data = await response.json();
+    const userData = await userRes.json();
+    const reposData = reposRes.ok ? await reposRes.json() : [];
+
+    // Bóc tách toàn bộ link chi tiết và đẹp mắt cho từng repo
+    const formattedRepositories = reposData.map((repo, index) => {
+      const defaultBranch = repo.default_branch || "main";
+      return {
+        stt: index + 1,
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description || "Không có mô tả",
+        language: repo.language || "Unknown",
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        open_issues: repo.open_issues_count,
+        default_branch: defaultBranch,
+        is_fork: repo.fork,
+        is_archived: repo.archived,
+        urls: {
+          web_url: repo.html_url,
+          homepage: repo.homepage || null,
+          clone_https: repo.clone_url,
+          clone_ssh: repo.ssh_url,
+          git_url: repo.git_url,
+          download_zip: `${repo.html_url}/archive/refs/heads/${defaultBranch}.zip`,
+          download_tar: `${repo.html_url}/archive/refs/heads/${defaultBranch}.tar.gz`,
+          commits_url: `${repo.html_url}/commits`,
+          issues_url: repo.has_issues ? `${repo.html_url}/issues` : null,
+          releases_url: `${repo.html_url}/releases`
+        },
+        created_at: repo.created_at,
+        updated_at: repo.updated_at,
+        pushed_at: repo.pushed_at
+      };
+    });
 
     return {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
       },
       body: JSON.stringify({
         status: "success",
+        author: "Zhee API Service",
         data: {
-          id: data.id,
-          username: data.login,
-          name: data.name,
-          avatar_url: data.avatar_url,
-          html_url: data.html_url,
-          bio: data.bio,
-          location: data.location,
-          public_repos: data.public_repos,
-          followers: data.followers,
-          following: data.following
+          profile: {
+            id: userData.id,
+            username: userData.login,
+            name: userData.name || userData.login,
+            avatar_url: userData.avatar_url,
+            profile_url: userData.html_url,
+            bio: userData.bio || "Không có tiểu sử",
+            company: userData.company || null,
+            blog: userData.blog || null,
+            location: userData.location || null,
+            email: userData.email || null,
+            twitter: userData.twitter_username || null,
+            public_repos: userData.public_repos,
+            followers: userData.followers,
+            following: userData.following,
+            created_at: userData.created_at,
+            updated_at: userData.updated_at
+          },
+          total_repos: formattedRepositories.length,
+          repositories: formattedRepositories
         }
       }, null, 2)
     };
