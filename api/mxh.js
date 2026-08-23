@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
         ten_api: "TikTok Profile & Video Downloader",
         duong_dan: "/api/mxh/tiktok",
         phuong_thuc: "GET",
-        mo_ta: "Lấy thông tin tài khoản hoặc tải video không có watermark",
+        mo_ta: "Lấy thông tin tài khoản hoặc tải video không watermark",
         cu_phap: [
           `${baseUrl}/api/mxh/tiktok?={username}`,
           `${baseUrl}/api/mxh/tiktok?={link_video}`
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
         ten_api: "YouTube Channel & Video Stream",
         duong_dan: "/api/mxh/youtube",
         phuong_thuc: "GET",
-        mo_ta: "Lấy thông tin kênh hoặc link stream video",
+        mo_ta: "Lấy thông tin kênh hoặc link stream video MP4/MP3",
         cu_phap: [
           `${baseUrl}/api/mxh/youtube?={handle_kenh}`,
           `${baseUrl}/api/mxh/youtube?={link_video}`
@@ -48,15 +48,17 @@ module.exports = async (req, res) => {
         ]
       },
       discord: {
-        ten_api: "Discord User & Server Lookup",
+        ten_api: "Discord Lookup & Token Account Checker",
         duong_dan: "/api/mxh/discord",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu thông tin User ID hoặc kiểm tra server qua mã mời",
+        mo_ta: "Tra cứu thông tin tài khoản bằng Token (email, sđt, nitro, guilds), User ID hoặc máy chủ qua link mời",
         cu_phap: [
+          `${baseUrl}/api/mxh/discord?={discord_token}`,
           `${baseUrl}/api/mxh/discord?={user_id}`,
           `${baseUrl}/api/mxh/discord?={invite_code_hoac_link}`
         ],
         vi_du: [
+          `${baseUrl}/api/mxh/discord?=OTg4OTg2ODgx...`,
           `${baseUrl}/api/mxh/discord?=156114103282368512`,
           `${baseUrl}/api/mxh/discord?=https://discord.gg/discord-developers`
         ]
@@ -93,16 +95,15 @@ module.exports = async (req, res) => {
         ten_api: "Facebook Profile & Video/Reels Downloader",
         duong_dan: "/api/mxh/facebook",
         phuong_thuc: "GET",
-        mo_ta: "Tìm UID, lấy Avatar Full HD hoặc tải video MP4 (hỗ trợ cookie/token cho video hạn chế)",
+        mo_ta: "Tìm UID, lấy Avatar Full HD hoặc tải video MP4 (hỗ trợ kèm Access Token)",
         cu_phap: [
           `${baseUrl}/api/mxh/facebook?={username_hoac_uid}`,
-          `${baseUrl}/api/mxh/facebook?={link_video_cong_khai}`,
-          `${baseUrl}/api/mxh/facebook?={link_video_rieng_tu}&code={cookie_hoac_token}`
+          `${baseUrl}/api/mxh/facebook?={username_hoac_uid}&code={access_token}`,
+          `${baseUrl}/api/mxh/facebook?={link_video}`
         ],
         vi_du: [
-          `${baseUrl}/api/mxh/facebook?=zuck`,
-          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=1813358456318928`,
-          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=1813358456318928&code=c_user=1000...;xs=...;`
+          `${baseUrl}/api/mxh/facebook?=hoducminh.depzai&code=EAAGNO4...`,
+          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=1813358456318928`
         ]
       }
     }
