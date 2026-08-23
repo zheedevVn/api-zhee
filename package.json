@@ -1,0 +1,12 @@
+{
+  "name": "repo-api",
+  "version": "1.0.0",
+  "description": "Zhee API Service Engine",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
+}

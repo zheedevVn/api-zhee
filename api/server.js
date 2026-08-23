@@ -1,5 +1,7 @@
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
+const bankHandler = require("../lib/bank");
+const mailHandler = require("../lib/mail");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
 const youtubeHandler = require("../lib/youtube");
@@ -8,16 +10,18 @@ const telegramHandler = require("../lib/telegram");
 const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
-const bankHandler = require("../lib/bank");
 
 module.exports = async (req, res) => {
   const url = req.url || "/";
   const pathname = url.split("?")[0].toLowerCase();
 
-  if (pathname === "/" || pathname === "/home" || pathname === "/api" || pathname === "/api/home") return homeHandler(req, res);
-  if (pathname === "/mxh" || pathname === "/api/mxh") return mxhHandler(req, res);
-  if (pathname.includes("/bank") || pathname.includes("/check") || pathname.includes("/taoqr")) return bankHandler(req, res);
+  // 1. Home
+  if (pathname === "/" || pathname === "/home" || pathname === "/api" || pathname === "/api/home") {
+    return homeHandler(req, res);
+  }
 
+  // 2. Chuyên mục Mạng Xã Hội
+  if (pathname === "/mxh" || pathname === "/api/mxh") return mxhHandler(req, res);
   if (pathname.includes("/github")) return githubHandler(req, res);
   if (pathname.includes("/tiktok")) return tiktokHandler(req, res);
   if (pathname.includes("/youtube")) return youtubeHandler(req, res);
@@ -26,6 +30,16 @@ module.exports = async (req, res) => {
   if (pathname.includes("/twitter") || pathname.includes("/x")) return twitterHandler(req, res);
   if (pathname.includes("/facebook")) return facebookHandler(req, res);
   if (pathname.includes("/zalo")) return zaloHandler(req, res);
+
+  // 3. Chuyên mục Ngân Hàng
+  if (pathname.includes("/bank") || pathname.includes("/check") || pathname.includes("/taoqr")) {
+    return bankHandler(req, res);
+  }
+
+  // 4. Chuyên mục Mail
+  if (pathname.includes("/mail") || pathname.includes("/gmail")) {
+    return mailHandler(req, res);
+  }
 
   return homeHandler(req, res);
 };
