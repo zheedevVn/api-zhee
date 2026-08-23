@@ -2,76 +2,72 @@ module.exports = async (req, res) => {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
 
-  let rawQuery = req.url.includes("?") ? req.url.split("?")[1] : "";
-  
-  // Trích xuất tham số query và tham số code/cookie/token
-  let query = req.query.url || req.query.user || req.query.id || req.query[""] || null;
-  let userAuth = req.query.code || req.query.cookie || req.query.token || null;
+  // 1. Phân giải toàn bộ query string thủ công để tránh mất mát ký tự đặc biệt
+  const fullUrl = req.url || "";
+  let queryTarget = "";
+  let userAuth = "";
 
-  if (rawQuery) {
-    const parts = rawQuery.split("&");
-    if (!query) {
-      query = decodeURIComponent(parts[0].replace(/^=/, "").trim());
-    }
-    for (const part of parts) {
-      if (part.startsWith("code=") || part.startsWith("code?=")) {
-        userAuth = decodeURIComponent(part.replace(/^code\??=/, "").trim());
-      } else if (part.startsWith("cookie=")) {
-        userAuth = decodeURIComponent(part.replace(/^cookie=/, "").trim());
-      } else if (part.startsWith("token=")) {
-        userAuth = decodeURIComponent(part.replace(/^token=/, "").trim());
+  if (fullUrl.includes("?")) {
+    const searchParams = new URLSearchParams(fullUrl.slice(fullUrl.indexOf("?")));
+    
+    // Lấy query chính (vị trí đầu tiên hoặc key "")
+    for (const [key, value] of searchParams.entries()) {
+      if (key === "" || key === "url" || key === "user" || key === "id") {
+        if (!queryTarget) queryTarget = value || key;
+      } else if (key === "code" || key === "token" || key === "cookie") {
+        userAuth = value;
       }
+    }
+
+    // Fallback cắt chuỗi thuần túy nếu dùng cú pháp ?=value&code=...
+    if (!queryTarget) {
+      const rawQuery = fullUrl.split("?")[1] || "";
+      const parts = rawQuery.split("&code=");
+      queryTarget = decodeURIComponent(parts[0].replace(/^=/, "").trim());
+      if (parts[1]) userAuth = decodeURIComponent(parts[1].trim());
     }
   }
 
-  if (!query) {
+  if (!queryTarget) {
     return res.status(400).json({
       trang_thai: "that_bai",
-      thong_bao: "Vui lòng nhập UID, Username hoặc Link video Facebook.",
-      cu_phap: {
-        cong_khai: "https://{domain}/api/mxh/facebook?={link_hoac_username}",
-        kem_xac_thuc_cookie_token: "https://{domain}/api/mxh/facebook?={link_video}&code={cookie_hoac_token}"
-      }
+      thong_bao: "Vui lòng nhập UID, Username hoặc Link Facebook.",
+      cu_phap: "https://{domain}/api/mxh/facebook?={username_hoac_link}&code={cookie_hoac_token}"
     });
   }
 
-  const cleanQuery = query.trim();
-  const isVideo = cleanQuery.includes("/videos/") || 
-                  cleanQuery.includes("/reel/") || 
-                  cleanQuery.includes("/reels/") || 
-                  cleanQuery.includes("/watch") || 
-                  cleanQuery.includes("fb.watch/") ||
-                  cleanQuery.includes("/posts/");
+  const cleanTarget = queryTarget.trim();
+  const isVideo = cleanTarget.includes("/videos/") || 
+                  cleanTarget.includes("/reel/") || 
+                  cleanTarget.includes("/reels/") || 
+                  cleanTarget.includes("/watch") || 
+                  cleanTarget.includes("fb.watch/") ||
+                  cleanTarget.includes("/posts/");
 
   const browserHeaders = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-Mode": "navigate"
+    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
   };
 
-  if (userAuth && (userAuth.includes("c_user=") || userAuth.includes("xs="))) {
+  if (userAuth && (userAuth.includes("c_user=") || userAuth.includes("datr="))) {
     browserHeaders["Cookie"] = userAuth;
   }
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: TẢI VIDEO FACEBOOK (HỖ TRỢ COOKIE / TOKEN)
+    // TRƯỜNG HỢP 1: TẢI VIDEO FACEBOOK
     // -------------------------------------------------------------
     if (isVideo) {
       let downloadData = null;
 
-      // Cách 1: Sử dụng Cookie/Session của người dùng bóc tách trực tiếp HTML payload
-      if (userAuth) {
+      if (userAuth && browserHeaders["Cookie"]) {
         try {
-          const videoRes = await fetch(cleanQuery, { headers: browserHeaders });
+          const videoRes = await fetch(cleanTarget, { headers: browserHeaders });
           const html = await videoRes.text();
-
           const hdMatch = html.match(/"browser_native_hd_url":"([^"]+)"/) || html.match(/"playable_url_quality_hd":"([^"]+)"/);
           const sdMatch = html.match(/"browser_native_sd_url":"([^"]+)"/) || html.match(/"playable_url":"([^"]+)"/);
           const thumbMatch = html.match(/"preferred_thumbnail":{"image":{"uri":"([^"]+)"/);
-
           const decodeUrl = (u) => u ? JSON.parse(`"${u}"`) : null;
 
           if (hdMatch || sdMatch) {
@@ -85,13 +81,12 @@ module.exports = async (req, res) => {
         } catch (e) {}
       }
 
-      // Cách 2: Parse engine qua Snapsave
       if (!downloadData) {
         try {
           const snapRes = await fetch("https://snapsave.app/action.php", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "Mozilla/5.0" },
-            body: `url=${encodeURIComponent(cleanQuery)}`
+            body: `url=${encodeURIComponent(cleanTarget)}`
           });
           if (snapRes.ok) {
             const snapHtml = await snapRes.text();
@@ -110,49 +105,26 @@ module.exports = async (req, res) => {
         } catch (e) {}
       }
 
-      // Cách 3: Fallback qua API VKR
-      if (!downloadData) {
-        try {
-          const vkrRes = await fetch(`https://api.vkrdownloader.com/server?vkr=${encodeURIComponent(cleanQuery)}`);
-          if (vkrRes.ok) {
-            const vkr = await vkrRes.json();
-            if (vkr.data?.downloads) {
-              const dList = vkr.data.downloads;
-              const hd = dList.find(d => d.format_id?.includes("hd") || d.quality?.includes("HD"));
-              const sd = dList.find(d => d.format_id?.includes("sd") || d.quality?.includes("SD"));
-              downloadData = {
-                phuong_thuc: "Serverless CDN Proxy",
-                tieu_de: vkr.data.title || "Facebook Video",
-                anh_thumbnail: vkr.data.thumbnail || null,
-                video_mp4_hd: hd?.url || null,
-                video_mp4_sd: sd?.url || dList[0]?.url || null
-              };
-            }
-          }
-        } catch (e) {}
-      }
-
       if (!downloadData) {
         return res.status(404).json({
           trang_thai: "that_bai",
-          thong_bao: "Không tìm thấy video hoặc video ở chế độ riêng tư/chặn quốc gia. Vui lòng kèm &code={cookie_hoac_token} để truy cập.",
-          cu_phap_goi_y: `https://api-zhee.vercel.app/api/mxh/facebook?=${cleanQuery}&code={cookie_cua_ban}`
+          thong_bao: "Không tìm thấy video. Hãy đính kèm &code={cookie_hoac_token} nếu video ở chế độ riêng tư."
         });
       }
 
       return res.status(200).json({
         trang_thai: "thanh_cong",
         loai: "facebook_video",
-        link_goc: cleanQuery,
+        link_goc: cleanTarget,
         ket_qua_tai: downloadData
       });
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: PROFILE / UID / USERNAME QUA API ENGINE
+    // TRƯỜNG HỢP 2: PROFILE / UID / USERNAME FACEBOOK
     // -------------------------------------------------------------
-    let cleanInput = cleanQuery
-      .replace(/^https?:\/\/(?:www\.|m\.|mobile\.)?facebook\.com\//, "")
+    let cleanInput = cleanTarget
+      .replace(/^https?:\/\/(?:www\.|m\.|mobile\.|touch\.)?facebook\.com\//, "")
       .replace(/^@+/, "")
       .replace(/^profile\.php\?id=/, "")
       .split("/")[0]
@@ -161,32 +133,63 @@ module.exports = async (req, res) => {
 
     let uid = /^\d{5,25}$/.test(cleanInput) ? cleanInput : null;
     let fullName = null;
-    const targetUrl = `https://www.facebook.com/${cleanInput}`;
+    let verifiedViaToken = false;
 
+    // A. NẾU USER TRUYỀN TOKEN (EAAG...) -> GỌI THẲNG GRAPH API CHÍNH CHỦ
+    if (userAuth && userAuth.startsWith("EA")) {
+      try {
+        const tokenRes = await fetch(`https://graph.facebook.com/v19.0/${cleanInput}?fields=id,name,username,link&access_token=${userAuth}`);
+        if (tokenRes.ok) {
+          const tokenData = await tokenRes.json();
+          if (tokenData.id) {
+            uid = tokenData.id;
+            fullName = tokenData.name;
+            if (tokenData.username) cleanInput = tokenData.username;
+            verifiedViaToken = true;
+          }
+        }
+      } catch (e) {}
+    }
+
+    // B. NẾU CHƯA CÓ UID -> SỬ DỤNG CÁC ENGINE TRA CỨU ĐA TẦNG
     if (!uid) {
-      const lookupApis = [
-        async () => {
-          const r = await fetch("https://id.traodoisub.net/api.php", {
+      // 1. Cổng F-ID Lookup Engine
+      try {
+        const fidRes = await fetch(`https://api.findids.net/api/get-uid-from-username?username=${encodeURIComponent(cleanInput)}`);
+        const fidData = await fidRes.json();
+        if (fidData.data?.id || fidData.id) {
+          uid = String(fidData.data?.id || fidData.id).trim();
+        }
+      } catch (e) {}
+
+      // 2. TraoDoiSub ID Engine
+      if (!uid) {
+        try {
+          const tdsRes = await fetch("https://id.traodoisub.net/api.php", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `link=${encodeURIComponent(targetUrl)}`
+            body: `link=${encodeURIComponent(`https://facebook.com/${cleanInput}`)}`
           });
-          const d = await r.json();
-          return d.code === 200 ? d.id : null;
-        },
-        async () => {
-          const r = await fetch(`https://api.findids.net/api/get-uid-from-username?username=${encodeURIComponent(cleanInput)}`);
-          const d = await r.json();
-          return d.data?.id || d.id || null;
-        }
-      ];
+          const tdsData = await tdsRes.json();
+          if (tdsData.code === 200 && tdsData.id) {
+            uid = String(tdsData.id).trim();
+          }
+        } catch (e) {}
+      }
 
-      for (const api of lookupApis) {
+      // 3. Quét trực tiếp qua Mobile Gateway (sử dụng Cookie nếu có)
+      if (!uid) {
         try {
-          const foundId = await api();
-          if (foundId) {
-            uid = String(foundId).trim();
-            break;
+          const profileRes = await fetch(`https://mbasic.facebook.com/${cleanInput}`, { headers: browserHeaders });
+          const html = await profileRes.text();
+          const uidMatch = html.match(/"userID":"(\d+)"/) || 
+                           html.match(/fb:\/\/profile\/(\d+)/) || 
+                           html.match(/entity_id=(\d+)/) ||
+                           html.match(/id=(\d{5,25})/);
+          if (uidMatch) uid = uidMatch[1];
+          const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+          if (titleMatch && !titleMatch[1].includes("Facebook") && !titleMatch[1].includes("Đăng nhập")) {
+            fullName = titleMatch[1].trim();
           }
         } catch (e) {}
       }
@@ -199,24 +202,24 @@ module.exports = async (req, res) => {
       });
     }
 
-    const tokenList = [
-      userAuth && userAuth.startsWith("EA") ? userAuth : null,
-      "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662",
-      "EAAAAAYsX7TsBO"
-    ].filter(Boolean);
-
-    for (const token of tokenList) {
-      try {
-        const graphRes = await fetch(`https://graph.facebook.com/v19.0/${uid}?fields=name,username,link&access_token=${token}`);
-        if (graphRes.ok) {
-          const gData = await graphRes.json();
-          if (gData.name) {
-            fullName = gData.name;
-            if (gData.username) cleanInput = gData.username;
-            break;
+    // C. LẤY TÊN HIỂN THỊ NẾU CHƯA CÓ
+    if (!fullName) {
+      const fallbackTokens = [
+        "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662",
+        "EAAAAAYsX7TsBO"
+      ];
+      for (const t of fallbackTokens) {
+        try {
+          const gRes = await fetch(`https://graph.facebook.com/v19.0/${uid}?fields=name,username&access_token=${t}`);
+          if (gRes.ok) {
+            const gData = await gRes.json();
+            if (gData.name) {
+              fullName = gData.name;
+              break;
+            }
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
     }
 
     return res.status(200).json({
@@ -226,6 +229,7 @@ module.exports = async (req, res) => {
         uid: uid,
         tai_khoan: cleanInput,
         ten_hien_thi: fullName || `Người dùng Facebook (${uid})`,
+        xac_thuc_token_rieng: verifiedViaToken,
         anh_dai_dien: {
           chat_luong_cao: `https://graph.facebook.com/${uid}/picture?width=1080&height=1080&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
           chuan_large: `https://graph.facebook.com/${uid}/picture?type=large`,
