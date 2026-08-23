@@ -1,14 +1,14 @@
 exports.handler = async (event, context) => {
   const params = event.queryStringParameters || {};
   
-  // Tự động nhận diện username từ: ?={username}, ?user={username}, hoặc ?{username}
+  // Nhận diện username linh hoạt từ: ?={username}, ?user={username}, hoặc ?{username}
   let username = params.user || params.username || params[""] || null;
 
   if (!username && event.rawQuery) {
     username = event.rawQuery.replace(/^=/, "").trim();
   }
 
-  // Kiểm tra username
+  // Kiểm tra nếu chưa nhập username
   if (!username) {
     return {
       statusCode: 400,
@@ -17,9 +17,9 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Origin": "*"
       },
       body: JSON.stringify({
-        status: "error",
-        message: "Vui lòng nhập username GitHub.",
-        example: "https://api-zhee.netlify.app/github?=hoducminh123"
+        trang_thai: "that_bai",
+        thong_bao: "Vui lòng nhập tên tài khoản GitHub (username).",
+        huong_dan: "https://api-zhee.netlify.app/github?={username}"
       }, null, 2)
     };
   }
@@ -40,8 +40,8 @@ exports.handler = async (event, context) => {
           "Access-Control-Allow-Origin": "*"
         },
         body: JSON.stringify({
-          status: "error",
-          message: `Không tìm thấy tài khoản GitHub: ${username}`
+          trang_thai: "that_bai",
+          thong_bao: `Không tìm thấy tài khoản GitHub: ${username}`
         }, null, 2)
       };
     }
@@ -49,13 +49,17 @@ exports.handler = async (event, context) => {
     const userData = await userRes.json();
     const reposData = reposRes.ok ? await reposRes.json() : [];
 
-    // Chỉ lấy tên và link trực tiếp của từng Repo
-    const repositories = reposData.map((repo, index) => ({
+    // Định dạng danh sách kho lưu trữ (repos) thuần Tiếng Việt
+    const danh_sach_repo = reposData.map((repo, index) => ({
       stt: index + 1,
-      repo_name: repo.name,
-      repo_url: repo.html_url,
-      description: repo.description || null,
-      language: repo.language || null
+      ten_repo: repo.name,
+      link_repo: repo.html_url,
+      mo_ta: repo.description || "Không có mô tả",
+      ngon_ngu: repo.language || "Không xác định",
+      so_sao: repo.stargazers_count,
+      luot_fork: repo.forks_count,
+      ngay_tao: repo.created_at,
+      ngay_cap_nhat: repo.updated_at
     }));
 
     return {
@@ -67,15 +71,28 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Headers": "Content-Type"
       },
       body: JSON.stringify({
-        status: "success",
-        profile: {
-          username: userData.login,
-          name: userData.name || userData.login,
-          avatar: userData.avatar_url,
-          profile_url: userData.html_url,
-          total_repos: userData.public_repos
+        trang_thai: "thanh_cong",
+        thong_tin_ca_nhan: {
+          id: userData.id,
+          tai_khoan: userData.login,
+          ho_ten: userData.name || userData.login,
+          anh_dai_dien: userData.avatar_url,
+          link_trang_ca_nhan: userData.html_url,
+          tieu_su: userData.bio || "Không có tiểu sử",
+          cong_ty: userData.company || "Không có",
+          trang_web: userData.blog || "Không có",
+          dia_chi: userData.location || "Không có",
+          email: userData.email || "Không công khai",
+          twitter: userData.twitter_username || "Không có",
+          tong_so_repo: userData.public_repos,
+          tong_so_gist: userData.public_gists,
+          nguoi_theo_doi: userData.followers,
+          dang_theo_doi: userData.following,
+          ngay_tao_tai_khoan: userData.created_at,
+          ngay_cap_nhat_lan_cuoi: userData.updated_at
         },
-        repositories: repositories
+        tong_so_repo_hien_tai: danh_sach_repo.length,
+        danh_sach_repo: danh_sach_repo
       }, null, 2)
     };
   } catch (error) {
@@ -86,8 +103,8 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Origin": "*"
       },
       body: JSON.stringify({
-        status: "error",
-        message: error.message
+        trang_thai: "that_bai",
+        thong_bao: error.message
       }, null, 2)
     };
   }
