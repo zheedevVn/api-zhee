@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
           ten_api: "Kiểm tra tên chủ tài khoản ngân hàng",
           duong_dan: "/bank/check",
           phuong_thuc: "GET",
-          mo_ta: "Tra cứu tên chủ sở hữu STK ngân hàng thời gian thực",
+          mo_ta: "Tra cứu tên chủ sở hữu STK ngân hàng chuẩn Napas",
           cu_phap: [
             `${baseUrl}/bank/check?bank={ma_nh}&stk={so_tai_khoan}`,
             `${baseUrl}/bank/check?={ma_nh}-{so_tai_khoan}`
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
     });
   }
 
-  // Bóc tách tham số đầu vào
+  // Bóc tách tham số
   let bankCode = req.query.bank || req.query.nganhang || "";
   let accountNo = req.query.account || req.query.stk || req.query[""] || "";
   let amount = req.query.amount || req.query.sotien || 0;
@@ -105,43 +105,51 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: XỬ LÝ /bank/check (TRA CỨU TÊN CHỦ TÀI KHOẢN MIỄN PHÍ)
+    // TRƯỜNG HỢP 2: XỬ LÝ /bank/check (TRA CỨU TÊN CHỦ TÀI KHOẢN)
     // -------------------------------------------------------------
     if (isCheck) {
       let ownerName = null;
 
-      // Danh sách các cổng Gateway ngân hàng trực tiếp không bị chặn bản quyền Free
-      const openGateways = [
-        // Cổng 1: Napas Web2M Core
-        async () => {
-          const r = await fetch(`https://api.web2m.com/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
-          const d = await r.json();
-          return d.account_name || d.name || (d.data ? d.data.accountName : null);
-        },
-        // Cổng 2: Sieuthicode Napas Hub
-        async () => {
-          const r = await fetch(`https://api.sieuthicode.net/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
-          const d = await r.json();
-          return d.account_name || d.name || null;
-        },
-        // Cổng 3: TheSieuRe Banking Check
-        async () => {
-          const r = await fetch("https://thesieure.com/api/bank/check", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `bank_code=${targetBank.shortName}&account_number=${cleanAccount}`
-          });
-          const d = await r.json();
-          return d.account_name || d.name || null;
-        }
-      ];
+      // Cổng 1: VietQR Web Gateway
+      try {
+        const vqrRes = await fetch("https://vietqr.co/api/generate-qr-code", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+          },
+          body: JSON.stringify({
+            bank: targetBank.bin,
+            accountNo: cleanAccount
+          })
+        });
 
-      for (const gateway of openGateways) {
+        if (vqrRes.ok) {
+          const vqrData = await vqrRes.json();
+          if (vqrData?.data?.accountName) {
+            ownerName = vqrData.data.accountName;
+          }
+        }
+      } catch (e) {}
+
+      // Cổng 2: VietQR Pro Gateway Fallback
+      if (!ownerName) {
         try {
-          const nameFound = await gateway();
-          if (nameFound && typeof nameFound === "string" && nameFound.trim().length > 2) {
-            ownerName = nameFound.trim().toUpperCase();
-            break;
+          const pRes = await fetch("https://api.vietqr.io/v2/lookup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-client-id": "47c5615d-a214-4d7d-ac22-1d1a969375b9",
+              "x-api-key": "7be1d7de-0eae-4d3a-a594-1a6d1cf78576"
+            },
+            body: JSON.stringify({
+              bin: targetBank.bin,
+              accountNumber: cleanAccount
+            })
+          });
+          const pData = await pRes.json();
+          if (pData.code === "00" && pData.data?.accountName) {
+            ownerName = pData.data.accountName;
           }
         } catch (e) {}
       }
@@ -162,7 +170,7 @@ module.exports = async (req, res) => {
         loai: "check_stk_ngan_hang",
         thong_tin: {
           so_tai_khoan: cleanAccount,
-          chu_tai_khoan: ownerName,
+          chu_tai_khoan: ownerName.toUpperCase(),
           ngan_hang: {
             ten_day_du: targetBank.name,
             ma_ngan_hang: targetBank.shortName,
