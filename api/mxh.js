@@ -1,9 +1,12 @@
-exports.handler = async (event, context) => {
-  const protocol = event.headers["x-forwarded-proto"] || "https";
-  const host = event.headers.host;
+module.exports = async (req, res) => {
+  const protocol = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers.host;
   const baseUrl = `${protocol}://${host}`;
 
-  const mxhDocs = {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
+  res.status(200).json({
     chuyen_muc: "Mạng Xã Hội (Social Media Tools)",
     tac_gia: "Hồ Đức Minh (Zhee Dev)",
     tong_so_tool: 4,
@@ -59,16 +62,5 @@ exports.handler = async (event, context) => {
         ]
       }
     }
-  };
-
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
-    },
-    body: JSON.stringify(mxhDocs, null, 2)
-  };
+  });
 };

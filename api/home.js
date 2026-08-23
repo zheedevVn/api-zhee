@@ -1,9 +1,12 @@
-exports.handler = async (event, context) => {
-  const protocol = event.headers["x-forwarded-proto"] || "https";
-  const host = event.headers.host;
+module.exports = async (req, res) => {
+  const protocol = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers.host;
   const baseUrl = `${protocol}://${host}`;
 
-  const homeData = {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
+  res.status(200).json({
     trang_thai: "thanh_cong",
     tac_gia: {
       ten: "Hồ Đức Minh (Zhee Dev)",
@@ -13,6 +16,7 @@ exports.handler = async (event, context) => {
     he_thong: {
       ten_dich_vu: "Zhee API Service Engine",
       phien_ban: "2.0.0",
+      nen_tang: "Vercel Serverless Functions",
       mo_ta: "Hệ thống REST API phân chia theo từng nhóm chuyên mục."
     },
     danh_sach_chuyen_muc: {
@@ -22,16 +26,5 @@ exports.handler = async (event, context) => {
         link_huong_dan: `${baseUrl}/mxh`
       }
     }
-  };
-
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
-    },
-    body: JSON.stringify(homeData, null, 2)
-  };
+  });
 };

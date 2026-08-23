@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api/home"
+    },
+    {
+      "source": "/home",
+      "destination": "/api/home"
+    },
+    {
+      "source": "/mxh",
+      "destination": "/api/mxh"
+    },
+    {
+      "source": "/api/mxh/:name",
+      "destination": "/api/:name"
+    },
+    {
+      "source": "/:name",
+      "destination": "/api/:name"
+    }
+  ]
+}
