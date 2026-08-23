@@ -1,7 +1,6 @@
 exports.handler = async (event, context) => {
   const params = event.queryStringParameters || {};
 
-  // Tự động nhận diện input
   let query = params.url || params.user || params.channel || params.username || params[""] || null;
   if (!query && event.rawQuery) {
     query = decodeURIComponent(event.rawQuery.replace(/^=/, "").trim());
@@ -16,8 +15,8 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         trang_thai: "that_bai",
-        thong_bao: "Vui lòng nhập tên kênh/handle hoặc link video YouTube.",
-        cu_phap: "https://api-zhee.netlify.app/youtube?={handle_hoac_link}"
+        thong_bao: "Vui lòng nhập link video hoặc handle kênh YouTube.",
+        cu_phap: "https://api-zhee.netlify.app/youtube?={link_hoac_handle}"
       }, null, 2)
     };
   }
@@ -30,7 +29,7 @@ exports.handler = async (event, context) => {
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: LINK VIDEO YOUTUBE (LẤY INFO + LINK TẢI MP3/MP4)
+    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY LINK TẢI TRỰC TIẾP MP4 / MP3)
     // -------------------------------------------------------------
     const isVideo = query.includes("watch?v=") || query.includes("youtu.be/") || query.includes("/shorts/");
     
@@ -46,25 +45,73 @@ exports.handler = async (event, context) => {
 
       const cleanVideoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-      // 1. Lấy thông tin cơ bản từ OEmbed
+      // 1. Lấy metadata video
       const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
       const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
 
-      // 2. Lấy link tải MP3 và MP4 chất lượng cao từ dịch vụ phân giải stream
-      let downloadLinks = {
-        video_mp4_720p: `https://yt-download.org/api/button/videos/${videoId}`,
-        audio_mp3_320k: `https://yt-download.org/api/button/mp3/${videoId}`,
-        tai_qua_server_nhanh: {
-          mp4: `https://loader.to/api/button/?url=${encodeURIComponent(cleanVideoUrl)}&f=1080`,
-          mp3: `https://loader.to/api/button/?url=${encodeURIComponent(cleanVideoUrl)}&f=mp3`
+      // 2. Gọi backend Cobalt để lấy link trực tiếp file mp4 và mp3
+      let directMp4 = null;
+      let directMp3 = null;
+
+      try {
+        const cobaltApis = [
+          "https://co.wuk.sh/api/json",
+          "https://api.cobalt.tools/api/json"
+        ];
+
+        // Lấy link MP4
+        for (const endpoint of cobaltApis) {
+          try {
+            const mp4Res = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                url: cleanVideoUrl,
+                vQuality: "720"
+              })
+            });
+            const resData = await mp4Res.json();
+            if (resData.url) {
+              directMp4 = resData.url;
+              break;
+            }
+          } catch (err) {}
         }
-      };
+
+        // Lấy link MP3
+        for (const endpoint of cobaltApis) {
+          try {
+            const mp3Res = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                url: cleanVideoUrl,
+                isAudioOnly: true,
+                aFormat: "mp3"
+              })
+            });
+            const resData = await mp3Res.json();
+            if (resData.url) {
+              directMp3 = resData.url;
+              break;
+            }
+          } catch (err) {}
+        }
+      } catch (e) {}
 
       return {
         statusCode: 200,
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Access-Control-Allow-Origin": "*"
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
         },
         body: JSON.stringify({
           trang_thai: "thanh_cong",
@@ -74,32 +121,30 @@ exports.handler = async (event, context) => {
             tieu_de: oembedData?.title || "YouTube Video",
             tac_gia: oembedData?.author_name || "Chưa xác định",
             link_kenh: oembedData?.author_url || null,
-            link_xem_truc_tiep: cleanVideoUrl,
-            link_nhung: `https://www.youtube.com/embed/${videoId}`,
+            link_goc: cleanVideoUrl,
             anh_thumbnail: {
               chuan_maxres: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
               chuan_hq: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
               mac_dinh: oembedData?.thumbnail_url || `https://img.youtube.com/vi/${videoId}/default.jpg`
             }
           },
-          link_tai_nhac_va_video: downloadLinks
+          link_tai_truc_tiep: {
+            file_mp4_720p: directMp4 || `https://api.vevioz.com/api/button/mp4/${videoId}`,
+            file_mp3_audio: directMp3 || `https://api.vevioz.com/api/button/mp3/${videoId}`
+          }
         }, null, 2)
       };
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: LẤY THÔNG TIN KÊNH + VIDEO MỚI NHẤT (THEO HANDLE)
+    // TRƯỜNG HỢP 2: LẤY PROFILE KÊNH + VIDEO THEO HANDLE
     // -------------------------------------------------------------
-    let cleanHandle = query.trim();
-    if (!cleanHandle.startsWith("@") && !cleanHandle.startsWith("UC")) {
-      cleanHandle = `@${cleanHandle}`;
-    }
+    let cleanHandle = query.trim().replace(/^@+/, "");
+    const channelPageUrl = `https://www.youtube.com/@${cleanHandle}`;
 
-    const channelPageUrl = `https://www.youtube.com/${cleanHandle}`;
     const pageRes = await fetch(channelPageUrl, { headers: browserHeaders });
     const html = await pageRes.text();
 
-    // Bóc tách dữ liệu JSON nhúng `ytInitialData` của YouTube
     let channelInfo = null;
     let videoList = [];
 
@@ -112,21 +157,18 @@ exports.handler = async (event, context) => {
 
         const title = metadata?.title || header?.title?.text || cleanHandle;
         const avatar = metadata?.avatar?.thumbnails?.[0]?.url || header?.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.sources?.[0]?.url || null;
-        const banner = header?.banner?.image?.sources?.[0]?.url || null;
         const desc = metadata?.description || "Không có mô tả";
         const channelId = metadata?.externalId || html.match(/"channelId":"(UC[a-zA-Z0-9_-]{22})"/)?.[1] || null;
 
         channelInfo = {
           id_kenh: channelId,
           ten_kenh: title,
-          handle: cleanHandle,
+          handle: `@${cleanHandle}`,
           anh_dai_dien: avatar,
-          anh_bia: banner,
           mo_ta: desc,
           link_kenh: metadata?.channelUrl || channelPageUrl
         };
 
-        // Quét các video nếu kênh đã đăng bài
         const tabList = ytData.contents?.twoColumnBrowseResultsRenderer?.tabs || [];
         for (const tab of tabList) {
           const content = tab.tabRenderer?.content?.sectionListRenderer?.contents?.[0]?.itemSectionRenderer?.contents?.[0]?.gridRenderer?.items || [];
@@ -148,7 +190,6 @@ exports.handler = async (event, context) => {
       } catch (e) {}
     }
 
-    // Nếu không bóc tách được chi tiết, đọc fallback qua OEmbed / Header cơ bản
     if (!channelInfo) {
       const channelId = html.match(/"channelId":"(UC[a-zA-Z0-9_-]{22})"/)?.[1] || null;
       if (!channelId) {
@@ -157,15 +198,15 @@ exports.handler = async (event, context) => {
           headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
           body: JSON.stringify({
             trang_thai: "that_bai",
-            thong_bao: `Không tìm thấy kênh YouTube: ${query}`
+            thong_bao: `Không tìm thấy kênh YouTube: @${cleanHandle}`
           }, null, 2)
         };
       }
 
       channelInfo = {
         id_kenh: channelId,
-        ten_kenh: cleanHandle,
-        handle: cleanHandle,
+        ten_kenh: `@${cleanHandle}`,
+        handle: `@${cleanHandle}`,
         link_kenh: channelPageUrl
       };
     }
@@ -179,7 +220,7 @@ exports.handler = async (event, context) => {
       payload.tong_so_video_lay_duoc = videoList.length;
       payload.danh_sach_video = videoList.slice(0, 10);
     } else {
-      payload.thong_bao_video = "Kênh này hiện chưa có video công khai nào.";
+      payload.thong_bao_video = "Kênh này hiện chưa đăng tải video công khai nào.";
     }
 
     return {
