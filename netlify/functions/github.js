@@ -1,14 +1,12 @@
 exports.handler = async (event, context) => {
   const params = event.queryStringParameters || {};
   
-  // Nhận diện username linh hoạt từ: ?={username}, ?user={username}, hoặc ?{username}
   let username = params.user || params.username || params[""] || null;
 
   if (!username && event.rawQuery) {
     username = event.rawQuery.replace(/^=/, "").trim();
   }
 
-  // Kiểm tra nếu chưa nhập username
   if (!username) {
     return {
       statusCode: 400,
@@ -18,11 +16,14 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         trang_thai: "that_bai",
-        thong_bao: "Vui lòng nhập tên tài khoản GitHub (username).",
-        huong_dan: "https://api-zhee.netlify.app/github?={username}"
+        thong_bao: "Vui lòng nhập tên tài khoản GitHub.",
+        cu_phap: "https://api-zhee.netlify.app/github?={username}"
       }, null, 2)
     };
   }
+
+  // Tự động bỏ dấu @ nếu có
+  username = decodeURIComponent(username).trim().replace(/^@+/, "");
 
   const headers = { "User-Agent": "Netlify-Serverless-Function" };
 
@@ -49,7 +50,6 @@ exports.handler = async (event, context) => {
     const userData = await userRes.json();
     const reposData = reposRes.ok ? await reposRes.json() : [];
 
-    // Định dạng danh sách kho lưu trữ (repos) thuần Tiếng Việt
     const danh_sach_repo = reposData.map((repo, index) => ({
       stt: index + 1,
       ten_repo: repo.name,
@@ -83,9 +83,7 @@ exports.handler = async (event, context) => {
           trang_web: userData.blog || "Không có",
           dia_chi: userData.location || "Không có",
           email: userData.email || "Không công khai",
-          twitter: userData.twitter_username || "Không có",
           tong_so_repo: userData.public_repos,
-          tong_so_gist: userData.public_gists,
           nguoi_theo_doi: userData.followers,
           dang_theo_doi: userData.following,
           ngay_tao_tai_khoan: userData.created_at,

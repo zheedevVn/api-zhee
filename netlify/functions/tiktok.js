@@ -1,7 +1,7 @@
 exports.handler = async (event, context) => {
   const params = event.queryStringParameters || {};
   
-  // Tự động nhận diện: ?={input}, ?url={input}, ?user={input}
+  // Tự động nhận diện chuỗi tìm kiếm
   let query = params.url || params.user || params.username || params[""] || null;
   if (!query && event.rawQuery) {
     query = decodeURIComponent(event.rawQuery.replace(/^=/, "").trim());
@@ -16,33 +16,22 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         trang_thai: "that_bai",
-        thong_bao: "Vui lòng nhập username hoặc link video TikTok.",
+        thong_bao: "Vui lòng nhập username (@username hoặc username) hoặc link video TikTok.",
         cu_phap: "https://api-zhee.netlify.app/tiktok?={username_hoac_link}"
       }, null, 2)
     };
   }
 
   const defaultHeaders = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/html, */*"
   };
 
   try {
-    // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: TRUYỀN LINK VIDEO ĐỂ TẢI VIDEO KHÔNG LOGO
-    // -------------------------------------------------------------
+    // 1. NẾU LÀ LINK VIDEO TIKTOK
     if (query.includes("tiktok.com")) {
-      const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(query)}`;
-      const res = await fetch(apiUrl, { headers: defaultHeaders });
-      const rawText = await res.text();
-      
-      let data;
-      try {
-        data = JSON.parse(rawText);
-      } catch (e) {
-        throw new Error("Dịch vụ phân tích video đang bận, vui lòng thử lại.");
-      }
+      const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(query)}`, { headers: defaultHeaders });
+      const data = await res.json();
 
       if (data.code !== 0 || !data.data) {
         return {
@@ -83,91 +72,99 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: TRUYỀN USERNAME (LẤY PROFILE + TỐI ĐA 10 VIDEO GẦN NHẤT)
-    // -------------------------------------------------------------
-    const cleanUser = query.replace(/^@/, "").trim();
-    const tiktokProfileUrl = `https://www.tiktok.com/@${cleanUser}`;
-    
-    const profileRes = await fetch(tiktokProfileUrl, { headers: defaultHeaders });
-    const html = await profileRes.text();
+    // 2. NẾU LÀ USERNAME (Xử lý sạch dấu @, khoảng trắng)
+    const cleanUser = query.trim().replace(/^@+/, "");
 
-    const regexUniversal = /<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application\/json">([\s\S]*?)<\/script>/;
-    const regexSigi = /<script id="SIGI_STATE" type="application\/json">([\s\S]*?)<\/script>/;
-    
+    // Gọi API lấy danh sách bài đăng & thông tin user từ TikWM User Feed
+    const feedRes = await fetch(`https://www.tikwm.com/api/user/posts?unique_id=${encodeURIComponent(cleanUser)}&count=10`, { headers: defaultHeaders });
+    const feedData = await feedRes.json();
+
     let userInfo = null;
-    let userStats = null;
-    let itemList = [];
-    let itemModule = {};
+    let videoList = [];
 
-    if (regexUniversal.test(html)) {
-      const match = html.match(regexUniversal);
-      const json = JSON.parse(match[1]);
-      const defaultScope = json["__DEFAULT_SCOPE__"] || {};
-      const userDetail = defaultScope["webapp.user-detail"];
-      if (userDetail && userDetail.userInfo) {
-        userInfo = userDetail.userInfo.user;
-        userStats = userDetail.userInfo.stats;
-        itemList = userDetail.itemList || [];
-        itemModule = userDetail.itemModule || {};
-      }
-    } else if (regexSigi.test(html)) {
-      const match = html.match(regexSigi);
-      const json = JSON.parse(match[1]);
-      const userModule = json["UserModule"] || {};
-      userInfo = userModule.users ? userModule.users[cleanUser] : null;
-      userStats = userModule.stats ? userModule.stats[cleanUser] : null;
-      itemList = json["ItemList"]?.["user-post"]?.list || [];
-      itemModule = json["ItemModule"] || {};
-    }
-
-    if (!userInfo) {
-      return {
-        statusCode: 404,
-        headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({
-          trang_thai: "that_bai",
-          thong_bao: `Không tìm thấy tài khoản TikTok: @${cleanUser}`
-        }, null, 2)
-      };
-    }
-
-    // Lấy tối đa 10 video gần nhất
-    const top10VideoIds = (Array.isArray(itemList) ? itemList : []).slice(0, 10);
-    const danhSachVideo = top10VideoIds.map((id, index) => {
-      const item = itemModule[id] || {};
-      return {
+    if (feedData.code === 0 && feedData.data) {
+      const videos = feedData.data.videos || [];
+      videoList = videos.slice(0, 10).map((v, index) => ({
         stt: index + 1,
-        id_video: id,
-        tieu_de: item.desc || item.title || "Không có tiêu đề",
-        link_video: `https://www.tiktok.com/@${userInfo.uniqueId}/video/${id}`,
-        anh_bia: item.video?.cover || item.cover || null,
-        luot_xem: item.stats?.playCount || 0,
-        luot_thich: item.stats?.diggCount || 0
-      };
-    });
+        id_video: v.video_id || v.id,
+        tieu_de: v.title || "Không có tiêu đề",
+        link_video: `https://www.tiktok.com/@${cleanUser}/video/${v.video_id || v.id}`,
+        anh_bia: v.cover,
+        luot_xem: v.play_count || 0,
+        luot_thich: v.digg_count || 0,
+        link_tai_khong_logo: v.play || null
+      }));
 
-    const responsePayload = {
-      trang_thai: "thanh_cong",
-      thong_tin_ca_nhan: {
-        id: userInfo.id,
-        tai_khoan: userInfo.uniqueId,
-        ho_ten: userInfo.nickname,
-        anh_dai_dien: userInfo.avatarLarger || userInfo.avatarMedium,
-        link_trang_ca_nhan: `https://www.tiktok.com/@${userInfo.uniqueId}`,
-        tieu_su: userInfo.signature || "Không có tiểu sử",
-        tich_xanh: Boolean(userInfo.verified),
-        tai_khoan_rieng_tu: Boolean(userInfo.privateAccount),
-        nguoi_theo_doi: userStats?.followerCount || 0,
-        dang_theo_doi: userStats?.followingCount || 0,
-        tong_luot_thich: userStats?.heartCount || 0,
-        tong_so_video: userStats?.videoCount || 0
+      // Nếu có video, lấy thông tin tác giả từ video đầu
+      if (videos.length > 0 && videos[0].author) {
+        const a = videos[0].author;
+        userInfo = {
+          tai_khoan: a.unique_id || cleanUser,
+          ho_ten: a.nickname || cleanUser,
+          anh_dai_dien: a.avatar,
+          link_trang_ca_nhan: `https://www.tiktok.com/@${a.unique_id || cleanUser}`
+        };
       }
+    }
+
+    // Nếu chưa lấy được thông tin cá nhân thì cào trực tiếp từ HTML TikTok
+    if (!userInfo) {
+      const profileRes = await fetch(`https://www.tiktok.com/@${cleanUser}`, { headers: defaultHeaders });
+      const html = await profileRes.text();
+
+      const regexUniversal = /<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application\/json">([\s\S]*?)<\/script>/;
+      const regexSigi = /<script id="SIGI_STATE" type="application\/json">([\s\S]*?)<\/script>/;
+
+      let u = null;
+      let s = null;
+
+      if (regexUniversal.test(html)) {
+        const json = JSON.parse(html.match(regexUniversal)[1]);
+        const userDetail = json?.["__DEFAULT_SCOPE__"]?.["webapp.user-detail"];
+        if (userDetail?.userInfo) {
+          u = userDetail.userInfo.user;
+          s = userDetail.userInfo.stats;
+        }
+      } else if (regexSigi.test(html)) {
+        const json = JSON.parse(html.match(regexSigi)[1]);
+        const userModule = json["UserModule"] || {};
+        u = userModule.users ? userModule.users[cleanUser] : null;
+        s = userModule.stats ? userModule.stats[cleanUser] : null;
+      }
+
+      if (!u) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
+          body: JSON.stringify({ trang_thai: "that_bai", thong_bao: `Không tìm thấy tài khoản TikTok: @${cleanUser}` }, null, 2)
+        };
+      }
+
+      userInfo = {
+        id: u.id,
+        tai_khoan: u.uniqueId,
+        ho_ten: u.nickname,
+        anh_dai_dien: u.avatarLarger || u.avatarMedium,
+        link_trang_ca_nhan: `https://www.tiktok.com/@${u.uniqueId}`,
+        tieu_su: u.signature || "Không có tiểu sử",
+        tich_xanh: Boolean(u.verified),
+        tai_khoan_rieng_tu: Boolean(u.privateAccount),
+        nguoi_theo_doi: s?.followerCount || 0,
+        dang_theo_doi: s?.followingCount || 0,
+        tong_luot_thich: s?.heartCount || 0,
+        tong_so_video: s?.videoCount || 0
+      };
+    }
+
+    const result = {
+      trang_thai: "thanh_cong",
+      thong_tin_ca_nhan: userInfo
     };
 
-    // Chỉ đính kèm danh sách video nếu có ít nhất 1 video
-    if (danhSachVideo.length > 0) {
-      responsePayload.danh_sach_video_gan_nhat = danhSachVideo;
+    // Chỉ hiển thị danh sách video nếu có video
+    if (videoList.length > 0) {
+      result.so_video_lay_duoc = videoList.length;
+      result.danh_sach_video_gan_nhat = videoList;
     }
 
     return {
@@ -178,20 +175,14 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Methods": "GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type"
       },
-      body: JSON.stringify(responsePayload, null, 2)
+      body: JSON.stringify(result, null, 2)
     };
 
   } catch (error) {
     return {
       statusCode: 500,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({
-        trang_thai: "that_bai",
-        thong_bao: error.message
-      }, null, 2)
+      headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ trang_thai: "that_bai", thong_bao: error.message }, null, 2)
     };
   }
 };
