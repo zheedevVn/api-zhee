@@ -17,12 +17,22 @@ module.exports = async (req, res) => {
   const url = req.url || "/";
   const pathname = url.split("?")[0].toLowerCase();
 
-  // 1. Home
-  if (pathname === "/" || pathname === "/home" || pathname === "/api" || pathname === "/api/home") {
-    return homeHandler(req, res);
+  // 1. Chuyên mục Quản trị Mạng & Website
+  if (pathname === "/web" || pathname.startsWith("/web/") || pathname.startsWith("/api/web")) {
+    return webHandler(req, res);
   }
 
-  // 2. Chuyên mục Mạng Xã Hội & Game
+  // 2. Chuyên mục Dịch vụ Email
+  if (pathname === "/mail" || pathname.startsWith("/mail/") || pathname.startsWith("/api/mail")) {
+    return mailHandler(req, res);
+  }
+
+  // 3. Chuyên mục Ngân Hàng
+  if (pathname === "/bank" || pathname.startsWith("/bank/") || pathname.startsWith("/api/bank")) {
+    return bankHandler(req, res);
+  }
+
+  // 4. Chuyên mục Mạng Xã Hội & Game
   if (pathname === "/mxh" || pathname === "/api/mxh") return mxhHandler(req, res);
   if (pathname.includes("/roblox")) return robloxHandler(req, res);
   if (pathname.includes("/github")) return githubHandler(req, res);
@@ -34,20 +44,6 @@ module.exports = async (req, res) => {
   if (pathname.includes("/facebook")) return facebookHandler(req, res);
   if (pathname.includes("/zalo")) return zaloHandler(req, res);
 
-  // 3. Chuyên mục Ngân Hàng
-  if (pathname.includes("/bank") || pathname.includes("/check") && !pathname.includes("/web")) {
-    return bankHandler(req, res);
-  }
-
-  // 4. Chuyên mục Mail
-  if (pathname.includes("/mail") || pathname.includes("/gmail")) {
-    return mailHandler(req, res);
-  }
-
-  // 5. Chuyên mục Web & Mạng
-  if (pathname.includes("/web")) {
-    return webHandler(req, res);
-  }
-
+  // 5. Trang chủ tổng hợp
   return homeHandler(req, res);
 };
