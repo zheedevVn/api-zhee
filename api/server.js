@@ -5,6 +5,7 @@ const mailHandler = require("../lib/mail");
 const webHandler = require("../lib/web");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
+const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
@@ -29,22 +30,27 @@ module.exports = async (req, res) => {
     return downloadsHandler(req, res);
   }
 
-  // 3. Chuyên mục Quản trị Mạng & Website
+  // 3. Chuyên mục Video Gated (Riêng tư yêu cầu Key)
+  if (pathname === "/video" || pathname.startsWith("/video/") || pathname.startsWith("/api/video")) {
+    return videoHandler(req, res);
+  }
+
+  // 4. Chuyên mục Quản trị Mạng & Website
   if (pathname === "/web" || pathname.startsWith("/web/") || pathname.startsWith("/api/web")) {
     return webHandler(req, res);
   }
 
-  // 4. Chuyên mục Dịch vụ Email
+  // 5. Chuyên mục Dịch vụ Email
   if (pathname === "/mail" || pathname.startsWith("/mail/") || pathname.startsWith("/api/mail")) {
     return mailHandler(req, res);
   }
 
-  // 5. Chuyên mục Ngân Hàng
+  // 6. Chuyên mục Ngân Hàng
   if (pathname === "/bank" || pathname.startsWith("/bank/") || pathname.startsWith("/api/bank")) {
     return bankHandler(req, res);
   }
 
-  // 6. Chuyên mục Mạng Xã Hội & Game
+  // 7. Chuyên mục Mạng Xã Hội & Game
   if (pathname === "/mxh" || pathname === "/api/mxh") return mxhHandler(req, res);
   if (pathname.includes("/roblox")) return robloxHandler(req, res);
   if (pathname.includes("/github")) return githubHandler(req, res);
@@ -56,6 +62,6 @@ module.exports = async (req, res) => {
   if (pathname.includes("/facebook")) return facebookHandler(req, res);
   if (pathname.includes("/zalo")) return zaloHandler(req, res);
 
-  // 7. Trang chủ tổng hợp
+  // 8. Trang chủ tổng hợp
   return homeHandler(req, res);
 };
