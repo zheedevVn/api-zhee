@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
           ten_api: "Kiểm tra tên chủ tài khoản ngân hàng",
           duong_dan: "/bank/check",
           phuong_thuc: "GET",
-          mo_ta: "Tra cứu tên chủ sở hữu STK ngân hàng chuẩn Napas 247",
+          mo_ta: "Tra cứu tên chủ sở hữu STK ngân hàng thời gian thực",
           cu_phap: [
             `${baseUrl}/bank/check?bank={ma_nh}&stk={so_tai_khoan}`,
             `${baseUrl}/bank/check?={ma_nh}-{so_tai_khoan}`
@@ -105,58 +105,64 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: XỬ LÝ /bank/check (TRA CỨU TÊN CHỦ TÀI KHOẢN)
+    // TRƯỜNG HỢP 2: XỬ LÝ /bank/check (TRA CỨU TÊN CHỦ TÀI KHOẢN MIỄN PHÍ)
     // -------------------------------------------------------------
     if (isCheck) {
       let ownerName = null;
 
-      // Cặp khóa xác thực VietQR chính thức
-      const vietQrClientId = "47c5615d-a214-4d7d-ac22-1d1a969375b9";
-      const vietQrApiKey = "7be1d7de-0eae-4d3a-a594-1a6d1cf78576";
-
-      try {
-        const lookupRes = await fetch("https://api.vietqr.io/v2/lookup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-client-id": vietQrClientId,
-            "x-api-key": vietQrApiKey
-          },
-          body: JSON.stringify({
-            bin: targetBank.bin,
-            accountNumber: cleanAccount
-          })
-        });
-
-        const lookupData = await lookupRes.json();
-        if (lookupData.code === "00" && lookupData.data?.accountName) {
-          ownerName = lookupData.data.accountName;
-        } else if (lookupData.desc) {
-          // Trả về lý do chi tiết từ cổng Napas nếu STK không tồn tại
-          return res.status(200).json({
-            trang_thai: "thanh_cong",
-            loai: "check_stk_ngan_hang",
-            thong_tin: {
-              so_tai_khoan: cleanAccount,
-              chu_tai_khoan: null,
-              trang_thai_stk: lookupData.desc,
-              ngan_hang: {
-                ten_day_du: targetBank.name,
-                ma_ngan_hang: targetBank.shortName,
-                ma_bin: targetBank.bin,
-                logo: targetBank.logo
-              }
-            }
+      // Danh sách các cổng Gateway ngân hàng trực tiếp không bị chặn bản quyền Free
+      const openGateways = [
+        // Cổng 1: Napas Web2M Core
+        async () => {
+          const r = await fetch(`https://api.web2m.com/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
+          const d = await r.json();
+          return d.account_name || d.name || (d.data ? d.data.accountName : null);
+        },
+        // Cổng 2: Sieuthicode Napas Hub
+        async () => {
+          const r = await fetch(`https://api.sieuthicode.net/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
+          const d = await r.json();
+          return d.account_name || d.name || null;
+        },
+        // Cổng 3: TheSieuRe Banking Check
+        async () => {
+          const r = await fetch("https://thesieure.com/api/bank/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `bank_code=${targetBank.shortName}&account_number=${cleanAccount}`
           });
+          const d = await r.json();
+          return d.account_name || d.name || null;
         }
-      } catch (e) {}
+      ];
+
+      for (const gateway of openGateways) {
+        try {
+          const nameFound = await gateway();
+          if (nameFound && typeof nameFound === "string" && nameFound.trim().length > 2) {
+            ownerName = nameFound.trim().toUpperCase();
+            break;
+          }
+        } catch (e) {}
+      }
+
+      if (!ownerName) {
+        return res.status(404).json({
+          trang_thai: "that_bai",
+          thong_bao: "Không tìm thấy tên tài khoản hoặc STK không tồn tại tại ngân hàng đã chọn.",
+          thong_tin_nhap: {
+            ngan_hang: targetBank.shortName,
+            so_tai_khoan: cleanAccount
+          }
+        });
+      }
 
       return res.status(200).json({
         trang_thai: "thanh_cong",
         loai: "check_stk_ngan_hang",
         thong_tin: {
           so_tai_khoan: cleanAccount,
-          chu_tai_khoan: ownerName || "Không tìm thấy tên hoặc STK không tồn tại",
+          chu_tai_khoan: ownerName,
           ngan_hang: {
             ten_day_du: targetBank.name,
             ma_ngan_hang: targetBank.shortName,
