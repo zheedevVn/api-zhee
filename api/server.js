@@ -2,6 +2,7 @@ const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const bankHandler = require("../lib/bank");
 const mailHandler = require("../lib/mail");
+const webHandler = require("../lib/web");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
@@ -34,13 +35,18 @@ module.exports = async (req, res) => {
   if (pathname.includes("/zalo")) return zaloHandler(req, res);
 
   // 3. Chuyên mục Ngân Hàng
-  if (pathname.includes("/bank") || pathname.includes("/check") || pathname.includes("/taoqr")) {
+  if (pathname.includes("/bank") || pathname.includes("/check") && !pathname.includes("/web")) {
     return bankHandler(req, res);
   }
 
   // 4. Chuyên mục Mail
   if (pathname.includes("/mail") || pathname.includes("/gmail")) {
     return mailHandler(req, res);
+  }
+
+  // 5. Chuyên mục Web & Mạng
+  if (pathname.includes("/web")) {
+    return webHandler(req, res);
   }
 
   return homeHandler(req, res);
