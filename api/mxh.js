@@ -93,14 +93,16 @@ module.exports = async (req, res) => {
         ten_api: "Facebook Profile & Video/Reels Downloader",
         duong_dan: "/api/mxh/facebook",
         phuong_thuc: "GET",
-        mo_ta: "Tìm UID, lấy Avatar Full HD hoặc lấy link tải trực tiếp Video/Reels MP4",
+        mo_ta: "Tìm UID, lấy Avatar Full HD hoặc tải video MP4 (hỗ trợ cookie/token cho video hạn chế)",
         cu_phap: [
-          `${baseUrl}/api/mxh/facebook?={username_hoac_link_profile}`,
-          `${baseUrl}/api/mxh/facebook?={link_video_reels_watch}`
+          `${baseUrl}/api/mxh/facebook?={username_hoac_uid}`,
+          `${baseUrl}/api/mxh/facebook?={link_video_cong_khai}`,
+          `${baseUrl}/api/mxh/facebook?={link_video_rieng_tu}&code={cookie_hoac_token}`
         ],
         vi_du: [
           `${baseUrl}/api/mxh/facebook?=zuck`,
-          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=100000000000000`
+          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=1813358456318928`,
+          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=1813358456318928&code=c_user=1000...;xs=...;`
         ]
       }
     }
