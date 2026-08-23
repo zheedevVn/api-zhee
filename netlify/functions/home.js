@@ -4,32 +4,28 @@ exports.handler = async (event, context) => {
   const baseUrl = `${protocol}://${host}`;
 
   const documentation = {
-    name: "Zhee API Service",
-    version: "1.0.0",
-    description: "Tài liệu danh sách các API đang hoạt động",
-    endpoints: [
-      {
-        path: "/home",
-        method: "GET",
-        full_url: `${baseUrl}/home`,
-        description: "Xem danh sách và hướng dẫn sử dụng API",
-        params: {}
-      },
-      {
-        path: "/github",
-        method: "GET",
-        full_url: `${baseUrl}/github?user={username}`,
-        description: "Lấy thông tin tài khoản GitHub",
-        formats: [
-          `${baseUrl}/github?user={username}`,
-          `${baseUrl}/github?={username}`
-        ],
-        examples: [
-          `${baseUrl}/github?user=zheedevVn`,
-          `${baseUrl}/github?=torvalds`
-        ]
-      }
-    ]
+    github: {
+      ten_api: "GitHub Info & Repos",
+      duong_dan: "/github",
+      phuong_thuc: "GET",
+      mo_ta: "Lấy thông tin cá nhân và link toàn bộ repositories",
+      cu_phap: `${baseUrl}/github?={username}`,
+      vi_du: `${baseUrl}/github?=hoducminh123`
+    },
+    tiktok: {
+      ten_api: "TikTok Info & Downloader",
+      duong_dan: "/tiktok",
+      phuong_thuc: "GET",
+      mo_ta: "Tra cứu thông tin tài khoản TikTok hoặc lấy link video không logo",
+      cu_phap: [
+        `${baseUrl}/tiktok?={username}`,
+        `${baseUrl}/tiktok?={link_video}`
+      ],
+      vi_du: [
+        `${baseUrl}/tiktok?=tiktok`,
+        `${baseUrl}/tiktok?=https://vt.tiktok.com/ZSjabcXYZ/`
+      ]
+    }
   };
 
   return {
