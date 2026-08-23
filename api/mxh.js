@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
         ten_api: "Discord Lookup & Token Account Checker",
         duong_dan: "/api/mxh/discord",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu thông tin tài khoản bằng Token (email, sđt, nitro, guilds), User ID hoặc máy chủ qua link mời",
+        mo_ta: "Tra cứu thông tin tài khoản qua User Token (email, sđt, nitro, guilds), User ID hoặc máy chủ qua link mời",
         cu_phap: [
           `${baseUrl}/api/mxh/discord?={discord_token}`,
           `${baseUrl}/api/mxh/discord?={user_id}`,
@@ -107,18 +107,20 @@ module.exports = async (req, res) => {
         ]
       },
       zalo: {
-        ten_api: "Zalo Lookup & Session Account Checker",
+        ten_api: "Zalo Lookup & Account Session Checker",
         duong_dan: "/api/mxh/zalo",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check full thông tin cá nhân/bạn bè/nhóm qua Cookie & IMEI",
+        mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check full thông tin tài khoản qua Cookie / IMEI",
         cu_phap: [
           `${baseUrl}/api/mxh/zalo?={sdt_hoac_link_nhom}`,
+          `${baseUrl}/api/mxh/zalo?cookie={zalo_cookie_chuoi_hoac_json}`,
+          `${baseUrl}/api/mxh/zalo?imei={zalo_imei}`,
           `${baseUrl}/api/mxh/zalo?cookie={zalo_cookie}&imei={zalo_imei}`
         ],
         vi_du: [
           `${baseUrl}/api/mxh/zalo?=0912345678`,
           `${baseUrl}/api/mxh/zalo?=https://zalo.me/g/abcdef123`,
-          `${baseUrl}/api/mxh/zalo?cookie=zpw_sek=...;_zlang=vn&imei=12345678-abcd-...`
+          `${baseUrl}/api/mxh/zalo?cookie=zpw_sek=fT0L.410649910...;_zlang=vn&imei=a8fe8c2a-4ddc-4fc0-9ace-8cc51b089057-8e253f85246590342756399a57054cb8`
         ]
       }
     }
