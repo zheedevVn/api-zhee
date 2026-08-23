@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
   res.status(200).json({
     chuyen_muc: "Mạng Xã Hội (Social Media Tools)",
     tac_gia: "Hồ Đức Minh (Zhee Dev)",
-    tong_so_tool: 6,
+    tong_so_tool: 7,
     danh_sach_tool: {
       github: {
         ten_api: "GitHub Info & Repos",
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
         ten_api: "YouTube Channel & Video Stream",
         duong_dan: "/api/mxh/youtube",
         phuong_thuc: "GET",
-        mo_ta: "Lấy thông tin kênh (10 video mới nhất) hoặc link stream video",
+        mo_ta: "Lấy thông tin kênh hoặc link stream video",
         cu_phap: [
           `${baseUrl}/api/mxh/youtube?={handle_kenh}`,
           `${baseUrl}/api/mxh/youtube?={link_video}`
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
         ten_api: "Discord User & Server Lookup",
         duong_dan: "/api/mxh/discord",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu thông tin User ID hoặc kiểm tra server qua mã/link mời",
+        mo_ta: "Tra cứu thông tin User ID hoặc kiểm tra server qua mã mời",
         cu_phap: [
           `${baseUrl}/api/mxh/discord?={user_id}`,
           `${baseUrl}/api/mxh/discord?={invite_code_hoac_link}`
@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
         ten_api: "Telegram Lookup (User, Bot, Group, Channel)",
         duong_dan: "/api/mxh/telegram",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu thông tin tài khoản cá nhân, bot, hội nhóm hoặc kênh Telegram",
+        mo_ta: "Tra cứu thông tin tài khoản cá nhân, bot qua Token, nhóm/kênh",
         cu_phap: [
           `${baseUrl}/api/mxh/telegram?={username}`,
           `${baseUrl}/api/mxh/telegram?={bot_token}`
@@ -79,7 +79,7 @@ module.exports = async (req, res) => {
         ten_api: "Twitter (X) User & Video Downloader",
         duong_dan: "/api/mxh/twitter",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu thông tin profile hoặc tải ảnh/video MP4 trực tiếp từ Tweet",
+        mo_ta: "Tra cứu profile (kèm top 10 following) hoặc tải video Tweet",
         cu_phap: [
           `${baseUrl}/api/mxh/twitter?={username}`,
           `${baseUrl}/api/mxh/twitter?={link_tweet}`
@@ -87,6 +87,20 @@ module.exports = async (req, res) => {
         vi_du: [
           `${baseUrl}/api/mxh/twitter?=elonmusk`,
           `${baseUrl}/api/mxh/twitter?=https://x.com/NASA/status/1800000000000000000`
+        ]
+      },
+      facebook: {
+        ten_api: "Facebook Profile & Video/Reels Downloader",
+        duong_dan: "/api/mxh/facebook",
+        phuong_thuc: "GET",
+        mo_ta: "Tìm UID, lấy Avatar Full HD hoặc lấy link tải trực tiếp Video/Reels MP4",
+        cu_phap: [
+          `${baseUrl}/api/mxh/facebook?={username_hoac_link_profile}`,
+          `${baseUrl}/api/mxh/facebook?={link_video_reels_watch}`
+        ],
+        vi_du: [
+          `${baseUrl}/api/mxh/facebook?=zuck`,
+          `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=100000000000000`
         ]
       }
     }
