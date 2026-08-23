@@ -1,0 +1,9 @@
+[build]
+  functions = "netlify/functions"
+
+# Điều hướng trực tiếp: /home -> /.netlify/functions/home, /github -> /.netlify/functions/github
+[[redirects]]
+  from = "/:splat"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
