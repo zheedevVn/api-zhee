@@ -23,9 +23,14 @@ module.exports = async (req, res) => {
   const cleanQuery = query.trim();
   const isTweet = cleanQuery.includes("/status/") || cleanQuery.includes("/statuses/");
 
+  const browserHeaders = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/html"
+  };
+
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: BÓC TÁCH BÀI ĐĂNG (TWEET) & LINK TẢI VIDEO MP4
+    // TRƯỜNG HỢP 1: BÓC TÁCH BÀI ĐĂNG (TWEET) & VIDEO MP4
     // -------------------------------------------------------------
     if (isTweet) {
       const tweetIdMatch = cleanQuery.match(/status(?:es)?\/(\d+)/);
@@ -38,7 +43,6 @@ module.exports = async (req, res) => {
         });
       }
 
-      // Khai thác qua engine FxTwitter API v2
       const apiRes = await fetch(`https://api.fxtwitter.com/status/${tweetId}`);
       if (!apiRes.ok) {
         return res.status(404).json({
@@ -51,26 +55,13 @@ module.exports = async (req, res) => {
       const tweet = data.tweet || {};
       const author = tweet.author || {};
 
-      // Phân loại danh sách hình ảnh & video MP4
-      const danhSachAnh = [];
-      const danhSachVideo = [];
-
-      if (tweet.media?.photos) {
-        tweet.media.photos.forEach((p, idx) => {
-          danhSachAnh.push({ stt: idx + 1, url: p.url });
-        });
-      }
-
-      if (tweet.media?.videos) {
-        tweet.media.videos.forEach((v, idx) => {
-          danhSachVideo.push({
-            stt: idx + 1,
-            anh_thumbnail: v.thumbnail_url,
-            file_mp4_truc_tiep: v.url,
-            dinh_dang: v.format
-          });
-        });
-      }
+      const danhSachAnh = (tweet.media?.photos || []).map((p, idx) => ({ stt: idx + 1, url: p.url }));
+      const danhSachVideo = (tweet.media?.videos || []).map((v, idx) => ({
+        stt: idx + 1,
+        anh_thumbnail: v.thumbnail_url,
+        file_mp4_truc_tiep: v.url,
+        dinh_dang: v.format
+      }));
 
       return res.status(200).json({
         trang_thai: "thanh_cong",
@@ -105,7 +96,7 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: KIỂM TRA PROFILE NGƯỜI DÙNG TWITTER / X
+    // TRƯỜNG HỢP 2: PROFILE USER + 10 TÀI KHOẢN ĐANG FOLLOW (FOLLOWING)
     // -------------------------------------------------------------
     const cleanUser = cleanQuery
       .replace(/^https?:\/\/(?:twitter|x)\.com\//, "")
@@ -124,7 +115,61 @@ module.exports = async (req, res) => {
     const userData = await userRes.json();
     const u = userData.user || {};
 
-    return res.status(200).json({
+    // Bóc tách danh sách following qua các node scraper công khai
+    let followingUsernames = [];
+    const nitterNodes = [
+      `https://nitter.poast.org/${cleanUser}/following`,
+      `https://nitter.privacydev.net/${cleanUser}/following`
+    ];
+
+    for (const node of nitterNodes) {
+      try {
+        const fRes = await fetch(node, { headers: browserHeaders });
+        if (fRes.ok) {
+          const html = await fRes.text();
+          const matches = [...html.matchAll(/class="username"[^>]*>@([a-zA-Z0-9_]+)<\/a>/g)];
+          if (matches.length > 0) {
+            followingUsernames = [...new Set(matches.map(m => m[1]))].filter(name => name.toLowerCase() !== cleanUser.toLowerCase()).slice(0, 10);
+            break;
+          }
+        }
+      } catch (err) {
+        continue;
+      }
+    }
+
+    // Lấy thông tin chi tiết của từng người trong 10 người đang follow
+    let danhSach10Following = [];
+    if (followingUsernames.length > 0) {
+      const details = await Promise.allSettled(
+        followingUsernames.map(async (fUser, idx) => {
+          const infoRes = await fetch(`https://api.fxtwitter.com/${fUser}`);
+          if (infoRes.ok) {
+            const fData = await infoRes.json();
+            const fu = fData.user || {};
+            return {
+              stt: idx + 1,
+              id: fu.id,
+              tai_khoan: `@${fu.screen_name || fUser}`,
+              ho_ten: fu.name || fUser,
+              anh_dai_dien: fu.avatar_url ? fu.avatar_url.replace("_normal", "") : null,
+              tieu_su: fu.description || "Không có tiểu sử",
+              nguoi_theo_doi: fu.followers || 0,
+              dang_theo_doi: fu.following || 0,
+              link_trang_ca_nhan: `https://x.com/${fu.screen_name || fUser}`
+            };
+          }
+          return {
+            stt: idx + 1,
+            tai_khoan: `@${fUser}`,
+            link_trang_ca_nhan: `https://x.com/${fUser}`
+          };
+        })
+      );
+      danhSach10Following = details.filter(d => d.status === "fulfilled").map(d => d.value);
+    }
+
+    const payload = {
       trang_thai: "thanh_cong",
       loai: "twitter_user",
       thong_tin_ca_nhan: {
@@ -145,7 +190,16 @@ module.exports = async (req, res) => {
           luot_thich: u.likes || 0
         }
       }
-    });
+    };
+
+    if (danhSach10Following.length > 0) {
+      payload.tong_so_following_lay_duoc = danhSach10Following.length;
+      payload.danh_sach_10_nguoi_dang_follow = danhSach10Following;
+    } else {
+      payload.ghi_chu_following = "Tài khoản không follow ai hoặc danh sách following đang ở chế độ hạn chế bởi X.";
+    }
+
+    return res.status(200).json(payload);
 
   } catch (error) {
     return res.status(500).json({
