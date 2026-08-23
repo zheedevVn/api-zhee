@@ -1,5 +1,4 @@
 exports.handler = async (event, context) => {
-  // Lấy domain hiện tại
   const protocol = event.headers["x-forwarded-proto"] || "https";
   const host = event.headers.host;
   const baseUrl = `${protocol}://${host}`;
@@ -19,19 +18,15 @@ exports.handler = async (event, context) => {
       {
         path: "/github",
         method: "GET",
-        full_url: `${baseUrl}/github`,
-        description: "Lấy thông tin người dùng GitHub",
-        params: {
-          user: {
-            type: "string",
-            required: false,
-            default: "zheedevVn",
-            description: "Tên tài khoản GitHub cần tra cứu"
-          }
-        },
+        full_url: `${baseUrl}/github?user={username}`,
+        description: "Lấy thông tin tài khoản GitHub",
+        formats: [
+          `${baseUrl}/github?user={username}`,
+          `${baseUrl}/github?={username}`
+        ],
         examples: [
-          `${baseUrl}/github`,
-          `${baseUrl}/github?user=octocat`
+          `${baseUrl}/github?user=zheedevVn`,
+          `${baseUrl}/github?=torvalds`
         ]
       }
     ]
