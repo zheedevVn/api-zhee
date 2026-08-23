@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   if (!query) {
     return res.status(400).json({
       trang_thai: "that_bai",
-      thong_bao: "Vui lòng nhập UID, link profile hoặc username Facebook.",
+      thong_bao: "Vui lòng nhập UID, Username hoặc Link Facebook.",
       cu_phap: "https://{domain}/api/mxh/facebook?={uid_hoac_username}"
     });
   }
@@ -22,16 +22,7 @@ module.exports = async (req, res) => {
                   cleanQuery.includes("/reel/") || 
                   cleanQuery.includes("/reels/") || 
                   cleanQuery.includes("/watch") || 
-                  cleanQuery.includes("fb.watch/") ||
-                  cleanQuery.includes("/posts/");
-
-  const browserHeaders = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-Mode": "navigate"
-  };
+                  cleanQuery.includes("fb.watch/");
 
   try {
     // -------------------------------------------------------------
@@ -63,7 +54,7 @@ module.exports = async (req, res) => {
       if (!downloadData) {
         return res.status(404).json({
           trang_thai: "that_bai",
-          thong_bao: "Không thể lấy link video. Video có thể ở chế độ riêng tư hoặc link không hợp lệ."
+          thong_bao: "Không tìm thấy video hoặc video ở chế độ riêng tư."
         });
       }
 
@@ -76,80 +67,99 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: PROFILE / UID / USERNAME FACEBOOK
+    // TRƯỜNG HỢP 2: PROFILE / UID / USERNAME QUA API ENGINE
     // -------------------------------------------------------------
     let cleanInput = cleanQuery
-      .replace(/^https?:\/\/(?:www\.|m\.|mobile\.|touch\.)?facebook\.com\//, "")
+      .replace(/^https?:\/\/(?:www\.|m\.|mobile\.)?facebook\.com\//, "")
       .replace(/^@+/, "")
       .replace(/^profile\.php\?id=/, "")
       .split("/")[0]
       .split("?")[0]
       .trim();
 
-    let uid = null;
+    let uid = /^\d{5,25}$/.test(cleanInput) ? cleanInput : null;
     let fullName = null;
-    let actualUsername = cleanInput;
+    const targetUrl = `https://www.facebook.com/${cleanInput}`;
 
-    const isNumeric = /^\d{5,25}$/.test(cleanInput);
-
-    if (isNumeric) {
-      uid = cleanInput;
-    } else {
-      // Tìm UID từ username/slug
-      try {
-        const findIdRes = await fetch("https://id.traodoisub.net/api.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `link=${encodeURIComponent(`https://facebook.com/${cleanInput}`)}`
-        });
-        const findData = await findIdRes.json();
-        if (findData.code === 200 && findData.id) {
-          uid = findData.id;
+    // 1. Phân giải Username -> UID qua các cổng API chuyên dụng
+    if (!uid) {
+      const lookupApis = [
+        async () => {
+          const r = await fetch("https://id.traodoisub.net/api.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `link=${encodeURIComponent(targetUrl)}`
+          });
+          const d = await r.json();
+          return d.code === 200 ? d.id : null;
+        },
+        async () => {
+          const r = await fetch(`https://api.findids.net/api/get-uid-from-username?username=${encodeURIComponent(cleanInput)}`);
+          const d = await r.json();
+          return d.data?.id || d.id || null;
+        },
+        async () => {
+          const r = await fetch(`https://lookup-id.com/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `fburl=${encodeURIComponent(targetUrl)}&check=Lookup`
+          });
+          const text = await r.text();
+          const match = text.match(/id="code" class="result-box">(\d+)</) || text.match(/(\d{10,20})/);
+          return match ? match[1] : null;
         }
-      } catch (e) {}
-    }
+      ];
 
-    // Quét dữ liệu qua giao diện mbasic / touch của Facebook để lấy Name và Meta
-    const profileEndpoints = isNumeric
-      ? [`https://mbasic.facebook.com/profile.php?id=${uid}`, `https://www.facebook.com/${uid}`]
-      : [`https://mbasic.facebook.com/${cleanInput}`, `https://www.facebook.com/${cleanInput}`];
-
-    for (const endpoint of profileEndpoints) {
-      try {
-        const fbRes = await fetch(endpoint, { headers: browserHeaders });
-        const html = await fbRes.text();
-
-        // Bóc tách tên hiển thị
-        const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
-        if (titleMatch && !titleMatch[1].includes("Facebook") && !titleMatch[1].includes("Đăng nhập")) {
-          fullName = titleMatch[1].trim();
-        }
-
-        const ogTitleMatch = html.match(/<meta property="og:title" content="([^"]+)"/i);
-        if (ogTitleMatch && !fullName) {
-          fullName = ogTitleMatch[1].trim();
-        }
-
-        // Bóc tách UID nếu đầu vào là username
-        if (!uid) {
-          const uidMatch = html.match(/"userID":"(\d+)"/) || 
-                           html.match(/fb:\/\/profile\/(\d+)/) || 
-                           html.match(/entity_id=(\d+)/) ||
-                           html.match(/"entity_id":"(\d+)"/);
-          if (uidMatch) uid = uidMatch[1];
-        }
-
-        if (fullName && uid) break;
-      } catch (err) {
-        continue;
+      for (const api of lookupApis) {
+        try {
+          const foundId = await api();
+          if (foundId) {
+            uid = String(foundId).trim();
+            break;
+          }
+        } catch (e) {}
       }
     }
 
     if (!uid) {
       return res.status(404).json({
         trang_thai: "that_bai",
-        thong_bao: `Không tìm thấy thông tin hoặc UID cho đối tượng Facebook: ${cleanInput}`
+        thong_bao: `Không tìm thấy UID cho tài khoản Facebook: ${cleanInput}`
       });
+    }
+
+    // 2. Lấy Tên hiển thị thật qua Facebook Graph OpenData API
+    const tokenList = [
+      "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662",
+      "EAAAAAYsX7TsBO",
+      "EAAD6V7os0gcBO"
+    ];
+
+    for (const token of tokenList) {
+      try {
+        const graphRes = await fetch(`https://graph.facebook.com/v19.0/${uid}?fields=name,username,link&access_token=${token}`);
+        if (graphRes.ok) {
+          const gData = await graphRes.json();
+          if (gData.name) {
+            fullName = gData.name;
+            if (gData.username) cleanInput = gData.username;
+            break;
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Fallback tên qua OpenGraph Title
+    if (!fullName) {
+      try {
+        const ogRes = await fetch(`https://graph.facebook.com/${uid}/picture?redirect=false`);
+        if (ogRes.ok) {
+          const pic = await ogRes.json();
+          if (pic?.data?.url) {
+            fullName = `Facebook User (${uid})`;
+          }
+        }
+      } catch (e) {}
     }
 
     return res.status(200).json({
@@ -157,8 +167,8 @@ module.exports = async (req, res) => {
       loai: "facebook_profile",
       thong_tin: {
         uid: uid,
-        tai_khoan: actualUsername,
-        ten_hien_thi: fullName || `Người dùng Facebook (${uid})`,
+        tai_khoan: cleanInput,
+        ten_hien_thi: fullName || `Người dùng (${uid})`,
         anh_dai_dien: {
           chat_luong_cao: `https://graph.facebook.com/${uid}/picture?width=1080&height=1080&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
           chuan_large: `https://graph.facebook.com/${uid}/picture?type=large`,
