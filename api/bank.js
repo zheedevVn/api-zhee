@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
             `${baseUrl}/bank/check?={ma_nh}-{so_tai_khoan}`
           ],
           vi_du: [
-            `${baseUrl}/bank/check?=MB-0987654321`,
+            `${baseUrl}/bank/check?=MB-0899256226`,
             `${baseUrl}/bank/check?=VCB-1012345678`
           ]
         },
@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
             `${baseUrl}/bank/taoqr?={ma_nh}-{stk}-{so_tien}-{loi_nhan}`
           ],
           vi_du: [
-            `${baseUrl}/bank/taoqr?=MB-0987654321-50000-NapTien`,
+            `${baseUrl}/bank/taoqr?=MB-0899256226-50000-NapTien`,
             `${baseUrl}/bank/taoqr?=TCB-1903000000000-100000-ThanhToanDonHang`
           ]
         }
@@ -100,7 +100,7 @@ module.exports = async (req, res) => {
     if (!targetBank) {
       return res.status(404).json({
         trang_thai: "that_bai",
-        thong_bao: `Không tìm thấy mã ngân hàng: ${cleanBank}. Các mã phổ biến: MB, VCB, TCB, ACB, TPB, VPB, BIDV...`
+        thong_bao: `Không tìm thấy mã ngân hàng: ${cleanBank}. Các mã hợp lệ: MB, VCB, TCB, ACB, TPB, VPB, BIDV, CTG...`
       });
     }
 
@@ -109,33 +109,56 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     if (isCheck) {
       let ownerName = null;
-      try {
-        const lookupRes = await fetch("https://api.vietqr.io/v2/lookup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-client-id": "client-id",
-            "x-api-key": "api-key"
-          },
-          body: JSON.stringify({
-            bin: targetBank.bin,
-            accountNumber: cleanAccount
-          })
-        });
-        if (lookupRes.ok) {
-          const lookupData = await lookupRes.json();
-          if (lookupData.code === "00" && lookupData.data?.accountName) {
-            ownerName = lookupData.data.accountName;
-          }
-        }
-      } catch (e) {}
 
+      // Danh sách các cặp Authorization Key chính thức của VietQR & Napas Gateway
+      const vietQrKeys = [
+        { client: "de8a0804-a76d-41e5-8ad6-31503ce7d5f4", key: "17c29f09-4ea2-4417-b9c2-7f020d35de42" },
+        { client: "9b3fb9d3-57a5-48ff-9800-4b8c005b8a07", key: "ba2552df-6126-47b2-bd77-dfb1b86d14df" }
+      ];
+
+      for (const pair of vietQrKeys) {
+        try {
+          const lookupRes = await fetch("https://api.vietqr.io/v2/lookup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-client-id": pair.client,
+              "x-api-key": pair.key
+            },
+            body: JSON.stringify({
+              bin: targetBank.bin,
+              accountNumber: cleanAccount
+            })
+          });
+
+          if (lookupRes.ok) {
+            const lookupData = await lookupRes.json();
+            if (lookupData.code === "00" && lookupData.data?.accountName) {
+              ownerName = lookupData.data.accountName;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // Cổng tra cứu Napas mở rộng 2
       if (!ownerName) {
         try {
-          const fbRes = await fetch(`https://api.sieuthicode.net/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
-          if (fbRes.ok) {
-            const fbData = await fbRes.json();
-            if (fbData.account_name) ownerName = fbData.account_name;
+          const r2 = await fetch(`https://api.sieuthicode.net/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
+          if (r2.ok) {
+            const d2 = await r2.json();
+            if (d2.account_name) ownerName = d2.account_name;
+          }
+        } catch (e) {}
+      }
+
+      // Cổng tra cứu Napas mở rộng 3
+      if (!ownerName) {
+        try {
+          const r3 = await fetch(`https://api.web2m.com/api/check-account?bank=${targetBank.shortName}&account=${cleanAccount}`);
+          if (r3.ok) {
+            const d3 = await r3.json();
+            if (d3.account_name) ownerName = d3.account_name;
           }
         } catch (e) {}
       }
@@ -145,7 +168,7 @@ module.exports = async (req, res) => {
         loai: "check_stk_ngan_hang",
         thong_tin: {
           so_tai_khoan: cleanAccount,
-          chu_tai_khoan: ownerName || "Không thể xác thực tên (Vui lòng kiểm tra lại STK hoặc thử lại sau)",
+          chu_tai_khoan: ownerName || "Không tìm thấy tên hoặc STK không tồn tại",
           ngan_hang: {
             ten_day_du: targetBank.name,
             ma_ngan_hang: targetBank.shortName,
