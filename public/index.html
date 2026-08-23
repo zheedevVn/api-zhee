@@ -3,375 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zhee Media Hub - Video & GIF Streaming</title>
+  
+  <title>Zhee Dev - Trung Tâm API Gateway & Media Hub</title>
+  <meta name="description" content="Nền tảng REST API đa năng và cổng dịch vụ của Hồ Đức Minh (Zhee Dev).">
+  <meta name="keywords" content="Zhee API, Zhee Dev, REST API, API Gateway">
+  <meta name="author" content="Hồ Đức Minh (Zhee Dev)">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Zhee Dev - Trung Tâm API Gateway & Media Hub">
+  <meta property="og:description" content="Nền tảng REST API đa năng và cổng dịch vụ của Zhee Dev.">
+  <meta property="og:url" content="https://api-zhee.vercel.app">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-primary: #0a0d14;
-      --bg-card: rgba(18, 24, 38, 0.7);
-      --bg-card-hover: rgba(28, 36, 56, 0.85);
+      --bg-main: #0a0d14;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
       --accent: #6366f1;
       --accent-glow: rgba(99, 102, 241, 0.35);
-      --accent-pink: #ec4899;
+      --accent-emerald: #10b981;
       --border-color: rgba(255, 255, 255, 0.08);
-      --text-main: #f3f4f6;
+      --text-main: #f9fafb;
       --text-muted: #94a3b8;
-      --radius-lg: 16px;
+      --radius: 14px;
       --radius-sm: 8px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080b11; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
-      background: radial-gradient(circle at 50% 0%, #171d33 0%, var(--bg-primary) 70%);
+      background: radial-gradient(circle at 50% 0%, #161f38 0%, var(--bg-main) 65%);
       color: var(--text-main);
       min-height: 100vh;
-      padding-bottom: 60px;
+      padding-bottom: 80px;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* SVG Utilities */
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
+      stroke: currentColor;
+      fill: none;
+      flex-shrink: 0;
+    }
+    .icon-lg {
+      width: 44px;
+      height: 44px;
+      stroke-width: 1.5;
     }
 
-    /* Header */
-    header {
-      padding: 40px 0 20px;
-      text-align: center;
-    }
-
+    header { padding: 40px 0 24px; text-align: center; }
     .badge {
-      display: inline-block;
-      padding: 6px 14px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid var(--accent-glow);
-      color: #a5b4fc;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 14px;
-      letter-spacing: 0.5px;
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      background: rgba(99, 102, 241, 0.12); border: 1px solid var(--accent-glow);
+      color: #a5b4fc; border-radius: 999px; font-size: 13px; font-weight: 700;
+      margin-bottom: 14px; letter-spacing: 0.5px;
     }
-
     h1 {
-      font-size: 32px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+      font-size: 32px; font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
     }
+    p.subtitle { color: var(--text-muted); font-size: 15px; }
 
-    p.subtitle {
-      color: var(--text-muted);
-      font-size: 15px;
+    .author-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 20px; margin: 20px 0 30px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 20px; flex-wrap: wrap; backdrop-filter: blur(10px);
     }
+    .author-info h3 { font-size: 17px; margin-bottom: 4px; }
+    .author-info p { font-size: 13px; color: var(--text-muted); }
+    .social-links { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    /* Key Box / Auth Status */
-    .auth-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(12px);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin: 25px auto 40px;
-      max-width: 650px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-
-    .auth-input-group {
-      display: flex;
-      gap: 12px;
-    }
-
-    input[type="password"], input[type="text"] {
-      flex: 1;
-      padding: 13px 18px;
-      background: rgba(10, 13, 20, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-sm);
-      color: #fff;
-      font-size: 15px;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .btn {
-      padding: 13px 24px;
-      border-radius: var(--radius-sm);
-      border: none;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), #4f46e5);
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
-    }
-
-    .btn-primary:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
-    }
-
-    .auth-status {
-      margin-top: 14px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ef4444;
-    }
-
-    .status-dot.active {
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-    }
-
-    /* Tabs Filter */
     .tabs-wrapper {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-      overflow-x: auto;
-      padding-bottom: 6px;
+      display: flex; gap: 10px; margin-bottom: 28px; overflow-x: auto; padding-bottom: 6px;
     }
-
     .tab-btn {
-      padding: 10px 20px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      white-space: nowrap;
-      transition: all 0.2s;
+      padding: 10px 18px; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color); color: var(--text-muted);
+      border-radius: var(--radius-sm); cursor: pointer; font-weight: 600;
+      font-size: 14px; white-space: nowrap; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
     }
-
     .tab-btn.active, .tab-btn:hover {
-      background: rgba(99, 102, 241, 0.15);
-      color: #fff;
-      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.15); color: #fff; border-color: var(--accent);
     }
 
-    /* Section Category */
-    .category-section {
-      margin-bottom: 40px;
-    }
-
+    .category-section { margin-bottom: 40px; }
     .section-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 19px; font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
     }
-
     .section-title::before {
-      content: '';
-      width: 4px;
-      height: 20px;
-      background: var(--accent);
-      border-radius: 2px;
+      content: ''; width: 4px; height: 18px; background: var(--accent); border-radius: 2px;
     }
 
-    /* Grid Servers */
-    .server-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
+    .grid-container {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px;
     }
-
-    .server-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      transition: all 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    .api-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 20px; display: flex;
+      flex-direction: column; justify-content: space-between; transition: all 0.2s ease;
     }
-
-    .server-card:hover {
-      background: var(--bg-card-hover);
-      border-color: rgba(99, 102, 241, 0.4);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    .api-card:hover {
+      background: var(--bg-card-hover); border-color: rgba(99, 102, 241, 0.35); transform: translateY(-2px);
     }
-
-    .server-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .card-title { font-size: 16px; font-weight: 700; color: #fff; }
+    .tag {
+      font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700;
+      text-transform: uppercase; background: rgba(16, 185, 129, 0.15); color: #34d399;
     }
+    .tag.lock { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
 
-    .server-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
+    .endpoint-block {
+      background: #080b11; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 16px;
     }
+    .endpoint-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+    .endpoint-code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #93c5fd; word-break: break-all; }
 
-    .server-type {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-weight: 700;
-      text-transform: uppercase;
-      background: rgba(255,255,255,0.06);
-      color: var(--text-muted);
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn {
+      padding: 9px 14px; border-radius: var(--radius-sm); border: none; font-weight: 600;
+      font-size: 13px; cursor: pointer; transition: all 0.2s; display: inline-flex;
+      align-items: center; justify-content: center; gap: 6px; text-decoration: none;
     }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #4f46e5); color: #fff; }
+    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #e2e8f0; }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
 
-    .server-type.meta { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
-    .server-type.gif { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .server-type.stream { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
-
-    .server-count {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 18px;
+    .private-lock-view {
+      background: rgba(17, 24, 39, 0.7); border: 1px dashed rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius); padding: 44px 20px; text-align: center;
     }
-
-    .card-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+    .lock-icon-wrap {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-glow);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; color: #a5b4fc;
     }
-
-    .btn-sm {
-      padding: 8px 12px;
-      font-size: 13px;
-      border-radius: 6px;
+    .private-lock-view h3 { font-size: 20px; color: #fff; margin-bottom: 8px; }
+    .private-lock-view p { color: var(--text-muted); font-size: 14px; max-width: 460px; margin: 0 auto 20px; }
+    .key-form { display: flex; max-width: 440px; margin: 0 auto; gap: 10px; }
+    input[type="password"] {
+      flex: 1; padding: 11px 16px; background: #080b11;
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: var(--radius-sm);
+      color: #fff; font-size: 14px; outline: none;
     }
+    input[type="password"]:focus { border-color: var(--accent); }
 
-    .btn-outline {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      color: #e2e8f0;
-    }
-
-    .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Modal Player */
     .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+      z-index: 1000; align-items: center; justify-content: center; padding: 20px;
     }
-
-    .modal.show {
-      display: flex;
-    }
-
+    .modal.show { display: flex; }
     .modal-content {
-      background: #111625;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 800px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-      display: flex;
-      flex-direction: column;
+      background: #111726; border: 1px solid var(--border-color);
+      border-radius: var(--radius); width: 100%; max-width: 780px; overflow: hidden;
     }
-
     .modal-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
     }
-
-    .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 22px;
-      cursor: pointer;
-      line-height: 1;
-    }
-
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; }
     .modal-body {
-      padding: 20px;
-      text-align: center;
-      background: #000;
-      min-height: 380px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      padding: 20px; text-align: center; background: #000;
+      min-height: 360px; display: flex; align-items: center; justify-content: center;
     }
-
-    .media-player {
-      max-width: 100%;
-      max-height: 520px;
-      border-radius: var(--radius-sm);
-    }
-
+    .media-player { max-width: 100%; max-height: 520px; border-radius: var(--radius-sm); }
     .modal-meta {
-      padding: 14px 20px;
-      background: #0e121d;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      color: var(--text-muted);
+      padding: 14px 20px; background: #0b0f19; border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--text-muted);
     }
 
-    .modal-controls {
-      display: flex;
-      gap: 10px;
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      background: #1e293b; border: 1px solid var(--border-color); color: #fff;
+      padding: 12px 18px; border-radius: var(--radius-sm); font-size: 13px;
+      display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      animation: slideIn 0.25s ease-out;
+    }
+    .toast.success { border-left: 4px solid var(--accent-emerald); }
+    .toast.error { border-left: 4px solid #ef4444; }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
-    @media (max-width: 600px) {
-      .auth-input-group { flex-direction: column; }
-      .card-actions { grid-template-columns: 1fr; }
+    @media (max-width: 650px) {
+      .author-card { flex-direction: column; align-items: flex-start; }
+      .grid-container { grid-template-columns: 1fr; }
+      .key-form { flex-direction: column; }
     }
   </style>
 </head>
@@ -379,267 +222,398 @@
 
   <div class="container">
     <header>
-      <div class="badge">ZHEE API STREAMING SYSTEM</div>
-      <h1>Trung Tâm Quản Lý Media</h1>
-      <p class="subtitle">Truy cập toàn bộ Server Video Doggy, Ảnh GIF & Hentai Streaming</p>
+      <div class="badge">
+        <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+        ZHEE API ENGINE v7.1.0
+      </div>
+      <h1>Trung Tâm API Gateway & Media Hub</h1>
+      <p class="subtitle">Nền tảng REST API đa năng & Cổng Dịch Vụ Trực Tuyến</p>
     </header>
 
-    <!-- Khu vực nhập Mật khẩu (API Key) -->
-    <div class="auth-card">
-      <div class="auth-input-group">
-        <input type="password" id="apiKeyInput" placeholder="Nhập API Key / Mật khẩu truy cập...">
-        <button class="btn btn-primary" id="btnSaveKey">Xác Nhận Key</button>
+    <!-- Tác Giả & Trạng Thái -->
+    <div class="author-card">
+      <div class="author-info">
+        <h3>Hồ Đức Minh (Zhee Dev)</h3>
+        <p>Full-Stack Developer & Bot/API Automation Specialist | Trạng thái: <strong style="color: #10b981;">Online</strong></p>
       </div>
-      <div class="auth-status">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">Chưa nhập API Key (Video yêu cầu mật khẩu để xem)</span>
+      <div class="social-links">
+        <a href="https://facebook.com/hoducminh.depzai" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">
+          <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+          Facebook
+        </a>
+        <a href="https://t.me/zheevipv1" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">
+          <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+          Telegram
+        </a>
+        <a href="https://github.com/hoducminh123" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">
+          <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+          GitHub
+        </a>
       </div>
     </div>
 
-    <!-- Bộ lọc Thư mục -->
+    <!-- Tabs Bộ Lọc -->
     <div class="tabs-wrapper">
-      <button class="tab-btn active" data-filter="all">Tất Cả Thư Mục</button>
-      <button class="tab-btn" data-filter="doggy-meta">Doggy V5 - V14 (Có Tên & Thumbnail)</button>
-      <button class="tab-btn" data-filter="doggy-id">Doggy V1 - V4 (ID Number)</button>
-      <button class="tab-btn" data-filter="gif">Kho GIF Ẩn Danh (1 - 6)</button>
-      <button class="tab-btn" data-filter="stream">Video Khác & Hentai Stream</button>
+      <button class="tab-btn active" data-filter="all">
+        <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+        Tất Cả Chuyên Mục
+      </button>
+      <button class="tab-btn" data-filter="public-apis">
+        <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253"/></svg>
+        Chuyên Mục Công Khai (Free)
+      </button>
+      <button class="tab-btn" data-filter="private-video">
+        <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+        Khu Vực Riêng Tư (/video)
+      </button>
     </div>
 
-    <!-- Danh sách thư mục theo phân loại -->
-    <div id="mediaSections">
-      <!-- Section Doggy V5 - V14 -->
-      <div class="category-section" data-cat="doggy-meta">
-        <div class="section-title">Thư Mục Doggy V5 - V14 (Metadata Full)</div>
-        <div class="server-grid" id="gridDoggyMeta"></div>
+    <!-- 1. CÁC CHUYÊN MỤC CÔNG KHAI -->
+    <section class="category-section" data-cat="public-apis">
+      <div class="section-title">Danh Sách Chuyên Mục API Công Khai</div>
+      <div class="grid-container" id="gridPublicApis"></div>
+    </section>
+
+    <!-- 2. CHUYÊN MỤC /video -->
+    <section class="category-section" data-cat="private-video">
+      <div class="section-title">Khu Vực Riêng Tư (/video)</div>
+
+      <!-- Khung Khóa -->
+      <div id="videoLockBox" class="private-lock-view">
+        <div class="lock-icon-wrap">
+          <svg class="icon icon-lg" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+        </div>
+        <h3>Khu Vực Yêu Cầu Xác Thực</h3>
+        <p>Endpoint này được giới hạn truy cập. Vui lòng nhập API Key để mở khóa dữ liệu.</p>
+        <div class="key-form">
+          <input type="password" id="inputApiKey" placeholder="Nhập API Key xác thực...">
+          <button class="btn btn-primary" id="btnUnlockVideo">
+            <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+            Mở Khóa
+          </button>
+        </div>
       </div>
 
-      <!-- Section Doggy V1 - V4 -->
-      <div class="category-section" data-cat="doggy-id">
-        <div class="section-title">Thư Mục Doggy V1 - V4 (Đánh Số ID)</div>
-        <div class="server-grid" id="gridDoggyId"></div>
+      <!-- Khung Hiển Thị Sau Khi Xác Thực -->
+      <div id="videoContentBox" style="display: none;">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(16,185,129,0.1); padding: 12px 18px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.2);">
+          <span style="color: #34d399; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Xác thực API Key thành công!
+          </span>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" id="btnLockVideo">
+            <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+            Khóa Lại
+          </button>
+        </div>
+        <div class="grid-container" id="gridVideoServers"></div>
       </div>
-
-      <!-- Section GIF Ẩn Danh -->
-      <div class="category-section" data-cat="gif">
-        <div class="section-title">Thư Mục Ảnh Động GIF Ẩn Danh (1 - 6)</div>
-        <div class="server-grid" id="gridGif"></div>
-      </div>
-
-      <!-- Section Video Khác & Hentai -->
-      <div class="category-section" data-cat="stream">
-        <div class="section-title">Thư Mục Video Khác & Hentai Streaming</div>
-        <div class="server-grid" id="gridStream"></div>
-      </div>
-    </div>
+    </section>
   </div>
 
   <!-- Modal Player -->
   <div class="modal" id="playerModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title" id="modalTitle">Đang phát Media</div>
-        <button class="close-btn" id="closeModal">&times;</button>
+        <div class="modal-title" id="modalTitle">Media Viewer</div>
+        <button class="close-btn" id="closeModal">
+          <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
-      <div class="modal-body" id="modalBody">
-        <!-- Chèn video hoặc ảnh ở đây -->
-      </div>
+      <div class="modal-body" id="modalBody"></div>
       <div class="modal-meta">
-        <span id="modalDesc">ID: # -- | Tổng: --</span>
-        <div class="modal-controls">
-          <button class="btn btn-outline btn-sm" id="btnNextRandom">Ngẫu Nhiên Khác</button>
-          <a href="#" target="_blank" class="btn btn-primary btn-sm" id="btnDirectLink">Mở Tab Mới</a>
+        <span id="modalDesc">--</span>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline" id="btnNextRandom">
+            <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            Random Khác
+          </button>
+          <a href="#" target="_blank" class="btn btn-primary" id="btnDirectLink">
+            <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+            Xem Trực Tiếp
+          </a>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="toast-container" id="toastContainer"></div>
+
   <script>
-    // Dữ liệu danh sách Server chia theo thư mục
-    const SERVER_DATA = {
-      doggyMeta: [
-        { id: "doggyv5", name: "Doggy Server V5", count: "30+ video", type: "meta" },
-        { id: "doggyv6", name: "Doggy Server V6", count: "92 video", type: "meta" },
-        { id: "doggyv7", name: "Doggy Server V7", count: "26 video", type: "meta" },
-        { id: "doggyv8", name: "Doggy Server V8", count: "19 video", type: "meta" },
-        { id: "doggyv9", name: "Doggy Server V9", count: "48 video", type: "meta" },
-        { id: "doggyv10", name: "Doggy Server V10", count: "36 video", type: "meta" },
-        { id: "doggyv11", name: "Doggy Server V11", count: "27 video", type: "meta" },
-        { id: "doggyv12", name: "Doggy Server V12", count: "72 video", type: "meta" },
-        { id: "doggyv13", name: "Doggy Server V13", count: "35 video", type: "meta" },
-        { id: "doggyv14", name: "Doggy Server V14", count: "19 video", type: "meta" }
-      ],
-      doggyId: [
-        { id: "doggyv1", name: "Doggy Server V1", count: "72 video (1-72.mp4)", type: "video" },
-        { id: "doggyv2", name: "Doggy Server V2", count: "49 video (1-49.mp4)", type: "video" },
-        { id: "doggyv3", name: "Doggy Server V3", count: "107 video (1-107.mp4)", type: "video" },
-        { id: "doggyv4", name: "Doggy Server V4", count: "162 video (1-162.mp4)", type: "video" }
-      ],
-      gif: [
-        { id: "andanhgif1", name: "Ẩn Danh GIF 1", count: "35 ảnh (image1-35.gif)", type: "gif" },
-        { id: "andanhgif2", name: "Ẩn Danh GIF 2", count: "32 ảnh (image1-32.gif)", type: "gif" },
-        { id: "andanhgif3", name: "Ẩn Danh GIF 3", count: "26 ảnh (image1-26.gif)", type: "gif" },
-        { id: "andanhgif4", name: "Ẩn Danh GIF 4", count: "31 ảnh (image1-31.gif)", type: "gif" },
-        { id: "andanhgif5", name: "Ẩn Danh GIF 5", count: "26 ảnh (image1-26.gif)", type: "gif" },
-        { id: "andanhgif6", name: "Ẩn Danh GIF 6", count: "18 ảnh (image1-18.gif)", type: "gif" }
-      ],
-      stream: [
-        { id: "videoandanh247", name: "Video & Ảnh 247", count: "26 video", type: "video" },
-        { id: "videoxuattrong", name: "Video Xuất Trong", count: "28 video", type: "video" },
-        { id: "hentai2d", name: "Hentai 2D Dynamic", count: "Nguồn động", type: "stream" },
-        { id: "hentai3d", name: "Hentai 3D Dynamic", count: "Nguồn động", type: "stream" },
-        { id: "hentai3dvanguoi", name: "Hentai 3D & Người", count: "Nguồn động", type: "stream" }
-      ]
-    };
+    const origin = window.location.origin;
 
-    let currentPlayingCategory = "";
-
-    // DOM Elements
-    const apiKeyInput = document.getElementById("apiKeyInput");
-    const btnSaveKey = document.getElementById("btnSaveKey");
-    const statusDot = document.getElementById("statusDot");
-    const statusText = document.getElementById("statusText");
-    const playerModal = document.getElementById("playerModal");
-    const closeModal = document.getElementById("closeModal");
-    const modalBody = document.getElementById("modalBody");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalDesc = document.getElementById("modalDesc");
-    const btnNextRandom = document.getElementById("btnNextRandom");
-    const btnDirectLink = document.getElementById("btnDirectLink");
-
-    // Khởi tạo Key từ localStorage hoặc URL param
-    function getStoredKey() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlKey = urlParams.get("key");
-      if (urlKey) {
-        localStorage.setItem("zhee_api_key", urlKey);
-        return urlKey;
-      }
-      return localStorage.getItem("zhee_api_key") || "";
+    function showToast(message, type = "success") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      
+      const iconSvg = type === 'success' 
+        ? `<svg class="icon" style="color: #34d399;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        : `<svg class="icon" style="color: #f87171;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>`;
+      
+      toast.innerHTML = `${iconSvg}<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 250);
+      }, 3000);
     }
 
-    function updateAuthUI(key) {
-      if (key) {
-        apiKeyInput.value = key;
-        statusDot.classList.add("active");
-        statusText.textContent = `Đã kết nối với Key: ${key}`;
-        statusText.style.color = "#10b981";
-      } else {
-        apiKeyInput.value = "";
-        statusDot.classList.remove("active");
-        statusText.textContent = "Chưa nhập API Key (Video yêu cầu mật khẩu để xem)";
-        statusText.style.color = "#94a3b8";
+    const PUBLIC_CATEGORIES = [
+      {
+        name: "API Mạng Xã Hội & Game (/mxh)",
+        desc: "Tổng hợp 9 tool tra cứu & phân tích: Roblox, GitHub, TikTok, YouTube, Discord, Telegram, Twitter, Facebook, Zalo",
+        url: `${origin}/mxh`,
+        btnText: "Xem Hướng Dẫn"
+      },
+      {
+        name: "Công Cụ AI & Game Utilities (/tools)",
+        desc: "Tra cứu UID Free Fire, AI Xóa phông nền ảnh (Remove.bg), AI Làm nét & Phục chế ảnh HD",
+        url: `${origin}/tools`,
+        btnText: "Xem Hướng Dẫn"
+      },
+      {
+        name: "Tải & Bóc Tách Đa Phương Tiện (/downloads)",
+        desc: "Bóc tách trọn bộ ảnh truyện tranh, bài viết và trích xuất luồng phát video trực tiếp (MP4, HLS M3U8)",
+        url: `${origin}/downloads`,
+        btnText: "Xem Hướng Dẫn"
+      },
+      {
+        name: "Quản Trị Mạng & DNS Website (/web)",
+        desc: "Công cụ kiểm tra DNS, Ping, Whois và phân tích trạng thái máy chủ website",
+        url: `${origin}/web`,
+        btnText: "Xem Hướng Dẫn"
+      },
+      {
+        name: "Dịch Vụ Email Tạm Thời & Xác Thực (/mail)",
+        desc: "Hệ thống tạo email ảo nhận mã OTP và kiểm tra định dạng email",
+        url: `${origin}/mail`,
+        btnText: "Xem Hướng Dẫn"
+      },
+      {
+        name: "Cổng Thanh Toán & Ngân Hàng (/bank)",
+        desc: "Tạo mã VietQR tự động, tra cứu danh sách ngân hàng Napas và định tuyến thanh toán",
+        url: `${origin}/bank`,
+        btnText: "Xem Hướng Dẫn"
       }
-    }
+    ];
 
-    // Render danh sách server ra giao diện
-    function renderServerCard(item) {
+    let currentSessionKey = "";
+    let currentActiveCategory = "";
+
+    function renderPublicCategoryCard(item) {
       return `
-        <div class="server-card">
+        <div class="api-card">
           <div>
-            <div class="server-header">
-              <div class="server-name">${item.name}</div>
-              <span class="server-type ${item.type}">${item.type}</span>
+            <div class="card-top">
+              <div class="card-title">${item.name}</div>
+              <span class="tag">Free</span>
             </div>
-            <div class="server-count">${item.count}</div>
+            <div class="card-desc">${item.desc}</div>
+            <div class="endpoint-block">
+              <div class="endpoint-label">Endpoint URL</div>
+              <div class="endpoint-code">${item.url}</div>
+            </div>
           </div>
           <div class="card-actions">
-            <button class="btn btn-primary btn-sm" onclick="playMedia('${item.id}', '${item.name}', '${item.type}')">Xem Random</button>
-            <button class="btn btn-outline btn-sm" onclick="playWithId('${item.id}', '${item.name}', '${item.type}')">Theo ID</button>
+            <a href="${item.url}" target="_blank" class="btn btn-primary">
+              <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+              ${item.btnText}
+            </a>
+            <button class="btn btn-outline" onclick="copyText('${item.url}')">
+              <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"/></svg>
+              Sao Chép Link
+            </button>
           </div>
         </div>
       `;
     }
 
-    function initGrids() {
-      document.getElementById("gridDoggyMeta").innerHTML = SERVER_DATA.doggyMeta.map(renderServerCard).join("");
-      document.getElementById("gridDoggyId").innerHTML = SERVER_DATA.doggyId.map(renderServerCard).join("");
-      document.getElementById("gridGif").innerHTML = SERVER_DATA.gif.map(renderServerCard).join("");
-      document.getElementById("gridStream").innerHTML = SERVER_DATA.stream.map(renderServerCard).join("");
-    }
-
-    // Gọi API để lấy video/gif
-    async function fetchMedia(type, requestedId = null) {
-      const key = apiKeyInput.value.trim() || getStoredKey();
-      if (!key) {
-        alert("Vui lòng nhập API Key / Mật khẩu ở khung trên trước khi xem!");
-        apiKeyInput.focus();
-        return null;
+    function renderVideoServerCard(keyName, serverObj) {
+      if (keyName === "hentai_streaming") {
+        return `
+          <div class="api-card">
+            <div>
+              <div class="card-top">
+                <div class="card-title">Hentai Dynamic Streaming</div>
+                <span class="tag lock">Stream</span>
+              </div>
+              <div class="card-desc">Thể loại: ${serverObj.the_loai.join(", ")}</div>
+              <div class="endpoint-block">
+                <div class="endpoint-label">Cú Pháp</div>
+                <div class="endpoint-code">${serverObj.cu_phap}</div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-primary" onclick="playMedia('hentai2d', 'Hentai 2D')">
+                <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+                Xem 2D
+              </button>
+              <button class="btn btn-outline" onclick="playMedia('hentai3d', 'Hentai 3D')">
+                <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+                Xem 3D
+              </button>
+            </div>
+          </div>
+        `;
       }
 
-      let url = `/video?type=${encodeURIComponent(type)}&key=${encodeURIComponent(key)}`;
-      if (requestedId) url += `&id=${encodeURIComponent(requestedId)}`;
+      if (keyName === "album_anh_anime") {
+        return `
+          <div class="api-card">
+            <div>
+              <div class="card-top">
+                <div class="card-title">Album Ảnh Anime Proxy</div>
+                <span class="tag lock">Image API</span>
+              </div>
+              <div class="card-desc">Tìm kiếm & bóc tách album ảnh anime trọn bộ</div>
+              <div class="endpoint-block">
+                <div class="endpoint-label">Endpoint Tìm Kiếm</div>
+                <div class="endpoint-code">${serverObj.tim_kiem}</div>
+              </div>
+            </div>
+            <div class="card-actions" style="grid-template-columns: 1fr;">
+              <a href="${serverObj.tim_kiem}" target="_blank" class="btn btn-primary">
+                <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                Xem Demo JSON
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      const typeParam = keyName.replace("_", "");
+      return `
+        <div class="api-card">
+          <div>
+            <div class="card-top">
+              <div class="card-title">${serverObj.ten}</div>
+              <span class="tag lock">${serverObj.so_luong}</span>
+            </div>
+            <div class="card-desc">Cú pháp: <code>${serverObj.cu_phap_random}</code></div>
+            <div class="endpoint-block">
+              <div class="endpoint-label">Direct Raw Stream</div>
+              <div class="endpoint-code">${serverObj.xem_truc_tiep}</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary" onclick="playMedia('${typeParam}', '${serverObj.ten}')">
+              <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+              Random
+            </button>
+            <button class="btn btn-outline" onclick="playWithId('${typeParam}', '${serverObj.ten}')">
+              <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5l-3.9 19.5m-2.1-19.5l-3.9 19.5"/></svg>
+              Theo ID
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      showToast("Đã sao chép link vào bộ nhớ tạm!");
+    }
+
+    const playerModal = document.getElementById("playerModal");
+    const modalBody = document.getElementById("modalBody");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    const btnDirectLink = document.getElementById("btnDirectLink");
+    const btnNextRandom = document.getElementById("btnNextRandom");
+
+    async function playMedia(type, title, reqId = null) {
+      currentActiveCategory = type;
+      let url = `/video?type=${encodeURIComponent(type)}&key=${encodeURIComponent(currentSessionKey)}`;
+      if (reqId) url += `&id=${encodeURIComponent(reqId)}`;
 
       try {
         const res = await fetch(url);
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.thong_bao || `Mã lỗi: ${res.status}`);
+        if (!res.ok) throw new Error(data.thong_bao || "Lỗi truy xuất media");
+
+        const mediaUrl = data.link_video || data.link_media || "";
+        const isGif = mediaUrl.endsWith(".gif") || (data.dinh_dang && data.dinh_dang.includes("GIF"));
+
+        modalTitle.textContent = data.ten_file || data.ten_video || title;
+        modalDesc.textContent = `ID: #${data.id || 'Random'} / ${data.tong_so || 'N/A'}`;
+        btnDirectLink.href = `/video?type=${type}&raw=true&key=${encodeURIComponent(currentSessionKey)}${reqId ? `&id=${reqId}` : ''}`;
+
+        if (isGif) {
+          modalBody.innerHTML = `<img src="${mediaUrl}" class="media-player" alt="GIF">`;
+        } else {
+          modalBody.innerHTML = `
+            <video controls autoplay class="media-player" playsinline>
+              <source src="${mediaUrl}" type="video/mp4">
+            </video>`;
         }
-        return data;
+        playerModal.classList.add("show");
       } catch (err) {
-        alert(`Lỗi: ${err.message}`);
-        return null;
+        showToast(err.message, "error");
       }
     }
 
-    async function playMedia(type, title, mediaType, reqId = null) {
-      currentPlayingCategory = type;
-      const data = await fetchMedia(type, reqId);
-      if (!data) return;
-
-      const mediaUrl = data.link_video || data.link_media || data.url || "";
-      const isGif = mediaType === "gif" || (mediaUrl && mediaUrl.endsWith(".gif"));
-
-      modalTitle.textContent = data.ten_file || data.ten_video || `${title}`;
-      modalDesc.textContent = `ID: #${data.id || 'Random'} | Tổng: ${data.tong_so || 'N/A'}`;
-      btnDirectLink.href = `/video?type=${type}&raw=true&key=${encodeURIComponent(apiKeyInput.value.trim())}${reqId ? `&id=${reqId}` : ''}`;
-
-      if (isGif) {
-        modalBody.innerHTML = `<img src="${mediaUrl}" class="media-player" alt="GIF">`;
-      } else {
-        modalBody.innerHTML = `
-          <video controls autoplay class="media-player" playsinline>
-            <source src="${mediaUrl}" type="video/mp4">
-            Trình duyệt không hỗ trợ thẻ video.
-          </video>
-        `;
-      }
-
-      playerModal.classList.add("show");
+    function playWithId(type, title) {
+      const id = prompt(`Nhập số ID bạn muốn xem từ ${title}:`, "1");
+      if (id) playMedia(type, title, id.trim());
     }
 
-    function playWithId(type, title, mediaType) {
-      const id = prompt(`Nhập số ID (Thứ tự) muốn xem từ server ${title}:`, "1");
-      if (id) {
-        playMedia(type, title, mediaType, id.trim());
+    async function unlockVideoFolder(key) {
+      try {
+        const res = await fetch(`/video?key=${encodeURIComponent(key)}`);
+        const data = await res.json();
+
+        if (!res.ok || data.trang_thai !== "da_xac_thuc") {
+          throw new Error(data.thong_bao || "API Key không chính xác hoặc đã hết hạn!");
+        }
+
+        currentSessionKey = key;
+        const grid = document.getElementById("gridVideoServers");
+        grid.innerHTML = "";
+
+        const servers = data.danh_sach_server_media || data.danh_sach_server_video || {};
+        for (const [sKey, sVal] of Object.entries(servers)) {
+          grid.innerHTML += renderVideoServerCard(sKey, sVal);
+        }
+
+        document.getElementById("videoLockBox").style.display = "none";
+        document.getElementById("videoContentBox").style.display = "block";
+        showToast("Xác thực thành công!");
+      } catch (err) {
+        showToast(err.message, "error");
       }
     }
 
-    // Event Listeners
-    btnSaveKey.addEventListener("click", () => {
-      const key = apiKeyInput.value.trim();
-      if (key) {
-        localStorage.setItem("zhee_api_key", key);
-        updateAuthUI(key);
-        alert("Đã lưu API Key thành công!");
-      } else {
-        localStorage.removeItem("zhee_api_key");
-        updateAuthUI("");
-      }
+    function lockVideoFolder() {
+      currentSessionKey = "";
+      document.getElementById("videoLockBox").style.display = "block";
+      document.getElementById("videoContentBox").style.display = "none";
+      document.getElementById("gridVideoServers").innerHTML = "";
+      document.getElementById("inputApiKey").value = "";
+      showToast("Đã khóa lại khu vực riêng tư.");
+    }
+
+    document.getElementById("btnUnlockVideo").addEventListener("click", () => {
+      const key = document.getElementById("inputApiKey").value.trim();
+      if (!key) return showToast("Vui lòng nhập API Key!", "error");
+      unlockVideoFolder(key);
     });
 
-    closeModal.addEventListener("click", () => {
+    document.getElementById("inputApiKey").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") document.getElementById("btnUnlockVideo").click();
+    });
+
+    document.getElementById("btnLockVideo").addEventListener("click", lockVideoFolder);
+
+    document.getElementById("closeModal").addEventListener("click", () => {
       playerModal.classList.remove("show");
       modalBody.innerHTML = "";
     });
 
     btnNextRandom.addEventListener("click", () => {
-      if (currentPlayingCategory) {
-        playMedia(currentPlayingCategory, "Đang tải...", "");
-      }
+      if (currentActiveCategory) playMedia(currentActiveCategory, "Đang tải...");
     });
 
-    // Lọc Tabs
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -656,11 +630,8 @@
       });
     });
 
-    // Khởi chạy khi load trang
     window.addEventListener("DOMContentLoaded", () => {
-      const key = getStoredKey();
-      updateAuthUI(key);
-      initGrids();
+      document.getElementById("gridPublicApis").innerHTML = PUBLIC_CATEGORIES.map(renderPublicCategoryCard).join("");
     });
   </script>
 </body>
