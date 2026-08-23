@@ -23,13 +23,12 @@ exports.handler = async (event, context) => {
 
   const browserHeaders = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Cookie": "CONSENT=YES+1"
+    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
   };
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY LINK TẢI TRỰC TIẾP MP4 / MP3)
+    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY LINK TRỰC TIẾP MP4 / MP3)
     // -------------------------------------------------------------
     const isVideo = query.includes("watch?v=") || query.includes("youtu.be/") || query.includes("/shorts/");
     
@@ -49,59 +48,60 @@ exports.handler = async (event, context) => {
       const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
       const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
 
-      // 2. Gọi backend Cobalt để lấy link trực tiếp file mp4 và mp3
+      // 2. Phân giải stream link trực tiếp file mp4 & mp3 qua y2mate API backend
       let directMp4 = null;
       let directMp3 = null;
 
       try {
-        const cobaltApis = [
-          "https://co.wuk.sh/api/json",
-          "https://api.cobalt.tools/api/json"
-        ];
+        const analyzeRes = await fetch("https://www.y2mate.com/mates/analyzeV2/ajax", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "User-Agent": "Mozilla/5.0"
+          },
+          body: `k_query=${encodeURIComponent(cleanVideoUrl)}&k_page=home&hl=en&q_auto=0`
+        });
 
-        // Lấy link MP4
-        for (const endpoint of cobaltApis) {
-          try {
-            const mp4Res = await fetch(endpoint, {
+        const analyzeData = await analyzeRes.json();
+        
+        if (analyzeData.status === "ok") {
+          const vidKeys = analyzeData.links?.mp4;
+          const audioKeys = analyzeData.links?.mp3;
+
+          // Lấy key chuyển đổi MP4 (ưu tiên 720p/auto)
+          const mp4KeyObj = vidKeys ? Object.values(vidKeys)[0] : null;
+          // Lấy key chuyển đổi MP3
+          const mp3KeyObj = audioKeys ? Object.values(audioKeys)[0] : null;
+
+          if (mp4KeyObj) {
+            const convertMp4 = await fetch("https://www.y2mate.com/mates/convertV2/index", {
               method: "POST",
               headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "User-Agent": "Mozilla/5.0"
               },
-              body: JSON.stringify({
-                url: cleanVideoUrl,
-                vQuality: "720"
-              })
+              body: `vid=${videoId}&k=${encodeURIComponent(mp4KeyObj.k)}`
             });
-            const resData = await mp4Res.json();
-            if (resData.url) {
-              directMp4 = resData.url;
-              break;
+            const mp4Data = await convertMp4.json();
+            if (mp4Data.status === "ok" && mp4Data.dlink) {
+              directMp4 = mp4Data.dlink;
             }
-          } catch (err) {}
-        }
+          }
 
-        // Lấy link MP3
-        for (const endpoint of cobaltApis) {
-          try {
-            const mp3Res = await fetch(endpoint, {
+          if (mp3KeyObj) {
+            const convertMp3 = await fetch("https://www.y2mate.com/mates/convertV2/index", {
               method: "POST",
               headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "User-Agent": "Mozilla/5.0"
               },
-              body: JSON.stringify({
-                url: cleanVideoUrl,
-                isAudioOnly: true,
-                aFormat: "mp3"
-              })
+              body: `vid=${videoId}&k=${encodeURIComponent(mp3KeyObj.k)}`
             });
-            const resData = await mp3Res.json();
-            if (resData.url) {
-              directMp3 = resData.url;
-              break;
+            const mp3Data = await convertMp3.json();
+            if (mp3Data.status === "ok" && mp3Data.dlink) {
+              directMp3 = mp3Data.dlink;
             }
-          } catch (err) {}
+          }
         }
       } catch (e) {}
 
@@ -129,15 +129,15 @@ exports.handler = async (event, context) => {
             }
           },
           link_tai_truc_tiep: {
-            file_mp4_720p: directMp4 || `https://api.vevioz.com/api/button/mp4/${videoId}`,
-            file_mp3_audio: directMp3 || `https://api.vevioz.com/api/button/mp3/${videoId}`
+            video_mp4: directMp4 || "Đang lấy luồng video...",
+            audio_mp3: directMp3 || "Đang lấy luồng audio..."
           }
         }, null, 2)
       };
     }
 
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 2: LẤY PROFILE KÊNH + VIDEO THEO HANDLE
+    // TRƯỜNG HỢP 2: PROFILE KÊNH YOUTUBE
     // -------------------------------------------------------------
     let cleanHandle = query.trim().replace(/^@+/, "");
     const channelPageUrl = `https://www.youtube.com/@${cleanHandle}`;
@@ -180,9 +180,7 @@ exports.handler = async (event, context) => {
                 id_video: v.videoId,
                 tieu_de: v.title?.runs?.[0]?.text || "Video YouTube",
                 link_video: `https://www.youtube.com/watch?v=${v.videoId}`,
-                anh_bia: v.thumbnail?.thumbnails?.pop()?.url || null,
-                thoi_luong: v.thumbnailOverlays?.[0]?.thumbnailOverlayTimeStatusRenderer?.text?.simpleText || "N/A",
-                luot_xem: v.viewCountText?.simpleText || "Chưa có lượt xem"
+                anh_bia: v.thumbnail?.thumbnails?.pop()?.url || null
               });
             }
           }
