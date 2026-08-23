@@ -1,9 +1,20 @@
 [build]
   functions = "netlify/functions"
 
-# Điều hướng trực tiếp: /home -> /.netlify/functions/home, /github -> /.netlify/functions/github
+# Điều hướng /mxh vào function mxh
+[[redirects]]
+  from = "/mxh"
+  to = "/.netlify/functions/mxh"
+  status = 200
+
+# Điều hướng chạy API tool theo dạng /api/mxh/:name -> netlify/functions/:name
+[[redirects]]
+  from = "/api/mxh/:name"
+  to = "/.netlify/functions/:name"
+  status = 200
+
+# Điều hướng mặc định cho các endpoint khác
 [[redirects]]
   from = "/:splat"
   to = "/.netlify/functions/:splat"
   status = 200
-  force = true

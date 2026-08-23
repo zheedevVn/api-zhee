@@ -3,42 +3,24 @@ exports.handler = async (event, context) => {
   const host = event.headers.host;
   const baseUrl = `${protocol}://${host}`;
 
-  const documentation = {
-    github: {
-      ten_api: "GitHub Info & Repos",
-      duong_dan: "/github",
-      phuong_thuc: "GET",
-      mo_ta: "Lấy thông tin cá nhân và link toàn bộ repositories",
-      cu_phap: `${baseUrl}/github?={username}`,
-      vi_du: `${baseUrl}/github?=hoducminh123`
+  const homeData = {
+    trang_thai: "thanh_cong",
+    tac_gia: {
+      ten: "Hồ Đức Minh (Zhee Dev)",
+      github: "https://github.com/zheedevVn",
+      website: baseUrl
     },
-    tiktok: {
-      ten_api: "TikTok Info & Downloader",
-      duong_dan: "/tiktok",
-      phuong_thuc: "GET",
-      mo_ta: "Tra cứu thông tin tài khoản TikTok hoặc lấy link video không logo",
-      cu_phap: [
-        `${baseUrl}/tiktok?={username}`,
-        `${baseUrl}/tiktok?={link_video}`
-      ],
-      vi_du: [
-        `${baseUrl}/tiktok?=tiktok`,
-        `${baseUrl}/tiktok?=https://vt.tiktok.com/ZSjabcXYZ/`
-      ]
+    he_thong: {
+      ten_dich_vu: "Zhee API Service Engine",
+      phien_ban: "2.0.0",
+      mo_ta: "Hệ thống REST API phân chia theo từng nhóm chuyên mục."
     },
-    discord: {
-      ten_api: "Discord User & Server Lookup",
-      duong_dan: "/discord",
-      phuong_thuc: "GET",
-      mo_ta: "Tra cứu thông tin tài khoản Discord qua User ID hoặc bóc tách dữ liệu máy chủ qua link mời",
-      cu_phap: [
-        `${baseUrl}/discord?={user_id}`,
-        `${baseUrl}/discord?={invite_code_hoac_link}`
-      ],
-      vi_du: [
-        `${baseUrl}/discord?=156114103282368512`,
-        `${baseUrl}/discord?=https://discord.gg/discord-developers`
-      ]
+    danh_sach_chuyen_muc: {
+      mang_xa_hoi: {
+        ten: "API Mạng Xã Hội",
+        mo_ta: "Tổng hợp các tool bóc tách dữ liệu GitHub, TikTok, YouTube, Discord...",
+        link_huong_dan: `${baseUrl}/mxh`
+      }
     }
   };
 
@@ -46,8 +28,10 @@ exports.handler = async (event, context) => {
     statusCode: 200,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*"
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
     },
-    body: JSON.stringify(documentation, null, 2)
+    body: JSON.stringify(homeData, null, 2)
   };
 };
