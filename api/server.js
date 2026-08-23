@@ -2,6 +2,7 @@ const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const bankHandler = require("../lib/bank");
 const mailHandler = require("../lib/mail");
+const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
 const youtubeHandler = require("../lib/youtube");
@@ -20,8 +21,9 @@ module.exports = async (req, res) => {
     return homeHandler(req, res);
   }
 
-  // 2. Chuyên mục Mạng Xã Hội
+  // 2. Chuyên mục Mạng Xã Hội & Game
   if (pathname === "/mxh" || pathname === "/api/mxh") return mxhHandler(req, res);
+  if (pathname.includes("/roblox")) return robloxHandler(req, res);
   if (pathname.includes("/github")) return githubHandler(req, res);
   if (pathname.includes("/tiktok")) return tiktokHandler(req, res);
   if (pathname.includes("/youtube")) return youtubeHandler(req, res);
