@@ -23,12 +23,13 @@ exports.handler = async (event, context) => {
 
   const browserHeaders = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7"
+    "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Cookie": "CONSENT=YES+1"
   };
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY LINK TRỰC TIẾP MP4 / MP3)
+    // TRƯỜNG HỢP 1: LINK VIDEO (LẤY TRỰC TIẾP LINK FILE MP4 & MP3)
     // -------------------------------------------------------------
     const isVideo = query.includes("watch?v=") || query.includes("youtu.be/") || query.includes("/shorts/");
     
@@ -44,66 +45,58 @@ exports.handler = async (event, context) => {
 
       const cleanVideoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-      // 1. Lấy metadata video
-      const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
-      const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
+      // Danh sách các Invidious instances công khai ổn định
+      const instances = [
+        "https://inv.tux.pizza",
+        "https://invidious.nerdvpn.de",
+        "https://invidious.jing.rocks",
+        "https://vid.puffyan.us"
+      ];
 
-      // 2. Phân giải stream link trực tiếp file mp4 & mp3 qua y2mate API backend
-      let directMp4 = null;
-      let directMp3 = null;
+      let videoDetails = null;
+      let streamData = null;
 
-      try {
-        const analyzeRes = await fetch("https://www.y2mate.com/mates/analyzeV2/ajax", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "User-Agent": "Mozilla/5.0"
-          },
-          body: `k_query=${encodeURIComponent(cleanVideoUrl)}&k_page=home&hl=en&q_auto=0`
-        });
-
-        const analyzeData = await analyzeRes.json();
-        
-        if (analyzeData.status === "ok") {
-          const vidKeys = analyzeData.links?.mp4;
-          const audioKeys = analyzeData.links?.mp3;
-
-          // Lấy key chuyển đổi MP4 (ưu tiên 720p/auto)
-          const mp4KeyObj = vidKeys ? Object.values(vidKeys)[0] : null;
-          // Lấy key chuyển đổi MP3
-          const mp3KeyObj = audioKeys ? Object.values(audioKeys)[0] : null;
-
-          if (mp4KeyObj) {
-            const convertMp4 = await fetch("https://www.y2mate.com/mates/convertV2/index", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                "User-Agent": "Mozilla/5.0"
-              },
-              body: `vid=${videoId}&k=${encodeURIComponent(mp4KeyObj.k)}`
-            });
-            const mp4Data = await convertMp4.json();
-            if (mp4Data.status === "ok" && mp4Data.dlink) {
-              directMp4 = mp4Data.dlink;
-            }
+      for (const instance of instances) {
+        try {
+          const res = await fetch(`${instance}/api/v1/videos/${videoId}`, {
+            headers: browserHeaders
+          });
+          if (res.ok) {
+            const data = await res.json();
+            videoDetails = data;
+            streamData = data.formatStreams || [];
+            break;
           }
-
-          if (mp3KeyObj) {
-            const convertMp3 = await fetch("https://www.y2mate.com/mates/convertV2/index", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                "User-Agent": "Mozilla/5.0"
-              },
-              body: `vid=${videoId}&k=${encodeURIComponent(mp3KeyObj.k)}`
-            });
-            const mp3Data = await convertMp3.json();
-            if (mp3Data.status === "ok" && mp3Data.dlink) {
-              directMp3 = mp3Data.dlink;
-            }
-          }
+        } catch (e) {
+          continue;
         }
-      } catch (e) {}
+      }
+
+      // Lọc link MP4 có kèm cả tiếng (chất lượng 720p hoặc 360p)
+      let directMp4 = null;
+      if (streamData && streamData.length > 0) {
+        const mp4Stream = streamData.find(s => s.resolution === "720p" && s.container === "mp4") ||
+                          streamData.find(s => s.container === "mp4") ||
+                          streamData[0];
+        directMp4 = mp4Stream?.url || null;
+      }
+
+      // Lọc link Audio MP3 / M4A stream
+      let directAudio = null;
+      if (videoDetails?.adaptiveFormats) {
+        const audioStream = videoDetails.adaptiveFormats.find(f => f.type?.includes("audio/mp4") || f.type?.includes("audio/webm"));
+        directAudio = audioStream?.url || null;
+      }
+
+      // Lấy thông tin dự phòng qua OEmbed nếu không có videoDetails
+      let title = videoDetails?.title;
+      let author = videoDetails?.author;
+      if (!title) {
+        const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${cleanVideoUrl}&format=json`);
+        const oembedData = oembedRes.ok ? await oembedRes.json().catch(() => null) : null;
+        title = oembedData?.title || "YouTube Video";
+        author = oembedData?.author_name || "Chưa xác định";
+      }
 
       return {
         statusCode: 200,
@@ -118,19 +111,20 @@ exports.handler = async (event, context) => {
           loai: "video",
           thong_tin_video: {
             id_video: videoId,
-            tieu_de: oembedData?.title || "YouTube Video",
-            tac_gia: oembedData?.author_name || "Chưa xác định",
-            link_kenh: oembedData?.author_url || null,
+            tieu_de: title,
+            tac_gia: author,
+            thoi_luong_giay: videoDetails?.lengthSeconds || 0,
+            luot_xem: videoDetails?.viewCount || 0,
             link_goc: cleanVideoUrl,
             anh_thumbnail: {
               chuan_maxres: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
               chuan_hq: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-              mac_dinh: oembedData?.thumbnail_url || `https://img.youtube.com/vi/${videoId}/default.jpg`
+              mac_dinh: `https://img.youtube.com/vi/${videoId}/default.jpg`
             }
           },
           link_tai_truc_tiep: {
-            video_mp4: directMp4 || "Đang lấy luồng video...",
-            audio_mp3: directMp3 || "Đang lấy luồng audio..."
+            file_mp4_video: directMp4 || `https://yewtu.be/latest_version?id=${videoId}&itag=22`,
+            file_audio_nhac: directAudio || `https://yewtu.be/latest_version?id=${videoId}&itag=140`
           }
         }, null, 2)
       };
