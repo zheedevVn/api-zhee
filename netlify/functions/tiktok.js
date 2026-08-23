@@ -1,6 +1,7 @@
 exports.handler = async (event, context) => {
   const params = event.queryStringParameters || {};
   
+  // Tự động nhận diện: ?={input}, ?url={input}, ?user={input}
   let query = params.url || params.user || params.username || params[""] || null;
   if (!query && event.rawQuery) {
     query = decodeURIComponent(event.rawQuery.replace(/^=/, "").trim());
@@ -28,7 +29,9 @@ exports.handler = async (event, context) => {
   };
 
   try {
-    // TRƯỜNG HỢP 1: LẤY THÔNG TIN / LINK TẢI VIDEO TIKTOK
+    // -------------------------------------------------------------
+    // TRƯỜNG HỢP 1: TRUYỀN LINK VIDEO ĐỂ TẢI VIDEO KHÔNG LOGO
+    // -------------------------------------------------------------
     if (query.includes("tiktok.com")) {
       const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(query)}`;
       const res = await fetch(apiUrl, { headers: defaultHeaders });
@@ -38,7 +41,7 @@ exports.handler = async (event, context) => {
       try {
         data = JSON.parse(rawText);
       } catch (e) {
-        throw new Error("Dịch vụ tải video đang bảo trì hoặc link không hợp lệ.");
+        throw new Error("Dịch vụ phân tích video đang bận, vui lòng thử lại.");
       }
 
       if (data.code !== 0 || !data.data) {
@@ -80,19 +83,22 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // TRƯỜNG HỢP 2: LẤY THÔNG TIN USER TIKTOK
+    // -------------------------------------------------------------
+    // TRƯỜNG HỢP 2: TRUYỀN USERNAME (LẤY PROFILE + TỐI ĐA 10 VIDEO GẦN NHẤT)
+    // -------------------------------------------------------------
     const cleanUser = query.replace(/^@/, "").trim();
     const tiktokProfileUrl = `https://www.tiktok.com/@${cleanUser}`;
     
     const profileRes = await fetch(tiktokProfileUrl, { headers: defaultHeaders });
     const html = await profileRes.text();
 
-    // Bóc tách JSON được nhúng sẵn trong HTML của TikTok
     const regexUniversal = /<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application\/json">([\s\S]*?)<\/script>/;
     const regexSigi = /<script id="SIGI_STATE" type="application\/json">([\s\S]*?)<\/script>/;
     
     let userInfo = null;
     let userStats = null;
+    let itemList = [];
+    let itemModule = {};
 
     if (regexUniversal.test(html)) {
       const match = html.match(regexUniversal);
@@ -102,6 +108,8 @@ exports.handler = async (event, context) => {
       if (userDetail && userDetail.userInfo) {
         userInfo = userDetail.userInfo.user;
         userStats = userDetail.userInfo.stats;
+        itemList = userDetail.itemList || [];
+        itemModule = userDetail.itemModule || {};
       }
     } else if (regexSigi.test(html)) {
       const match = html.match(regexSigi);
@@ -109,6 +117,8 @@ exports.handler = async (event, context) => {
       const userModule = json["UserModule"] || {};
       userInfo = userModule.users ? userModule.users[cleanUser] : null;
       userStats = userModule.stats ? userModule.stats[cleanUser] : null;
+      itemList = json["ItemList"]?.["user-post"]?.list || [];
+      itemModule = json["ItemModule"] || {};
     }
 
     if (!userInfo) {
@@ -117,9 +127,47 @@ exports.handler = async (event, context) => {
         headers: { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" },
         body: JSON.stringify({
           trang_thai: "that_bai",
-          thong_bao: `Không tìm thấy thông tin tài khoản TikTok: @${cleanUser}`
+          thong_bao: `Không tìm thấy tài khoản TikTok: @${cleanUser}`
         }, null, 2)
       };
+    }
+
+    // Lấy tối đa 10 video gần nhất
+    const top10VideoIds = (Array.isArray(itemList) ? itemList : []).slice(0, 10);
+    const danhSachVideo = top10VideoIds.map((id, index) => {
+      const item = itemModule[id] || {};
+      return {
+        stt: index + 1,
+        id_video: id,
+        tieu_de: item.desc || item.title || "Không có tiêu đề",
+        link_video: `https://www.tiktok.com/@${userInfo.uniqueId}/video/${id}`,
+        anh_bia: item.video?.cover || item.cover || null,
+        luot_xem: item.stats?.playCount || 0,
+        luot_thich: item.stats?.diggCount || 0
+      };
+    });
+
+    const responsePayload = {
+      trang_thai: "thanh_cong",
+      thong_tin_ca_nhan: {
+        id: userInfo.id,
+        tai_khoan: userInfo.uniqueId,
+        ho_ten: userInfo.nickname,
+        anh_dai_dien: userInfo.avatarLarger || userInfo.avatarMedium,
+        link_trang_ca_nhan: `https://www.tiktok.com/@${userInfo.uniqueId}`,
+        tieu_su: userInfo.signature || "Không có tiểu sử",
+        tich_xanh: Boolean(userInfo.verified),
+        tai_khoan_rieng_tu: Boolean(userInfo.privateAccount),
+        nguoi_theo_doi: userStats?.followerCount || 0,
+        dang_theo_doi: userStats?.followingCount || 0,
+        tong_luot_thich: userStats?.heartCount || 0,
+        tong_so_video: userStats?.videoCount || 0
+      }
+    };
+
+    // Chỉ đính kèm danh sách video nếu có ít nhất 1 video
+    if (danhSachVideo.length > 0) {
+      responsePayload.danh_sach_video_gan_nhat = danhSachVideo;
     }
 
     return {
@@ -130,26 +178,7 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Methods": "GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type"
       },
-      body: JSON.stringify({
-        trang_thai: "thanh_cong",
-        loai: "tai_khoan",
-        thong_tin_ca_nhan: {
-          id: userInfo.id,
-          username: userInfo.uniqueId,
-          ten_hien_thi: userInfo.nickname,
-          anh_dai_dien: userInfo.avatarLarger || userInfo.avatarMedium,
-          tieu_su: userInfo.signature || "Không có tiểu sử",
-          link_trang_ca_nhan: `https://www.tiktok.com/@${userInfo.uniqueId}`,
-          tich_xanh: Boolean(userInfo.verified),
-          tai_khoan_rieng_tu: Boolean(userInfo.privateAccount)
-        },
-        thong_ke: {
-          dang_theo_doi: userStats?.followingCount || 0,
-          nguoi_theo_doi: userStats?.followerCount || 0,
-          tong_luot_thich: userStats?.heartCount || 0,
-          tong_so_video: userStats?.videoCount || 0
-        }
-      }, null, 2)
+      body: JSON.stringify(responsePayload, null, 2)
     };
 
   } catch (error) {
