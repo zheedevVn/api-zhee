@@ -14,6 +14,18 @@
       "destination": "/api/mxh"
     },
     {
+      "source": "/bank",
+      "destination": "/api/bank"
+    },
+    {
+      "source": "/bank/:name",
+      "destination": "/api/:name"
+    },
+    {
+      "source": "/api/bank/:name",
+      "destination": "/api/:name"
+    },
+    {
       "source": "/x",
       "destination": "/api/twitter"
     },
