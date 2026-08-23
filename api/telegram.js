@@ -30,16 +30,18 @@ module.exports = async (req, res) => {
 
   try {
     // -------------------------------------------------------------
-    // TRƯỜNG HỢP 1: KIỂM TRA BOT QUA BOT TOKEN (OFFICIAL TELEGRAM API)
+    // TRƯỜNG HỢP 1: KIỂM TRA BOT QUA BOT TOKEN
     // -------------------------------------------------------------
     if (isBotToken) {
-      const [getMeRes, webhookRes] = await Promise.all([
+      const [getMeRes, webhookRes, updatesRes] = await Promise.all([
         fetch(`https://api.telegram.org/bot${cleanQuery}/getMe`),
-        fetch(`https://api.telegram.org/bot${cleanQuery}/getWebhookInfo`)
+        fetch(`https://api.telegram.org/bot${cleanQuery}/getWebhookInfo`),
+        fetch(`https://api.telegram.org/bot${cleanQuery}/getUpdates?limit=10`).catch(() => null)
       ]);
 
       const meData = await getMeRes.json();
       const webhookData = webhookRes.ok ? await webhookRes.json() : null;
+      const updatesData = updatesRes && updatesRes.ok ? await updatesRes.json() : null;
 
       if (!meData.ok) {
         return res.status(401).json({
@@ -53,6 +55,21 @@ module.exports = async (req, res) => {
 
       const bot = meData.result;
       const webhook = webhookData?.result || {};
+
+      // Bóc tách người dùng / Admin tương tác gần nhất từ getUpdates
+      let adminTuongTac = null;
+      if (updatesData?.ok && Array.isArray(updatesData.result) && updatesData.result.length > 0) {
+        const firstMsg = updatesData.result[0]?.message || updatesData.result[0]?.channel_post;
+        if (firstMsg?.from) {
+          const fromUser = firstMsg.from;
+          adminTuongTac = {
+            id_admin: fromUser.id,
+            ten_hien_thi: [fromUser.first_name, fromUser.last_name].filter(Boolean).join(" "),
+            tai_khoan: fromUser.username ? `@${fromUser.username}` : "Không đặt username",
+            ngon_ngu: fromUser.language_code || "N/A"
+          };
+        }
+      }
 
       return res.status(200).json({
         trang_thai: "thanh_cong",
@@ -75,6 +92,10 @@ module.exports = async (req, res) => {
             webhook_url: webhook.url || "Đang dùng chế độ Long Polling (Không cài Webhook)",
             so_tin_nhan_chua_xu_ly: webhook.pending_update_count || 0,
             loi_webhook_gan_nhat: webhook.last_error_message || "Không có lỗi"
+          },
+          chu_so_huu: {
+            luu_y: "Telegram ẩn thông tin người tạo bot trong Bot API vì chính sách bảo mật.",
+            admin_tuong_tac_gan_nhat: adminTuongTac || "Chưa có tin nhắn/cần gửi tin nhắn đến bot để nhận diện"
           }
         }
       });
@@ -101,24 +122,19 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Bóc tách tên hiển thị
     const titleMatch = html.match(/<div class="tgme_page_title"[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>[\s\S]*?<\/div>/) ||
                        html.match(/<div class="tgme_page_title"[^>]*>([\s\S]*?)<\/div>/);
     const tenHienThi = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, "").trim() : cleanUser;
 
-    // Bóc tách ảnh đại diện
     const avatarMatch = html.match(/<img class="tgme_page_photo_image" src="([^"]+)"/);
     const anhDaiDien = avatarMatch ? avatarMatch[1] : null;
 
-    // Bóc tách thông số phụ (members, subscribers, status)
     const extraMatch = html.match(/<div class="tgme_page_extra"[^>]*>([\s\S]*?)<\/div>/);
     const extraText = extraMatch ? extraMatch[1].replace(/<[^>]+>/g, "").trim() : "";
 
-    // Bóc tách tiểu sử
     const descMatch = html.match(/<div class="tgme_page_description"[^>]*>([\s\S]*?)<\/div>/);
     const tieuSu = descMatch ? descMatch[1].replace(/<br\s*[\/]?>/gi, "\n").replace(/<[^>]+>/g, "").trim() : "Không có mô tả";
 
-    // Phân loại chính xác thực thể
     const isBot = cleanUser.toLowerCase().endsWith("bot") || extraText.toLowerCase().includes("bot");
     let loaiDoiTuong = "Nguoi_Dung (User)";
     let soThanhVien = null;
