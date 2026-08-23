@@ -2,44 +2,8 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/api/home"
-    },
-    {
-      "source": "/home",
-      "destination": "/api/home"
-    },
-    {
-      "source": "/mxh",
-      "destination": "/api/mxh"
-    },
-    {
-      "source": "/bank",
-      "destination": "/api/bank"
-    },
-    {
-      "source": "/bank/check",
-      "destination": "/api/bank"
-    },
-    {
-      "source": "/bank/taoqr",
-      "destination": "/api/bank"
-    },
-    {
-      "source": "/api/bank/:path*",
-      "destination": "/api/bank"
-    },
-    {
-      "source": "/x",
-      "destination": "/api/twitter"
-    },
-    {
-      "source": "/api/mxh/:name",
-      "destination": "/api/:name"
-    },
-    {
-      "source": "/:name",
-      "destination": "/api/:name"
+      "source": "/(.*)",
+      "destination": "/api/server"
     }
   ]
 }
