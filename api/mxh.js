@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
   res.status(200).json({
     chuyen_muc: "Mạng Xã Hội (Social Media Tools)",
     tac_gia: "Hồ Đức Minh (Zhee Dev)",
-    tong_so_tool: 7,
+    tong_so_tool: 8,
     danh_sach_tool: {
       github: {
         ten_api: "GitHub Info & Repos",
@@ -104,6 +104,21 @@ module.exports = async (req, res) => {
         vi_du: [
           `${baseUrl}/api/mxh/facebook?=hoducminh.depzai&code=EAAGNO4...`,
           `${baseUrl}/api/mxh/facebook?=https://www.facebook.com/watch/?v=1813358456318928`
+        ]
+      },
+      zalo: {
+        ten_api: "Zalo Lookup & Session Account Checker",
+        duong_dan: "/api/mxh/zalo",
+        phuong_thuc: "GET",
+        mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check full thông tin cá nhân/bạn bè/nhóm qua Cookie & IMEI",
+        cu_phap: [
+          `${baseUrl}/api/mxh/zalo?={sdt_hoac_link_nhom}`,
+          `${baseUrl}/api/mxh/zalo?cookie={zalo_cookie}&imei={zalo_imei}`
+        ],
+        vi_du: [
+          `${baseUrl}/api/mxh/zalo?=0912345678`,
+          `${baseUrl}/api/mxh/zalo?=https://zalo.me/g/abcdef123`,
+          `${baseUrl}/api/mxh/zalo?cookie=zpw_sek=...;_zlang=vn&imei=12345678-abcd-...`
         ]
       }
     }
