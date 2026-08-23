@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zhee Media Hub - Video & GIF Streaming</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-card: rgba(18, 24, 38, 0.7);
+      --bg-card-hover: rgba(28, 36, 56, 0.85);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --accent-pink: #ec4899;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #94a3b8;
+      --radius-lg: 16px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #171d33 0%, var(--bg-primary) 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      padding: 40px 0 20px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid var(--accent-glow);
+      color: #a5b4fc;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Key Box / Auth Status */
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin: 25px auto 40px;
+      max-width: 650px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .auth-input-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    input[type="password"], input[type="text"] {
+      flex: 1;
+      padding: 13px 18px;
+      background: rgba(10, 13, 20, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn {
+      padding: 13px 24px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .auth-status {
+      margin-top: 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+    }
+
+    .status-dot.active {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* Tabs Filter */
+    .tabs-wrapper {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Section Category */
+    .category-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* Grid Servers */
+    .server-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .server-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .server-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .server-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .server-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .server-type {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+    }
+
+    .server-type.meta { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+    .server-type.gif { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .server-type.stream { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+
+    .server-count {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: #e2e8f0;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Modal Player */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #111625;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 800px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 20px;
+      text-align: center;
+      background: #000;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .media-player {
+      max-width: 100%;
+      max-height: 520px;
+      border-radius: var(--radius-sm);
+    }
+
+    .modal-meta {
+      padding: 14px 20px;
+      background: #0e121d;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .modal-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .auth-input-group { flex-direction: column; }
+      .card-actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge">ZHEE API STREAMING SYSTEM</div>
+      <h1>Trung Tâm Quản Lý Media</h1>
+      <p class="subtitle">Truy cập toàn bộ Server Video Doggy, Ảnh GIF & Hentai Streaming</p>
+    </header>
+
+    <!-- Khu vực nhập Mật khẩu (API Key) -->
+    <div class="auth-card">
+      <div class="auth-input-group">
+        <input type="password" id="apiKeyInput" placeholder="Nhập API Key / Mật khẩu truy cập...">
+        <button class="btn btn-primary" id="btnSaveKey">Xác Nhận Key</button>
+      </div>
+      <div class="auth-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Chưa nhập API Key (Video yêu cầu mật khẩu để xem)</span>
+      </div>
+    </div>
+
+    <!-- Bộ lọc Thư mục -->
+    <div class="tabs-wrapper">
+      <button class="tab-btn active" data-filter="all">Tất Cả Thư Mục</button>
+      <button class="tab-btn" data-filter="doggy-meta">Doggy V5 - V14 (Có Tên & Thumbnail)</button>
+      <button class="tab-btn" data-filter="doggy-id">Doggy V1 - V4 (ID Number)</button>
+      <button class="tab-btn" data-filter="gif">Kho GIF Ẩn Danh (1 - 6)</button>
+      <button class="tab-btn" data-filter="stream">Video Khác & Hentai Stream</button>
+    </div>
+
+    <!-- Danh sách thư mục theo phân loại -->
+    <div id="mediaSections">
+      <!-- Section Doggy V5 - V14 -->
+      <div class="category-section" data-cat="doggy-meta">
+        <div class="section-title">Thư Mục Doggy V5 - V14 (Metadata Full)</div>
+        <div class="server-grid" id="gridDoggyMeta"></div>
+      </div>
+
+      <!-- Section Doggy V1 - V4 -->
+      <div class="category-section" data-cat="doggy-id">
+        <div class="section-title">Thư Mục Doggy V1 - V4 (Đánh Số ID)</div>
+        <div class="server-grid" id="gridDoggyId"></div>
+      </div>
+
+      <!-- Section GIF Ẩn Danh -->
+      <div class="category-section" data-cat="gif">
+        <div class="section-title">Thư Mục Ảnh Động GIF Ẩn Danh (1 - 6)</div>
+        <div class="server-grid" id="gridGif"></div>
+      </div>
+
+      <!-- Section Video Khác & Hentai -->
+      <div class="category-section" data-cat="stream">
+        <div class="section-title">Thư Mục Video Khác & Hentai Streaming</div>
+        <div class="server-grid" id="gridStream"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Player -->
+  <div class="modal" id="playerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Đang phát Media</div>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Chèn video hoặc ảnh ở đây -->
+      </div>
+      <div class="modal-meta">
+        <span id="modalDesc">ID: # -- | Tổng: --</span>
+        <div class="modal-controls">
+          <button class="btn btn-outline btn-sm" id="btnNextRandom">Ngẫu Nhiên Khác</button>
+          <a href="#" target="_blank" class="btn btn-primary btn-sm" id="btnDirectLink">Mở Tab Mới</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dữ liệu danh sách Server chia theo thư mục
+    const SERVER_DATA = {
+      doggyMeta: [
+        { id: "doggyv5", name: "Doggy Server V5", count: "30+ video", type: "meta" },
+        { id: "doggyv6", name: "Doggy Server V6", count: "92 video", type: "meta" },
+        { id: "doggyv7", name: "Doggy Server V7", count: "26 video", type: "meta" },
+        { id: "doggyv8", name: "Doggy Server V8", count: "19 video", type: "meta" },
+        { id: "doggyv9", name: "Doggy Server V9", count: "48 video", type: "meta" },
+        { id: "doggyv10", name: "Doggy Server V10", count: "36 video", type: "meta" },
+        { id: "doggyv11", name: "Doggy Server V11", count: "27 video", type: "meta" },
+        { id: "doggyv12", name: "Doggy Server V12", count: "72 video", type: "meta" },
+        { id: "doggyv13", name: "Doggy Server V13", count: "35 video", type: "meta" },
+        { id: "doggyv14", name: "Doggy Server V14", count: "19 video", type: "meta" }
+      ],
+      doggyId: [
+        { id: "doggyv1", name: "Doggy Server V1", count: "72 video (1-72.mp4)", type: "video" },
+        { id: "doggyv2", name: "Doggy Server V2", count: "49 video (1-49.mp4)", type: "video" },
+        { id: "doggyv3", name: "Doggy Server V3", count: "107 video (1-107.mp4)", type: "video" },
+        { id: "doggyv4", name: "Doggy Server V4", count: "162 video (1-162.mp4)", type: "video" }
+      ],
+      gif: [
+        { id: "andanhgif1", name: "Ẩn Danh GIF 1", count: "35 ảnh (image1-35.gif)", type: "gif" },
+        { id: "andanhgif2", name: "Ẩn Danh GIF 2", count: "32 ảnh (image1-32.gif)", type: "gif" },
+        { id: "andanhgif3", name: "Ẩn Danh GIF 3", count: "26 ảnh (image1-26.gif)", type: "gif" },
+        { id: "andanhgif4", name: "Ẩn Danh GIF 4", count: "31 ảnh (image1-31.gif)", type: "gif" },
+        { id: "andanhgif5", name: "Ẩn Danh GIF 5", count: "26 ảnh (image1-26.gif)", type: "gif" },
+        { id: "andanhgif6", name: "Ẩn Danh GIF 6", count: "18 ảnh (image1-18.gif)", type: "gif" }
+      ],
+      stream: [
+        { id: "videoandanh247", name: "Video & Ảnh 247", count: "26 video", type: "video" },
+        { id: "videoxuattrong", name: "Video Xuất Trong", count: "28 video", type: "video" },
+        { id: "hentai2d", name: "Hentai 2D Dynamic", count: "Nguồn động", type: "stream" },
+        { id: "hentai3d", name: "Hentai 3D Dynamic", count: "Nguồn động", type: "stream" },
+        { id: "hentai3dvanguoi", name: "Hentai 3D & Người", count: "Nguồn động", type: "stream" }
+      ]
+    };
+
+    let currentPlayingCategory = "";
+
+    // DOM Elements
+    const apiKeyInput = document.getElementById("apiKeyInput");
+    const btnSaveKey = document.getElementById("btnSaveKey");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const playerModal = document.getElementById("playerModal");
+    const closeModal = document.getElementById("closeModal");
+    const modalBody = document.getElementById("modalBody");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    const btnNextRandom = document.getElementById("btnNextRandom");
+    const btnDirectLink = document.getElementById("btnDirectLink");
+
+    // Khởi tạo Key từ localStorage hoặc URL param
+    function getStoredKey() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlKey = urlParams.get("key");
+      if (urlKey) {
+        localStorage.setItem("zhee_api_key", urlKey);
+        return urlKey;
+      }
+      return localStorage.getItem("zhee_api_key") || "";
+    }
+
+    function updateAuthUI(key) {
+      if (key) {
+        apiKeyInput.value = key;
+        statusDot.classList.add("active");
+        statusText.textContent = `Đã kết nối với Key: ${key}`;
+        statusText.style.color = "#10b981";
+      } else {
+        apiKeyInput.value = "";
+        statusDot.classList.remove("active");
+        statusText.textContent = "Chưa nhập API Key (Video yêu cầu mật khẩu để xem)";
+        statusText.style.color = "#94a3b8";
+      }
+    }
+
+    // Render danh sách server ra giao diện
+    function renderServerCard(item) {
+      return `
+        <div class="server-card">
+          <div>
+            <div class="server-header">
+              <div class="server-name">${item.name}</div>
+              <span class="server-type ${item.type}">${item.type}</span>
+            </div>
+            <div class="server-count">${item.count}</div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary btn-sm" onclick="playMedia('${item.id}', '${item.name}', '${item.type}')">Xem Random</button>
+            <button class="btn btn-outline btn-sm" onclick="playWithId('${item.id}', '${item.name}', '${item.type}')">Theo ID</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function initGrids() {
+      document.getElementById("gridDoggyMeta").innerHTML = SERVER_DATA.doggyMeta.map(renderServerCard).join("");
+      document.getElementById("gridDoggyId").innerHTML = SERVER_DATA.doggyId.map(renderServerCard).join("");
+      document.getElementById("gridGif").innerHTML = SERVER_DATA.gif.map(renderServerCard).join("");
+      document.getElementById("gridStream").innerHTML = SERVER_DATA.stream.map(renderServerCard).join("");
+    }
+
+    // Gọi API để lấy video/gif
+    async function fetchMedia(type, requestedId = null) {
+      const key = apiKeyInput.value.trim() || getStoredKey();
+      if (!key) {
+        alert("Vui lòng nhập API Key / Mật khẩu ở khung trên trước khi xem!");
+        apiKeyInput.focus();
+        return null;
+      }
+
+      let url = `/video?type=${encodeURIComponent(type)}&key=${encodeURIComponent(key)}`;
+      if (requestedId) url += `&id=${encodeURIComponent(requestedId)}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.thong_bao || `Mã lỗi: ${res.status}`);
+        }
+        return data;
+      } catch (err) {
+        alert(`Lỗi: ${err.message}`);
+        return null;
+      }
+    }
+
+    async function playMedia(type, title, mediaType, reqId = null) {
+      currentPlayingCategory = type;
+      const data = await fetchMedia(type, reqId);
+      if (!data) return;
+
+      const mediaUrl = data.link_video || data.link_media || data.url || "";
+      const isGif = mediaType === "gif" || (mediaUrl && mediaUrl.endsWith(".gif"));
+
+      modalTitle.textContent = data.ten_file || data.ten_video || `${title}`;
+      modalDesc.textContent = `ID: #${data.id || 'Random'} | Tổng: ${data.tong_so || 'N/A'}`;
+      btnDirectLink.href = `/video?type=${type}&raw=true&key=${encodeURIComponent(apiKeyInput.value.trim())}${reqId ? `&id=${reqId}` : ''}`;
+
+      if (isGif) {
+        modalBody.innerHTML = `<img src="${mediaUrl}" class="media-player" alt="GIF">`;
+      } else {
+        modalBody.innerHTML = `
+          <video controls autoplay class="media-player" playsinline>
+            <source src="${mediaUrl}" type="video/mp4">
+            Trình duyệt không hỗ trợ thẻ video.
+          </video>
+        `;
+      }
+
+      playerModal.classList.add("show");
+    }
+
+    function playWithId(type, title, mediaType) {
+      const id = prompt(`Nhập số ID (Thứ tự) muốn xem từ server ${title}:`, "1");
+      if (id) {
+        playMedia(type, title, mediaType, id.trim());
+      }
+    }
+
+    // Event Listeners
+    btnSaveKey.addEventListener("click", () => {
+      const key = apiKeyInput.value.trim();
+      if (key) {
+        localStorage.setItem("zhee_api_key", key);
+        updateAuthUI(key);
+        alert("Đã lưu API Key thành công!");
+      } else {
+        localStorage.removeItem("zhee_api_key");
+        updateAuthUI("");
+      }
+    });
+
+    closeModal.addEventListener("click", () => {
+      playerModal.classList.remove("show");
+      modalBody.innerHTML = "";
+    });
+
+    btnNextRandom.addEventListener("click", () => {
+      if (currentPlayingCategory) {
+        playMedia(currentPlayingCategory, "Đang tải...", "");
+      }
+    });
+
+    // Lọc Tabs
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const filter = btn.dataset.filter;
+
+        document.querySelectorAll(".category-section").forEach(sec => {
+          if (filter === "all" || sec.dataset.cat === filter) {
+            sec.style.display = "block";
+          } else {
+            sec.style.display = "none";
+          }
+        });
+      });
+    });
+
+    // Khởi chạy khi load trang
+    window.addEventListener("DOMContentLoaded", () => {
+      const key = getStoredKey();
+      updateAuthUI(key);
+      initGrids();
+    });
+  </script>
+</body>
+</html>
