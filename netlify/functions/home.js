@@ -26,18 +26,18 @@ exports.handler = async (event, context) => {
         `${baseUrl}/tiktok?=https://vt.tiktok.com/ZSjabcXYZ/`
       ]
     },
-    youtube: {
-      ten_api: "YouTube Channel & Video Info",
-      duong_dan: "/youtube",
+    discord: {
+      ten_api: "Discord User & Server Lookup",
+      duong_dan: "/discord",
       phuong_thuc: "GET",
-      mo_ta: "Lấy thông tin kênh kèm 10 video mới nhất hoặc bóc tách dữ liệu video YouTube",
+      mo_ta: "Tra cứu thông tin tài khoản Discord qua User ID hoặc bóc tách dữ liệu máy chủ qua link mời",
       cu_phap: [
-        `${baseUrl}/youtube?={handle_hoac_ten_kenh}`,
-        `${baseUrl}/youtube?={link_video_youtube}`
+        `${baseUrl}/discord?={user_id}`,
+        `${baseUrl}/discord?={invite_code_hoac_link}`
       ],
       vi_du: [
-        `${baseUrl}/youtube?=@SonTungMTP`,
-        `${baseUrl}/youtube?=https://www.youtube.com/watch?v=dQw4w9WgXcQ`
+        `${baseUrl}/discord?=156114103282368512`,
+        `${baseUrl}/discord?=https://discord.gg/discord-developers`
       ]
     }
   };
