@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
   res.status(200).json({
     chuyen_muc: "Mạng Xã Hội (Social Media Tools)",
     tac_gia: "Hồ Đức Minh (Zhee Dev)",
-    tong_so_tool: 5,
+    tong_so_tool: 6,
     danh_sach_tool: {
       github: {
         ten_api: "GitHub Info & Repos",
@@ -68,12 +68,25 @@ module.exports = async (req, res) => {
         mo_ta: "Tra cứu thông tin tài khoản cá nhân, bot, hội nhóm hoặc kênh Telegram",
         cu_phap: [
           `${baseUrl}/api/mxh/telegram?={username}`,
-          `${baseUrl}/api/mxh/telegram?={link_t_me}`
+          `${baseUrl}/api/mxh/telegram?={bot_token}`
         ],
         vi_du: [
           `${baseUrl}/api/mxh/telegram?=durov`,
-          `${baseUrl}/api/mxh/telegram?=BotFather`,
-          `${baseUrl}/api/mxh/telegram?=telegram`
+          `${baseUrl}/api/mxh/telegram?=BotFather`
+        ]
+      },
+      twitter: {
+        ten_api: "Twitter (X) User & Video Downloader",
+        duong_dan: "/api/mxh/twitter",
+        phuong_thuc: "GET",
+        mo_ta: "Tra cứu thông tin profile hoặc tải ảnh/video MP4 trực tiếp từ Tweet",
+        cu_phap: [
+          `${baseUrl}/api/mxh/twitter?={username}`,
+          `${baseUrl}/api/mxh/twitter?={link_tweet}`
+        ],
+        vi_du: [
+          `${baseUrl}/api/mxh/twitter?=elonmusk`,
+          `${baseUrl}/api/mxh/twitter?=https://x.com/NASA/status/1800000000000000000`
         ]
       }
     }

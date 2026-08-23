@@ -14,6 +14,10 @@
       "destination": "/api/mxh"
     },
     {
+      "source": "/x",
+      "destination": "/api/twitter"
+    },
+    {
       "source": "/api/mxh/:name",
       "destination": "/api/:name"
     },
