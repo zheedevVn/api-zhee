@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
   res.status(200).json({
     chuyen_muc: "Mạng Xã Hội (Social Media Tools)",
     tac_gia: "Hồ Đức Minh (Zhee Dev)",
-    tong_so_tool: 4,
+    tong_so_tool: 5,
     danh_sach_tool: {
       github: {
         ten_api: "GitHub Info & Repos",
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
         ten_api: "Discord User & Server Lookup",
         duong_dan: "/api/mxh/discord",
         phuong_thuc: "GET",
-        mo_ta: "Tra cứu thông tin User ID hoặc kiểm tra server qua link mời",
+        mo_ta: "Tra cứu thông tin User ID hoặc kiểm tra server qua mã/link mời",
         cu_phap: [
           `${baseUrl}/api/mxh/discord?={user_id}`,
           `${baseUrl}/api/mxh/discord?={invite_code_hoac_link}`
@@ -59,6 +59,21 @@ module.exports = async (req, res) => {
         vi_du: [
           `${baseUrl}/api/mxh/discord?=156114103282368512`,
           `${baseUrl}/api/mxh/discord?=https://discord.gg/discord-developers`
+        ]
+      },
+      telegram: {
+        ten_api: "Telegram Lookup (User, Bot, Group, Channel)",
+        duong_dan: "/api/mxh/telegram",
+        phuong_thuc: "GET",
+        mo_ta: "Tra cứu thông tin tài khoản cá nhân, bot, hội nhóm hoặc kênh Telegram",
+        cu_phap: [
+          `${baseUrl}/api/mxh/telegram?={username}`,
+          `${baseUrl}/api/mxh/telegram?={link_t_me}`
+        ],
+        vi_du: [
+          `${baseUrl}/api/mxh/telegram?=durov`,
+          `${baseUrl}/api/mxh/telegram?=BotFather`,
+          `${baseUrl}/api/mxh/telegram?=telegram`
         ]
       }
     }

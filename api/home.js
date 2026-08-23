@@ -15,14 +15,14 @@ module.exports = async (req, res) => {
     },
     he_thong: {
       ten_dich_vu: "Zhee API Service Engine",
-      phien_ban: "2.0.0",
+      phien_ban: "2.1.0",
       nen_tang: "Vercel Serverless Functions",
       mo_ta: "Hệ thống REST API phân chia theo từng nhóm chuyên mục."
     },
     danh_sach_chuyen_muc: {
       mang_xa_hoi: {
         ten: "API Mạng Xã Hội",
-        mo_ta: "Tổng hợp các tool bóc tách dữ liệu GitHub, TikTok, YouTube, Discord...",
+        mo_ta: "Tổng hợp các tool bóc tách dữ liệu GitHub, TikTok, YouTube, Discord, Telegram...",
         link_huong_dan: `${baseUrl}/mxh`
       }
     }
