@@ -20,10 +20,19 @@ const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 const checkimeiHandler = require("../lib/checkimei");
+const checksdtHandler = require("../lib/checksdt");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/checksdt", "/tools/checksdt", "/checksdt", "/api/checksdt"],
+    ten: "Check Phone Number Intelligence (Twilio Lookups V2)",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tra cứu thông tin nhà mạng, loại thuê bao, quốc gia, SIM Swap và chuyển tiếp cuộc gọi.",
+    vi_du_params: "?=0944921186",
+    handler: checksdtHandler
+  },
   {
     prefix: ["/api/tools/checkimei", "/tools/checkimei", "/checkimei", "/api/checkimei"],
     ten: "Check IMEI & iOS Apple Device Inspector",
@@ -264,7 +273,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.4.0",
+        phien_ban: "3.5.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
