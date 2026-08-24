@@ -1,48 +1,189 @@
-// 1. IMPORT TẤT CẢ HANDLER
-const homeHandler = require("../lib/home");
-const mxhHandler = require("../lib/mxh");
-const bankHandler = require("../lib/bank");
-const mailHandler = require("../lib/mail");
-const webHandler = require("../lib/web");
-const downloadsHandler = require("../lib/downloads");
-const toolsHandler = require("../lib/tools");
-const videoHandler = require("../lib/video");
-const robloxHandler = require("../lib/roblox");
-const githubHandler = require("../lib/github");
-const tiktokHandler = require("../lib/tiktok");
-const youtubeHandler = require("../lib/youtube");
-const discordHandler = require("../lib/discord");
-const telegramHandler = require("../lib/telegram");
-const twitterHandler = require("../lib/twitter");
-const facebookHandler = require("../lib/facebook");
-const zaloHandler = require("../lib/zalo");
+const http = require("http");
 
-// 2. REGISTRY TỰ ĐỘNG - KHI THÊM LỆNH/ENDPOINT MỚI, CHỈ CẦN THÊM VÀO ĐÂY 1 DÒNG DUY NHẤT:
+// 1. IMPORT TOÀN BỘ 18 MODULE TRONG THƯ MỤC LIB
+const homeHandler = require("./lib/home");
+const mxhHandler = require("./lib/mxh");
+const instagramHandler = require("./lib/instagram");
+const bankHandler = require("./lib/bank");
+const mailHandler = require("./lib/mail");
+const webHandler = require("./lib/web");
+const downloadsHandler = require("./lib/downloads");
+const toolsHandler = require("./lib/tools");
+const videoHandler = require("./lib/video");
+const robloxHandler = require("./lib/roblox");
+const githubHandler = require("./lib/github");
+const tiktokHandler = require("./lib/tiktok");
+const youtubeHandler = require("./lib/youtube");
+const discordHandler = require("./lib/discord");
+const telegramHandler = require("./lib/telegram");
+const twitterHandler = require("./lib/twitter");
+const facebookHandler = require("./lib/facebook");
+const zaloHandler = require("./lib/zalo");
+const listHandler = require("./lib/list");
+
+// 2. REGISTRY ĐIỀU HƯỚNG TỔNG
 const ROUTES_REGISTRY = [
+  // --- NHÓM /tools ---
   {
-    prefix: ["/tools", "/api/tools"],
-    ten: "Công Cụ, Key Manager & Trợ Lý AI",
-    mo_ta: "Quản trị Key, tra cứu Free Fire, tách nền ảnh AI, làm nét ảnh HD và AI Chat (Gemini / ChatGPT).",
-    vi_du_params: "/chat?q=xin chào bạn&model=gemini",
+    prefix: ["/tools/chat", "/api/tools/chat"],
+    ten: "AI Chat Assistant (Gemini & ChatGPT)",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Hỏi đáp AI đàm thoại hỗ trợ Google Gemini và OpenAI ChatGPT.",
+    vi_du_params: "?q=xin chào bạn&model=gemini",
     handler: toolsHandler
   },
   {
+    prefix: ["/tools/key", "/api/tools/key"],
+    ten: "ZheeTool Key Manager",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Tạo, check hạn dùng, lượt dùng key qua HMAC-SHA256 & Session IP.",
+    vi_du_params: "?action=check&key=ZheeTool-UQ6KS-A324-ZVUSV-6B3P-6Z91-UXI",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/tools/freefire", "/api/tools/freefire"],
+    ten: "Free Fire Player Info",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Tra cứu thông tin tài khoản Free Fire (Nickname, Region, UID).",
+    vi_du_params: "?uid=86744126",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/tools/removebg", "/api/tools/removebg"],
+    ten: "AI Background Remover",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Xóa nền ảnh tự động bằng engine Remove.bg Pro.",
+    vi_du_params: "?url=https://photo360.com/uploads/worigin/2018/08/16/logo-avatar-game-lien-quan-mobile5b7543dc6943f_485f7a07eaecddff272fdbdbb5ef5c20.jpg",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/tools/enhance", "/api/tools/enhance"],
+    ten: "AI Image Enhancer (HD 2K/4K)",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Làm nét, khử mờ và tăng độ phân giải hình ảnh.",
+    vi_du_params: "?url=https://photo360.com/uploads/worigin/2018/08/16/logo-avatar-game-lien-quan-mobile5b7543dc6943f_485f7a07eaecddff272fdbdbb5ef5c20.jpg",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/tools", "/api/tools"],
+    ten: "Công Cụ & Tiện Ích Đa Năng AI",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Tài liệu danh mục các công cụ tiện ích AI.",
+    vi_du_params: "",
+    handler: toolsHandler
+  },
+
+  // --- NHÓM MẠNG XÃ HỘI & GAMING ---
+  {
+    prefix: ["/api/mxh/instagram", "/mxh/instagram", "/instagram", "/ig"],
+    ten: "Instagram Profile Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu avatar HD, bio, người theo dõi, số bài viết và tích xanh Instagram.",
+    vi_du_params: "?username=cristiano",
+    handler: instagramHandler
+  },
+  {
+    prefix: ["/api/mxh/roblox", "/mxh/roblox", "/roblox"],
+    ten: "Roblox User Lookup",
+    chuyen_muc: "Gaming",
+    mo_ta: "Tra cứu thông tin hồ sơ Roblox (tiểu sử, avatar 3D toàn thân).",
+    vi_du_params: "?=Roblox",
+    handler: robloxHandler
+  },
+  {
+    prefix: ["/api/mxh/github", "/mxh/github", "/github"],
+    ten: "GitHub Info & Repos",
+    chuyen_muc: "Developer",
+    mo_ta: "Lấy thông tin cá nhân và danh sách kho lưu trữ GitHub.",
+    vi_du_params: "?=zheedevVn",
+    handler: githubHandler
+  },
+  {
+    prefix: ["/api/mxh/tiktok", "/mxh/tiktok", "/tiktok"],
+    ten: "TikTok Profile & Downloader",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Lấy thông tin profile hoặc tải video TikTok không watermark.",
+    vi_du_params: "?=tiktok",
+    handler: tiktokHandler
+  },
+  {
+    prefix: ["/api/mxh/youtube", "/mxh/youtube", "/youtube"],
+    ten: "YouTube Channel & Video Stream",
+    chuyen_muc: "Media",
+    mo_ta: "Lấy thông tin kênh hoặc link stream video MP4/MP3.",
+    vi_du_params: "?=@SonTungMTP",
+    handler: youtubeHandler
+  },
+  {
+    prefix: ["/api/mxh/discord", "/mxh/discord", "/discord"],
+    ten: "Discord Lookup & Checker",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu thông tin tài khoản qua Token, User ID hoặc server link mời.",
+    vi_du_params: "?=156114103282368512",
+    handler: discordHandler
+  },
+  {
+    prefix: ["/api/mxh/telegram", "/mxh/telegram", "/telegram"],
+    ten: "Telegram Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu thông tin tài khoản, bot qua Token, nhóm/kênh Telegram.",
+    vi_du_params: "?=durov",
+    handler: telegramHandler
+  },
+  {
+    prefix: ["/api/mxh/twitter", "/mxh/twitter", "/twitter", "/x"],
+    ten: "Twitter (X) Profile & Video Downloader",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu profile hoặc tải video Tweet nền tảng X.",
+    vi_du_params: "?=elonmusk",
+    handler: twitterHandler
+  },
+  {
+    prefix: ["/api/mxh/facebook", "/mxh/facebook", "/facebook"],
+    ten: "Facebook Profile & Downloader",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tìm UID, lấy Avatar HD hoặc tải video MP4.",
+    vi_du_params: "?=https://facebook.com/zuck",
+    handler: facebookHandler
+  },
+  {
+    prefix: ["/api/mxh/zalo", "/mxh/zalo", "/zalo"],
+    ten: "Zalo Account & Session Checker",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check tài khoản qua Cookie/IMEI.",
+    vi_du_params: "?=0912345678",
+    handler: zaloHandler
+  },
+  {
+    prefix: ["/mxh", "/api/mxh"],
+    ten: "Mạng Xã Hội & Game Platforms",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Trang tài liệu tổng hợp danh mục 10 công cụ mạng xã hội & game.",
+    vi_du_params: "",
+    handler: mxhHandler
+  },
+
+  // --- CÁC DỊCH VỤ HỆ THỐNG KHÁC ---
+  {
     prefix: ["/downloads", "/api/downloads"],
-    ten: "Tải Video & Âm Thanh Đa Nền Tảng",
-    mo_ta: "Bóc tách link video không logo, audio chất lượng cao từ nhiều nguồn.",
+    ten: "Media Downloader Đa Nền Tảng",
+    chuyen_muc: "Download",
+    mo_ta: "Bóc tách link video không logo, audio chất lượng cao.",
     vi_du_params: "?url=https://www.tiktok.com/@example/video/123456789",
     handler: downloadsHandler
   },
   {
     prefix: ["/video", "/api/video"],
-    ten: "Video Gated (Nội Dung Riêng Tư Yêu Cầu Key)",
-    mo_ta: "Truy cập tài nguyên media VIP bảo vệ bằng mã Key xác thực.",
+    ten: "Video Gated (Nội Dung Yêu Cầu Key)",
+    chuyen_muc: "Media VIP",
+    mo_ta: "Kho tài nguyên video bảo mật bằng Key ZheeTool.",
     vi_du_params: "?id=vip_video_01&key=zhee_vip",
     handler: videoHandler
   },
   {
     prefix: ["/web", "/api/web"],
     ten: "Quản Trị Mạng & Công Cụ Website",
+    chuyen_muc: "Web Utilities",
     mo_ta: "Kiểm tra DNS, Ping IP, Whois domain và SSL cert.",
     vi_du_params: "?domain=google.com",
     handler: webHandler
@@ -50,6 +191,7 @@ const ROUTES_REGISTRY = [
   {
     prefix: ["/mail", "/api/mail"],
     ten: "Dịch Vụ Temp Mail & Xác Thực Email",
+    chuyen_muc: "Mail Service",
     mo_ta: "Tạo hộp thư tạm thời nhận OTP hoặc xác thực định dạng email.",
     vi_du_params: "?action=create",
     handler: mailHandler
@@ -57,84 +199,15 @@ const ROUTES_REGISTRY = [
   {
     prefix: ["/bank", "/api/bank"],
     ten: "Tra Cứu & Tạo Mã VietQR Ngân Hàng",
-    mo_ta: "Tạo QR thanh toán tự động theo chuẩn Napas 247 và tra cứu BIN ngân hàng.",
+    chuyen_muc: "Fintech",
+    mo_ta: "Tạo QR thanh toán tự động theo chuẩn Napas 247 và tra cứu BIN.",
     vi_du_params: "?bank=MBBank&acc=0987654321&amount=50000&memo=ZheePayment",
     handler: bankHandler
-  },
-  {
-    prefix: ["/mxh", "/api/mxh"],
-    ten: "Tổng Hợp Tiện Ích Mạng Xã Hội",
-    mo_ta: "Trang danh mục các công cụ hỗ trợ mạng xã hội.",
-    vi_du_params: "",
-    handler: mxhHandler
-  },
-  {
-    prefix: ["/roblox"],
-    ten: "Tra Cứu Thông Tin Roblox",
-    mo_ta: "Tra cứu avatar, user ID, bạn bè và thông số game Roblox.",
-    vi_du_params: "?username=Roblox",
-    handler: robloxHandler
-  },
-  {
-    prefix: ["/github"],
-    ten: "Tra Cứu Profile & Repo GitHub",
-    mo_ta: "Lấy thông số repository, commit, avatar và bio lập trình viên.",
-    vi_du_params: "?user=zheedevVn",
-    handler: githubHandler
-  },
-  {
-    prefix: ["/tiktok"],
-    ten: "Tiện Ích & Bóc Tách Dữ Liệu TikTok",
-    mo_ta: "Lấy thông tin profile creator, tải video no watermark.",
-    vi_du_params: "?user=tiktok",
-    handler: tiktokHandler
-  },
-  {
-    prefix: ["/youtube"],
-    ten: "Tra Cứu Kênh & Video YouTube",
-    mo_ta: "Lấy thông tin thumbnail HD, tiêu đề, view count của video.",
-    vi_du_params: "?v=dQw4w9WgXcQ",
-    handler: youtubeHandler
-  },
-  {
-    prefix: ["/discord"],
-    ten: "Tra Cứu User & Server Discord",
-    mo_ta: "Lấy banner, avatar decoration và status user qua Discord ID.",
-    vi_du_params: "?id=123456789012345678",
-    handler: discordHandler
-  },
-  {
-    prefix: ["/telegram"],
-    ten: "Tiện Ích Bot & User Telegram",
-    mo_ta: "Kiểm tra thông tin tài khoản hoặc gửi thông báo qua Bot Telegram.",
-    vi_du_params: "?action=lookup&username=durov",
-    handler: telegramHandler
-  },
-  {
-    prefix: ["/twitter", "/x"],
-    ten: "Tra Cứu Người Dùng & Bài Đăng X (Twitter)",
-    mo_ta: "Lấy avatar, bio, follower count và status từ nền tảng X.",
-    vi_du_params: "?user=elonmusk",
-    handler: twitterHandler
-  },
-  {
-    prefix: ["/facebook"],
-    ten: "Tra Cứu UID & Profile Facebook",
-    mo_ta: "Chuyển đổi URL trang cá nhân sang UID và kiểm tra avatar công khai.",
-    vi_du_params: "?url=https://facebook.com/zuck",
-    handler: facebookHandler
-  },
-  {
-    prefix: ["/zalo"],
-    ten: "Tiện Ích & Tra Cứu Zalo",
-    mo_ta: "Kiểm tra số điện thoại đăng ký Zalo và hỗ trợ tạo link nhắn tin nhanh.",
-    vi_du_params: "?phone=0987654321",
-    handler: zaloHandler
   }
 ];
 
-// 3. MAIN DISPATCHER & TỰ ĐỘNG SINH /list
-module.exports = async (req, res) => {
+// 3. CORE REQUEST DISPATCHER
+async function app(req, res) {
   const protocol = req.headers["x-forwarded-proto"] || "https";
   const host = req.headers.host || "api-zhee.vercel.app";
   const baseUrl = `${protocol}://${host}`;
@@ -142,7 +215,7 @@ module.exports = async (req, res) => {
   const url = req.url || "/";
   const pathname = url.split("?")[0].toLowerCase();
 
-  // --- ENDPOINT /list TỰ ĐỘNG TỔNG HỢP ---
+  // Route /list: Tổng hợp toàn bộ danh mục tự động
   if (pathname === "/list" || pathname === "/api/list") {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -151,10 +224,11 @@ module.exports = async (req, res) => {
     const danhSach = {};
     ROUTES_REGISTRY.forEach((route) => {
       const mainPath = route.prefix[0];
-      const keyName = mainPath.replace(/^\//, "").replace(/-/g, "_");
+      const keyName = mainPath.replace(/^\//, "").replace(/\//g, "_").replace(/-/g, "_");
 
       danhSach[keyName] = {
-        ten_chuyen_muc: route.ten,
+        ten_api: route.ten,
+        chuyen_muc: route.chuyen_muc,
         duong_dan: mainPath,
         mo_ta: route.mo_ta,
         tat_ca_prefix_ho_tro: route.prefix,
@@ -164,23 +238,37 @@ module.exports = async (req, res) => {
 
     return res.status(200).json({
       trang_thai: "thanh_cong",
-      he_thong: "Zhee Dev - Auto Directory Discovery",
+      he_thong: "Zhee Dev - Central API Directory",
       tac_gia: "Hồ Đức Minh (Zhee Dev)",
-      tong_so_endpoint: ROUTES_REGISTRY.length,
+      phien_ban: "3.0.0",
+      tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
       danh_sach: danhSach
     });
   }
 
-  // --- TỰ ĐỘNG ĐỊNH TUYẾN DỰA VÀO REGISTRY ---
+  // Tự động phân luồng theo Registry
   for (const route of ROUTES_REGISTRY) {
     const matched = route.prefix.some(
-      (p) => pathname === p || pathname.startsWith(`${p}/`) || pathname.includes(p)
+      (p) => pathname === p || pathname.startsWith(`${p}/`) || pathname === `${p}`
     );
     if (matched) {
       return route.handler(req, res);
     }
   }
 
-  // Mặc định trả về trang chủ
+  // Trang chủ mặc định
   return homeHandler(req, res);
-};
+}
+
+// 4. KHỞI CHẠY HTTP SERVER NẾU CHẠY LOCAL
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  const server = http.createServer(app);
+  server.listen(PORT, () => {
+    console.log(`Zhee API Server đang chạy tại: http://localhost:${PORT}`);
+    console.log(`Danh mục API: http://localhost:${PORT}/list`);
+  });
+}
+
+// Export cho môi trường Vercel Serverless
+module.exports = app;
