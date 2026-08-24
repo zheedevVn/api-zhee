@@ -1,29 +1,26 @@
-const http = require("http");
+// 1. IMPORT TOÀN BỘ CÁC MODULE CON TRONG THƯ MỤC LIB
+const homeHandler = require("../lib/home");
+const mxhHandler = require("../lib/mxh");
+const instagramHandler = require("../lib/instagram");
+const bankHandler = require("../lib/bank");
+const mailHandler = require("../lib/mail");
+const webHandler = require("../lib/web");
+const downloadsHandler = require("../lib/downloads");
+const toolsHandler = require("../lib/tools");
+const videoHandler = require("../lib/video");
+const robloxHandler = require("../lib/roblox");
+const githubHandler = require("../lib/github");
+const tiktokHandler = require("../lib/tiktok");
+const youtubeHandler = require("../lib/youtube");
+const discordHandler = require("../lib/discord");
+const telegramHandler = require("../lib/telegram");
+const twitterHandler = require("../lib/twitter");
+const facebookHandler = require("../lib/facebook");
+const zaloHandler = require("../lib/zalo");
 
-// 1. IMPORT TOÀN BỘ 18 MODULE TRONG THƯ MỤC LIB
-const homeHandler = require("./lib/home");
-const mxhHandler = require("./lib/mxh");
-const instagramHandler = require("./lib/instagram");
-const bankHandler = require("./lib/bank");
-const mailHandler = require("./lib/mail");
-const webHandler = require("./lib/web");
-const downloadsHandler = require("./lib/downloads");
-const toolsHandler = require("./lib/tools");
-const videoHandler = require("./lib/video");
-const robloxHandler = require("./lib/roblox");
-const githubHandler = require("./lib/github");
-const tiktokHandler = require("./lib/tiktok");
-const youtubeHandler = require("./lib/youtube");
-const discordHandler = require("./lib/discord");
-const telegramHandler = require("./lib/telegram");
-const twitterHandler = require("./lib/twitter");
-const facebookHandler = require("./lib/facebook");
-const zaloHandler = require("./lib/zalo");
-const listHandler = require("./lib/list");
-
-// 2. REGISTRY ĐIỀU HƯỚNG TỔNG
+// 2. REGISTRY TỔNG HỢP TOÀN BỘ API
 const ROUTES_REGISTRY = [
-  // --- NHÓM /tools ---
+  // --- NHÓM TOOLS & AI ---
   {
     prefix: ["/tools/chat", "/api/tools/chat"],
     ten: "AI Chat Assistant (Gemini & ChatGPT)",
@@ -158,12 +155,12 @@ const ROUTES_REGISTRY = [
     prefix: ["/mxh", "/api/mxh"],
     ten: "Mạng Xã Hội & Game Platforms",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Trang tài liệu tổng hợp danh mục 10 công cụ mạng xã hội & game.",
+    mo_ta: "Trang tài liệu tổng hợp danh mục các công cụ mạng xã hội & game.",
     vi_du_params: "",
     handler: mxhHandler
   },
 
-  // --- CÁC DỊCH VỤ HỆ THỐNG KHÁC ---
+  // --- CÁC DỊCH VỤ KHÁC ---
   {
     prefix: ["/downloads", "/api/downloads"],
     ten: "Media Downloader Đa Nền Tảng",
@@ -206,69 +203,71 @@ const ROUTES_REGISTRY = [
   }
 ];
 
-// 3. CORE REQUEST DISPATCHER
-async function app(req, res) {
-  const protocol = req.headers["x-forwarded-proto"] || "https";
-  const host = req.headers.host || "api-zhee.vercel.app";
-  const baseUrl = `${protocol}://${host}`;
+module.exports = async (req, res) => {
+  try {
+    const protocol = req.headers["x-forwarded-proto"] || "https";
+    const host = req.headers.host || "api-zhee.vercel.app";
+    const baseUrl = `${protocol}://${host}`;
 
-  const url = req.url || "/";
-  const pathname = url.split("?")[0].toLowerCase();
+    const url = req.url || "/";
+    const pathname = url.split("?")[0].toLowerCase();
 
-  // Route /list: Tổng hợp toàn bộ danh mục tự động
-  if (pathname === "/list" || pathname === "/api/list") {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    // --- ROUTE /list: HIỂN THỊ DANH BẠ TOÀN BỘ API ---
+    if (pathname === "/list" || pathname === "/api/list") {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
 
-    const danhSach = {};
-    ROUTES_REGISTRY.forEach((route) => {
-      const mainPath = route.prefix[0];
-      const keyName = mainPath.replace(/^\//, "").replace(/\//g, "_").replace(/-/g, "_");
+      const danhSach = {};
+      ROUTES_REGISTRY.forEach((route) => {
+        const mainPath = route.prefix[0];
+        const keyName = mainPath.replace(/^\//, "").replace(/\//g, "_").replace(/-/g, "_");
 
-      danhSach[keyName] = {
-        ten_api: route.ten,
-        chuyen_muc: route.chuyen_muc,
-        duong_dan: mainPath,
-        mo_ta: route.mo_ta,
-        tat_ca_prefix_ho_tro: route.prefix,
-        link_vi_du: `${baseUrl}${mainPath}${route.vi_du_params}`
-      };
-    });
+        danhSach[keyName] = {
+          ten_api: route.ten,
+          chuyen_muc: route.chuyen_muc,
+          duong_dan: mainPath,
+          mo_ta: route.mo_ta,
+          tat_ca_prefix_ho_tro: route.prefix,
+          link_vi_du: `${baseUrl}${mainPath}${route.vi_du_params}`
+        };
+      });
+
+      return res.status(200).json({
+        trang_thai: "thanh_cong",
+        he_thong: "Zhee Dev - Central API Directory",
+        tac_gia: "Hồ Đức Minh (Zhee Dev)",
+        phien_ban: "3.0.0",
+        tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
+        danh_sach: danhSach
+      });
+    }
+
+    // Tự động phân luồng theo Registry
+    for (const route of ROUTES_REGISTRY) {
+      const matched = route.prefix.some(
+        (p) => pathname === p || pathname.startsWith(`${p}/`) || pathname === `${p}`
+      );
+      if (matched && typeof route.handler === "function") {
+        return await route.handler(req, res);
+      }
+    }
+
+    // Mặc định gọi homeHandler
+    if (typeof homeHandler === "function") {
+      return await homeHandler(req, res);
+    }
 
     return res.status(200).json({
       trang_thai: "thanh_cong",
-      he_thong: "Zhee Dev - Central API Directory",
-      tac_gia: "Hồ Đức Minh (Zhee Dev)",
-      phien_ban: "3.0.0",
-      tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
-      danh_sach: danhSach
+      thong_bao: "Zhee API Gateway is running!"
+    });
+  } catch (error) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(500).json({
+      trang_thai: "that_bai",
+      ma_loi: 500,
+      thong_bao: "Lỗi xử lý máy chủ: " + error.message
     });
   }
-
-  // Tự động phân luồng theo Registry
-  for (const route of ROUTES_REGISTRY) {
-    const matched = route.prefix.some(
-      (p) => pathname === p || pathname.startsWith(`${p}/`) || pathname === `${p}`
-    );
-    if (matched) {
-      return route.handler(req, res);
-    }
-  }
-
-  // Trang chủ mặc định
-  return homeHandler(req, res);
-}
-
-// 4. KHỞI CHẠY HTTP SERVER NẾU CHẠY LOCAL
-if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
-  const server = http.createServer(app);
-  server.listen(PORT, () => {
-    console.log(`Zhee API Server đang chạy tại: http://localhost:${PORT}`);
-    console.log(`Danh mục API: http://localhost:${PORT}/list`);
-  });
-}
-
-// Export cho môi trường Vercel Serverless
-module.exports = app;
+};
