@@ -33,7 +33,7 @@
       padding-bottom: 80px;
     }
 
-    .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
     .icon { width: 18px; height: 18px; stroke-width: 1.8; stroke: currentColor; fill: none; flex-shrink: 0; }
     .icon-lg { width: 44px; height: 44px; stroke-width: 1.5; }
 
@@ -73,7 +73,7 @@
     input[type="password"]:focus { border-color: var(--accent); }
 
     .grid-container {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 16px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-top: 16px;
     }
     .api-card {
       background: var(--bg-card); border: 1px solid var(--border-color);
@@ -115,7 +115,7 @@
       display: flex; justify-content: space-between; align-items: center;
     }
     .modal-title { font-size: 15px; font-weight: 700; }
-    .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; font-size: 16px; }
+    .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
     .modal-body {
       padding: 18px; text-align: center; background: #000;
       min-height: 320px; display: flex; align-items: center; justify-content: center;
@@ -148,33 +148,30 @@
     <header>
       <div class="badge">SECURE GATEWAY</div>
       <h1>Khu Vực Lưu Trữ Riêng Tư (VIP Portal)</h1>
-      <p class="subtitle">Hệ thống phân phối luồng Media bảo vệ bằng mã khóa</p>
+      <p class="subtitle">Cụm máy chủ phân phối luồng Media bảo vệ bằng mã khóa</p>
     </header>
 
-    <!-- Khung Khóa Nhập Key -->
     <div id="videoLockBox" class="lock-box">
       <div class="lock-icon-wrap">
         <svg class="icon icon-lg" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
       </div>
       <h3>Yêu Cầu Xác Thực Quyền Truy Cập</h3>
-      <p>Vui lòng cung cấp API Key hợp lệ để kết nối với các cụm máy chủ luồng stream.</p>
+      <p>Nhập API Key hợp lệ để kết nối với toàn bộ cụm máy chủ luồng stream.</p>
       <div class="key-form">
         <input type="password" id="inputApiKey" placeholder="Nhập API Key xác thực...">
         <button class="btn btn-primary" id="btnUnlockVideo">Mở Khóa</button>
       </div>
     </div>
 
-    <!-- Khung Danh Sách Cụm Server (Chỉ mở khi có Key) -->
     <div id="videoContentBox" style="display: none;">
       <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(16,185,129,0.1); padding: 10px 16px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.2);">
-        <span style="color: #34d399; font-size: 13px; font-weight: 600;">Phiên xác thực hợp lệ! Đang kết nối Gateway.</span>
+        <span style="color: #34d399; font-size: 13px; font-weight: 600;">Xác thực thành công! Đã kết nối 24 cụm máy chủ Storage.</span>
         <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" id="btnLockVideo">Khóa Lại</button>
       </div>
       <div class="grid-container" id="gridVideoServers"></div>
     </div>
   </div>
 
-  <!-- Modal Player -->
   <div class="modal" id="playerModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -207,14 +204,31 @@
       setTimeout(() => { toast.remove(); }, 3000);
     }
 
-    // Danh sách các node được mã hóa an toàn, không chứa bất kỳ từ khóa nhạy cảm nào
     const CLUSTER_NODES = [
-      { id: "node_01", title: "Storage Relay Alpha", desc: "Dedicated high-bandwidth stream buffer." },
-      { id: "node_02", title: "Storage Relay Beta", desc: "Dynamic visual media acceleration node." },
-      { id: "node_03", title: "Storage Relay Gamma", desc: "Animated stream direct edge balancer." },
-      { id: "node_04", title: "Storage Relay Delta", desc: "High-priority distributed cluster storage." },
-      { id: "node_05", title: "Storage Relay Epsilon", desc: "Primary dynamic buffer relay cluster 01." },
-      { id: "node_06", title: "Storage Relay Zeta", desc: "Primary dynamic buffer relay cluster 02." }
+      { id: "node_v1", title: "Storage Relay V1", desc: "Dedicated MP4 high-speed buffer node (72 items)." },
+      { id: "node_v2", title: "Storage Relay V2", desc: "Dedicated MP4 high-speed buffer node (49 items)." },
+      { id: "node_v3", title: "Storage Relay V3", desc: "Dedicated MP4 high-speed buffer node (107 items)." },
+      { id: "node_v4", title: "Storage Relay V4", desc: "Dedicated MP4 high-speed buffer node (162 items)." },
+      { id: "node_v5", title: "Storage Dynamic V5", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v6", title: "Storage Dynamic V6", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v7", title: "Storage Dynamic V7", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v8", title: "Storage Dynamic V8", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v9", title: "Storage Dynamic V9", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v10", title: "Storage Dynamic V10", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v11", title: "Storage Dynamic V11", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v12", title: "Storage Dynamic V12", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v13", title: "Storage Dynamic V13", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_v14", title: "Storage Dynamic V14", desc: "Metadata & thumbnail enabled cluster node." },
+      { id: "node_media_247", title: "Static Media Relay 247", desc: "Direct video stream cluster (26 items)." },
+      { id: "node_media_xt", title: "Static Media Relay XT", desc: "Direct video stream cluster (28 items)." },
+      { id: "node_gif_01", title: "GIF Stream Buffer 01", desc: "Optimized GIF animation stream cluster." },
+      { id: "node_gif_02", title: "GIF Stream Buffer 02", desc: "Optimized GIF animation stream cluster." },
+      { id: "node_gif_03", title: "GIF Stream Buffer 03", desc: "Optimized GIF animation stream cluster." },
+      { id: "node_gif_04", title: "GIF Stream Buffer 04", desc: "Optimized GIF animation stream cluster." },
+      { id: "node_gif_05", title: "GIF Stream Buffer 05", desc: "Optimized GIF animation stream cluster." },
+      { id: "node_gif_06", title: "GIF Stream Buffer 06", desc: "Optimized GIF animation stream cluster." },
+      { id: "node_stream_2d", title: "Dynamic Stream Relay 2D", desc: "Real-time non-repeating stream balancer." },
+      { id: "node_stream_3d", title: "Dynamic Stream Relay 3D", desc: "Real-time non-repeating stream balancer." }
     ];
 
     async function unlockVideoFolder(key) {
@@ -264,11 +278,11 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.thong_bao || "Lỗi truy xuất media");
 
-        const mediaUrl = data.link_video || data.link_media || "";
+        const mediaUrl = data.link_media || data.link_video || "";
         const isGif = mediaUrl.endsWith(".gif");
 
-        document.getElementById("modalTitle").textContent = title;
-        document.getElementById("modalDesc").textContent = `ID: #${data.id || 'Random'}`;
+        document.getElementById("modalTitle").textContent = data.ten_file || title;
+        document.getElementById("modalDesc").textContent = `ID: #${data.id || 'Random'} / ${data.tong_so || 'N/A'}`;
         document.getElementById("btnDirectLink").href = `/video?node=${nodeId}&raw=true&key=${encodeURIComponent(currentSessionKey)}${reqId ? `&id=${reqId}` : ''}`;
 
         const body = document.getElementById("modalBody");
