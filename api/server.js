@@ -19,10 +19,19 @@ const telegramHandler = require("../lib/telegram");
 const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
+const checkimeiHandler = require("../lib/checkimei");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
-  // --- NHÓM TOOLS & AI ---
+  // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/checkimei", "/tools/checkimei", "/checkimei", "/api/checkimei"],
+    ten: "Check IMEI & iOS Apple Device Inspector",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tra cứu thông tin thiết bị Apple iOS qua IMEI, Serial, Model Number (bảo mật tuyệt đối, không lưu log thiết bị).",
+    vi_du_params: "?=MLXJ3VN/A",
+    handler: checkimeiHandler
+  },
   {
     prefix: ["/tools/chat", "/api/tools/chat"],
     ten: "AI Chat Assistant (Gemini & ChatGPT)",
@@ -255,7 +264,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.3.0",
+        phien_ban: "3.4.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
