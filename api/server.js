@@ -75,17 +75,17 @@ const ROUTES_REGISTRY = [
   // --- NHÓM MẠNG XÃ HỘI, ÂM NHẠC & GAMING ---
   {
     prefix: ["/api/mxh/spotify", "/mxh/spotify", "/spotify"],
-    ten: "Spotify Music Search & Track Lookup",
+    ten: "Spotify Track, Lyrics & Artist Profile Lookup",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Tra cứu bài hát, ca sĩ, link nghe thử MP3 preview, lời bài hát (Lyrics) và ảnh bìa album từ Spotify.",
-    vi_du_params: "?q=Chung Ta Cua Tuong Lai",
+    mo_ta: "Tra cứu bài hát, ca sĩ, profile nghệ sĩ kèm Top 10 track nổi bật, lyrics và link stream từ Spotify.",
+    vi_du_params: "?q=Son Tung M-TP",
     handler: spotifyHandler
   },
   {
     prefix: ["/api/mxh/soundcloud", "/mxh/soundcloud", "/soundcloud"],
-    ten: "SoundCloud Music Search & Track Lookup",
+    ten: "SoundCloud Music & User Profile Lookup",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Tra cứu bài hát, nghệ sĩ, ảnh bìa HD, lượt nghe và luồng stream audio từ SoundCloud.",
+    mo_ta: "Tra cứu bài hát, profile tác giả kèm 10 track mới nhất, ảnh bìa HD và link stream audio từ SoundCloud.",
     vi_du_params: "?q=Cat Doi Noi Sau",
     handler: soundcloudHandler
   },
@@ -178,7 +178,7 @@ const ROUTES_REGISTRY = [
     handler: mxhHandler
   },
 
-  // --- CÁC DỊCH VỤ DOWLOAD, MEDIA & TIỆN ÍCH KHÁC ---
+  // --- CÁC DỊCH VỤ DOWNLOAD, MEDIA & TIỆN ÍCH KHÁC ---
   {
     prefix: ["/downloads", "/api/downloads"],
     ten: "Media Downloader Đa Nền Tảng",
@@ -255,7 +255,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.2.0",
+        phien_ban: "3.3.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
