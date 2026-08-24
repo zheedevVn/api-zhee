@@ -1,7 +1,8 @@
-// 1. IMPORT TOÀN BỘ CÁC MODULE TỪ THƯ MỤC CHA (../lib/)
+// 1. IMPORT TOÀN BỘ MODULE HANDLERS (../lib/)
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const spotifyHandler = require("../lib/spotify");
+const soundcloudHandler = require("../lib/soundcloud");
 const instagramHandler = require("../lib/instagram");
 const bankHandler = require("../lib/bank");
 const mailHandler = require("../lib/mail");
@@ -19,7 +20,7 @@ const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 
-// 2. REGISTRY TỔNG HỢP TOÀN BỘ API
+// 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
   // --- NHÓM TOOLS & AI ---
   {
@@ -71,14 +72,22 @@ const ROUTES_REGISTRY = [
     handler: toolsHandler
   },
 
-  // --- NHÓM MẠNG XÃ HỘI & GAMING ---
+  // --- NHÓM MẠNG XÃ HỘI, ÂM NHẠC & GAMING ---
   {
     prefix: ["/api/mxh/spotify", "/mxh/spotify", "/spotify"],
     ten: "Spotify Music Search & Track Lookup",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Tra cứu bài hát, ca sĩ, link nghe thử MP3 preview và ảnh bìa album từ Spotify.",
+    mo_ta: "Tra cứu bài hát, ca sĩ, link nghe thử MP3 preview, lời bài hát (Lyrics) và ảnh bìa album từ Spotify.",
     vi_du_params: "?q=Chung Ta Cua Tuong Lai",
     handler: spotifyHandler
+  },
+  {
+    prefix: ["/api/mxh/soundcloud", "/mxh/soundcloud", "/soundcloud"],
+    ten: "SoundCloud Music Search & Track Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu bài hát, nghệ sĩ, ảnh bìa HD, lượt nghe và luồng stream audio từ SoundCloud.",
+    vi_du_params: "?q=Cat Doi Noi Sau",
+    handler: soundcloudHandler
   },
   {
     prefix: ["/api/mxh/instagram", "/mxh/instagram", "/instagram", "/ig"],
@@ -101,7 +110,7 @@ const ROUTES_REGISTRY = [
     ten: "GitHub Info & Repos",
     chuyen_muc: "Developer",
     mo_ta: "Lấy thông tin cá nhân và danh sách kho lưu trữ GitHub.",
-    vi_du_params: "?=zheedevVn",
+    vi_du_params: "?=hoducminh123",
     handler: githubHandler
   },
   {
@@ -169,7 +178,7 @@ const ROUTES_REGISTRY = [
     handler: mxhHandler
   },
 
-  // --- CÁC DỊCH VỤ KHÁC ---
+  // --- CÁC DỊCH VỤ DOWLOAD, MEDIA & TIỆN ÍCH KHÁC ---
   {
     prefix: ["/downloads", "/api/downloads"],
     ten: "Media Downloader Đa Nền Tảng",
@@ -183,7 +192,7 @@ const ROUTES_REGISTRY = [
     ten: "Video Gated (Nội Dung Yêu Cầu Key)",
     chuyen_muc: "Media VIP",
     mo_ta: "Kho tài nguyên video bảo mật bằng Key ZheeTool.",
-    vi_du_params: "?id=vip_video_01&key=zhee_vip",
+    vi_du_params: "?node=node_v1&key=zhee_vip",
     handler: videoHandler
   },
   {
@@ -221,7 +230,7 @@ module.exports = async (req, res) => {
     const url = req.url || "/";
     const pathname = url.split("?")[0].toLowerCase();
 
-    // --- ROUTE /list: HIỂN THỊ DANH BẠ TOÀN BỘ API ---
+    // --- ROUTE /list: HIỂN THỊ DIRECTORY TỔNG HỢP ---
     if (pathname === "/list" || pathname === "/api/list") {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -246,7 +255,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.1.0",
+        phien_ban: "3.2.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
