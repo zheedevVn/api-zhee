@@ -1,6 +1,7 @@
-// 1. IMPORT TOÀN BỘ CÁC MODULE CON TỪ THƯ MỤC CHA (../lib/)
+// 1. IMPORT TOÀN BỘ CÁC MODULE TỪ THƯ MỤC CHA (../lib/)
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
+const spotifyHandler = require("../lib/spotify");
 const instagramHandler = require("../lib/instagram");
 const bankHandler = require("../lib/bank");
 const mailHandler = require("../lib/mail");
@@ -71,6 +72,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM MẠNG XÃ HỘI & GAMING ---
+  {
+    prefix: ["/api/mxh/spotify", "/mxh/spotify", "/spotify"],
+    ten: "Spotify Music Search & Track Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu bài hát, ca sĩ, link nghe thử MP3 preview và ảnh bìa album từ Spotify.",
+    vi_du_params: "?q=Chung Ta Cua Tuong Lai",
+    handler: spotifyHandler
+  },
   {
     prefix: ["/api/mxh/instagram", "/mxh/instagram", "/instagram", "/ig"],
     ten: "Instagram Profile Lookup",
@@ -237,7 +246,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.0.0",
+        phien_ban: "3.1.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
