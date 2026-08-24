@@ -1,4 +1,4 @@
-// 1. IMPORT TOÀN BỘ CÁC MODULE CON TRONG THƯ MỤC LIB
+// 1. IMPORT TOÀN BỘ CÁC MODULE CON TỪ THƯ MỤC CHA (../lib/)
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const instagramHandler = require("../lib/instagram");
