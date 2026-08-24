@@ -74,7 +74,7 @@
     }
     .author-info h3 { font-size: 17px; margin-bottom: 4px; }
     .author-info p { font-size: 13px; color: var(--text-muted); }
-    .social-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .social-links { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
     .category-section { margin-bottom: 40px; }
     .section-title {
@@ -121,6 +121,16 @@
     .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
     .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #e2e8f0; }
     .btn-outline:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+    .btn-vip { background: rgba(99, 102, 241, 0.15); border: 1px solid var(--accent); color: #a5b4fc; }
+    .btn-vip:hover { background: var(--accent); color: #fff; }
+
+    /* Modal VIP Portal */
+    .vip-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .vip-modal.show { display: flex; }
+    .vip-box { background: #111726; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 28px; max-width: 440px; width: 100%; text-align: center; }
+    .vip-box input { width: 100%; padding: 12px 16px; background: #080b11; border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); color: #fff; font-size: 14px; outline: none; margin: 16px 0 20px; }
+    .vip-box input:focus { border-color: var(--accent); }
+    .vip-actions { display: flex; gap: 10px; }
 
     .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
     .toast {
@@ -129,6 +139,7 @@
       display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
     .toast.success { border-left: 4px solid var(--accent-emerald); }
+    .toast.error { border-left: 4px solid #ef4444; }
 
     @media (max-width: 650px) {
       .author-card { flex-direction: column; align-items: flex-start; }
@@ -148,7 +159,6 @@
       <p class="subtitle">Nền tảng REST API đa năng & Cổng Tra Cứu Dịch Vụ Trực Tuyến</p>
     </header>
 
-    <!-- Tác Giả & Trạng Thái -->
     <div class="author-card">
       <div class="author-info">
         <h3>Hồ Đức Minh (Zhee Dev)</h3>
@@ -157,16 +167,30 @@
       <div class="social-links">
         <a href="https://facebook.com/hoducminh.depzai" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Facebook</a>
         <a href="https://t.me/zheevipv1" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Telegram</a>
-        <a href="https://github.com/hoducminh123" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">GitHub</a>
-        <a href="/list" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;">Xem Toàn Bộ API (/list)</a>
+        <a href="/list" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Directory /list</a>
+        <button class="btn btn-vip" onclick="openVipPrompt()" style="padding: 6px 14px; font-size: 12px;">
+          <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+          Private Media Hub
+        </button>
       </div>
     </div>
 
-    <!-- Danh Sách Chuyên Mục Công Khai -->
     <section class="category-section">
-      <div class="section-title">Danh Sách Chuyên Mục API</div>
+      <div class="section-title">Danh Sách Chuyên Mục API Công Khai</div>
       <div class="grid-container" id="gridPublicApis"></div>
     </section>
+  </div>
+
+  <div class="vip-modal" id="vipModal">
+    <div class="vip-box">
+      <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">Khu Vực Lưu Trữ Riêng Tư</h3>
+      <p style="font-size: 13px; color: var(--text-muted);">Vui lòng nhập API Key để truy cập cổng Media VIP Gateway.</p>
+      <input type="password" id="vipKeyInput" placeholder="Nhập API Key xác thực...">
+      <div class="vip-actions">
+        <button class="btn btn-outline" style="flex: 1;" onclick="closeVipPrompt()">Hủy</button>
+        <button class="btn btn-primary" style="flex: 1;" id="btnConfirmVip" onclick="confirmVipAccess()">Xác Thực</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast-container" id="toastContainer"></div>
@@ -174,50 +198,84 @@
   <script>
     const origin = window.location.origin;
 
-    function showToast(message) {
-      const container = document.getElementById("toastContainer");
-      const toast = document.createElement("div");
-      toast.className = "toast success";
-      toast.innerHTML = `<svg class="icon" style="color: #34d399;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>${message}</span>`;
-      container.appendChild(toast);
-      setTimeout(() => { toast.remove(); }, 3000);
+    function showToast(msg, type = "success") {
+      const c = document.getElementById("toastContainer");
+      const t = document.createElement("div");
+      t.className = "toast " + type;
+      t.innerHTML = "<span>" + msg + "</span>";
+      c.appendChild(t);
+      setTimeout(() => { t.remove(); }, 3000);
     }
 
-    function copyText(text) {
-      navigator.clipboard.writeText(text);
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt);
       showToast("Đã sao chép endpoint link!");
     }
+
+    function openVipPrompt() {
+      document.getElementById("vipModal").classList.add("show");
+      document.getElementById("vipKeyInput").focus();
+    }
+
+    function closeVipPrompt() {
+      document.getElementById("vipModal").classList.remove("show");
+      document.getElementById("vipKeyInput").value = "";
+    }
+
+    async function confirmVipAccess() {
+      const key = document.getElementById("vipKeyInput").value.trim();
+      if (!key) return showToast("Vui lòng nhập API Key!", "error");
+
+      try {
+        const res = await fetch('/video?key=' + encodeURIComponent(key));
+        const data = await res.json();
+        if (res.ok && data.trang_thai === 'da_xac_thuc') {
+          showToast("Xác thực thành công! Đang chuyển hướng...");
+          setTimeout(() => {
+            window.location.href = '/video.html';
+          }, 800);
+        } else {
+          showToast(data.thong_bao || "API Key không hợp lệ!", "error");
+        }
+      } catch (_) {
+        showToast("Lỗi kiểm tra key máy chủ!", "error");
+      }
+    }
+
+    document.getElementById("vipKeyInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") confirmVipAccess();
+    });
 
     const PUBLIC_CATEGORIES = [
       {
         name: "API Mạng Xã Hội & Game (/mxh)",
         desc: "Tra cứu & phân tích 10 nền tảng: Instagram, Roblox, GitHub, TikTok, YouTube, Discord, Telegram, Twitter, Facebook, Zalo.",
-        url: `${origin}/mxh`
+        url: origin + "/mxh"
       },
       {
         name: "Công Cụ AI & Tiện Ích (/tools)",
         desc: "AI Chat Assistant (Gemini & ChatGPT), Tra cứu Free Fire, Tách nền ảnh AI, Nâng cấp ảnh HD 4K, Quản lý Key.",
-        url: `${origin}/tools`
+        url: origin + "/tools"
       },
       {
         name: "Bóc Tách & Tải Đa Phương Tiện (/downloads)",
         desc: "Bóc tách trọn bộ ảnh truyện tranh, bài viết và trích xuất luồng phát video trực tiếp MP4.",
-        url: `${origin}/downloads`
+        url: origin + "/downloads"
       },
       {
         name: "Quản Trị Mạng & DNS (/web)",
         desc: "Công cụ kiểm tra DNS, Ping, Whois và phân tích trạng thái máy chủ website.",
-        url: `${origin}/web`
+        url: origin + "/web"
       },
       {
         name: "Dịch Vụ Email Tạm Thời (/mail)",
         desc: "Hệ thống tạo email ảo nhận mã xác minh OTP và kiểm tra định dạng email.",
-        url: `${origin}/mail`
+        url: origin + "/mail"
       },
       {
         name: "Cổng Thanh Toán & Ngân Hàng (/bank)",
         desc: "Tạo mã VietQR tự động, tra cứu danh sách ngân hàng Napas 247.",
-        url: `${origin}/bank`
+        url: origin + "/bank"
       }
     ];
 
