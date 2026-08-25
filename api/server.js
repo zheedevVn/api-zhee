@@ -22,16 +22,25 @@ const zaloHandler = require("../lib/zalo");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const taixiuHandler = require("../lib/taixiu");
+const hitclubHandler = require("../lib/hitclub");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
-  // --- NHÓM TIỆN ÍCH GAME & XÁC SUẤT ---
+  // --- CHUYÊN MỤC TÀI XỈU & HITCLUB ---
+  {
+    prefix: ["/api/taixiu/hitclub", "/taixiu/hitclub", "/hitclub", "/api/hitclub"],
+    ten: "Hitclub Tai Xiu MD5 & SHA-256 Engine",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Chuyên mục soi cầu, phân tích hash và đối soát chuỗi kết quả dành riêng cho cổng game Hitclub.",
+    vi_du_params: "?=6882d5f4f6d1b78c2cd3e226384ca20c2c0aa118c6ca2556098dcb142d1e4f1f",
+    handler: hitclubHandler
+  },
   {
     prefix: ["/api/taixiu", "/taixiu"],
     ten: "Tài Xỉu MD5 Analyzer & Dice Simulator",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Phân tích xác suất Tài Xỉu qua chuỗi MD5 độ tin cậy cao và mô phỏng lắc xúc xắc kèm ảnh xúc xắc chuẩn.",
-    vi_du_params: "?=9e107d9d372bb6826bd81d3542a419d6",
+    mo_ta: "Phân tích xác suất Tài Xỉu qua chuỗi MD5/SHA-256, mô phỏng gieo xúc xắc và thiết lập kết quả tùy chọn.",
+    vi_du_params: "?=roll",
     handler: taixiuHandler
   },
 
@@ -259,7 +268,7 @@ module.exports = async (req, res) => {
     const url = req.url || "/";
     const pathname = url.split("?")[0].toLowerCase();
 
-    // --- ROUTE /list: HIỂN THỊ DIRECTORY TỔNG HỢP ---
+    // --- ROUTE /list: DIRECTORY TỔNG HỢP ---
     if (pathname === "/list" || pathname === "/api/list") {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -284,13 +293,13 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.6.0",
+        phien_ban: "3.7.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
     }
 
-    // Tự động phân luồng theo Registry
+    // Tự động phân luồng theo Registry (khớp tiền tố dài hơn trước)
     for (const route of ROUTES_REGISTRY) {
       const matched = route.prefix.some(
         (p) => pathname === p || pathname.startsWith(`${p}/`) || pathname === `${p}`
@@ -300,7 +309,6 @@ module.exports = async (req, res) => {
       }
     }
 
-    // Mặc định gọi homeHandler
     if (typeof homeHandler === "function") {
       return await homeHandler(req, res);
     }
