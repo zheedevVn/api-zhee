@@ -21,9 +21,20 @@ const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
+const taixiuHandler = require("../lib/taixiu");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
+  // --- NHÓM TIỆN ÍCH GAME & XÁC SUẤT ---
+  {
+    prefix: ["/api/taixiu", "/taixiu"],
+    ten: "Tài Xỉu MD5 Analyzer & Dice Simulator",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Phân tích xác suất Tài Xỉu qua chuỗi MD5 độ tin cậy cao và mô phỏng lắc xúc xắc kèm ảnh xúc xắc chuẩn.",
+    vi_du_params: "?=9e107d9d372bb6826bd81d3542a419d6",
+    handler: taixiuHandler
+  },
+
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
   {
     prefix: ["/api/tools/checksdt", "/tools/checksdt", "/checksdt", "/api/checksdt"],
@@ -273,7 +284,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.5.0",
+        phien_ban: "3.6.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });

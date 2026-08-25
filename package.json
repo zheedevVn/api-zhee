@@ -7,12 +7,19 @@
     "start": "node api/server.js"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
     "@google/generative-ai": "^0.24.1",
+    "axios": "^1.19.0",
     "cheerio": "^1.0.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "free-fire-apis": "^0.0.1",
     "js-beautify": "^1.15.1",
     "nodemailer": "^6.9.13",
-    "twilio": "^6.1.0"
+    "play-dl": "^1.9.7",
+    "twilio": "^6.1.0",
+    "youtubei.js": "^18.0.0",
+    "ytsr": "^3.8.4"
   }
 }
