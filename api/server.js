@@ -24,15 +24,24 @@ const checksdtHandler = require("../lib/checksdt");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
+const sunwinHandler = require("../lib/sunwin");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
-  // --- CHUYÊN MỤC TÀI XỈU: HITCLUB & SUKA88 ---
+  // --- CHUYÊN MỤC TÀI XỈU: HITCLUB, SUNWIN, SUKA88 ---
+  {
+    prefix: ["/api/taixiu/sunwin", "/taixiu/sunwin", "/sunwin", "/api/sunwin"],
+    ten: "Sunwin Tai Xiu & Sicbo MD5 Engine",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Chuyên mục soi cầu và đối soát chuỗi MD5 bàn Tài Xỉu / Sicbo Hoàng Gia cổng game Sunwin.",
+    vi_du_params: "?=d8cf242b85bed14f7816102c765fa711",
+    handler: sunwinHandler
+  },
   {
     prefix: ["/api/taixiu/hitclub", "/taixiu/hitclub", "/hitclub", "/api/hitclub"],
-    ten: "Hitclub Tai Xiu MD5 & SHA-256 Engine",
+    ten: "Hitclub Tai Xiu & Sicbo Engine",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Chuyên mục soi cầu, phân tích hash và đối soát chuỗi kết quả dành riêng cho cổng game Hitclub.",
+    mo_ta: "Chuyên mục soi cầu và đối soát chuỗi SHA-256 / MD5 đa sảnh game Hitclub.",
     vi_du_params: "?=6882d5f4f6d1b78c2cd3e226384ca20c2c0aa118c6ca2556098dcb142d1e4f1f",
     handler: hitclubHandler
   },
@@ -41,14 +50,14 @@ const ROUTES_REGISTRY = [
     ten: "SUKA88 Game Engine & Provably Fair Simulator",
     chuyen_muc: "Gaming & Probability",
     mo_ta: "Cổng game tài xỉu SUKA88: Giả lập tung xúc xắc, chỉ định kết quả theo cầu kèm mã hash chuẩn.",
-    vi_du_params: "?=roll",
+    vi_du_params: "?=roll&key=minhhocgioi",
     handler: suka88Handler
   },
   {
     prefix: ["/api/taixiu", "/taixiu"],
     ten: "Trung Tâm API Tài Xỉu & Xác Suất",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Tài liệu danh mục các công cụ tài xỉu: Hitclub Engine và SUKA88 Game Simulator.",
+    mo_ta: "Tài liệu danh mục các cổng game: Hitclub, Sunwin và SUKA88.",
     vi_du_params: "",
     handler: taixiuHandler
   },
@@ -66,7 +75,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/tools/checkimei", "/tools/checkimei", "/checkimei", "/api/checkimei"],
     ten: "Check IMEI & iOS Apple Device Inspector",
     chuyen_muc: "Tools & Utilities",
-    mo_ta: "Tra cứu thông tin thiết bị Apple iOS qua IMEI, Serial, Model Number (bảo mật tuyệt đối, không lưu log thiết bị).",
+    mo_ta: "Tra cứu thông tin thiết bị Apple iOS qua IMEI, Serial, Model Number.",
     vi_du_params: "?=MLXJ3VN/A",
     handler: checkimeiHandler
   },
@@ -302,7 +311,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.8.0",
+        phien_ban: "5.0.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
