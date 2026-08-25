@@ -26,10 +26,19 @@ const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
 const sunwinHandler = require("../lib/sunwin");
 const club789Handler = require("../lib/789club");
+const b52clubHandler = require("../lib/b52club");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
-  // --- CHUYÊN MỤC TÀI XỈU: 789CLUB, SUNWIN, HITCLUB, SUKA88 ---
+  // --- CHUYÊN MỤC TÀI XỈU: B52CLUB, 789CLUB, SUNWIN, HITCLUB, SUKA88 ---
+  {
+    prefix: ["/api/taixiu/b52club", "/taixiu/b52club", "/b52club", "/api/b52club", "/b52"],
+    ten: "B52 Club Volta & Tai Xiu MD5 Engine",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Chuyên mục soi cầu và đối soát chuỗi MD5 bàn bóng đá Volta & Tài Xỉu cổng game B52 Club.",
+    vi_du_params: "?=50e0087bc111acab077a5b3a82f3a612",
+    handler: b52clubHandler
+  },
   {
     prefix: ["/api/taixiu/789club", "/taixiu/789club", "/789club", "/api/789club"],
     ten: "789Club Tai Xiu & Sicbo MD5 Engine",
@@ -66,7 +75,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/taixiu", "/taixiu"],
     ten: "Trung Tâm API Tài Xỉu & Xác Suất",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Tài liệu danh mục các cổng game: 789Club, Sunwin, Hitclub và SUKA88.",
+    mo_ta: "Tài liệu danh mục các cổng game: B52 Club, 789Club, Sunwin, Hitclub và SUKA88.",
     vi_du_params: "",
     handler: taixiuHandler
   },
@@ -320,7 +329,7 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "5.5.0",
+        phien_ban: "5.6.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
