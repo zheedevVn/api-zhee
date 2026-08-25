@@ -23,10 +23,11 @@ const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
+const suka88Handler = require("../lib/suka88");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
 const ROUTES_REGISTRY = [
-  // --- CHUYÊN MỤC TÀI XỈU & HITCLUB ---
+  // --- CHUYÊN MỤC TÀI XỈU: HITCLUB & SUKA88 ---
   {
     prefix: ["/api/taixiu/hitclub", "/taixiu/hitclub", "/hitclub", "/api/hitclub"],
     ten: "Hitclub Tai Xiu MD5 & SHA-256 Engine",
@@ -36,11 +37,19 @@ const ROUTES_REGISTRY = [
     handler: hitclubHandler
   },
   {
-    prefix: ["/api/taixiu", "/taixiu"],
-    ten: "Tài Xỉu MD5 Analyzer & Dice Simulator",
+    prefix: ["/api/taixiu/suka88", "/taixiu/suka88", "/suka88", "/api/suka88"],
+    ten: "SUKA88 Game Engine & Provably Fair Simulator",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Phân tích xác suất Tài Xỉu qua chuỗi MD5/SHA-256, mô phỏng gieo xúc xắc và thiết lập kết quả tùy chọn.",
+    mo_ta: "Cổng game tài xỉu SUKA88: Giả lập tung xúc xắc, chỉ định kết quả theo cầu kèm mã hash chuẩn.",
     vi_du_params: "?=roll",
+    handler: suka88Handler
+  },
+  {
+    prefix: ["/api/taixiu", "/taixiu"],
+    ten: "Trung Tâm API Tài Xỉu & Xác Suất",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Tài liệu danh mục các công cụ tài xỉu: Hitclub Engine và SUKA88 Game Simulator.",
+    vi_du_params: "",
     handler: taixiuHandler
   },
 
@@ -268,7 +277,7 @@ module.exports = async (req, res) => {
     const url = req.url || "/";
     const pathname = url.split("?")[0].toLowerCase();
 
-    // --- ROUTE /list: DIRECTORY TỔNG HỢP ---
+    // Route /list
     if (pathname === "/list" || pathname === "/api/list") {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -293,13 +302,12 @@ module.exports = async (req, res) => {
         trang_thai: "thanh_cong",
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
-        phien_ban: "3.7.0",
+        phien_ban: "3.8.0",
         tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
         danh_sach: danhSach
       });
     }
 
-    // Tự động phân luồng theo Registry (khớp tiền tố dài hơn trước)
     for (const route of ROUTES_REGISTRY) {
       const matched = route.prefix.some(
         (p) => pathname === p || pathname.startsWith(`${p}/`) || pathname === `${p}`
