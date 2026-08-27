@@ -84,9 +84,9 @@ const ROUTES_REGISTRY = [
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
   {
     prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
-    ten: "Locket Username Lookup",
+    ten: "Locket Username Lookup & Account Tools",
     chuyen_muc: "Tools & Utilities",
-    mo_ta: "Tra cứu username Locket Widget: kiểm tra còn trống hay đã đăng ký, lấy UID, avatar công khai và link mời bạn bè.",
+    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment và gửi/hủy 1 lời mời kết bạn.",
     vi_du_params: "?=minh",
     handler: locketHandler
   },
