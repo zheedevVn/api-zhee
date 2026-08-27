@@ -25,6 +25,7 @@ const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
 const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
+const captchaHandler = require("../lib/captcha");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -122,6 +123,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/captcha", "/tools/captcha", "/captcha", "/api/captcha"],
+    ten: "Giải Captcha Ảnh (OCR)",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Đọc chữ captcha từ ảnh base64 hoặc URL. Không auto-login ngân hàng.",
+    vi_du_params: "",
+    handler: captchaHandler
+  },
   {
     prefix: ["/api/tools/trans", "/tools/trans", "/trans", "/api/trans", "/api/tools/translate", "/tools/translate"],
     ten: "Dịch Thuật Đa Ngôn Ngữ",
