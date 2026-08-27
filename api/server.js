@@ -26,6 +26,8 @@ const locketHandler = require("../lib/locket");
 const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
 const baiHandler = require("../lib/bai");
+const baucuaHandler = require("../lib/baucua");
+const baccaratHandler = require("../lib/baccarat");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
@@ -77,23 +79,39 @@ const ROUTES_REGISTRY = [
     handler: suka88Handler
   },
   {
+    prefix: ["/api/taixiu/bai", "/taixiu/bai", "/bai", "/api/bai", "/api/tools/bai", "/tools/bai", "/api/tools/cards", "/tools/cards", "/cards"],
+    ten: "Bài Tây 52 Lá",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Random 1/2/3 lá, chỉ định 1/2/3 lá, xem thông tin từng lá bài Tây chuẩn 52 lá.",
+    vi_du_params: "?so=3",
+    handler: baiHandler
+  },
+  {
+    prefix: ["/api/taixiu/baucua", "/taixiu/baucua", "/baucua", "/api/baucua", "/taixiu/bct", "/bct"],
+    ten: "Bầu Cua Tôm Cá",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Lắc 3 viên Bầu Cua (Nai, Bầu, Gà, Cá, Cua, Tôm). Random, chỉ định mặt, thông tin từng mặt.",
+    vi_du_params: "?so=3",
+    handler: baucuaHandler
+  },
+  {
+    prefix: ["/api/taixiu/bcr", "/taixiu/bcr", "/bcr", "/api/bcr", "/taixiu/baccarat", "/baccarat", "/api/baccarat"],
+    ten: "Baccarat (Punto Banco)",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Chia bài Baccarat: random ván Player/Banker, chỉ định bài, thông tin luật và điểm lá.",
+    vi_du_params: "?action=random",
+    handler: baccaratHandler
+  },
+  {
     prefix: ["/api/taixiu", "/taixiu"],
     ten: "Trung Tâm API Tài Xỉu & Xác Suất",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Tài liệu danh mục các cổng game: B52 Club, 789Club, Sunwin, Hitclub và SUKA88.",
+    mo_ta: "Danh mục: B52, 789Club, Sunwin, Hitclub, SUKA88, Bài Tây, Bầu Cua, Baccarat.",
     vi_du_params: "",
     handler: taixiuHandler
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
-  {
-    prefix: ["/api/tools/bai", "/tools/bai", "/bai", "/api/bai", "/api/tools/cards", "/tools/cards", "/cards"],
-    ten: "Bài Tây 52 Lá",
-    chuyen_muc: "Tools & Utilities",
-    mo_ta: "Random 1/2/3 lá, chỉ định 1/2/3 lá, xem thông tin từng lá bài Tây chuẩn 52 lá.",
-    vi_du_params: "?so=3",
-    handler: baiHandler
-  },
   {
     prefix: ["/api/tools/trans", "/tools/trans", "/trans", "/api/trans", "/api/tools/translate", "/tools/translate"],
     ten: "Dịch Thuật Đa Ngôn Ngữ",
