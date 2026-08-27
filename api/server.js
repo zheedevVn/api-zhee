@@ -19,6 +19,7 @@ const telegramHandler = require("../lib/telegram");
 const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
+const shopeeHandler = require("../lib/shopee");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
@@ -260,6 +261,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check tài khoản qua Cookie/IMEI.",
     vi_du_params: "?=0912345678",
     handler: zaloHandler
+  },
+  {
+    prefix: ["/api/mxh/shopee", "/mxh/shopee", "/shopee"],
+    ten: "Shopee Shop & Account Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu gian hàng Shopee theo username, shopid hoặc link shop (tên, followers, rating, Mall).",
+    vi_du_params: "?=apple_flagship_store",
+    handler: shopeeHandler
   },
   {
     prefix: ["/mxh", "/api/mxh"],
