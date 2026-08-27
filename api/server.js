@@ -71,42 +71,52 @@ const ROUTES_REGISTRY = [
     handler: hitclubHandler
   },
   {
-    prefix: ["/api/taixiu/suka88", "/taixiu/suka88", "/suka88", "/api/suka88"],
-    ten: "SUKA88 Game Engine & Provably Fair Simulator",
+    prefix: [
+      "/api/taixiu/suka88/bai", "/taixiu/suka88/bai", "/suka88/bai", "/api/suka88/bai",
+      "/api/taixiu/bai", "/taixiu/bai", "/bai", "/api/bai", "/api/tools/bai", "/tools/bai", "/api/tools/cards", "/tools/cards", "/cards"
+    ],
+    ten: "SUKA88 — Bài Tây 52 Lá",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Cổng game tài xỉu SUKA88: Giả lập tung xúc xắc, chỉ định kết quả theo cầu kèm mã hash chuẩn.",
-    vi_du_params: "?=roll&key=minhhocgioi",
-    handler: suka88Handler
-  },
-  {
-    prefix: ["/api/taixiu/bai", "/taixiu/bai", "/bai", "/api/bai", "/api/tools/bai", "/tools/bai", "/api/tools/cards", "/tools/cards", "/cards"],
-    ten: "Bài Tây 52 Lá",
-    chuyen_muc: "Gaming & Probability",
-    mo_ta: "Random 1/2/3 lá, chỉ định 1/2/3 lá, xem thông tin từng lá bài Tây chuẩn 52 lá.",
-    vi_du_params: "?so=3",
+    mo_ta: "Sảnh bài Tây cổng SUKA88: random 1/2/3 lá, chỉ định, thông tin từng lá.",
+    vi_du_params: "?so=3&key=minhhocgioi",
     handler: baiHandler
   },
   {
-    prefix: ["/api/taixiu/baucua", "/taixiu/baucua", "/baucua", "/api/baucua", "/taixiu/bct", "/bct"],
-    ten: "Bầu Cua Tôm Cá",
+    prefix: [
+      "/api/taixiu/suka88/baucua", "/taixiu/suka88/baucua", "/suka88/baucua", "/api/suka88/baucua",
+      "/api/taixiu/baucua", "/taixiu/baucua", "/baucua", "/api/baucua", "/taixiu/bct", "/bct", "/suka88/bct"
+    ],
+    ten: "SUKA88 — Bầu Cua Tôm Cá",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Lắc 3 viên Bầu Cua (Nai, Bầu, Gà, Cá, Cua, Tôm). Random, chỉ định mặt, thông tin từng mặt.",
-    vi_du_params: "?so=3",
+    mo_ta: "Sảnh Bầu Cua cổng SUKA88: lắc 3 viên Nai/Bầu/Gà/Cá/Cua/Tôm.",
+    vi_du_params: "?so=3&key=minhhocgioi",
     handler: baucuaHandler
   },
   {
-    prefix: ["/api/taixiu/bcr", "/taixiu/bcr", "/bcr", "/api/bcr", "/taixiu/baccarat", "/baccarat", "/api/baccarat"],
-    ten: "Baccarat (Punto Banco)",
+    prefix: [
+      "/api/taixiu/suka88/bcr", "/taixiu/suka88/bcr", "/suka88/bcr", "/api/suka88/bcr",
+      "/api/taixiu/suka88/baccarat", "/taixiu/suka88/baccarat", "/suka88/baccarat", "/api/suka88/baccarat",
+      "/api/taixiu/bcr", "/taixiu/bcr", "/bcr", "/api/bcr", "/taixiu/baccarat", "/baccarat", "/api/baccarat"
+    ],
+    ten: "SUKA88 — Baccarat (BCR)",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Chia bài Baccarat: random ván Player/Banker, chỉ định bài, thông tin luật và điểm lá.",
-    vi_du_params: "?action=random",
+    mo_ta: "Sảnh Baccarat cổng SUKA88: chia bài Con/Cái, chỉ định, luật điểm.",
+    vi_du_params: "?action=random&key=minhhocgioi",
     handler: baccaratHandler
+  },
+  {
+    prefix: ["/api/taixiu/suka88", "/taixiu/suka88", "/suka88", "/api/suka88"],
+    ten: "SUKA88 Game Engine & Provably Fair Simulator",
+    chuyen_muc: "Gaming & Probability",
+    mo_ta: "Cổng SUKA88: Tài Xỉu, Bài Tây, Bầu Cua, Baccarat. Tự tạo, cần API key khi chơi.",
+    vi_du_params: "?=roll&key=minhhocgioi",
+    handler: suka88Handler
   },
   {
     prefix: ["/api/taixiu", "/taixiu"],
     ten: "Trung Tâm API Tài Xỉu & Xác Suất",
     chuyen_muc: "Gaming & Probability",
-    mo_ta: "Danh mục: B52, 789Club, Sunwin, Hitclub, SUKA88, Bài Tây, Bầu Cua, Baccarat.",
+    mo_ta: "Danh mục: B52, 789Club, Sunwin, Hitclub và cổng SUKA88 (Tài Xỉu, Bài, Bầu Cua, Baccarat).",
     vi_du_params: "",
     handler: taixiuHandler
   },
