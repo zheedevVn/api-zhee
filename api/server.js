@@ -21,6 +21,7 @@ const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
+const locketHandler = require("../lib/locket");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
@@ -81,6 +82,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
+    ten: "Locket Username Lookup",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tra cứu username Locket Widget: kiểm tra còn trống hay đã đăng ký, lấy UID, avatar công khai và link mời bạn bè.",
+    vi_du_params: "?=minh",
+    handler: locketHandler
+  },
   {
     prefix: ["/api/tools/checksdt", "/tools/checksdt", "/checksdt", "/api/checksdt"],
     ten: "Check Phone Number Intelligence (Twilio Lookups V2)",
