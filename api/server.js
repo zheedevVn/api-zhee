@@ -24,6 +24,7 @@ const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
 const nglHandler = require("../lib/ngl");
+const transHandler = require("../lib/trans");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
@@ -84,6 +85,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/trans", "/tools/trans", "/trans", "/api/trans", "/api/tools/translate", "/tools/translate"],
+    ten: "Dịch Thuật Đa Ngôn Ngữ",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Dịch văn bản mọi ngôn ngữ (tự nhận diện nguồn, mặc định sang tiếng Việt).",
+    vi_du_params: "?=Hello, how are you?",
+    handler: transHandler
+  },
   {
     prefix: ["/api/tools/ngl", "/tools/ngl", "/ngl", "/api/ngl"],
     ten: "NGL Username Lookup & One-shot Anonymous Message",
