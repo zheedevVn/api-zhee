@@ -96,7 +96,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
     ten: "Locket Username Lookup & Account Tools",
     chuyen_muc: "Tools & Utilities",
-    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment và gửi/hủy 1 lời mời kết bạn.",
+    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment, gửi/hủy 1 lời mời, tạo 1 tài khoản / 5 phút.",
     vi_du_params: "?=minh",
     handler: locketHandler
   },
