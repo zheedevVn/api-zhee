@@ -25,6 +25,7 @@ const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
 const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
+const baiHandler = require("../lib/bai");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
@@ -85,6 +86,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/bai", "/tools/bai", "/bai", "/api/bai", "/api/tools/cards", "/tools/cards", "/cards"],
+    ten: "Bài Tây 52 Lá",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Random 1/2/3 lá, chỉ định 1/2/3 lá, xem thông tin từng lá bài Tây chuẩn 52 lá.",
+    vi_du_params: "?so=3",
+    handler: baiHandler
+  },
   {
     prefix: ["/api/tools/trans", "/tools/trans", "/trans", "/api/trans", "/api/tools/translate", "/tools/translate"],
     ten: "Dịch Thuật Đa Ngôn Ngữ",
