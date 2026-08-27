@@ -22,6 +22,7 @@ const zaloHandler = require("../lib/zalo");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
+const nglHandler = require("../lib/ngl");
 const taixiuHandler = require("../lib/taixiu");
 const hitclubHandler = require("../lib/hitclub");
 const suka88Handler = require("../lib/suka88");
@@ -82,6 +83,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/ngl", "/tools/ngl", "/ngl", "/api/ngl"],
+    ten: "NGL Username Lookup & One-shot Anonymous Message",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Check username NGL.link và gửi đúng 1 tin nhắn ẩn danh mỗi lần. Không hỗ trợ spam / multi-thread.",
+    vi_du_params: "?=hoducminh",
+    handler: nglHandler
+  },
   {
     prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
     ten: "Locket Username Lookup & Account Tools",
