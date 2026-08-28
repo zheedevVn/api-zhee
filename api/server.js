@@ -143,12 +143,14 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: [
-      "/api/tools/checkmail", "/tools/checkmail", "/checkmail", "/api/checkmail",
-      "/api/tools/hopthu", "/tools/hopthu", "/hopthu", "/api/hopthu"
+      "/mail/check", "/api/mail/check",
+      "/mail/hopthu", "/api/mail/hopthu",
+      "/mail/inbox", "/api/mail/inbox",
+      "/api/tools/checkmail", "/tools/checkmail", "/checkmail"
     ],
-    ten: "Check hộp thư (IMAP mật khẩu ứng dụng)",
-    chuyen_muc: "Tools & Utilities",
-    mo_ta: "Đọc trang hộp thư đang hiện + tổng thư nhận. Các mục: hộp thư đến, sao, đã gửi, nháp, mua sắm...",
+    ten: "Check hộp thư IMAP (/mail/check)",
+    chuyen_muc: "Mail Service",
+    mo_ta: "Đọc trang hộp thư đang hiện + tổng thư nhận. Các mục: hộp thư đến, sao, đã gửi, nháp...",
     vi_du_params: "?email={gmail}&mk={mat_khau_ung_dung}",
     handler: checkmailHandler
   },
@@ -414,10 +416,10 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/mail", "/api/mail"],
-    ten: "Dịch Vụ Temp Mail & Xác Thực Email",
+    ten: "Dịch Vụ Mail: gửi OTP & check hộp thư",
     chuyen_muc: "Mail Service",
-    mo_ta: "Tạo hộp thư tạm thời nhận OTP hoặc xác thực định dạng email.",
-    vi_du_params: "?action=create",
+    mo_ta: "Gửi OTP/hóa đơn; check hộp thư IMAP tại /mail/check (email + mật khẩu ứng dụng).",
+    vi_du_params: "",
     handler: mailHandler
   },
   {
