@@ -29,7 +29,7 @@ const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
 const captchaHandler = require("../lib/captcha");
 const checkscamHandler = require("../lib/checkscam");
-const cccdHandler = require("../lib/cccd");
+const aikeyHandler = require("../lib/aikey");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -128,12 +128,17 @@ const ROUTES_REGISTRY = [
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
   {
-    prefix: ["/api/tools/cccd", "/tools/cccd", "/cccd", "/api/cccd", "/api/tools/cancuoc", "/tools/cancuoc"],
-    ten: "Check CCCD 12 số",
+    prefix: [
+      "/api/tools/checkkeyai", "/tools/checkkeyai", "/checkkeyai", "/api/checkkeyai",
+      "/api/tools/aikey", "/tools/aikey", "/aikey",
+      "/api/tools/apikey", "/tools/apikey", "/apikey",
+      "/api/tools/checkkey", "/tools/checkkey"
+    ],
+    ten: "Check API Key AI",
     chuyen_muc: "Tools & Utilities",
-    mo_ta: "Giải mã số CCCD: tỉnh khai sinh, giới tính, năm sinh. Không trả họ tên, không tra CSDLQG.",
-    vi_du_params: "?=001201000001",
-    handler: cccdHandler
+    mo_ta: "Check key AI còn hạn, module/model dùng được, quota/token/credit còn lại.",
+    vi_du_params: "?key={api_key}",
+    handler: aikeyHandler
   },
   {
     prefix: ["/api/tools/checkscam", "/tools/checkscam", "/checkscam", "/api/checkscam", "/api/tools/gdv", "/tools/gdv", "/gdv"],
