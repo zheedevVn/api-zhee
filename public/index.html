@@ -58,12 +58,15 @@
       display: flex;
       min-height: 100vh;
     }
-    html { scrollbar-width: thin; scrollbar-color: #c5cad6 transparent; }
-    html[data-theme="dark"] { scrollbar-color: #334155 transparent; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    html { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 35%, transparent) transparent; }
+    * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 35%, transparent) transparent; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #c5cad6; border-radius: 99px; }
-    html[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #334155; }
+    ::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--muted) 35%, transparent);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 55%, transparent); }
 
     .ico, [data-lucide] {
       width: 18px; height: 18px; flex-shrink: 0; display: block;
@@ -112,9 +115,11 @@
     }
     .drop > summary::-webkit-details-marker { display: none; }
     .drop > summary:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
-    .chevron { margin-left: auto; width: 16px !important; height: 16px !important; transition: transform .15s; }
-    .drop[open] .chevron { transform: rotate(180deg); }
+    .chevron { margin-left: auto; width: 16px !important; height: 16px !important; transition: transform .22s ease; }
+    .drop.is-open .chevron { transform: rotate(180deg); }
     svg.lucide { overflow: visible; flex-shrink: 0; display: block; }
+    .drop-panel { overflow: hidden; height: 0; transition: height .22s ease; }
+    .drop.is-open .drop-panel { height: auto; }
     .drop a {
       display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);
       font-size: 13.5px; font-weight: 600; padding: 7px 10px 7px 14px; border-radius: 10px; margin: 1px 0;
@@ -122,7 +127,7 @@
     .drop a:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
     .drop a.active { background: var(--nav-active); color: var(--nav-active-fg); }
 
-    .main { flex: 1; min-width: 0; overflow-y: auto; }
+    .main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; }
     .topbar {
       padding: 16px 28px 8px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
     }
@@ -158,10 +163,11 @@
     .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
     .home-tile {
       background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
-      text-decoration: none; color: inherit; display: flex; gap: 10px; align-items: center;
+      text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 8px; align-items: stretch;
     }
-    .home-tile strong { display: block; margin-bottom: 4px; }
-    .home-tile span { font-size: 12.5px; color: var(--muted); }
+    .home-tile-top { display: flex; align-items: center; gap: 10px; }
+    .home-tile-top strong { display: block; margin: 0; line-height: 1.35; }
+    .home-tile span { font-size: 12.5px; color: var(--muted); line-height: 1.45; padding-left: 30px; }
 
     .toast, .dialog-backdrop { z-index: 40; }
     .toast {
@@ -368,30 +374,56 @@
         }
         map.get(g.label).items.push(t);
       });
-      const open = new Set(JSON.parse(localStorage.getItem("zhee-open") || "[]"));
-      if (!open.size) groups.slice(0, 2).forEach((g) => open.add(g.label));
+      const open = new Set(JSON.parse(localStorage.getItem("zhee-open-v2") || "[]"));
       navEl.innerHTML = `
-        <details class="drop" open>
+        <details class="drop is-open" open>
           <summary>${ico("home")} Chính ${ico("chevron-down", "chevron")}</summary>
-          <a href="#home" data-id="home">${ico("home")} Trang chủ</a>
+          <div class="drop-panel"><div class="drop-panel-inner">
+            <a href="#home" data-id="home">${ico("home")} Trang chủ</a>
+          </div></div>
         </details>` + groups.map((g) => `
-        <details class="drop" data-group="${esc(g.label)}" ${open.has(g.label) || q ? "open" : ""}>
+        <details class="drop${open.has(g.label) || q ? " is-open" : ""}" data-group="${esc(g.label)}" open>
           <summary>${ico(g.icon)} ${esc(g.label)} ${ico("chevron-down", "chevron")}</summary>
+          <div class="drop-panel"><div class="drop-panel-inner">
           ${g.items.map((t) => `<a href="#${t.id}" data-id="${t.id}">${ico(iconFor(t.path, t.chuyen_muc))} ${esc(t.ten)}</a>`).join("")}
+          </div></div>
         </details>`).join("");
     }
 
     function rememberOpen() {
-      const open = [...navEl.querySelectorAll("details.drop[open]")].map((d) => d.dataset.group).filter(Boolean);
-      localStorage.setItem("zhee-open", JSON.stringify(open));
+      const open = [...navEl.querySelectorAll("details.drop.is-open")].map((d) => d.dataset.group).filter(Boolean);
+      localStorage.setItem("zhee-open-v2", JSON.stringify(open));
     }
-    navEl.addEventListener("toggle", rememberOpen, true);
+    navEl.addEventListener("click", (e) => {
+      const sum = e.target.closest("summary");
+      if (!sum || !navEl.contains(sum)) return;
+      const details = sum.parentElement;
+      if (!details.classList.contains("drop")) return;
+      e.preventDefault();
+      const panelEl = details.querySelector(".drop-panel");
+      if (!panelEl) return;
+      const inner = panelEl.querySelector(".drop-panel-inner");
+      const opening = !details.classList.contains("is-open");
+      if (opening) {
+        details.classList.add("is-open");
+        panelEl.style.height = "0px";
+        requestAnimationFrame(() => {
+          panelEl.style.height = (inner ? inner.scrollHeight : panelEl.scrollHeight) + "px";
+        });
+        panelEl.addEventListener("transitionend", () => { panelEl.style.height = "auto"; }, { once: true });
+      } else {
+        panelEl.style.height = (inner ? inner.scrollHeight : panelEl.scrollHeight) + "px";
+        requestAnimationFrame(() => { panelEl.style.height = "0px"; });
+        panelEl.addEventListener("transitionend", () => { details.classList.remove("is-open"); panelEl.style.height = ""; }, { once: true });
+      }
+      rememberOpen();
+    });
 
     function renderHome() {
       const tiles = CATALOG.slice(0, 12).map((t) => `
         <a class="home-tile" href="#${t.id}">
-          ${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}
-          <div><strong>${esc(t.ten)}</strong><span>${esc(t.mo_ta)}</span></div>
+          <div class="home-tile-top">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
+          <span>${esc(t.mo_ta)}</span>
         </a>`).join("");
       panel.innerHTML = `
         <h2>${ico("globe-2", "ico-head")} Public API</h2>
