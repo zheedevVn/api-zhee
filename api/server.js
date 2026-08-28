@@ -208,7 +208,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/tools/trans", "/tools/trans", "/trans", "/api/trans", "/api/tools/translate", "/tools/translate"],
     ten: "Dịch Thuật Đa Ngôn Ngữ",
     chuyen_muc: "Tools & Utilities",
-    mo_ta: "Dịch văn bản mọi ngôn ngữ (tự nhận diện nguồn, mặc định sang tiếng Việt).",
+    mo_ta: "Dịch văn bản mọi ngôn ngữ (tự nhận diện nguồn, mặc định sang tiếng Việt). Có voice: văn bản sang giọng nói MP3.",
     vi_du_params: "?=Hello, how are you?",
     handler: transHandler
   },
