@@ -7,6 +7,7 @@ const instagramHandler = require("../lib/instagram");
 const bankHandler = require("../lib/bank");
 const mailHandler = require("../lib/mail");
 const webHandler = require("../lib/web");
+const domainHandler = require("../lib/domain");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
 const videoHandler = require("../lib/video");
@@ -359,6 +360,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Kho tài nguyên video bảo mật bằng Key ZheeTool.",
     vi_du_params: "?node=node_v1&key=zhee_vip",
     handler: videoHandler
+  },
+  {
+    prefix: ["/web/domain", "/api/web/domain", "/domain", "/api/domain"],
+    ten: "Check Tên Miền Tồn Tại",
+    chuyen_muc: "Web Utilities",
+    mo_ta: "Kiểm tra tên miền đã đăng ký hay còn trống (DNS + RDAP).",
+    vi_du_params: "?=google.com",
+    handler: domainHandler
   },
   {
     prefix: ["/web", "/api/web"],
