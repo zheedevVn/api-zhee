@@ -1,3 +1,27 @@
+const fs = require("fs");
+const path = require("path");
+
+const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "index.html");
+
+function wantsDocsHtml(req, pathname) {
+  if (pathname === "/docs" || pathname === "/index.html" || pathname === "/ui") return true;
+  if (pathname !== "/") return false;
+  const url = req.url || "/";
+  if (/[?&]format=json(?:&|$)/i.test(url)) return false;
+  const accept = String(req.headers.accept || "");
+  if (accept.includes("application/json") && !accept.includes("text/html")) return false;
+  return accept.includes("text/html");
+}
+
+function serveDocsHtml(res) {
+  const html = fs.readFileSync(DOCS_HTML_PATH, "utf8");
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=120");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.statusCode = 200;
+  res.end(html);
+}
+
 // 1. IMPORT TOÀN BỘ MODULE HANDLERS (../lib/)
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
@@ -450,6 +474,13 @@ module.exports = async (req, res) => {
     const url = req.url || "/";
     const pathname = url.split("?")[0].toLowerCase();
 
+    if (wantsDocsHtml(req, pathname)) {
+      try {
+        serveDocsHtml(res);
+        return;
+      } catch (_) {}
+    }
+
     // Route /list
     if (pathname === "/list" || pathname === "/api/list") {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -457,7 +488,7 @@ module.exports = async (req, res) => {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
 
       const danhSach = {};
-      ROUTES_REGISTRY.forEach((route) => {
+      ROUTES_REGISTRY.filter((route) => !route.prefix.some((p) => p === "/video" || p === "/api/video")).forEach((route) => {
         const mainPath = route.prefix[0];
         const keyName = mainPath.replace(/^\//, "").replace(/\//g, "_").replace(/-/g, "_");
 
@@ -476,7 +507,7 @@ module.exports = async (req, res) => {
         he_thong: "Zhee Dev - Central API Directory",
         tac_gia: "Hồ Đức Minh (Zhee Dev)",
         phien_ban: "5.6.0",
-        tong_so_api_da_dang_ky: ROUTES_REGISTRY.length,
+        tong_so_api_da_dang_ky: Object.keys(danhSach).length,
         danh_sach: danhSach
       });
     }

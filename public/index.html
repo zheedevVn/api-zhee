@@ -3,303 +3,365 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zhee Dev - Trung Tâm API Gateway & Developer Hub</title>
-  <meta name="description" content="Nền tảng REST API đa năng và cổng dịch vụ của Hồ Đức Minh (Zhee Dev).">
-  <meta name="keywords" content="Zhee API, Zhee Dev, REST API, API Gateway">
+  <title>Zhee API — Tài liệu công khai | Hồ Đức Minh</title>
+  <meta name="description" content="Tài liệu REST API công khai Zhee Dev: mail, tools, mạng xã hội, ngân hàng, web, tải media. Hồ Đức Minh (Zhee Dev).">
+  <meta name="keywords" content="Zhee API, REST API, checkscam, taomail, VietQR, Hồ Đức Minh">
   <meta name="author" content="Hồ Đức Minh (Zhee Dev)">
   <meta name="robots" content="index, follow">
-
+  <link rel="canonical" href="https://api-zhee.vercel.app/">
+  <meta property="og:title" content="Zhee API — Tài liệu công khai">
+  <meta property="og:description" content="Cổng tra cứu REST API đa chuyên mục của Hồ Đức Minh (Zhee Dev).">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="vi_VN">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Zhee API","applicationCategory":"DeveloperApplication","operatingSystem":"Web","author":{"@type":"Person","name":"Hồ Đức Minh"}}
+  </script>
   <style>
     :root {
-      --bg-main: #0a0d14;
-      --bg-card: rgba(17, 24, 39, 0.85);
-      --bg-card-hover: rgba(30, 41, 59, 0.95);
-      --accent: #6366f1;
-      --accent-glow: rgba(99, 102, 241, 0.35);
-      --accent-emerald: #10b981;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --text-main: #f9fafb;
-      --text-muted: #94a3b8;
-      --radius: 14px;
-      --radius-sm: 8px;
+      --bg: #f4f5f8;
+      --sidebar: #ffffff;
+      --card: #ffffff;
+      --line: #eceef3;
+      --text: #111827;
+      --muted: #6b7280;
+      --pink: #e11d48;
+      --gold: #b45309;
+      --radius: 16px;
     }
-
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #080b11; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     body {
-      background: radial-gradient(circle at 50% 0%, #161f38 0%, var(--bg-main) 65%);
-      color: var(--text-main);
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
       min-height: 100vh;
-      padding-bottom: 80px;
     }
+    html { scrollbar-width: thin; scrollbar-color: #c5cad6 transparent; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c5cad6; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9aa3b5; }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .sidebar {
+      width: 268px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .brand {
+      padding: 22px 20px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(135deg, #111827, #b45309);
+      color: #fff; font-weight: 800; display: grid; place-items: center; font-size: 14px;
+    }
+    .brand h1 { font-size: 15px; font-weight: 800; line-height: 1.2; }
+    .brand p { font-size: 11px; color: var(--muted); }
+    .side-search { padding: 12px 16px; }
+    .side-search input {
+      width: 100%; border: 1px solid var(--line); border-radius: 10px;
+      padding: 9px 12px; font: inherit; font-size: 13px; outline: none; background: #fafafa;
+    }
+    .side-search input:focus { border-color: #d1d5db; background: #fff; }
+    .nav {
+      overflow-y: auto; flex: 1; padding: 4px 10px 24px;
+    }
+    .nav-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #9ca3af;
+      padding: 14px 10px 6px; text-transform: uppercase;
+    }
+    .nav a {
+      display: block; text-decoration: none; color: #374151; font-size: 13.5px; font-weight: 600;
+      padding: 8px 12px; border-radius: 10px; margin: 2px 0;
+    }
+    .nav a:hover { background: #f3f4f6; }
+    .nav a.active { background: #111827; color: #fff; }
 
-    .icon {
-      width: 18px;
-      height: 18px;
-      stroke-width: 1.8;
-      stroke: currentColor;
-      fill: none;
-      flex-shrink: 0;
+    .main { flex: 1; min-width: 0; overflow-y: auto; }
+    .topbar {
+      padding: 18px 28px 10px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
     }
+    .crumb { font-size: 13px; color: var(--muted); }
+    .uptime { font-size: 12px; font-weight: 700; color: var(--gold); background: #fff7ed; border: 1px solid #fed7aa; padding: 6px 10px; border-radius: 999px; }
+    article { padding: 8px 28px 48px; max-width: 1080px; }
+    article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+    .lead { color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 22px; }
 
-    header { padding: 40px 0 24px; text-align: center; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
-      background: rgba(99, 102, 241, 0.12); border: 1px solid var(--accent-glow);
-      color: #a5b4fc; border-radius: 999px; font-size: 13px; font-weight: 700;
-      margin-bottom: 14px; letter-spacing: 0.5px;
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 20px 22px; box-shadow: 0 1px 2px rgba(16,24,40,.04);
     }
-    h1 {
-      font-size: 32px; font-weight: 800;
-      background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+    .card h3 { font-size: 16px; margin-bottom: 12px; }
+    .label { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 6px; }
+    .endpoint {
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--pink);
+      word-break: break-all; line-height: 1.55;
     }
-    p.subtitle { color: var(--text-muted); font-size: 15px; }
+    .muted { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .row-btns { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    button, .btn {
+      font: inherit; font-size: 13px; font-weight: 700; border-radius: 10px; padding: 8px 12px; cursor: pointer;
+      border: 1px solid var(--line); background: #fff; color: #111827; text-decoration: none; display: inline-flex; align-items: center;
+    }
+    button:hover, .btn:hover { background: #f9fafb; }
+    .btn-dark { background: #111827; color: #fff; border-color: #111827; }
+    .btn-dark:hover { background: #1f2937; }
 
-    .author-card {
-      background: var(--bg-card); border: 1px solid var(--border-color);
-      border-radius: var(--radius); padding: 20px; margin: 20px 0 30px;
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 20px; flex-wrap: wrap; backdrop-filter: blur(10px);
+    .sample {
+      background: #0f172a; color: #e5e7eb; border-radius: var(--radius); padding: 18px 20px;
+      overflow: auto; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55;
     }
-    .author-info h3 { font-size: 17px; margin-bottom: 4px; }
-    .author-info p { font-size: 13px; color: var(--text-muted); }
-    .social-links { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .sample-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; }
 
-    .category-section { margin-bottom: 40px; }
-    .section-title {
-      font-size: 19px; font-weight: 700; margin-bottom: 16px;
-      display: flex; align-items: center; gap: 10px;
+    .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .home-tile {
+      background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; text-decoration: none; color: inherit; display: block;
     }
-    .section-title::before {
-      content: ''; width: 4px; height: 18px; background: var(--accent); border-radius: 2px;
-    }
+    .home-tile:hover { border-color: #d1d5db; }
+    .home-tile strong { display: block; margin-bottom: 4px; }
+    .home-tile span { font-size: 12.5px; color: var(--muted); }
 
-    .grid-container {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px;
-    }
-    .api-card {
-      background: var(--bg-card); border: 1px solid var(--border-color);
-      border-radius: var(--radius); padding: 20px; display: flex;
-      flex-direction: column; justify-content: space-between; transition: all 0.2s ease;
-    }
-    .api-card:hover {
-      background: var(--bg-card-hover); border-color: rgba(99, 102, 241, 0.35); transform: translateY(-2px);
-    }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .card-title { font-size: 16px; font-weight: 700; color: #fff; }
-    .tag {
-      font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700;
-      text-transform: uppercase; background: rgba(16, 185, 129, 0.15); color: #34d399;
-    }
-    .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
-
-    .endpoint-block {
-      background: #080b11; border: 1px solid rgba(255,255,255,0.06);
-      border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 16px;
-    }
-    .endpoint-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-    .endpoint-code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #93c5fd; word-break: break-all; }
-
-    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .btn {
-      padding: 9px 14px; border-radius: var(--radius-sm); border: none; font-weight: 600;
-      font-size: 13px; cursor: pointer; transition: all 0.2s; display: inline-flex;
-      align-items: center; justify-content: center; gap: 6px; text-decoration: none;
-    }
-    .btn-primary { background: linear-gradient(135deg, var(--accent), #4f46e5); color: #fff; }
-    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
-    .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #e2e8f0; }
-    .btn-outline:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-vip { background: rgba(99, 102, 241, 0.15); border: 1px solid var(--accent); color: #a5b4fc; }
-    .btn-vip:hover { background: var(--accent); color: #fff; }
-
-    /* Modal VIP Portal */
-    .vip-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-    .vip-modal.show { display: flex; }
-    .vip-box { background: #111726; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 28px; max-width: 440px; width: 100%; text-align: center; }
-    .vip-box input { width: 100%; padding: 12px 16px; background: #080b11; border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); color: #fff; font-size: 14px; outline: none; margin: 16px 0 20px; }
-    .vip-box input:focus { border-color: var(--accent); }
-    .vip-actions { display: flex; gap: 10px; }
-
-    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
     .toast {
-      background: #1e293b; border: 1px solid var(--border-color); color: #fff;
-      padding: 12px 18px; border-radius: var(--radius-sm); font-size: 13px;
-      display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: fixed; right: 18px; bottom: 18px; background: #111827; color: #fff;
+      padding: 11px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,.2); opacity: 0; transform: translateY(8px); transition: .2s; z-index: 20;
     }
-    .toast.success { border-left: 4px solid var(--accent-emerald); }
-    .toast.error { border-left: 4px solid #ef4444; }
+    .toast.show { opacity: 1; transform: none; }
 
-    @media (max-width: 650px) {
-      .author-card { flex-direction: column; align-items: flex-start; }
-      .grid-container { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: relative; border-right: 0; border-bottom: 1px solid var(--line); }
+      .nav { max-height: 220px; }
+      .cards { grid-template-columns: 1fr; }
+      article { padding: 8px 16px 40px; }
     }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <header>
-      <div class="badge">
-        <svg class="icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
-        ZHEE API ENGINE v7.2.0
-      </div>
-      <h1>Trung Tâm API Gateway & Developer Hub</h1>
-      <p class="subtitle">Nền tảng REST API đa năng & Cổng Tra Cứu Dịch Vụ Trực Tuyến</p>
-    </header>
-
-    <div class="author-card">
-      <div class="author-info">
-        <h3>Hồ Đức Minh (Zhee Dev)</h3>
-        <p>Full-Stack Developer & API Specialist | Trạng thái: <strong style="color: #10b981;">Online</strong></p>
-      </div>
-      <div class="social-links">
-        <a href="https://facebook.com/hoducminh.depzai" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Facebook</a>
-        <a href="https://t.me/zheevipv1" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Telegram</a>
-        <a href="/list" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Directory /list</a>
-        <button class="btn btn-vip" onclick="openVipPrompt()" style="padding: 6px 14px; font-size: 12px;">
-          <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
-          Private Media Hub
-        </button>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Z</div>
+      <div>
+        <h1>Zhee API</h1>
+        <p>Cổng tra cứu công khai</p>
       </div>
     </div>
-
-    <section class="category-section">
-      <div class="section-title">Danh Sách Chuyên Mục API Công Khai</div>
-      <div class="grid-container" id="gridPublicApis"></div>
-    </section>
-  </div>
-
-  <div class="vip-modal" id="vipModal">
-    <div class="vip-box">
-      <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">Khu Vực Lưu Trữ Riêng Tư</h3>
-      <p style="font-size: 13px; color: var(--text-muted);">Vui lòng nhập API Key để truy cập cổng Media VIP Gateway.</p>
-      <input type="password" id="vipKeyInput" placeholder="Nhập API Key xác thực...">
-      <div class="vip-actions">
-        <button class="btn btn-outline" style="flex: 1;" onclick="closeVipPrompt()">Hủy</button>
-        <button class="btn btn-primary" style="flex: 1;" id="btnConfirmVip" onclick="confirmVipAccess()">Xác Thực</button>
-      </div>
+    <div class="side-search"><input id="q" type="search" placeholder="Tìm tool…" autocomplete="off"></div>
+    <nav class="nav" id="nav" aria-label="Danh mục API"></nav>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb" id="crumb">Public API</div>
+      <div class="uptime" id="uptime">Đang tính thời gian hoạt động…</div>
     </div>
+    <article id="panel"></article>
   </div>
-
-  <div class="toast-container" id="toastContainer"></div>
+  <div class="toast" id="toast" role="status"></div>
 
   <script>
-    const origin = window.location.origin;
-
-    function showToast(msg, type = "success") {
-      const c = document.getElementById("toastContainer");
-      const t = document.createElement("div");
-      t.className = "toast " + type;
-      t.innerHTML = "<span>" + msg + "</span>";
-      c.appendChild(t);
-      setTimeout(() => { t.remove(); }, 3000);
-    }
-
-    function copyText(txt) {
-      navigator.clipboard.writeText(txt);
-      showToast("Đã sao chép endpoint link!");
-    }
-
-    function openVipPrompt() {
-      document.getElementById("vipModal").classList.add("show");
-      document.getElementById("vipKeyInput").focus();
-    }
-
-    function closeVipPrompt() {
-      document.getElementById("vipModal").classList.remove("show");
-      document.getElementById("vipKeyInput").value = "";
-    }
-
-    async function confirmVipAccess() {
-      const key = document.getElementById("vipKeyInput").value.trim();
-      if (!key) return showToast("Vui lòng nhập API Key!", "error");
-
-      try {
-        const res = await fetch('/video?key=' + encodeURIComponent(key));
-        const data = await res.json();
-        if (res.ok && data.trang_thai === 'da_xac_thuc') {
-          showToast("Xác thực thành công! Đang chuyển hướng...");
-          setTimeout(() => {
-            window.location.href = '/video.html';
-          }, 800);
-        } else {
-          showToast(data.thong_bao || "API Key không hợp lệ!", "error");
-        }
-      } catch (_) {
-        showToast("Lỗi kiểm tra key máy chủ!", "error");
-      }
-    }
-
-    document.getElementById("vipKeyInput").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") confirmVipAccess();
-    });
-
-    const PUBLIC_CATEGORIES = [
-      {
-        name: "API Mạng Xã Hội & Game (/mxh)",
-        desc: "Tra cứu & phân tích 10 nền tảng: Instagram, Roblox, GitHub, TikTok, YouTube, Discord, Telegram, Twitter, Facebook, Zalo.",
-        url: origin + "/mxh"
-      },
-      {
-        name: "Công Cụ AI & Tiện Ích (/tools)",
-        desc: "AI Chat Assistant (Gemini & ChatGPT), Tra cứu Free Fire, Tách nền ảnh AI, Nâng cấp ảnh HD 4K, Quản lý Key.",
-        url: origin + "/tools"
-      },
-      {
-        name: "Bóc Tách & Tải Đa Phương Tiện (/downloads)",
-        desc: "Bóc tách trọn bộ ảnh truyện tranh, bài viết và trích xuất luồng phát video trực tiếp MP4.",
-        url: origin + "/downloads"
-      },
-      {
-        name: "Quản Trị Mạng & DNS (/web)",
-        desc: "Công cụ kiểm tra DNS, Ping, Whois và phân tích trạng thái máy chủ website.",
-        url: origin + "/web"
-      },
-      {
-        name: "Dịch Vụ Email Tạm Thời (/mail)",
-        desc: "Hệ thống tạo email ảo nhận mã xác minh OTP và kiểm tra định dạng email.",
-        url: origin + "/mail"
-      },
-      {
-        name: "Cổng Thanh Toán & Ngân Hàng (/bank)",
-        desc: "Tạo mã VietQR tự động, tra cứu danh sách ngân hàng Napas 247.",
-        url: origin + "/bank"
-      }
+    const ORIGIN = location.origin;
+    const GROUPS = [
+      { id: "chinh", label: "Chính", items: ["home"] },
+      { id: "mail", label: "Mail", items: ["taomail", "checkmail", "mail"] },
+      { id: "tools", label: "Công cụ", items: ["checkscam", "checkkeyai", "captcha", "trans", "ngl", "locket", "checksdt", "checkimei", "chat", "key", "freefire", "removebg", "enhance"] },
+      { id: "mxh", label: "Mạng xã hội", items: ["mxh", "spotify", "soundcloud", "instagram", "roblox", "github", "tiktok", "youtube", "discord", "telegram", "twitter", "facebook", "zalo", "shopee"] },
+      { id: "web", label: "Web", items: ["web", "domain", "endpoint"] },
+      { id: "bank", label: "Ngân hàng", items: ["bank"] },
+      { id: "dl", label: "Tải media", items: ["downloads"] },
+      { id: "tx", label: "Tài xỉu", items: ["taixiu", "suka88", "bai", "baucua", "bcr", "b52", "c789", "sunwin", "hitclub"] }
     ];
+    const TOOLS = {
+      home: { ten: "Public API", mo_ta: "Cổng tra cứu cho đối tác. JSON gốc: thêm ?format=json.", method: "GET", path: "/", vi_du: "/?format=json", mau: { trang_thai: "thanh_cong", thoi_gian_hoat_dong: { moc_khai_truong: "28/8/2026", da_hoat_dong: "0 ngày …" } } },
+      taomail: { ten: "Tạo mail tạm", mo_ta: "Tạo hộp thư 1secmail (ngắn) hoặc Mail.tm (dài, có mật khẩu).", method: "GET", path: "/mail/taomail", vi_du: "/mail/taomail?kieu=dai", mau: { trang_thai: "thanh_cong", kieu: "Mail.tm (dài hạn)", hop_thu: [{ email: "ten@domain.com", mat_khau: "••••" }] } },
+      checkmail: { ten: "Check hộp thư IMAP", mo_ta: "Đọc Gmail bằng mật khẩu ứng dụng. Tab Chính, 50 thư/trang.", method: "GET/POST", path: "/mail/check", vi_du: "/mail/check?email={gmail}&mk={app_password}", mau: { trang_thai: "thanh_cong", tong_thu: 261, thu: [{ tu: "Google", tieu_de: "Cảnh báo bảo mật" }] } },
+      mail: { ten: "Mail — gửi OTP", mo_ta: "Gửi OTP, hóa đơn, cảnh báo bảo mật qua Gmail SMTP.", method: "GET", path: "/mail", vi_du: "/mail/gmail?={email}/otp/{otp}/xacthuc", mau: { trang_thai: "thanh_cong", thong_bao: "Đã gửi email." } },
+      checkscam: { ten: "Checkscam", mo_ta: "Tra STK, SĐT, họ tên đã bị tố cáo/báo cáo lừa đảo.", method: "GET", path: "/tools/checkscam", vi_du: "/tools/checkscam?=1903456789", mau: { status: "danger", message: "Đối tượng nằm trong danh sách đen", data: { name: "NGUYEN VAN A", stk: "0987xxx321", reports: 3 } } },
+      checkkeyai: { ten: "Check API Key AI", mo_ta: "Key còn hạn, model dùng được, quota/credit nếu nhà cung cấp công khai.", method: "GET/POST", path: "/tools/checkkeyai", vi_du: "/tools/checkkeyai?key=sk-proj-...", mau: { hop_le: "CÓ", con_han: "CÓ", nha_cung_cap: "OpenAI" } },
+      captcha: { ten: "Tạo captcha", mo_ta: "Sinh captcha méo chữ: kytu, so, code, toan, hinh.", method: "GET", path: "/tools/captcha", vi_du: "/tools/captcha?kieu=toan", mau: { trang_thai: "thanh_cong", kieu: "toan", token: "…" } },
+      trans: { ten: "Dịch thuật", mo_ta: "Dịch văn bản, tự nhận ngôn ngữ nguồn, mặc định sang tiếng Việt.", method: "GET", path: "/tools/trans", vi_du: "/tools/trans?=Hello, how are you?", mau: { trang_thai: "thanh_cong", ban_dich: "Xin chào, bạn khỏe không?" } },
+      ngl: { ten: "NGL", mo_ta: "Check username NGL và gửi đúng 1 tin ẩn danh mỗi lần.", method: "GET/POST", path: "/tools/ngl", vi_du: "/tools/ngl?=hoducminh", mau: { trang_thai: "thanh_cong", ton_tai: "CÓ" } },
+      locket: { ten: "Locket", mo_ta: "Check username Locket; token để xem bạn bè/moment.", method: "GET/POST", path: "/tools/locket", vi_du: "/tools/locket?=minh", mau: { trang_thai: "thanh_cong", username: "minh" } },
+      checksdt: { ten: "Check SĐT", mo_ta: "Twilio Lookup: nhà mạng, quốc gia, SIM swap.", method: "GET", path: "/tools/checksdt", vi_du: "/tools/checksdt?=0944921186", mau: { trang_thai: "thanh_cong", nha_mang: "…" } },
+      checkimei: { ten: "Check IMEI", mo_ta: "Tra thiết bị Apple qua IMEI / serial / model.", method: "GET", path: "/tools/checkimei", vi_du: "/tools/checkimei?=MLXJ3VN/A", mau: { trang_thai: "thanh_cong", model: "iPhone" } },
+      chat: { ten: "AI Chat", mo_ta: "Hỏi Gemini hoặc ChatGPT qua /tools/chat.", method: "GET", path: "/tools/chat", vi_du: "/tools/chat?q=bạn là ai&model=gemini", mau: { trang_thai: "thanh_cong", tra_loi: "…" } },
+      key: { ten: "ZheeTool Key", mo_ta: "Tạo, check, xóa key HMAC. Không trừ lượt nếu consume=false.", method: "GET", path: "/tools/key", vi_du: "/tools/key?action=check&key=ZheeTool-...", mau: { trang_thai: "thanh_cong", hop_le: "CÓ" } },
+      freefire: { ten: "Free Fire", mo_ta: "Tra nickname, region theo UID.", method: "GET", path: "/tools/freefire", vi_du: "/tools/freefire?uid=86744126", mau: { Nickname: "…", Uid: "86744126" } },
+      removebg: { ten: "Xóa nền ảnh", mo_ta: "Remove.bg — trả PNG trong suốt.", method: "GET", path: "/tools/removebg", vi_du: "/tools/removebg?url={link_anh}", mau: { trang_thai: "thanh_cong" } },
+      enhance: { ten: "Làm nét ảnh", mo_ta: "Tăng độ phân giải HD 2K/4K.", method: "GET", path: "/tools/enhance", vi_du: "/tools/enhance?url={link_anh}", mau: { trang_thai: "thanh_cong" } },
+      mxh: { ten: "Mạng xã hội", mo_ta: "Hub tra cứu Instagram, TikTok, YouTube, GitHub, Zalo…", method: "GET", path: "/mxh", vi_du: "/mxh", mau: { chuyen_muc: "Mạng xã hội" } },
+      spotify: { ten: "Spotify", mo_ta: "Bài hát, lyrics, profile nghệ sĩ.", method: "GET", path: "/mxh/spotify", vi_du: "/mxh/spotify?q=Son Tung M-TP", mau: { trang_thai: "thanh_cong" } },
+      soundcloud: { ten: "SoundCloud", mo_ta: "Bài hát, profile, stream MP3.", method: "GET", path: "/mxh/soundcloud", vi_du: "/mxh/soundcloud?q=Cat Doi Noi Sau", mau: { trang_thai: "thanh_cong" } },
+      instagram: { ten: "Instagram", mo_ta: "Avatar HD, followers, bio, tích xanh.", method: "GET", path: "/mxh/instagram", vi_du: "/mxh/instagram?username=cristiano", mau: { trang_thai: "thanh_cong" } },
+      roblox: { ten: "Roblox", mo_ta: "Hồ sơ user, avatar 3D.", method: "GET", path: "/mxh/roblox", vi_du: "/mxh/roblox?=Roblox", mau: { trang_thai: "thanh_cong" } },
+      github: { ten: "GitHub", mo_ta: "Profile và danh sách repo.", method: "GET", path: "/mxh/github", vi_du: "/mxh/github?=hoducminh123", mau: { trang_thai: "thanh_cong" } },
+      tiktok: { ten: "TikTok", mo_ta: "Profile hoặc tải video không watermark.", method: "GET", path: "/mxh/tiktok", vi_du: "/mxh/tiktok?=tiktok", mau: { trang_thai: "thanh_cong" } },
+      youtube: { ten: "YouTube", mo_ta: "Kênh và stream MP4/MP3.", method: "GET", path: "/mxh/youtube", vi_du: "/mxh/youtube?=@SonTungMTP", mau: { trang_thai: "thanh_cong" } },
+      discord: { ten: "Discord", mo_ta: "Tra user/server qua ID hoặc link mời.", method: "GET", path: "/mxh/discord", vi_du: "/mxh/discord?=156114103282368512", mau: { trang_thai: "thanh_cong" } },
+      telegram: { ten: "Telegram", mo_ta: "User, bot, nhóm, kênh.", method: "GET", path: "/mxh/telegram", vi_du: "/mxh/telegram?=durov", mau: { trang_thai: "thanh_cong" } },
+      twitter: { ten: "Twitter / X", mo_ta: "Profile hoặc tải video tweet.", method: "GET", path: "/mxh/twitter", vi_du: "/mxh/twitter?=elonmusk", mau: { trang_thai: "thanh_cong" } },
+      facebook: { ten: "Facebook", mo_ta: "UID, avatar HD, tải video.", method: "GET", path: "/mxh/facebook", vi_du: "/mxh/facebook?=https://facebook.com/zuck", mau: { trang_thai: "thanh_cong" } },
+      zalo: { ten: "Zalo", mo_ta: "Nhóm, SĐT, cookie/IMEI.", method: "GET", path: "/mxh/zalo", vi_du: "/mxh/zalo?=0912345678", mau: { trang_thai: "thanh_cong" } },
+      shopee: { ten: "Shopee", mo_ta: "Gian hàng: username, shopid, rating, Mall.", method: "GET", path: "/mxh/shopee", vi_du: "/mxh/shopee?=apple_flagship_store", mau: { trang_thai: "thanh_cong" } },
+      web: { ten: "Web / DNS", mo_ta: "DNS, ping, whois, SSL.", method: "GET", path: "/web", vi_du: "/web?domain=google.com", mau: { trang_thai: "thanh_cong" } },
+      domain: { ten: "Check domain", mo_ta: "Tên miền đã đăng ký hay còn trống (DNS + RDAP).", method: "GET", path: "/web/domain", vi_du: "/web/domain?=google.com", mau: { trang_thai: "thanh_cong", ket_qua: "ĐÃ ĐĂNG KÝ" } },
+      endpoint: { ten: "Check endpoint", mo_ta: "Quét HTML/JS tìm URL API tĩnh. Không bắt live request.", method: "GET", path: "/web/endpoint", vi_du: "/web/endpoint?=https://vietqr.io", mau: { trang_thai: "thanh_cong" } },
+      bank: { ten: "VietQR / Bank", mo_ta: "Tạo QR Napas 247, tra BIN ngân hàng.", method: "GET", path: "/bank", vi_du: "/bank?bank=MBBank&acc=0987654321&amount=50000", mau: { trang_thai: "thanh_cong" } },
+      downloads: { ten: "Tải video", mo_ta: "Bóc video không logo, audio từ nhiều nền tảng.", method: "GET", path: "/downloads", vi_du: "/downloads?url={link_video}", mau: { trang_thai: "thanh_cong" } },
+      taixiu: { ten: "Tài xỉu hub", mo_ta: "MD5 các cổng; SUKA88 tự tạo.", method: "GET", path: "/taixiu", vi_du: "/taixiu", mau: { chuyen_muc: "Tài xỉu" } },
+      suka88: { ten: "SUKA88", mo_ta: "Tài xỉu provably fair. Chơi cần key minhhocgioi.", method: "GET", path: "/taixiu/suka88", vi_du: "/taixiu/suka88?=roll&key=minhhocgioi", mau: { trang_thai: "thanh_cong" } },
+      bai: { ten: "Bài Tây 52", mo_ta: "Random 1–3 lá, chỉ định, thông tin.", method: "GET", path: "/taixiu/suka88/bai", vi_du: "/taixiu/suka88/bai?so=3&key=minhhocgioi", mau: { trang_thai: "thanh_cong" } },
+      baucua: { ten: "Bầu Cua", mo_ta: "Lắc 3 viên Nai/Bầu/Gà/Cá/Cua/Tôm.", method: "GET", path: "/taixiu/suka88/baucua", vi_du: "/taixiu/suka88/baucua?so=3&key=minhhocgioi", mau: { trang_thai: "thanh_cong" } },
+      bcr: { ten: "Baccarat", mo_ta: "Punto Banco, luật rút bài.", method: "GET", path: "/taixiu/suka88/bcr", vi_du: "/taixiu/suka88/bcr?action=random&key=minhhocgioi", mau: { trang_thai: "thanh_cong" } },
+      b52: { ten: "B52 Club", mo_ta: "Soi MD5 Volta & Tài Xỉu.", method: "GET", path: "/taixiu/b52club", vi_du: "/taixiu/b52club?=50e0087bc111acab077a5b3a82f3a612", mau: { trang_thai: "thanh_cong" } },
+      c789: { ten: "789Club", mo_ta: "MD5 Tài Xỉu / Sicbo.", method: "GET", path: "/taixiu/789club", vi_du: "/taixiu/789club?=b87c550e3fb2cde381fa06886b772498", mau: { trang_thai: "thanh_cong" } },
+      sunwin: { ten: "Sunwin", mo_ta: "MD5 Tài Xỉu Hoàng Gia.", method: "GET", path: "/taixiu/sunwin", vi_du: "/taixiu/sunwin?=d8cf242b85bed14f7816102c765fa711", mau: { trang_thai: "thanh_cong" } },
+      hitclub: { ten: "Hitclub", mo_ta: "SHA-256 / MD5 đa sảnh.", method: "GET", path: "/taixiu/hitclub", vi_du: "/taixiu/hitclub?=6882d5f4f6d1b78c2cd3e226384ca20c2c0aa118c6ca2556098dcb142d1e4f1f", mau: { trang_thai: "thanh_cong" } }
+    };
 
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("gridPublicApis").innerHTML = PUBLIC_CATEGORIES.map(item => `
-        <div class="api-card">
-          <div>
-            <div class="card-top">
-              <div class="card-title">${item.name}</div>
-              <span class="tag">Active</span>
-            </div>
-            <div class="card-desc">${item.desc}</div>
-            <div class="endpoint-block">
-              <div class="endpoint-label">Endpoint URL</div>
-              <div class="endpoint-code">${item.url}</div>
+    const navEl = document.getElementById("nav");
+    const panel = document.getElementById("panel");
+    const crumb = document.getElementById("crumb");
+    const toast = document.getElementById("toast");
+    let toastTimer;
+
+    function notify(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => notify("Đã sao chép.")).catch(() => notify("Không sao chép được."));
+    }
+
+    function currentId() {
+      const h = (location.hash || "#home").replace(/^#\/?/, "");
+      return TOOLS[h] ? h : "home";
+    }
+
+    function renderNav(filter) {
+      const q = (filter || "").toLowerCase().trim();
+      navEl.innerHTML = GROUPS.map((g) => {
+        const items = g.items.filter((id) => {
+          const t = TOOLS[id];
+          if (!t) return false;
+          if (!q) return true;
+          return (t.ten + t.mo_ta + t.path).toLowerCase().includes(q);
+        });
+        if (!items.length) return "";
+        return `<div class="nav-label">${g.label}</div>` + items.map((id) =>
+          `<a href="#${id}" data-id="${id}">${TOOLS[id].ten}</a>`
+        ).join("");
+      }).join("");
+    }
+
+    function renderHome() {
+      const tiles = Object.keys(TOOLS).filter((id) => id !== "home").slice(0, 12).map((id) => {
+        const t = TOOLS[id];
+        return `<a class="home-tile" href="#${id}"><strong>${t.ten}</strong><span>${t.mo_ta}</span></a>`;
+      }).join("");
+      panel.innerHTML = `
+        <h2>Public API</h2>
+        <p class="lead">Cổng tra cứu cho đối tác. Chọn tool ở cột trái. Endpoint video không công khai.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Tác giả</h3>
+            <p><strong>Hồ Đức Minh (Zhee Dev)</strong></p>
+            <p class="muted">Full-Stack Developer & API Specialist</p>
+            <div class="row-btns">
+              <a class="btn" href="https://t.me/zheedev" target="_blank" rel="noopener">Telegram</a>
+              <a class="btn" href="/list" rel="nofollow">JSON /list</a>
             </div>
           </div>
-          <div class="card-actions">
-            <a href="${item.url}" target="_blank" class="btn btn-primary">Mở API</a>
-            <button class="btn btn-outline" onclick="copyText('${item.url}')">Sao Chép</button>
+          <div class="card">
+            <h3>JSON gốc</h3>
+            <div class="label">Endpoint</div>
+            <div class="endpoint">GET ${ORIGIN}/?format=json</div>
+            <div class="row-btns">
+              <a class="btn btn-dark" href="/?format=json">Mở JSON</a>
+              <button type="button" data-copy="${ORIGIN}/?format=json">Sao chép</button>
+            </div>
           </div>
         </div>
-      `).join("");
+        <div class="home-grid">${tiles}</div>`;
+    }
+
+    function renderTool(id) {
+      const t = TOOLS[id];
+      const full = ORIGIN + t.vi_du;
+      const pathFull = ORIGIN + t.path;
+      panel.innerHTML = `
+        <h2>${t.ten}</h2>
+        <p class="lead">${t.mo_ta}</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Endpoint</h3>
+            <div class="label">${t.method}</div>
+            <div class="endpoint">${pathFull}${t.vi_du.includes("?") ? t.vi_du.slice(t.vi_du.indexOf("?")) : ""}</div>
+            <p class="muted">Ví dụ: ${full}</p>
+            <div class="row-btns">
+              <a class="btn btn-dark" href="${t.vi_du}" target="_blank" rel="nofollow">Gọi thử</a>
+              <button type="button" data-copy="${full}">Sao chép</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Đường dẫn</h3>
+            <div class="label">Path</div>
+            <div class="endpoint">${t.path}</div>
+            <p class="muted">Alias cùng chức năng có thể có dưới /api/…</p>
+          </div>
+        </div>
+        <div class="sample">
+          <div class="sample-head">
+            <span>Phản hồi mẫu</span>
+            <button type="button" data-copy='${JSON.stringify(t.mau)}'>Sao chép JSON</button>
+          </div>
+          <pre>${JSON.stringify(t.mau, null, 2).replace(/</g, "&lt;")}</pre>
+        </div>`;
+    }
+
+    function paint() {
+      const id = currentId();
+      document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === id));
+      crumb.textContent = id === "home" ? "Public API" : TOOLS[id].ten;
+      document.title = (id === "home" ? "Zhee API — Tài liệu công khai" : TOOLS[id].ten + " | Zhee API");
+      if (id === "home") renderHome();
+      else renderTool(id);
+    }
+
+    document.getElementById("q").addEventListener("input", (e) => {
+      renderNav(e.target.value);
+      document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === currentId()));
     });
+    document.body.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-copy]");
+      if (btn) copyText(btn.getAttribute("data-copy"));
+    });
+    window.addEventListener("hashchange", paint);
+    renderNav("");
+    paint();
+
+    fetch("/?format=json").then((r) => r.json()).then((d) => {
+      const t = d.thoi_gian_hoat_dong;
+      if (t && t.da_hoat_dong) document.getElementById("uptime").textContent = "Hoạt động: " + t.da_hoat_dong + " · từ " + t.moc_khai_truong;
+    }).catch(() => {});
   </script>
 </body>
 </html>
