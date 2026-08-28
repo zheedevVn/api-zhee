@@ -661,7 +661,12 @@
       try { return decodeURIComponent(String(s || "").replace(/\+/g, " ")); } catch (_) { return String(s || ""); }
     }
     function exampleFields(t) {
-      const q = String(t.params || "").replace(/^\?/, "");
+      let search = String(t.params || "");
+      if (!search && t.vi_du) {
+        const i = String(t.vi_du).indexOf("?");
+        if (i >= 0) search = String(t.vi_du).slice(i);
+      }
+      const q = search.replace(/^\?/, "");
       const fields = [];
       if (!q) {
         fields.push({ key: "", value: "" });
@@ -676,22 +681,37 @@
       });
       return fields;
     }
-    function fieldRow(key, value) {
-      return `<div class="try-row">
-        <input data-k placeholder="tên (?= để trống)" value="${esc(key)}" spellcheck="false">
-        <input data-v placeholder="giá trị" value="${esc(value)}" spellcheck="false">
-      </div>`;
+    function makeTryRow(key, value) {
+      const row = document.createElement("div");
+      row.className = "try-row";
+      const ik = document.createElement("input");
+      ik.setAttribute("data-try-key", "1");
+      ik.placeholder = "tên (để trống = ?= )";
+      ik.value = key || "";
+      ik.spellcheck = false;
+      const iv = document.createElement("input");
+      iv.setAttribute("data-try-val", "1");
+      iv.placeholder = "giá trị";
+      iv.value = value || "";
+      iv.spellcheck = false;
+      row.append(ik, iv);
+      return row;
+    }
+    function fillTryFields(t) {
+      const box = document.getElementById("tryFields");
+      if (!box) return;
+      box.innerHTML = "";
+      exampleFields(t).forEach((f) => box.appendChild(makeTryRow(f.key, f.value)));
     }
     function collectTryUrl() {
       if (!currentTool) return "";
       const rows = [...panel.querySelectorAll(".try-row")];
       const parts = [];
       rows.forEach((row) => {
-        const k = (row.querySelector("[data-k]") || {}).value;
-        const v = (row.querySelector("[data-v]") || {}).value;
-        const key = String(k || "").trim();
-        const val = String(v || "").trim();
+        const key = String((row.querySelector("[data-try-key]") || {}).value || "").trim();
+        const val = String((row.querySelector("[data-try-val]") || {}).value || "").trim();
         if (!key && !val) return;
+        if (!val) return;
         if (!key) parts.push("=" + encodeURIComponent(val));
         else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
       });
@@ -771,7 +791,6 @@
       if (!t) return renderHome();
       currentTool = t;
       const full = t.vi_du || (ORIGIN + t.path);
-      const fields = exampleFields(t);
       panel.innerHTML = `
         <h2>${ico(iconFor(t.path, t.chuyen_muc), "ico-head")} ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
@@ -795,8 +814,8 @@
         </div>
         <div class="card try-card">
           <h3>Chạy trên giao diện</h3>
-          <p class="muted" style="margin-top:0">Điền tham số rồi bấm Chạy API. Tên trống = tham số <code>?=</code>.</p>
-          <div id="tryFields">${fields.map((f) => fieldRow(f.key, f.value)).join("")}</div>
+          <p class="muted" style="margin-top:0">Điền tham số rồi bấm Chạy API. Ô tên để trống thì gửi dạng <code>?=giá_trị</code>.</p>
+          <div id="tryFields"></div>
           <p class="endpoint" id="tryUrl"></p>
           <div class="row-btns">
             <button class="act act-dark" type="button" id="tryRun">${ico("play")} Chạy API</button>
@@ -812,6 +831,7 @@
           </div>
           <pre id="liveJson">Đang gọi API…</pre>
         </div>`;
+      fillTryFields(t);
       updateTryUrl();
       const auto = autoloadUrl(t);
       loadLive(auto, 10000);
@@ -867,10 +887,7 @@
     panel.addEventListener("click", (e) => {
       if (e.target.closest("#tryAdd")) {
         const box = document.getElementById("tryFields");
-        if (box) {
-          box.insertAdjacentHTML("beforeend", fieldRow("", ""));
-          paintIcons();
-        }
+        if (box) box.appendChild(makeTryRow("", ""));
         return;
       }
       if (e.target.closest("#tryRun")) {
