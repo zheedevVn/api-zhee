@@ -8,6 +8,7 @@ const bankHandler = require("../lib/bank");
 const mailHandler = require("../lib/mail");
 const webHandler = require("../lib/web");
 const domainHandler = require("../lib/domain");
+const endpointHandler = require("../lib/endpoint");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
 const videoHandler = require("../lib/video");
@@ -360,6 +361,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Kho tài nguyên video bảo mật bằng Key ZheeTool.",
     vi_du_params: "?node=node_v1&key=zhee_vip",
     handler: videoHandler
+  },
+  {
+    prefix: ["/web/endpoint", "/api/web/endpoint", "/web/api", "/api/web/api"],
+    ten: "Check Endpoint / API của Website",
+    chuyen_muc: "Web Utilities",
+    mo_ta: "Quét HTML/JS để liệt kê URL API mà trang khai báo. Không bắt live request như DevTools.",
+    vi_du_params: "?=https://vietqr.io",
+    handler: endpointHandler
   },
   {
     prefix: ["/web/domain", "/api/web/domain", "/domain", "/api/domain"],
