@@ -30,6 +30,7 @@ const transHandler = require("../lib/trans");
 const captchaHandler = require("../lib/captcha");
 const checkscamHandler = require("../lib/checkscam");
 const aikeyHandler = require("../lib/aikey");
+const checkmailHandler = require("../lib/checkmail");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -139,6 +140,17 @@ const ROUTES_REGISTRY = [
     mo_ta: "Check key AI còn hạn, module/model dùng được, quota/token/credit còn lại.",
     vi_du_params: "?key={api_key}",
     handler: aikeyHandler
+  },
+  {
+    prefix: [
+      "/api/tools/checkmail", "/tools/checkmail", "/checkmail", "/api/checkmail",
+      "/api/tools/hopthu", "/tools/hopthu", "/hopthu", "/api/hopthu"
+    ],
+    ten: "Check hộp thư (IMAP mật khẩu ứng dụng)",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Đọc trang hộp thư đang hiện + tổng thư nhận. Các mục: hộp thư đến, sao, đã gửi, nháp, mua sắm...",
+    vi_du_params: "?email={gmail}&mk={mat_khau_ung_dung}",
+    handler: checkmailHandler
   },
   {
     prefix: ["/api/tools/checkscam", "/tools/checkscam", "/checkscam", "/api/checkscam", "/api/tools/gdv", "/tools/gdv", "/gdv"],
