@@ -88,6 +88,12 @@
       width: 280px; background: var(--sidebar); border-right: 1px solid var(--line);
       display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow: hidden;
     }
+    .nav-toggle { display: none; }
+    .nav-close { display: none; margin-left: auto; }
+    .backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, .45); z-index: 45;
+    }
+    .backdrop.show { display: block; }
     .brand { padding: 18px 18px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
     .brand-mark {
       width: 38px; height: 38px; border-radius: 12px;
@@ -187,12 +193,36 @@
     }
     .dialog-box p { margin: 0 0 16px; line-height: 1.5; }
 
+    @media (min-width: 901px) {
+      .nav-toggle { display: grid; }
+      body.nav-collapsed .sidebar { display: none; }
+    }
     @media (max-width: 900px) {
-      body { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; position: relative; }
-      .nav { max-height: 280px; }
+      .nav-toggle, .nav-close { display: grid; }
+      .sidebar {
+        position: fixed; left: 0; top: 0; bottom: 0;
+        width: min(86vw, 300px); height: 100dvh; z-index: 50;
+        transform: translateX(-105%);
+        transition: transform .25s ease;
+        border-right: 1px solid var(--line);
+      }
+      .sidebar.open { transform: translateX(0); box-shadow: 12px 0 40px rgba(0,0,0,.25); }
+      .topbar {
+        padding: 12px 14px 10px; position: sticky; top: 0; z-index: 20;
+        background: var(--bg); flex-wrap: nowrap; gap: 8px;
+      }
+      .crumb { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      article { padding: 8px 14px 36px; padding-bottom: max(36px, env(safe-area-inset-bottom)); }
+      article h2 { font-size: 22px; }
       .cards { grid-template-columns: 1fr; }
-      article { padding: 8px 16px 40px; }
+      .home-grid { grid-template-columns: 1fr; }
+      .home-tile span { padding-left: 0; }
+      .sample { padding: 14px; }
+      .sample-head { flex-wrap: wrap; gap: 8px; }
+      .row-btns .act { flex: 1; justify-content: center; }
+      .uptime { display: none; }
+      .toast { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+      .lead { font-size: 14px; }
     }
   </style>
 </head>
@@ -204,6 +234,7 @@
         <h1>Zhee API</h1>
         <p>Cổng tra cứu công khai</p>
       </div>
+      <button class="icon-btn nav-close" id="navClose" type="button" title="Đóng menu" aria-label="Đóng menu"></button>
     </div>
     <div class="side-tools">
       <input id="q" type="search" placeholder="Tìm tool…" autocomplete="off">
@@ -211,8 +242,10 @@
     </div>
     <nav class="nav" id="nav" aria-label="Danh mục API"></nav>
   </aside>
+  <div class="backdrop" id="backdrop"></div>
   <div class="main">
     <div class="topbar">
+      <button class="icon-btn nav-toggle" id="navToggle" type="button" title="Menu" aria-label="Mở menu"></button>
       <div class="crumb" id="crumb"></div>
       <div class="uptime" id="uptime"></div>
     </div>
@@ -335,6 +368,57 @@
     applyTheme(localStorage.getItem("zhee-theme") || "light");
     themeBtn.addEventListener("click", () => {
       applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    });
+
+    const sidebar = document.querySelector(".sidebar");
+    const backdrop = document.getElementById("backdrop");
+    const navToggle = document.getElementById("navToggle");
+    const navClose = document.getElementById("navClose");
+    function isMobile() { return window.matchMedia("(max-width: 900px)").matches; }
+    function syncNavBtn() {
+      const collapsed = isMobile() ? !sidebar.classList.contains("open") : document.body.classList.contains("nav-collapsed");
+      navToggle.innerHTML = ico(collapsed ? "menu" : "panel-left-close");
+      navClose.innerHTML = ico("x");
+      paintIcons();
+    }
+    function openNav() {
+      if (isMobile()) {
+        sidebar.classList.add("open");
+        backdrop.classList.add("show");
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.classList.remove("nav-collapsed");
+        localStorage.setItem("zhee-nav", "open");
+      }
+      syncNavBtn();
+    }
+    function closeNav() {
+      if (isMobile()) {
+        sidebar.classList.remove("open");
+        backdrop.classList.remove("show");
+        document.body.style.overflow = "";
+      } else {
+        document.body.classList.add("nav-collapsed");
+        localStorage.setItem("zhee-nav", "collapsed");
+      }
+      syncNavBtn();
+    }
+    function toggleNav() {
+      if (isMobile()) sidebar.classList.contains("open") ? closeNav() : openNav();
+      else document.body.classList.contains("nav-collapsed") ? openNav() : closeNav();
+    }
+    navToggle.addEventListener("click", toggleNav);
+    navClose.addEventListener("click", closeNav);
+    backdrop.addEventListener("click", closeNav);
+    if (!isMobile() && localStorage.getItem("zhee-nav") === "collapsed") document.body.classList.add("nav-collapsed");
+    syncNavBtn();
+    window.addEventListener("resize", () => {
+      if (!isMobile()) {
+        sidebar.classList.remove("open");
+        backdrop.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+      syncNavBtn();
     });
 
     function notify(msg) {
@@ -506,7 +590,13 @@
       const btn = e.target.closest("[data-copy]");
       if (btn) copyText(btn.getAttribute("data-copy"));
     });
-    window.addEventListener("hashchange", paint);
+    window.addEventListener("hashchange", () => {
+      if (isMobile()) closeNav();
+      paint();
+    });
+    navEl.addEventListener("click", (e) => {
+      if (e.target.closest("a") && isMobile()) closeNav();
+    });
 
     const u = tinhUptime();
     document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
