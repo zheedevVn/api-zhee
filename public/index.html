@@ -221,32 +221,34 @@
 
     @media (min-width: 901px) {
       .nav-toggle { display: grid; }
-      body.nav-collapsed .sidebar { width: 72px; }
+      body.nav-collapsed .sidebar { width: 64px; }
       body.nav-collapsed .brand {
-        justify-content: center; padding: 18px 0 12px; gap: 0;
+        justify-content: center; padding: 16px 0 10px; gap: 0;
       }
-      body.nav-collapsed .brand-copy {
-        opacity: 0; max-width: 0; flex: 0 0 0; overflow: hidden; pointer-events: none;
+      body.nav-collapsed .brand-copy,
+      body.nav-collapsed .icon-btn.nav-close,
+      body.nav-collapsed .side-tools input,
+      body.nav-collapsed .nav-label,
+      body.nav-collapsed .chevron { display: none !important; }
+      body.nav-collapsed .side-tools { justify-content: center; padding: 8px 0 4px; gap: 0; }
+      body.nav-collapsed .nav {
+        padding: 6px 0 20px;
+        display: flex; flex-direction: column; align-items: center;
       }
-      body.nav-collapsed .icon-btn.nav-close { display: none; }
-      body.nav-collapsed .side-tools { justify-content: center; padding: 10px 0; gap: 0; }
-      body.nav-collapsed .side-tools input {
-        opacity: 0; flex: 0 0 0; width: 0; padding: 0; border-width: 0;
-        min-width: 0; overflow: hidden; pointer-events: none;
-      }
-      body.nav-collapsed .nav { padding: 8px 0 24px; }
+      body.nav-collapsed .drop { width: 100%; margin: 2px 0; }
       body.nav-collapsed .drop > summary {
-        justify-content: center; padding: 10px 0; gap: 0;
+        width: 40px; height: 40px; margin: 0 auto; padding: 0; gap: 0;
+        justify-content: center; align-items: center; border-radius: 12px;
       }
-      body.nav-collapsed .nav-label {
-        opacity: 0; max-width: 0; flex: 0 0 0; overflow: hidden; pointer-events: none;
-      }
-      body.nav-collapsed .chevron {
-        opacity: 0; width: 0 !important; min-width: 0; margin: 0; overflow: hidden; pointer-events: none;
-      }
-      body.nav-collapsed .drop-panel { height: 0 !important; }
+      body.nav-collapsed .drop-panel { height: 0 !important; overflow: hidden; }
       body.nav-collapsed .drop.has-active > summary {
         background: var(--nav-active); color: var(--nav-active-fg);
+      }
+      body.nav-collapsed .drop > summary:hover {
+        background: color-mix(in srgb, var(--text) 10%, transparent);
+      }
+      body.nav-collapsed .drop.has-active > summary:hover {
+        background: var(--nav-active);
       }
     }
     @media (max-width: 900px) {
@@ -525,6 +527,7 @@
         map.get(g.label).items.push(t);
       });
       const open = new Set(JSON.parse(localStorage.getItem("zhee-open-v2") || "[]"));
+      const here = currentId();
       navEl.innerHTML = `
         <details class="drop is-open" open>
           <summary title="Chính">${ico("home")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
@@ -532,7 +535,7 @@
             <a href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
           </div></div>
         </details>` + groups.map((g) => `
-        <details class="drop${open.has(g.label) || q ? " is-open" : ""}" data-group="${esc(g.label)}" open>
+        <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
           <summary title="${esc(g.label)}">${ico(g.icon)}<span class="nav-label">${esc(g.label)}</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
           ${g.items.map((t) => `<a href="#${t.id}" data-id="${t.id}" title="${esc(t.ten)}">${ico(iconFor(t.path, t.chuyen_muc))}<span class="nav-label">${esc(t.ten)}</span></a>`).join("")}
@@ -620,11 +623,49 @@
         <div class="home-grid">${tiles}</div>`;
     }
 
+    let liveAbort;
+    function autoloadUrl(t) {
+      const example = t.vi_du || (ORIGIN + t.path + (t.params || ""));
+      const heavy = /\{[^}]+\}/.test(example) || /[?&](url|email|mk|password|token|secret|key|uid)=/i.test(example);
+      return heavy ? (ORIGIN + t.path) : example;
+    }
+    function loadLive(t) {
+      if (liveAbort) liveAbort.abort();
+      const pre = document.getElementById("liveJson");
+      const status = document.getElementById("liveStatus");
+      const copyBtn = document.getElementById("liveCopy");
+      if (!pre) return;
+      const url = autoloadUrl(t);
+      const ac = new AbortController();
+      liveAbort = ac;
+      if (status) status.textContent = "Đang tải phản hồi…";
+      pre.textContent = "Đang gọi " + url + " …";
+      const timer = setTimeout(() => ac.abort(), 9000);
+      fetch(url, { signal: ac.signal, cache: "no-store", headers: { Accept: "application/json" } })
+        .then(async (r) => {
+          const text = await r.text();
+          try { return JSON.stringify(JSON.parse(text), null, 2); }
+          catch { return text; }
+        })
+        .then((body) => {
+          if (liveAbort !== ac) return;
+          pre.textContent = body;
+          if (status) status.textContent = "Phản hồi";
+          if (copyBtn) copyBtn.setAttribute("data-copy", body);
+        })
+        .catch((e) => {
+          if (liveAbort !== ac) return;
+          if (e.name === "AbortError") pre.textContent = "Hết thời gian chờ. Bấm Gọi thử để mở endpoint.";
+          else pre.textContent = "Không tải được: " + (e.message || e);
+          if (status) status.textContent = "Phản hồi";
+        })
+        .finally(() => clearTimeout(timer));
+    }
+
     function renderTool(id) {
       const t = CATALOG.find((x) => x.id === id);
       if (!t) return renderHome();
       const full = t.vi_du || (ORIGIN + t.path);
-      const mau = { trang_thai: "thanh_cong", chuyen_muc: t.chuyen_muc, duong_dan: t.path, mo_ta: t.mo_ta };
       panel.innerHTML = `
         <h2>${ico(iconFor(t.path, t.chuyen_muc), "ico-head")} ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
@@ -648,24 +689,44 @@
         </div>
         <div class="sample">
           <div class="sample-head">
-            <span>Phản hồi mẫu</span>
-            <button class="act" type="button" data-copy='${esc(JSON.stringify(mau))}'>${ico("copy")} Sao chép JSON</button>
+            <span id="liveStatus">Đang tải phản hồi…</span>
+            <button class="act" type="button" id="liveCopy" data-copy="">${ico("copy")} Sao chép JSON</button>
           </div>
-          <pre>${esc(JSON.stringify(mau, null, 2))}</pre>
+          <pre id="liveJson">Đang gọi API…</pre>
         </div>`;
+      loadLive(t);
     }
 
+    function revealActiveGroup() {
+      const active = navEl.querySelector("a.active");
+      const details = active && active.closest(".drop");
+      if (!details || details.classList.contains("is-open")) return;
+      if (document.body.classList.contains("nav-collapsed") && !isMobile()) {
+        details.classList.add("is-open");
+        rememberOpen();
+        return;
+      }
+      details.classList.add("is-open");
+      const panelEl = details.querySelector(".drop-panel");
+      const inner = panelEl && panelEl.querySelector(".drop-panel-inner");
+      if (panelEl) panelEl.style.height = (inner ? inner.scrollHeight : 0) + "px";
+      rememberOpen();
+    }
     function paint() {
       const id = currentId();
       document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === id));
       document.querySelectorAll(".nav .drop").forEach((d) => {
         d.classList.toggle("has-active", !!d.querySelector(`a.active`));
       });
+      revealActiveGroup();
       const t = CATALOG.find((x) => x.id === id);
       crumb.innerHTML = ico("search") + " " + (id === "home" ? "Public API" : (t ? t.ten : "Public API"));
       document.title = id === "home" ? "Zhee API — Tài liệu công khai | Hồ Đức Minh" : ((t ? t.ten : "API") + " | Zhee API");
-      if (id === "home") renderHome();
-      else renderTool(id);
+      if (id === "home") {
+        if (liveAbort) liveAbort.abort();
+        liveAbort = null;
+        renderHome();
+      } else renderTool(id);
       paintIcons();
     }
 
@@ -691,7 +752,7 @@
     document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
     paintIcons();
 
-    fetch("/list")
+    fetch("/list?t=" + Date.now(), { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         const ds = data.danh_sach || {};
