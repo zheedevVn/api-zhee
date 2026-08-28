@@ -34,8 +34,11 @@
     }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-    .icon { width: 18px; height: 18px; stroke-width: 1.8; stroke: currentColor; fill: none; flex-shrink: 0; }
-    .icon-lg { width: 44px; height: 44px; stroke-width: 1.5; }
+    [data-lucide], svg.lucide {
+      width: 18px; height: 18px; stroke-width: 1.9; flex-shrink: 0; display: block;
+    }
+    .lock-icon-wrap [data-lucide], .lock-icon-wrap svg.lucide { width: 22px; height: 22px; }
+    .close-btn [data-lucide], .close-btn svg.lucide { width: 18px; height: 18px; }
 
     header { padding: 40px 0 20px; text-align: center; }
     .badge {
@@ -115,7 +118,7 @@
       display: flex; justify-content: space-between; align-items: center;
     }
     .modal-title { font-size: 15px; font-weight: 700; }
-    .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
+    .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
     .modal-body {
       padding: 18px; text-align: center; background: #000;
       min-height: 320px; display: flex; align-items: center; justify-content: center;
@@ -153,7 +156,7 @@
 
     <div id="videoLockBox" class="lock-box">
       <div class="lock-icon-wrap">
-        <svg class="icon icon-lg" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+        <i data-lucide="lock"></i>
       </div>
       <h3>Yêu Cầu Xác Thực Quyền Truy Cập</h3>
       <p>Nhập API Key hợp lệ để kết nối với toàn bộ cụm máy chủ luồng stream.</p>
@@ -176,7 +179,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-title" id="modalTitle">Media Stream Viewer</div>
-        <button class="close-btn" id="closeModal">✕</button>
+        <button class="close-btn" id="closeModal" aria-label="Đóng"><i data-lucide="x"></i></button>
       </div>
       <div class="modal-body" id="modalBody"></div>
       <div class="modal-meta">
@@ -191,6 +194,7 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
     let currentSessionKey = "";
     let currentActiveNode = "";
@@ -331,6 +335,7 @@
     });
 
     window.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) lucide.createIcons({ attrs: { "stroke-width": "1.9", "stroke-linecap": "round", "stroke-linejoin": "round" } });
       const savedKey = sessionStorage.getItem("zhee_vip_key");
       if (savedKey) unlockVideoFolder(savedKey);
     });
