@@ -31,6 +31,7 @@ const captchaHandler = require("../lib/captcha");
 const checkscamHandler = require("../lib/checkscam");
 const aikeyHandler = require("../lib/aikey");
 const checkmailHandler = require("../lib/checkmail");
+const taomailHandler = require("../lib/taomail");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -153,6 +154,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Đọc trang hộp thư đang hiện + tổng thư nhận. Các mục: hộp thư đến, sao, đã gửi, nháp...",
     vi_du_params: "?email={gmail}&mk={mat_khau_ung_dung}",
     handler: checkmailHandler
+  },
+  {
+    prefix: ["/mail/taomail", "/api/mail/taomail", "/taomail", "/api/taomail"],
+    ten: "Tạo mail tạm (1secmail / Mail.tm)",
+    chuyen_muc: "Mail Service",
+    mo_ta: "Tạo hộp thư tạm thật: kieu=ngan (1secmail), kieu=dai (Mail.tm). Không copy bot Telegram.",
+    vi_du_params: "?kieu=dai",
+    handler: taomailHandler
   },
   {
     prefix: ["/api/tools/checkscam", "/tools/checkscam", "/checkscam", "/api/checkscam", "/api/tools/gdv", "/tools/gdv", "/gdv"],
