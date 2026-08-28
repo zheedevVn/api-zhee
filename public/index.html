@@ -91,7 +91,7 @@
       transition: width .32s cubic-bezier(.22, 1, .36, 1);
     }
     .nav-toggle { display: none; }
-    .nav-close { display: none; margin-left: auto; }
+    .icon-btn.nav-close { display: none; margin-left: auto; }
     .backdrop {
       position: fixed; inset: 0; background: rgba(15, 23, 42, .45); z-index: 45;
       opacity: 0; visibility: hidden; pointer-events: none;
@@ -136,7 +136,8 @@
       letter-spacing: .06em; text-transform: uppercase; color: var(--muted); user-select: none;
       gap: 10px; white-space: nowrap; overflow: hidden;
     }
-    .drop > summary::-webkit-details-marker { display: none; }
+    .drop > summary::-webkit-details-marker,
+    .drop > summary::marker { display: none; content: none; }
     .drop > summary:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
     .nav-label {
       min-width: 0; overflow: hidden; white-space: nowrap;
@@ -221,22 +222,35 @@
     @media (min-width: 901px) {
       .nav-toggle { display: grid; }
       body.nav-collapsed .sidebar { width: 72px; }
-      body.nav-collapsed .brand { gap: 0; }
-      body.nav-collapsed .brand-copy {
-        opacity: 0; max-width: 0; pointer-events: none;
+      body.nav-collapsed .brand {
+        justify-content: center; padding: 18px 0 12px; gap: 0;
       }
-      body.nav-collapsed .side-tools { padding: 10px 18px; gap: 0; }
+      body.nav-collapsed .brand-copy {
+        opacity: 0; max-width: 0; flex: 0 0 0; overflow: hidden; pointer-events: none;
+      }
+      body.nav-collapsed .icon-btn.nav-close { display: none; }
+      body.nav-collapsed .side-tools { justify-content: center; padding: 10px 0; gap: 0; }
       body.nav-collapsed .side-tools input {
-        opacity: 0; flex-grow: 0; flex-basis: 0; width: 0; padding: 0; border-width: 0;
+        opacity: 0; flex: 0 0 0; width: 0; padding: 0; border-width: 0;
         min-width: 0; overflow: hidden; pointer-events: none;
       }
-      body.nav-collapsed .nav { padding: 8px 10px 24px; }
-      body.nav-collapsed .nav-label,
-      body.nav-collapsed .chevron { opacity: 0; pointer-events: none; }
+      body.nav-collapsed .nav { padding: 8px 0 24px; }
+      body.nav-collapsed .drop > summary {
+        justify-content: center; padding: 10px 0; gap: 0;
+      }
+      body.nav-collapsed .nav-label {
+        opacity: 0; max-width: 0; flex: 0 0 0; overflow: hidden; pointer-events: none;
+      }
+      body.nav-collapsed .chevron {
+        opacity: 0; width: 0 !important; min-width: 0; margin: 0; overflow: hidden; pointer-events: none;
+      }
       body.nav-collapsed .drop-panel { height: 0 !important; }
+      body.nav-collapsed .drop.has-active > summary {
+        background: var(--nav-active); color: var(--nav-active-fg);
+      }
     }
     @media (max-width: 900px) {
-      .nav-toggle, .nav-close { display: grid; }
+      .nav-toggle, .icon-btn.nav-close { display: grid; }
       .sidebar {
         position: fixed; left: 0; top: 0; bottom: 0;
         width: min(86vw, 300px); height: 100dvh; z-index: 50;
@@ -644,6 +658,9 @@
     function paint() {
       const id = currentId();
       document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === id));
+      document.querySelectorAll(".nav .drop").forEach((d) => {
+        d.classList.toggle("has-active", !!d.querySelector(`a.active`));
+      });
       const t = CATALOG.find((x) => x.id === id);
       crumb.innerHTML = ico("search") + " " + (id === "home" ? "Public API" : (t ? t.ten : "Public API"));
       document.title = id === "home" ? "Zhee API — Tài liệu công khai | Hồ Đức Minh" : ((t ? t.ten : "API") + " | Zhee API");
@@ -655,6 +672,7 @@
     document.getElementById("q").addEventListener("input", (e) => {
       renderNav(e.target.value);
       document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === currentId()));
+      document.querySelectorAll(".nav .drop").forEach((d) => d.classList.toggle("has-active", !!d.querySelector("a.active")));
       paintIcons();
     });
     document.body.addEventListener("click", (e) => {
