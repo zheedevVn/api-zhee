@@ -616,7 +616,7 @@
         </a>`).join("");
       panel.innerHTML = `
         <h2>${ico("globe-2", "ico-head")} Public API</h2>
-        <p class="lead">Cổng tra cứu cho đối tác. Chọn tool ở cột trái — danh sách lấy từ <code>/list</code>, thêm API trên server là giao diện tự cập nhật. Endpoint video không công khai.</p>
+        <p class="lead">Cổng tra cứu REST API công khai. Chọn công cụ ở cột trái.</p>
         <div class="cards">
           <div class="card">
             <h3>Tác giả</h3>
@@ -757,9 +757,50 @@
       const btn = e.target.closest("[data-copy]");
       if (btn) copyText(btn.getAttribute("data-copy"));
     });
+    function applyCatalog(data) {
+      const ds = (data && data.danh_sach) || {};
+      CATALOG = Object.values(ds)
+        .filter((x) => x && x.duong_dan && !/\/video$/i.test(x.duong_dan))
+        .map((x) => ({
+          id: slug(x.duong_dan),
+          ten: x.ten_api,
+          mo_ta: x.mo_ta,
+          path: x.duong_dan,
+          chuyen_muc: x.chuyen_muc,
+          vi_du: x.link_vi_du,
+          params: (x.link_vi_du || "").split(x.duong_dan)[1] || ""
+        }));
+    }
+    function loadUI() {
+      const qEl = document.getElementById("q");
+      if (!CATALOG.length) {
+        navEl.innerHTML = `<p class="muted" style="padding:12px 10px">Đang tải giao diện…</p>`;
+        panel.innerHTML = `<h2>${ico("loader", "ico-head")} Đang tải</h2><p class="lead">Đang lấy danh sách API.</p>`;
+        paintIcons();
+      }
+      return fetch("/list?t=" + Date.now(), { cache: "no-store" })
+        .then((r) => r.json())
+        .then((data) => {
+          applyCatalog(data);
+          renderNav(qEl ? qEl.value : "");
+          paint();
+        })
+        .catch(() => {
+          if (!CATALOG.length) {
+            panel.innerHTML = `<h2>Không tải được giao diện</h2><p class="lead">Tải lại trang để thử lại.</p>`;
+            navEl.innerHTML = "";
+            paintIcons();
+            return;
+          }
+          renderNav(qEl ? qEl.value : "");
+          paint();
+        });
+    }
+
     window.addEventListener("hashchange", () => {
       if (isMobile()) closeNav();
-      paint();
+      if (CATALOG.length) paint();
+      loadUI();
     });
     navEl.addEventListener("click", (e) => {
       if (e.target.closest("a") && isMobile()) closeNav();
@@ -768,30 +809,7 @@
     const u = tinhUptime();
     document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
     paintIcons();
-
-    fetch("/list?t=" + Date.now(), { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) => {
-        const ds = data.danh_sach || {};
-        CATALOG = Object.values(ds)
-          .filter((x) => x && x.duong_dan && !/\/video$/i.test(x.duong_dan))
-          .map((x) => ({
-            id: slug(x.duong_dan),
-            ten: x.ten_api,
-            mo_ta: x.mo_ta,
-            path: x.duong_dan,
-            chuyen_muc: x.chuyen_muc,
-            vi_du: x.link_vi_du,
-            params: (x.link_vi_du || "").split(x.duong_dan)[1] || ""
-          }));
-        renderNav("");
-        paint();
-      })
-      .catch(() => {
-        appAlert("Không tải được danh sách API từ /list.");
-        renderNav("");
-        paint();
-      });
+    loadUI();
   </script>
 </body>
 </html>
