@@ -194,6 +194,19 @@
     .sample { background: var(--code-bg); color: var(--code-fg); border-radius: var(--radius); padding: 18px 20px; overflow: auto; }
     .sample-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; }
     .sample pre { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; }
+    .try-card { margin-bottom: 16px; }
+    .try-row { display: grid; grid-template-columns: minmax(110px, 160px) 1fr; gap: 8px; margin-bottom: 8px; }
+    .try-row input {
+      width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px;
+      font: inherit; font-size: 13px; outline: none; background: var(--bg); color: var(--text);
+    }
+    .try-row input:focus { border-color: color-mix(in srgb, var(--pink) 45%, var(--line)); }
+    .try-media { margin-bottom: 16px; }
+    .try-media audio, .try-media video { width: 100%; max-width: 560px; }
+    .try-media img { max-width: 100%; max-height: 360px; border-radius: 12px; border: 1px solid var(--line); }
+    @media (max-width: 900px) {
+      .try-row { grid-template-columns: 1fr; }
+    }
     .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
     .home-tile {
       background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
@@ -643,40 +656,112 @@
     }
 
     let liveAbort;
+    let currentTool = null;
+    function decodeParam(s) {
+      try { return decodeURIComponent(String(s || "").replace(/\+/g, " ")); } catch (_) { return String(s || ""); }
+    }
+    function exampleFields(t) {
+      const q = String(t.params || "").replace(/^\?/, "");
+      const fields = [];
+      if (!q) {
+        fields.push({ key: "", value: "" });
+        return fields;
+      }
+      q.split("&").forEach((part) => {
+        if (!part) return;
+        const eq = part.indexOf("=");
+        if (eq === 0) fields.push({ key: "", value: decodeParam(part.slice(1)) });
+        else if (eq < 0) fields.push({ key: decodeParam(part), value: "" });
+        else fields.push({ key: decodeParam(part.slice(0, eq)), value: decodeParam(part.slice(eq + 1)) });
+      });
+      return fields;
+    }
+    function fieldRow(key, value) {
+      return `<div class="try-row">
+        <input data-k placeholder="tên (?= để trống)" value="${esc(key)}" spellcheck="false">
+        <input data-v placeholder="giá trị" value="${esc(value)}" spellcheck="false">
+      </div>`;
+    }
+    function collectTryUrl() {
+      if (!currentTool) return "";
+      const rows = [...panel.querySelectorAll(".try-row")];
+      const parts = [];
+      rows.forEach((row) => {
+        const k = (row.querySelector("[data-k]") || {}).value;
+        const v = (row.querySelector("[data-v]") || {}).value;
+        const key = String(k || "").trim();
+        const val = String(v || "").trim();
+        if (!key && !val) return;
+        if (!key) parts.push("=" + encodeURIComponent(val));
+        else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
+      });
+      return currentTool.path + (parts.length ? "?" + parts.join("&") : "");
+    }
+    function updateTryUrl() {
+      const urlEl = document.getElementById("tryUrl");
+      const open = document.getElementById("tryOpen");
+      const url = collectTryUrl();
+      if (urlEl) urlEl.textContent = ORIGIN + url;
+      if (open) open.href = url;
+      return url;
+    }
     function autoloadUrl(t) {
       const example = t.vi_du || (ORIGIN + t.path + (t.params || ""));
-      const heavy = /\{[^}]+\}/.test(example) || /[?&](url|email|mk|password|token|secret|key|uid)=/i.test(example);
+      const heavy = /\{[^}]+\}/.test(example) || /[?&](email|mk|password|token|secret|key)=/i.test(example);
       return heavy ? (ORIGIN + t.path) : example;
     }
-    function loadLive(t) {
+    function loadLive(url, timeoutMs) {
       if (liveAbort) liveAbort.abort();
       const pre = document.getElementById("liveJson");
       const status = document.getElementById("liveStatus");
       const copyBtn = document.getElementById("liveCopy");
+      const media = document.getElementById("tryMedia");
       if (!pre) return;
-      const url = autoloadUrl(t);
       const ac = new AbortController();
       liveAbort = ac;
-      if (status) status.textContent = "Đang tải phản hồi…";
-      pre.textContent = "Đang gọi " + url + " …";
-      const timer = setTimeout(() => ac.abort(), 9000);
-      fetch(url, { signal: ac.signal, cache: "no-store", headers: { Accept: "application/json" } })
+      if (status) status.textContent = "Đang chạy…";
+      pre.textContent = "GET " + url;
+      if (media) media.innerHTML = "";
+      const timer = setTimeout(() => ac.abort(), timeoutMs || 12000);
+      fetch(url, { signal: ac.signal, cache: "no-store", headers: { Accept: "application/json, audio/*, image/*, */*" } })
         .then(async (r) => {
-          const text = await r.text();
-          try { return JSON.stringify(JSON.parse(text), null, 2); }
-          catch { return text; }
+          const type = String(r.headers.get("content-type") || "");
+          const buf = await r.arrayBuffer();
+          return { ok: r.ok, status: r.status, type, buf };
         })
-        .then((body) => {
+        .then((out) => {
           if (liveAbort !== ac) return;
+          const type = out.type.toLowerCase();
+          if (type.includes("audio") || type.includes("mpeg") && !type.includes("json")) {
+            const blob = new Blob([out.buf], { type: out.type || "audio/mpeg" });
+            const src = URL.createObjectURL(blob);
+            if (media) media.innerHTML = `<audio controls src="${src}"></audio>`;
+            pre.textContent = "HTTP " + out.status + " · " + (out.type || "audio") + " · " + out.buf.byteLength + " bytes";
+            if (status) status.textContent = "Audio";
+            if (copyBtn) copyBtn.setAttribute("data-copy", url);
+            return;
+          }
+          if (type.includes("image")) {
+            const blob = new Blob([out.buf], { type: out.type || "image/png" });
+            const src = URL.createObjectURL(blob);
+            if (media) media.innerHTML = `<img src="${src}" alt="Kết quả API">`;
+            pre.textContent = "HTTP " + out.status + " · " + (out.type || "image") + " · " + out.buf.byteLength + " bytes";
+            if (status) status.textContent = "Ảnh";
+            if (copyBtn) copyBtn.setAttribute("data-copy", url);
+            return;
+          }
+          const text = new TextDecoder("utf-8").decode(out.buf);
+          let body = text;
+          try { body = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
           pre.textContent = body;
-          if (status) status.textContent = "Phản hồi";
+          if (status) status.textContent = "HTTP " + out.status;
           if (copyBtn) copyBtn.setAttribute("data-copy", body);
         })
         .catch((e) => {
           if (liveAbort !== ac) return;
-          if (e.name === "AbortError") pre.textContent = "Hết thời gian chờ. Bấm Gọi thử để mở endpoint.";
-          else pre.textContent = "Không tải được: " + (e.message || e);
-          if (status) status.textContent = "Phản hồi";
+          if (e.name === "AbortError") pre.textContent = "Hết thời gian chờ. Thử lại hoặc mở tab mới.";
+          else pre.textContent = "Không chạy được: " + (e.message || e);
+          if (status) status.textContent = "Lỗi";
         })
         .finally(() => clearTimeout(timer));
     }
@@ -684,7 +769,9 @@
     function renderTool(id) {
       const t = CATALOG.find((x) => x.id === id);
       if (!t) return renderHome();
+      currentTool = t;
       const full = t.vi_du || (ORIGIN + t.path);
+      const fields = exampleFields(t);
       panel.innerHTML = `
         <h2>${ico(iconFor(t.path, t.chuyen_muc), "ico-head")} ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
@@ -695,7 +782,7 @@
             <div class="endpoint">${esc(full)}</div>
             <p class="muted">Path: ${esc(t.path)}</p>
             <div class="row-btns">
-              <a class="act act-dark" href="${esc(t.path + (t.params || ""))}" target="_blank" rel="nofollow">${ico("external-link")} Gọi thử</a>
+              <a class="act" href="${esc(t.path + (t.params || ""))}" target="_blank" rel="nofollow">${ico("external-link")} Mở tab mới</a>
               <button class="act" type="button" data-copy="${esc(full)}">${ico("copy")} Sao chép</button>
             </div>
           </div>
@@ -706,14 +793,28 @@
             <p class="muted">${esc(t.chuyen_muc)}</p>
           </div>
         </div>
+        <div class="card try-card">
+          <h3>Chạy trên giao diện</h3>
+          <p class="muted" style="margin-top:0">Điền tham số rồi bấm Chạy API. Tên trống = tham số <code>?=</code>.</p>
+          <div id="tryFields">${fields.map((f) => fieldRow(f.key, f.value)).join("")}</div>
+          <p class="endpoint" id="tryUrl"></p>
+          <div class="row-btns">
+            <button class="act act-dark" type="button" id="tryRun">${ico("play")} Chạy API</button>
+            <a class="act" id="tryOpen" target="_blank" rel="nofollow">${ico("external-link")} Mở URL</a>
+            <button class="act" type="button" id="tryAdd">${ico("plus")} Thêm tham số</button>
+          </div>
+        </div>
+        <div id="tryMedia" class="try-media"></div>
         <div class="sample">
           <div class="sample-head">
-            <span id="liveStatus">Đang tải phản hồi…</span>
+            <span id="liveStatus">Đang chạy…</span>
             <button class="act" type="button" id="liveCopy" data-copy="">${ico("copy")} Sao chép JSON</button>
           </div>
           <pre id="liveJson">Đang gọi API…</pre>
         </div>`;
-      loadLive(t);
+      updateTryUrl();
+      const auto = autoloadUrl(t);
+      loadLive(auto, 10000);
     }
 
     function revealActiveGroup() {
@@ -744,6 +845,7 @@
       if (id === "home") {
         if (liveAbort) liveAbort.abort();
         liveAbort = null;
+        currentTool = null;
         renderHome();
       } else renderTool(id);
       paintIcons();
@@ -758,6 +860,24 @@
     document.body.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-copy]");
       if (btn) copyText(btn.getAttribute("data-copy"));
+    });
+    panel.addEventListener("input", (e) => {
+      if (e.target.closest(".try-card")) updateTryUrl();
+    });
+    panel.addEventListener("click", (e) => {
+      if (e.target.closest("#tryAdd")) {
+        const box = document.getElementById("tryFields");
+        if (box) {
+          box.insertAdjacentHTML("beforeend", fieldRow("", ""));
+          paintIcons();
+        }
+        return;
+      }
+      if (e.target.closest("#tryRun")) {
+        e.preventDefault();
+        const url = updateTryUrl();
+        if (url) loadLive(url, 15000);
+      }
     });
     function applyCatalog(data) {
       const ds = (data && data.danh_sach) || {};
