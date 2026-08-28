@@ -26,6 +26,7 @@ const locketHandler = require("../lib/locket");
 const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
 const captchaHandler = require("../lib/captcha");
+const gdvHandler = require("../lib/gdv");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -123,6 +124,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/gdv", "/tools/gdv", "/gdv", "/api/gdv", "/api/tools/checkscam", "/tools/checkscam", "/checkscam"],
+    ten: "Check GDV / Checkscam trung gian",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tra cứu giao dịch viên, STK, SĐT trên danh sách tố cáo checkscam.",
+    vi_du_params: "?=1903456789",
+    handler: gdvHandler
+  },
   {
     prefix: ["/api/tools/captcha", "/tools/captcha", "/captcha", "/api/captcha"],
     ten: "Tạo Captcha Ảnh",
