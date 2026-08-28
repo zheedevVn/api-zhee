@@ -26,7 +26,7 @@ const locketHandler = require("../lib/locket");
 const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
 const captchaHandler = require("../lib/captcha");
-const gdvHandler = require("../lib/gdv");
+const checkscamHandler = require("../lib/checkscam");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -125,12 +125,12 @@ const ROUTES_REGISTRY = [
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
   {
-    prefix: ["/api/tools/gdv", "/tools/gdv", "/gdv", "/api/gdv", "/api/tools/checkscam", "/tools/checkscam", "/checkscam"],
-    ten: "Check GDV / Checkscam trung gian",
+    prefix: ["/api/tools/checkscam", "/tools/checkscam", "/checkscam", "/api/checkscam", "/api/tools/gdv", "/tools/gdv", "/gdv"],
+    ten: "Checkscam — Thông tin bị báo cáo",
     chuyen_muc: "Tools & Utilities",
-    mo_ta: "Tra cứu giao dịch viên, STK, SĐT trên danh sách tố cáo checkscam.",
+    mo_ta: "Tra cứu STK, SĐT, họ tên đã bị tố cáo/báo cáo lừa đảo.",
     vi_du_params: "?=1903456789",
-    handler: gdvHandler
+    handler: checkscamHandler
   },
   {
     prefix: ["/api/tools/captcha", "/tools/captcha", "/captcha", "/api/captcha"],
