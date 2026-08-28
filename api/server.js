@@ -46,6 +46,7 @@ const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 const shopeeHandler = require("../lib/shopee");
+const pinterestHandler = require("../lib/pinterest");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
@@ -397,6 +398,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu gian hàng Shopee theo username, shopid hoặc link shop (tên, followers, rating, Mall).",
     vi_du_params: "?=apple_flagship_store",
     handler: shopeeHandler
+  },
+  {
+    prefix: ["/api/mxh/pinterest", "/mxh/pinterest", "/pinterest"],
+    ten: "Pinterest Profile, Pin & Board Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu hồ sơ Pinterest (followers, pins, boards, avatar, bio), chi tiết Pin và bảng ghim.",
+    vi_du_params: "?=pinterest",
+    handler: pinterestHandler
   },
   {
     prefix: ["/mxh", "/api/mxh"],
