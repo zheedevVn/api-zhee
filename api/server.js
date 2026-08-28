@@ -29,6 +29,7 @@ const nglHandler = require("../lib/ngl");
 const transHandler = require("../lib/trans");
 const captchaHandler = require("../lib/captcha");
 const checkscamHandler = require("../lib/checkscam");
+const cccdHandler = require("../lib/cccd");
 const baiHandler = require("../lib/bai");
 const baucuaHandler = require("../lib/baucua");
 const baccaratHandler = require("../lib/baccarat");
@@ -126,6 +127,14 @@ const ROUTES_REGISTRY = [
   },
 
   // --- NHÓM TOOLS & TIỆN ÍCH HỆ THỐNG ---
+  {
+    prefix: ["/api/tools/cccd", "/tools/cccd", "/cccd", "/api/cccd", "/api/tools/cancuoc", "/tools/cancuoc"],
+    ten: "Check CCCD 12 số",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Giải mã số CCCD: tỉnh khai sinh, giới tính, năm sinh. Không trả họ tên, không tra CSDLQG.",
+    vi_du_params: "?=001201000001",
+    handler: cccdHandler
+  },
   {
     prefix: ["/api/tools/checkscam", "/tools/checkscam", "/checkscam", "/api/checkscam", "/api/tools/gdv", "/tools/gdv", "/gdv"],
     ten: "Checkscam — Thông tin bị báo cáo",
