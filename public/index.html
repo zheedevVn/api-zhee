@@ -195,12 +195,12 @@
     .sample-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-family: "Plus Jakarta Sans", sans-serif; }
     .sample pre { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; }
     .try-card { margin-bottom: 16px; }
-    .try-row { display: grid; grid-template-columns: minmax(110px, 160px) 1fr; gap: 8px; margin-bottom: 8px; }
-    .try-row input {
+    .try-row { display: grid; grid-template-columns: minmax(140px, 180px) 1fr; gap: 8px; margin-bottom: 8px; }
+    .try-row input, .try-row select {
       width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px;
       font: inherit; font-size: 13px; outline: none; background: var(--bg); color: var(--text);
     }
-    .try-row input:focus { border-color: color-mix(in srgb, var(--pink) 45%, var(--line)); }
+    .try-row input:focus, .try-row select:focus { border-color: color-mix(in srgb, var(--pink) 45%, var(--line)); }
     .try-media { margin-bottom: 16px; }
     .try-media audio, .try-media video { width: 100%; max-width: 560px; }
     .try-media img { max-width: 100%; max-height: 360px; border-radius: 12px; border: 1px solid var(--line); }
@@ -660,6 +660,40 @@
     function decodeParam(s) {
       try { return decodeURIComponent(String(s || "").replace(/\+/g, " ")); } catch (_) { return String(s || ""); }
     }
+    function keysFromTextList(list) {
+      const keys = [];
+      const seen = new Set();
+      const add = (k) => { if (!seen.has(k)) { seen.add(k); keys.push(k); } };
+      (list || []).forEach((s) => {
+        const str = String(s || "");
+        if (/\?=/.test(str)) add("");
+        str.replace(/[?&]([a-zA-Z0-9_]+)=/g, (_, k) => add(k));
+      });
+      return keys;
+    }
+    function paramKeysFor(t, extra) {
+      const keys = [];
+      const seen = new Set();
+      const add = (k) => { if (k === undefined || seen.has(k)) return; seen.add(k); keys.push(k); };
+      extra && extra.forEach(add);
+      exampleFields(t).forEach((f) => add(f.key));
+      const p = String(t.path || "");
+      if (/spotify/i.test(p)) ["", "q", "artist", "url"].forEach(add);
+      else if (/pinterest/i.test(p)) ["", "username", "url", "pin"].forEach(add);
+      else if (/trans/i.test(p)) ["", "text", "to", "from", "giong", "action", "format"].forEach(add);
+      else if (/taomail/i.test(p)) ["kieu", "so", "ten", "mk", "action"].forEach(add);
+      else if (/mail\/check|checkmail/i.test(p)) ["email", "mk", "action", "uid"].forEach(add);
+      else if (/checkkeyai/i.test(p)) ["key"].forEach(add);
+      else if (/downloads/i.test(p)) ["url"].forEach(add);
+      else if (/instagram|tiktok|github|roblox|twitter|facebook|zalo|telegram|discord|ngl|youtube|soundcloud/i.test(p)) {
+        ["", "username", "url"].forEach(add);
+      } else {
+        add("");
+        add("q");
+        add("url");
+      }
+      return keys;
+    }
     function exampleFields(t) {
       let search = String(t.params || "");
       if (!search && t.vi_du) {
@@ -681,37 +715,68 @@
       });
       return fields;
     }
-    function makeTryRow(key, value) {
+    function keyLabel(k) {
+      return k === "" ? "link / từ khóa" : k;
+    }
+    function makeTryRow(key, value, keys) {
       const row = document.createElement("div");
       row.className = "try-row";
-      const ik = document.createElement("input");
-      ik.setAttribute("data-try-key", "1");
-      ik.placeholder = "tên (để trống = ?= )";
-      ik.value = key || "";
-      ik.spellcheck = false;
+      const sel = document.createElement("select");
+      sel.setAttribute("data-try-key", "1");
+      (keys || [key || ""]).forEach((k) => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = keyLabel(k);
+        if (k === key) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      if (key && ![...sel.options].some((o) => o.value === key)) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = keyLabel(key);
+        opt.selected = true;
+        sel.appendChild(opt);
+      }
       const iv = document.createElement("input");
       iv.setAttribute("data-try-val", "1");
-      iv.placeholder = "giá trị";
+      iv.placeholder = "dán link, username hoặc nội dung";
       iv.value = value || "";
       iv.spellcheck = false;
-      row.append(ik, iv);
+      row.append(sel, iv);
       return row;
     }
     function fillTryFields(t) {
       const box = document.getElementById("tryFields");
       if (!box) return;
       box.innerHTML = "";
-      exampleFields(t).forEach((f) => box.appendChild(makeTryRow(f.key, f.value)));
+      const keys = paramKeysFor(t);
+      t._tryKeys = keys;
+      const fields = exampleFields(t);
+      (fields.length ? fields : [{ key: keys[0] || "", value: "" }]).forEach((f) => {
+        box.appendChild(makeTryRow(f.key, f.value, keys));
+      });
+    }
+    function smartKey(val, keys, current) {
+      const list = keys || [];
+      if (/^https?:\/\//i.test(val)) {
+        if (list.includes("url")) return "url";
+        if (list.includes("")) return "";
+        if (list.includes("q")) return "q";
+      }
+      return current;
     }
     function collectTryUrl() {
       if (!currentTool) return "";
+      const keys = currentTool._tryKeys || paramKeysFor(currentTool);
       const rows = [...panel.querySelectorAll(".try-row")];
       const parts = [];
       rows.forEach((row) => {
-        const key = String((row.querySelector("[data-try-key]") || {}).value || "").trim();
+        const sel = row.querySelector("[data-try-key]");
         const val = String((row.querySelector("[data-try-val]") || {}).value || "").trim();
-        if (!key && !val) return;
         if (!val) return;
+        let key = sel ? sel.value : "";
+        key = smartKey(val, keys, key);
+        if (sel && sel.value !== key) sel.value = key;
         if (!key) parts.push("=" + encodeURIComponent(val));
         else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
       });
@@ -771,10 +836,36 @@
             return;
           }
           const text = new TextDecoder("utf-8").decode(out.buf);
+          let parsed = null;
           let body = text;
-          try { body = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
+          try { parsed = JSON.parse(text); body = JSON.stringify(parsed, null, 2); } catch (_) {}
+          if (parsed && currentTool && Array.isArray(parsed.cu_phap)) {
+            const extra = keysFromTextList([].concat(parsed.cu_phap, parsed.vi_du || []));
+            currentTool._tryKeys = paramKeysFor(currentTool, extra);
+            panel.querySelectorAll("[data-try-key]").forEach((sel) => {
+              const cur = sel.value;
+              const keys = currentTool._tryKeys;
+              sel.innerHTML = "";
+              keys.forEach((k) => {
+                const opt = document.createElement("option");
+                opt.value = k;
+                opt.textContent = keyLabel(k);
+                if (k === cur) opt.selected = true;
+                sel.appendChild(opt);
+              });
+              if (cur && ![...sel.options].some((o) => o.value === cur)) {
+                const opt = document.createElement("option");
+                opt.value = cur;
+                opt.textContent = keyLabel(cur);
+                opt.selected = true;
+                sel.appendChild(opt);
+              }
+            });
+          }
           pre.textContent = body;
-          if (status) status.textContent = "HTTP " + out.status;
+          if (parsed && parsed.trang_thai === "huong_dan") {
+            if (status) status.textContent = "Hướng dẫn — chọn đúng tham số hoặc dán link dùng được";
+          } else if (status) status.textContent = "HTTP " + out.status;
           if (copyBtn) copyBtn.setAttribute("data-copy", body);
         })
         .catch((e) => {
@@ -814,7 +905,7 @@
         </div>
         <div class="card try-card">
           <h3>Chạy trên giao diện</h3>
-          <p class="muted" style="margin-top:0">Điền tham số rồi bấm Chạy API. Ô tên để trống thì gửi dạng <code>?=giá_trị</code>.</p>
+          <p class="muted" style="margin-top:0">Chọn tham số có sẵn, dán link hoặc giá trị. Link dùng được thì ra dữ liệu; không dùng được thì API trả hướng dẫn.</p>
           <div id="tryFields"></div>
           <p class="endpoint" id="tryUrl"></p>
           <div class="row-btns">
@@ -887,7 +978,12 @@
     panel.addEventListener("click", (e) => {
       if (e.target.closest("#tryAdd")) {
         const box = document.getElementById("tryFields");
-        if (box) box.appendChild(makeTryRow("", ""));
+        if (!box || !currentTool) return;
+        const keys = currentTool._tryKeys || paramKeysFor(currentTool);
+        const used = [...box.querySelectorAll("[data-try-key]")].map((s) => s.value);
+        const next = keys.find((k) => !used.includes(k)) || keys[0] || "";
+        box.appendChild(makeTryRow(next, "", keys));
+        updateTryUrl();
         return;
       }
       if (e.target.closest("#tryRun")) {
