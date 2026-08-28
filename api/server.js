@@ -16,7 +16,7 @@ function wantsDocsHtml(req, pathname) {
 function serveDocsHtml(res) {
   const html = fs.readFileSync(DOCS_HTML_PATH, "utf8");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "public, max-age=120");
+  res.setHeader("Cache-Control", "no-cache, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.statusCode = 200;
   res.end(html);
