@@ -67,6 +67,7 @@ const club789Handler = require("../lib/789club");
 const b52clubHandler = require("../lib/b52club");
 
 // 2. REGISTRY TỔNG HỢP TOÀN BỘ API GATEWAY
+// Giao diện / (docs) đọc /list — thêm/sửa route ở đây là sidebar tự cập nhật. Không public /video.
 const ROUTES_REGISTRY = [
   // --- CHUYÊN MỤC TÀI XỈU: B52CLUB, 789CLUB, SUNWIN, HITCLUB, SUKA88 ---
   {
