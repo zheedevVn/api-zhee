@@ -28,6 +28,7 @@
       --text: #111827;
       --muted: #6b7280;
       --pink: #e11d48;
+      --link: #be123c;
       --radius: 16px;
       --code-bg: #0f172a;
       --code-fg: #e5e7eb;
@@ -43,6 +44,7 @@
       --text: #f3f4f6;
       --muted: #9ca3af;
       --pink: #fb7185;
+      --link: #fda4af;
       --code-bg: #020617;
       --code-fg: #e5e7eb;
       --nav-active: #f8fafc;
@@ -160,6 +162,7 @@
     }
     .drop a:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
     .drop a.active { background: var(--nav-active); color: var(--nav-active-fg); }
+    .drop a.tool-link svg, .drop a.tool-link .ico-brand { color: var(--tool-accent); }
 
     .main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; }
     .topbar {
@@ -179,9 +182,13 @@
       background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 20px 22px; box-shadow: var(--shadow);
     }
+    .card.tool-card { border-top: 3px solid var(--tool-accent); }
+    .card.tool-card h3 { color: var(--tool-accent); }
     .card h3 { font-size: 16px; margin-bottom: 12px; }
     .label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
-    .endpoint { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--pink); word-break: break-all; line-height: 1.55; }
+    .endpoint { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--link); word-break: break-all; line-height: 1.55; }
+    .tool-icon { display: inline-grid; place-items: center; width: 34px; height: 34px; color: var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 13%, transparent); border: 1px solid color-mix(in srgb, var(--tool-accent) 30%, var(--line)); border-radius: 10px; }
+    .tool-icon svg { width: 19px; height: 19px; }
     .muted { color: var(--muted); font-size: 13px; margin-top: 8px; }
     .row-btns { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
     button.act, a.act {
@@ -209,10 +216,12 @@
     }
     .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
     .home-tile {
-      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
-      text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 8px; align-items: stretch;
+      position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--tool-accent); border-radius: 14px; padding: 15px 16px 16px;
+      text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 8px; align-items: stretch; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
-    .home-tile-top { display: flex; align-items: center; gap: 10px; }
+    .home-tile:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--tool-accent) 42%, var(--line)); box-shadow: 0 8px 22px color-mix(in srgb, var(--tool-accent) 12%, transparent); }
+    .home-tile-top { display: flex; align-items: center; gap: 10px; color: var(--tool-accent); }
+    .home-tile-top strong { color: var(--text); }
     .home-tile-top strong { display: block; margin: 0; line-height: 1.35; }
     .home-tile span { font-size: 12.5px; color: var(--muted); line-height: 1.45; padding-left: 30px; }
 
@@ -380,6 +389,17 @@
     function groupOf(chuyen) {
       const hit = GROUP_META.find((g) => g.match.test(String(chuyen || "")));
       return hit || { label: chuyen || "Khác", icon: "sparkles" };
+    }
+    function accentFor(path, chuyen) {
+      const value = `${String(path || "")} ${String(chuyen || "")}`.toLowerCase();
+      if (/tài xỉu|probability|gaming/.test(value)) return "#f59e0b";
+      if (/mail/.test(value)) return "#f97316";
+      if (/xã hội|social|instagram|facebook|telegram|discord|zalo|tiktok/.test(value)) return "#a855f7";
+      if (/bank|fintech|thanh toán|ngân hàng|vietqr/.test(value)) return "#14b8a6";
+      if (/download|youtube|spotify|soundcloud|media/.test(value)) return "#22c55e";
+      if (/web|domain|endpoint/.test(value)) return "#06b6d4";
+      if (/ai|captcha|check|imei|sdt|scam|key/.test(value)) return "#3b82f6";
+      return "#e11d48";
     }
     function iconFor(path, chuyen) {
       const p = String(path || "").toLowerCase();
@@ -570,7 +590,7 @@
         <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
           <summary title="${esc(g.label)}">${ico(g.icon)}<span class="nav-label">${esc(g.label)}</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
-          ${g.items.map((t) => `<a href="#${t.id}" data-id="${t.id}" title="${esc(t.ten)}">${ico(iconFor(t.path, t.chuyen_muc))}<span class="nav-label">${esc(t.ten)}</span></a>`).join("")}
+          ${g.items.map((t) => `<a class="tool-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" data-id="${t.id}" title="${esc(t.ten)}">${ico(iconFor(t.path, t.chuyen_muc))}<span class="nav-label">${esc(t.ten)}</span></a>`).join("")}
           </div></div>
         </details>`).join("");
     }
@@ -625,7 +645,7 @@
 
     function renderHome() {
       const tiles = CATALOG.slice(0, 12).map((t) => `
-        <a class="home-tile" href="#${t.id}">
+        <a class="home-tile" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}">
           <div class="home-tile-top">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
           <span>${esc(t.mo_ta)}</span>
         </a>`).join("");
@@ -883,10 +903,10 @@
       currentTool = t;
       const full = t.vi_du || (ORIGIN + t.path);
       panel.innerHTML = `
-        <h2>${ico(iconFor(t.path, t.chuyen_muc), "ico-head")} ${esc(t.ten)}</h2>
+        <h2 style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
         <div class="cards">
-          <div class="card">
+          <div class="card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
             <h3>Endpoint</h3>
             <div class="label">GET</div>
             <div class="endpoint">${esc(full)}</div>
@@ -896,14 +916,14 @@
               <button class="act" type="button" data-copy="${esc(full)}">${ico("copy")} Sao chép</button>
             </div>
           </div>
-          <div class="card">
+          <div class="card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
             <h3>Đường dẫn</h3>
             <div class="label">Path</div>
             <div class="endpoint">${esc(t.path)}</div>
             <p class="muted">${esc(t.chuyen_muc)}</p>
           </div>
         </div>
-        <div class="card try-card">
+        <div class="card try-card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
           <h3>Chạy trên giao diện</h3>
           <p class="muted" style="margin-top:0">Chọn tham số có sẵn, dán link hoặc giá trị. Link dùng được thì ra dữ liệu; không dùng được thì API trả hướng dẫn.</p>
           <div id="tryFields"></div>
