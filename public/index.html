@@ -1005,6 +1005,20 @@
           vi_du: x.link_vi_du,
           params: (x.link_vi_du || "").split(x.duong_dan)[1] || ""
         }));
+
+      // Keep the newly-added Mega tool visible even if an old cached /list
+      // response is returned by a browser, proxy, or stale deployment.
+      if (!CATALOG.some((x) => x.path === "/api/mxh/mega")) {
+        CATALOG.push({
+          id: slug("/api/mxh/mega"),
+          ten: "MEGA Public File & Folder Inspector",
+          mo_ta: "Kiểm tra metadata file/folder MEGA public; không tra cứu user riêng tư.",
+          path: "/api/mxh/mega",
+          chuyen_muc: "Cloud Storage",
+          vi_du: `${location.origin}/api/mxh/mega?url={link_mega_public}`,
+          params: "?url={link_mega_public}"
+        });
+      }
     }
     function loadUI() {
       const qEl = document.getElementById("q");
