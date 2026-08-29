@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zhee API — Image Collector</title>
+  <meta name="description" content="Thu thập và tải ảnh công khai từ một trang HTML.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root { --bg:#f4f5f8; --sidebar:#fff; --card:#fff; --line:#eceef3; --text:#111827; --muted:#6b7280; --pink:#e11d48; --active:#111827; --active-fg:#fff; --success:#059669; --danger:#dc2626; --shadow:0 1px 2px rgba(16,24,40,.05); }
+    html[data-theme="dark"] { --bg:#0b0f17; --sidebar:#111827; --card:#151c28; --line:#243044; --text:#f3f4f6; --muted:#9ca3af; --pink:#fb7185; --active:#f8fafc; --active-fg:#111827; --shadow:none; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html,body { min-height:100%; }
+    body { display:flex; min-height:100vh; color:var(--text); background:var(--bg); font-family:"Plus Jakarta Sans",system-ui,sans-serif; }
+    button,input { font:inherit; } button { cursor:pointer; }
+    [data-lucide] { width:18px; height:18px; flex-shrink:0; display:block; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+    .sidebar { width:280px; height:100vh; position:sticky; top:0; display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; background:var(--sidebar); border-right:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:10px; padding:18px 16px 12px; border-bottom:1px solid var(--line); }
+    .brand-mark { width:38px; height:38px; display:grid; place-items:center; flex-shrink:0; border-radius:12px; color:#fff; background:linear-gradient(135deg,#111827,#b45309); font-size:14px; font-weight:800; }
+    .brand h1 { font-size:15px; line-height:1.15; font-weight:800; } .brand p { color:var(--muted); font-size:11px; }
+    .side-tools { display:flex; gap:8px; padding:10px 12px; } .side-tools input { width:100%; min-width:0; padding:8px 10px; outline:none; color:var(--text); background:var(--bg); border:1px solid var(--line); border-radius:10px; font-size:13px; }
+    .icon-btn { width:36px; height:36px; display:grid; place-items:center; flex-shrink:0; color:var(--text); background:var(--card); border:1px solid var(--line); border-radius:10px; }
+    .nav { flex:1; overflow-y:auto; padding:4px 10px 24px; } .nav-section { margin:14px 0 5px; padding:0 10px; color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .nav a { display:flex; align-items:center; gap:10px; margin:1px 0; padding:7px 10px 7px 14px; color:var(--text); border-radius:10px; font-size:13px; font-weight:600; text-decoration:none; } .nav a:hover,.nav a.active { color:var(--active-fg); background:var(--active); }
+    .sidebar-foot { padding:12px 16px; color:var(--muted); border-top:1px solid var(--line); font-size:11px; line-height:1.5; }
+    .main { width:100%; min-width:0; } .content { max-width:1120px; margin:0 auto; padding:34px 34px 64px; }
+    .crumb { display:flex; align-items:center; gap:8px; margin-bottom:20px; color:var(--muted); font-size:12px; } .crumb a { color:inherit; text-decoration:none; } .crumb strong { color:var(--text); }
+    .eyebrow { display:inline-flex; align-items:center; gap:7px; margin-bottom:10px; color:var(--pink); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    h2 { margin-bottom:8px; font-size:clamp(25px,3vw,34px); letter-spacing:-.04em; } .lead { max-width:720px; color:var(--muted); font-size:14px; line-height:1.7; }
+    .panel { margin-top:22px; padding:22px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); }
+    .lock-panel { display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center; } .lock-icon { width:48px; height:48px; display:grid; place-items:center; color:var(--pink); background:color-mix(in srgb,var(--pink) 10%,transparent); border:1px solid color-mix(in srgb,var(--pink) 28%,transparent); border-radius:14px; }
+    .lock-panel h3 { margin-bottom:4px; font-size:16px; } .lock-panel p,.tool-copy { color:var(--muted); font-size:13px; line-height:1.5; }
+    .key-row,.url-row { display:flex; gap:10px; grid-column:2; } .key-row input,.url-row input { width:min(520px,100%); padding:11px 13px; outline:none; color:var(--text); background:var(--bg); border:1px solid var(--line); border-radius:10px; font-size:13px; }
+    .key-row input:focus,.url-row input:focus { border-color:var(--pink); } .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:10px 14px; border:0; border-radius:10px; font-size:13px; font-weight:700; } .btn-primary { color:var(--active-fg); background:var(--active); } .btn-outline { color:var(--text); background:var(--card); border:1px solid var(--line); }
+    .tool-head { display:flex; align-items:center; gap:9px; margin-bottom:6px; } .tool-head h3 { font-size:18px; } .tool-head svg { color:var(--pink); } .tool-copy { margin-bottom:14px; }
+    .results { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:16px; } .image-item { overflow:hidden; background:var(--bg); border:1px solid var(--line); border-radius:12px; } .image-item img { display:block; width:100%; height:140px; object-fit:cover; background:#020617; }
+    .image-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:9px; } .image-foot span { overflow:hidden; color:var(--muted); font-family:"JetBrains Mono",monospace; font-size:10px; text-overflow:ellipsis; white-space:nowrap; } .image-foot a { color:var(--pink); font-size:11px; font-weight:800; text-decoration:none; }
+    .notice { margin-top:16px; padding:12px 14px; color:var(--success); background:color-mix(in srgb,var(--success) 9%,var(--card)); border:1px solid color-mix(in srgb,var(--success) 25%,var(--line)); border-radius:12px; font-size:13px; font-weight:700; } .empty { padding:18px; color:var(--muted); background:var(--bg); border:1px dashed var(--line); border-radius:12px; font-size:12px; text-align:center; }
+    .toast-wrap { position:fixed; right:22px; bottom:22px; z-index:10; display:grid; gap:8px; } .toast { padding:11px 14px; color:var(--text); background:var(--card); border:1px solid var(--line); border-left:4px solid var(--success); border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.12); font-size:13px; } .toast.error { border-left-color:var(--danger); }
+    @media (max-width:760px) { .sidebar{display:none;} .content{padding:24px 18px 48px;} .lock-panel{grid-template-columns:auto 1fr;} .key-row{grid-column:1/-1;} }
+    @media (max-width:480px) { .lock-panel{display:block;} .lock-icon{margin-bottom:12px;} .key-row,.url-row{display:grid; margin-top:16px;} .key-row input,.url-row input{width:100%;} }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">Z</div><div><h1>Zhee API</h1><p>Cổng tra cứu công khai</p></div></div>
+    <div class="side-tools"><input id="navSearch" type="search" placeholder="Tìm tool..."><button class="icon-btn" id="themeToggle" type="button" aria-label="Đổi giao diện"><i data-lucide="sun-moon"></i></button></div>
+    <nav class="nav"><div class="nav-section">Điều hướng</div><a href="/"><i data-lucide="house"></i>Trang chủ</a><a href="/list"><i data-lucide="book-open"></i>Tài liệu API</a><div class="nav-section">Khu vực bảo vệ</div><a href="/video.html"><i data-lucide="lock-keyhole"></i>Video VIP</a><a class="active" href="/image.html"><i data-lucide="images"></i>Image Collector</a></nav>
+    <div class="sidebar-foot">Author: Hồ Đức Minh (Zhee Dev)<br>Chỉ xử lý ảnh công khai.</div>
+  </aside>
+  <main class="main"><div class="content">
+    <div class="crumb"><a href="/">Trang chủ</a><i data-lucide="chevron-right"></i><strong>Image Collector</strong></div>
+    <section class="hero"><div class="eyebrow"><i data-lucide="scan-search"></i> Public image utility</div><h2>Image Link Collector</h2><p class="lead">Nhập API Key để quét ảnh từ một trang HTML công khai. Kết quả được hiển thị riêng trong tab này, có thể mở hoặc tải từng ảnh.</p></section>
+    <section id="lockPanel" class="panel lock-panel"><div class="lock-icon"><i data-lucide="lock-keyhole"></i></div><div><h3>Nhập API Key để tiếp tục</h3><p>Key không được lưu vào trình duyệt và phải nhập lại khi tải lại trang.</p></div><div class="key-row"><input id="apiKey" type="password" autocomplete="off" placeholder="Nhập API Key xác thực..." aria-label="API Key"><button class="btn btn-primary" id="unlock" type="button"><i data-lucide="key-round"></i>Mở khóa</button></div></section>
+    <section id="toolPanel" class="panel" hidden><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Hỗ trợ ảnh trong img, srcset, lazy-load, og:image, Twitter image và JSON-LD. Giới hạn 50 ảnh mỗi lần.</p><div class="url-row"><input id="pageUrl" type="url" placeholder="https://example.com/en/gifs/227379" autocomplete="off" aria-label="URL trang nguồn"><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Lấy ảnh</button></div><div id="results" class="results" hidden></div></section>
+  </div></main><div class="toast-wrap" id="toasts" aria-live="polite"></div>
+  <script>
+    let sessionKey = "";
+    const $ = (id) => document.getElementById(id);
+    const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
+    const toast = (message, type = "success") => { const item = document.createElement("div"); item.className = `toast ${type}`; item.textContent = message; $("toasts").appendChild(item); setTimeout(() => item.remove(), 3500); };
+    const setTheme = () => { document.documentElement.dataset.theme = localStorage.getItem("zhee_theme") || "light"; };
+    const unlock = async () => { const key = $("apiKey").value.trim(); if (!key) return toast("Vui lòng nhập API Key.", "error"); const button = $("unlock"); button.disabled = true; button.textContent = "Đang kiểm tra..."; try { const response = await fetch(`/video?key=${encodeURIComponent(key)}`, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "API Key không hợp lệ."); sessionKey = key; $("lockPanel").hidden = true; $("toolPanel").hidden = false; toast("Xác thực thành công."); } catch (error) { toast(error.message, "error"); } finally { button.disabled = false; button.innerHTML = '<i data-lucide="key-round"></i>Mở khóa'; lucide.createIcons(); } };
+    const collect = async () => { const url = $("pageUrl").value.trim(); if (!/^https?:\/\//i.test(url)) return toast("Vui lòng nhập URL http hoặc https hợp lệ.", "error"); const button = $("collect"); button.disabled = true; button.textContent = "Đang quét..."; try { const response = await fetch(`/video/images?url=${encodeURIComponent(url)}&key=${encodeURIComponent(sessionKey)}`, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "Không thể lấy ảnh."); const results = $("results"); results.hidden = false; results.innerHTML = data.danh_sach_anh.length ? data.danh_sach_anh.map((image, index) => `<article class="image-item"><a href="${escapeHtml(image)}" target="_blank" rel="noopener"><img src="${escapeHtml(image)}" alt="Ảnh ${index + 1}" loading="lazy"></a><div class="image-foot"><span title="${escapeHtml(image)}">Ảnh ${index + 1}</span><a href="${escapeHtml(image)}" target="_blank" rel="noopener" download>Tải</a></div></article>`).join("") : '<div class="empty">Không tìm thấy ảnh công khai trong trang này.</div>'; toast(`Đã tìm thấy ${data.so_luong} ảnh.`); } catch (error) { toast(error.message, "error"); } finally { button.disabled = false; button.innerHTML = '<i data-lucide="scan-search"></i>Lấy ảnh'; lucide.createIcons(); } };
+    $("unlock").addEventListener("click", unlock); $("apiKey").addEventListener("keydown", (event) => { if (event.key === "Enter") unlock(); }); $("collect").addEventListener("click", collect); $("pageUrl").addEventListener("keydown", (event) => { if (event.key === "Enter") collect(); }); $("themeToggle").addEventListener("click", () => { localStorage.setItem("zhee_theme", document.documentElement.dataset.theme === "dark" ? "light" : "dark"); setTheme(); }); $("navSearch").addEventListener("input", (event) => { const query = event.target.value.toLowerCase(); document.querySelectorAll(".nav a").forEach((link) => { link.hidden = query && !link.textContent.toLowerCase().includes(query); }); }); setTheme(); lucide.createIcons();
+  </script>
+</body>
+</html>

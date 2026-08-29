@@ -2,6 +2,17 @@ const fs = require("fs");
 const path = require("path");
 
 const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "index.html");
+const VIDEO_HTML_PATH = path.join(__dirname, "..", "public", "video.html");
+const IMAGE_HTML_PATH = path.join(__dirname, "..", "public", "image.html");
+
+function servePageHtml(res, filePath) {
+  const html = fs.readFileSync(filePath, "utf8");
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, must-revalidate");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.statusCode = 200;
+  res.end(html);
+}
 
 function wantsDocsHtml(req, pathname) {
   if (pathname === "/docs" || pathname === "/index.html" || pathname === "/ui") return true;
@@ -14,12 +25,7 @@ function wantsDocsHtml(req, pathname) {
 }
 
 function serveDocsHtml(res) {
-  const html = fs.readFileSync(DOCS_HTML_PATH, "utf8");
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "no-cache, must-revalidate");
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.statusCode = 200;
-  res.end(html);
+  servePageHtml(res, DOCS_HTML_PATH);
 }
 
 // 1. IMPORT TOÀN BỘ MODULE HANDLERS (../lib/)
@@ -516,6 +522,16 @@ module.exports = async (req, res) => {
         serveDocsHtml(res);
         return;
       } catch (_) {}
+    }
+
+    // Explicitly serve the protected UI pages because vercel.json rewrites all requests here.
+    if (pathname === "/video.html") {
+      servePageHtml(res, VIDEO_HTML_PATH);
+      return;
+    }
+    if (pathname === "/image.html" || pathname === "/image") {
+      servePageHtml(res, IMAGE_HTML_PATH);
+      return;
     }
 
     // Route /list
