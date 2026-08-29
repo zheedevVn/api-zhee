@@ -36,6 +36,9 @@
     .side-tools { display: flex; gap: 8px; padding: 10px 12px; }
     .side-tools input { width: 100%; min-width: 0; padding: 8px 10px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
     .icon-btn { width: 36px; height: 36px; display: grid; place-items: center; flex-shrink: 0; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+    .icon-btn:hover { background: color-mix(in srgb, var(--text) 6%, var(--card)); }
+    .nav-toggle { display: grid; }
+    .nav-close { display: none; margin-left: auto; }
     .nav { flex: 1; overflow-y: auto; padding: 4px 10px 24px; }
     .nav-section { margin: 14px 0 5px; padding: 0 10px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .nav a { display: flex; align-items: center; gap: 10px; margin: 1px 0; padding: 7px 10px 7px 14px; color: var(--text); border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; }
@@ -45,9 +48,10 @@
     .nav-group summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px; color: var(--text); border-radius: 10px; cursor: pointer; list-style: none; font-size: 12px; font-weight: 800; }
     .nav-group summary::-webkit-details-marker { display: none; }
     .nav-group summary:hover { background: color-mix(in srgb, var(--nav-active) 7%, transparent); }
-    .nav-group summary span { display: flex; align-items: center; gap: 10px; }
-    .nav-group summary svg { width: 16px; height: 16px; color: var(--muted); transition: transform .2s; }
-    .nav-group[open] summary svg { transform: rotate(180deg); }
+    .nav-group summary span { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .nav-group summary span svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-group summary > svg { width: 16px; height: 16px; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
+    .nav-group[open] summary > svg:last-child { transform: rotate(180deg); }
     .nav-sub { margin: 2px 0 6px 14px; padding-left: 8px; border-left: 1px solid var(--line); }
     .nav-sub a { padding: 8px 10px; font-size: 12px; }
     .nav-group.search-hidden { display: none; }
@@ -61,25 +65,29 @@
     .id-modal-body label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
     .id-modal-body input { width: 100%; padding: 11px 13px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; }
     .id-modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 17px; border-top: 1px solid var(--line); }
-    .sidebar-foot { padding: 12px 16px; color: var(--muted); border-top: 1px solid var(--line); font-size: 11px; line-height: 1.5; }
+    .sidebar-foot { padding: 14px 16px 18px; color: var(--muted); border-top: 1px solid var(--line); font-size: 11px; line-height: 1.6; }
     .main { flex: 1; width: 100%; min-width: 0; overflow-y: auto; overflow-x: hidden; }
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 28px 8px; }
     .topbar strong { font-size: 13px; font-weight: 800; }
     .content { max-width: 1120px; margin: 0 auto; padding: 8px 28px 64px; }
     .crumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; color: var(--muted); font-size: 12px; }
     .crumb strong { color: var(--text); }
-    .hero { margin-bottom: 22px; padding: 22px 24px; background: linear-gradient(135deg, color-mix(in srgb, var(--card) 94%, var(--pink) 6%), var(--card)); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+    .hero { margin-bottom: 22px; }
     .eyebrow { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 10px; color: var(--pink); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-    h2 { margin-bottom: 8px; font-size: clamp(25px, 3vw, 34px); letter-spacing: -.04em; }
-    .lead { max-width: 720px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 26px; font-weight: 800; letter-spacing: -.04em; }
+    .lead { max-width: 720px; margin-bottom: 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
     .panel { padding: 22px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
     .panel:hover { border-color: color-mix(in srgb, var(--pink) 20%, var(--line)); }
+    .uptime { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 999px; font-size: 12px; }
+    .uptime strong { color: var(--text); font-weight: 700; }
     .lock-panel { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
     .lock-icon { width: 52px; height: 52px; display: grid; place-items: center; color: var(--pink); background: color-mix(in srgb, var(--pink) 10%, transparent); border: 1px solid color-mix(in srgb, var(--pink) 28%, transparent); border-radius: 15px; }
     .lock-icon [data-lucide] { width: 21px; height: 21px; }
-    .lock-panel h3 { margin-bottom: 4px; font-size: 16px; }
-    .lock-panel p { color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .key-row { display: flex; gap: 10px; grid-column: 2; }
+    .lock-panel h3 { margin-bottom: 6px; font-size: 16px; }
+    .lock-panel p { color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .key-row { display: flex; align-items: stretch; gap: 10px; grid-column: 2; margin-top: 2px; }
+    .key-row .btn { min-height: 44px; white-space: nowrap; }
+    .key-row input { min-height: 44px; }
     .key-row input { width: min(440px, 100%); padding: 11px 13px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; transition: border-color .2s, box-shadow .2s; }
     .key-row input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 14px; border: 0; border-radius: 10px; font-size: 13px; font-weight: 700; }
@@ -91,6 +99,35 @@
     .section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 26px 0 12px; }
     .section-head h3 { font-size: 18px; }
     .section-head p { color: var(--muted); font-size: 12px; }
+    .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+    .docs-card { display: flex; flex-direction: column; min-height: 178px; padding: 18px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+    .docs-card h3 { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; font-size: 15px; }
+    .docs-card .row-btns { margin-top: auto; }
+    .docs-card h3 svg { color: var(--pink); }
+    .docs-card p { color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .docs-card .endpoint { margin-top: 10px; }
+    .code-panel { margin-top: 14px; padding: 16px 18px; overflow: auto; color: var(--code-fg); background: var(--code-bg); border-radius: 14px; }
+    .code-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; color: #cbd5e1; font-size: 12px; font-weight: 800; }
+    .code-panel pre { font: 12px/1.6 "JetBrains Mono", ui-monospace, monospace; white-space: pre-wrap; }
+    .image-form { display: grid; gap: 10px; width: 100%; }
+    .image-url-table { display: grid; gap: 8px; }
+    .image-url-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+    .image-url-index { color: var(--muted); font: 11px "JetBrains Mono", monospace; text-align: center; }
+    .image-url-row input { width: 100%; min-width: 0; min-height: 42px; padding: 10px 12px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
+    .image-url-row input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
+    .image-url-row .remove-url { width: 34px; height: 34px; padding: 0; }
+    .image-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .image-form-actions .btn { min-height: 42px; white-space: nowrap; }
+    .image-json { margin-top: 18px; padding: 14px 16px; overflow: auto; color: var(--code-fg); background: var(--code-bg); border-radius: 12px; }
+    .image-json-head { display: flex; justify-content: space-between; margin-bottom: 8px; color: #cbd5e1; font-size: 11px; font-weight: 800; }
+    .image-json pre { font: 11.5px/1.55 "JetBrains Mono", monospace; white-space: pre-wrap; }
+    .image-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .image-item { min-width: 0; overflow: hidden; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
+    .image-item img { display: block; width: 100%; height: 120px; object-fit: cover; }
+    .image-item-foot { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; font-size: 11px; }
+    .image-item-foot span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .image-item-foot a { color: var(--pink); font-weight: 800; text-decoration: none; }
+    .empty-state { grid-column: 1 / -1; padding: 20px; color: var(--muted); text-align: center; font-size: 13px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
     .server-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 166px; padding: 17px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); transition: transform .2s, border-color .2s; }
     .server-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--pink) 35%, var(--line)); }
@@ -113,24 +150,32 @@
     .toast { padding: 11px 14px; color: var(--text); background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--success); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.12); font-size: 13px; }
     .toast.error { border-left-color: var(--danger); }
     @media (max-width: 760px) {
-      .sidebar { display: none; }
-      .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--sidebar); border-bottom: 1px solid var(--line); }
+      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; display: flex; width: min(86vw, 300px); height: 100dvh; transform: translateX(-105%); transition: transform .25s ease; }
+      .sidebar.open { transform: translateX(0); box-shadow: 12px 0 40px rgba(0,0,0,.25); }
+      .nav-close { display: grid; }
+      .topbar { padding: 14px 18px; background: var(--sidebar); border-bottom: 1px solid var(--line); }
       .content { padding: 24px 18px 48px; }
+      .docs-grid { grid-template-columns: 1fr; }
       .lock-panel { grid-template-columns: auto 1fr; }
-      .key-row { grid-column: 1 / -1; }
+      .key-row { grid-column: 1 / -1; margin-top: 2px; }
+      .image-form-actions { align-items: stretch; }
+      .image-form-actions .btn { flex: 1; }
     }
     @media (max-width: 480px) {
       .lock-panel { display: block; }
       .lock-icon { margin-bottom: 12px; }
       .key-row { display: grid; margin-top: 16px; }
-      .key-row input { width: 100%; }
+      .key-row input, .key-row .btn { width: 100%; }
+      .image-url-row { grid-template-columns: 26px minmax(0, 1fr) 34px; }
+      .image-form-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .image-form-actions .btn { width: 100%; }
       .notice { align-items: flex-start; flex-direction: column; }
     }
   </style>
 </head>
 <body>
   <aside class="sidebar">
-    <div class="brand"><div class="brand-mark">Z</div><div><h1>Zhee API</h1><p>Cổng tra cứu công khai</p></div></div>
+    <div class="brand"><div class="brand-mark">Z</div><div><h1>Zhee API</h1><p>Cổng tra cứu công khai</p></div><button class="icon-btn nav-close" id="navClose" type="button" aria-label="Đóng menu"><i data-lucide="x"></i></button></div>
     <div class="side-tools"><input id="navSearch" type="search" placeholder="Tìm tool..."><button class="icon-btn" id="themeToggle" type="button" aria-label="Đổi giao diện"><i data-lucide="sun-moon"></i></button></div>
     <nav class="nav">
       <div class="nav-section">Điều hướng</div>
@@ -150,9 +195,8 @@
   </aside>
 
   <main class="main">
-    <div class="topbar"><strong>Zhee API · Video VIP</strong><button class="icon-btn" id="mobileThemeToggle" type="button" aria-label="Đổi giao diện"><i data-lucide="sun-moon"></i></button></div>
+    <div class="topbar"><button class="icon-btn nav-toggle" id="navToggle" type="button" aria-label="Mở menu"><i data-lucide="panel-left"></i></button><div class="crumb"><a href="/" style="color:inherit;text-decoration:none">Trang chủ</a><i data-lucide="chevron-right"></i><strong id="pageTitle">Video VIP</strong></div><div class="uptime"><i data-lucide="shield-check"></i><strong>Protected</strong> · API Key</div><button class="icon-btn" id="mobileThemeToggle" type="button" aria-label="Đổi giao diện"><i data-lucide="sun-moon"></i></button></div>
     <div class="content">
-      <div class="crumb"><a href="/" style="color:inherit;text-decoration:none">Trang chủ</a><i data-lucide="chevron-right"></i><strong id="pageTitle">Video VIP</strong></div>
       <section class="hero">
         <div class="eyebrow"><i data-lucide="shield-check"></i><span id="pageEyebrow">Secure media gateway</span></div>
         <h2 id="pageHeading">Khu vực Video VIP</h2>
@@ -165,6 +209,31 @@
         <div class="key-row"><input id="inputApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Nhập API Key xác thực..." aria-label="API Key"><button class="btn btn-primary" id="btnUnlockVideo" type="button"><i data-lucide="key-round"></i>Mở khóa</button></div>
       </section>
 
+      <section class="docs-grid" aria-label="Ví dụ Video VIP">
+        <article class="docs-card">
+          <h3><i data-lucide="terminal"></i>Ví dụ gọi API</h3>
+          <p>Dùng API Key để mở khóa danh sách media, sau đó chọn cụm máy chủ hoặc truyền ID cụ thể.</p>
+          <div class="endpoint">GET /video?node=node_v1&amp;key=YOUR_API_KEY</div>
+          <div class="row-btns"><button class="btn btn-outline" id="copyVideoExample" type="button"><i data-lucide="copy"></i>Sao chép ví dụ</button></div>
+        </article>
+        <article class="docs-card">
+          <h3><i data-lucide="shield-check"></i>Bảo vệ &amp; phạm vi</h3>
+          <p>Key chỉ nằm trong bộ nhớ phiên hiện tại. Không có key hợp lệ, máy chủ không trả danh sách cluster hoặc link media.</p>
+          <div class="endpoint">GET /video/images?url=PUBLIC_URL&amp;key=YOUR_API_KEY</div>
+        </article>
+      </section>
+      <div class="code-panel">
+        <div class="code-panel-head"><span>HTTP 200 · Response mẫu</span><span>JSON</span></div>
+        <pre id="videoExampleCode">{
+  "trang_thai": "thanh_cong",
+  "loai": "video_stream",
+  "node": "node_v1",
+  "id": 1,
+  "link_media": "https://...",
+  "tac_gia": "Hồ Đức Minh (Zhee Dev)"
+}</pre>
+      </div>
+
       <section id="videoContent" data-view-panel="video" hidden>
         <div class="notice"><span><i data-lucide="badge-check" style="display:inline-block;vertical-align:middle;margin-right:6px"></i>Đã xác thực. Các cụm media đã sẵn sàng.</span><button class="btn btn-danger" id="btnLockVideo" type="button">Khóa lại</button></div>
         <div class="section-head"><div><h3>Cụm máy chủ media</h3><p>Chọn Random Stream hoặc nhập ID cụ thể để phát.</p></div></div>
@@ -173,7 +242,7 @@
 
       <section id="imageContent" class="tool-panel" data-view-panel="image" hidden>
         <div class="section-head"><div><h3>Image Link Collector</h3><p>Quét ảnh công khai ngay trong tab Video VIP này.</p></div><button class="btn btn-outline" id="btnBackToVideo" type="button"><i data-lucide="arrow-left"></i>Video VIP</button></div>
-        <div class="panel"><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Hỗ trợ ảnh trong img, srcset, lazy-load, og:image, Twitter image và JSON-LD. Giới hạn 50 ảnh mỗi lần.</p><div class="image-form"><input id="pageUrl" type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="URL trang nguồn"><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Lấy ảnh</button></div><div id="imageResults" class="image-results" hidden></div></div>
+        <div class="panel"><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Nhập tối đa 10 URL trong bảng. JSON kết quả sẽ hiện trước; ảnh xem trước hiển thị phía dưới. Bộ lọc loại các dấu hiệu logo, quảng cáo và ảnh trang trí.</p><div class="image-form"><div id="imageUrlTable" class="image-url-table"><div class="image-url-row"><span class="image-url-index">01</span><input id="pageUrl" type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="URL trang nguồn"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa URL"><i data-lucide="x"></i></button></div></div><div class="image-form-actions"><button class="btn btn-outline" id="addImageUrl" type="button"><i data-lucide="plus"></i>Thêm URL</button><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Quét toàn bộ</button></div></div><div id="imageJson" class="image-json" hidden><div class="image-json-head"><span>JSON · Kết quả trước khi xem ảnh</span><span id="imageJsonStatus">--</span></div><pre id="imageJsonCode"></pre></div><div id="imageResults" class="image-results" hidden></div></div>
       </section>
     </div>
   </main>
@@ -208,8 +277,25 @@
     const $ = (id) => document.getElementById(id);
     const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
     function toast(message, type = "success") { const item = document.createElement("div"); item.className = `toast ${type}`; item.textContent = message; $("toastWrap").appendChild(item); setTimeout(() => item.remove(), 3500); }
-    function setTheme() { document.documentElement.dataset.theme = localStorage.getItem("zhee_theme") || "light"; }
-    function toggleTheme() { const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; localStorage.setItem("zhee_theme", next); setTheme(); }
+    function setTheme() {
+      const theme = localStorage.getItem("zhee-theme") || "light";
+      document.documentElement.dataset.theme = theme;
+      const icon = theme === "dark" ? "sun" : "moon";
+      [$("themeToggle"), $("mobileThemeToggle")].forEach((button) => {
+        button.innerHTML = `<i data-lucide="${icon}"></i>`;
+      });
+      lucide.createIcons();
+    }
+    function toggleTheme() {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem("zhee-theme", next);
+      setTheme();
+    }
+    const sidebar = document.querySelector(".sidebar");
+    function closeNav() { sidebar.classList.remove("open"); }
+    function openNav() { sidebar.classList.add("open"); }
+    $("navToggle").addEventListener("click", openNav);
+    $("navClose").addEventListener("click", closeNav);
     function renderCards() { $("gridVideoServers").innerHTML = CLUSTER_NODES.map(([id, title, desc]) => `<article class="server-card"><div><div class="card-top"><div class="card-title">${escapeHtml(title)}</div><span class="tag">Online</span></div><p class="card-desc">${escapeHtml(desc)}</p></div><div class="card-actions"><button class="btn btn-primary" type="button" data-node="${id}" data-action="random">Random Stream</button><button class="btn btn-outline" type="button" data-node="${id}" data-action="id">Theo ID</button></div></article>`).join(""); }
     function setView(view, updateHash = true) {
       activeView = view === "image" ? "image" : "video";
@@ -222,25 +308,53 @@
       $("pageHeading").textContent = imageView ? "Image Link Collector" : "Khu vực Video VIP";
       $("pageLead").textContent = imageView ? "Quét ảnh công khai từ một trang HTML ngay trong tab Video VIP này." : "Truy cập các cụm media chỉ sau khi xác thực bằng API Key hợp lệ. Nội dung và các nút phát video sẽ không được tải cho đến khi máy chủ xác nhận key.";
     }
+    function imageUrlValues() {
+      return [...document.querySelectorAll("#imageUrlTable input")].map((input) => input.value.trim()).filter(Boolean);
+    }
+    function renderImageUrlRows() {
+      document.querySelectorAll("#imageUrlTable .image-url-row").forEach((row, index) => {
+        row.querySelector(".image-url-index").textContent = String(index + 1).padStart(2, "0");
+        row.querySelector("[data-remove-url]").disabled = document.querySelectorAll("#imageUrlTable .image-url-row").length === 1;
+      });
+      lucide.createIcons();
+    }
+    function addImageUrlRow(value = "") {
+      const table = $("imageUrlTable");
+      if (table.children.length >= 10) return toast("Tối đa 10 URL mỗi lần quét.", "error");
+      const row = document.createElement("div");
+      row.className = "image-url-row";
+      row.innerHTML = `<span class="image-url-index"></span><input type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="URL trang nguồn"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa URL"><i data-lucide="x"></i></button>`;
+      row.querySelector("input").value = value;
+      table.appendChild(row);
+      renderImageUrlRows();
+    }
     async function collectImages() {
-      const url = $("pageUrl").value.trim();
-      if (!/^https?:\\/\\//i.test(url)) return toast("Vui lòng nhập URL http hoặc https hợp lệ.", "error");
+      const urls = imageUrlValues();
+      if (!urls.length || urls.some((url) => !/^https?:\/\//i.test(url))) return toast("Mỗi dòng phải là URL http hoặc https hợp lệ.", "error");
       const button = $("collect");
       button.disabled = true;
       button.textContent = "Đang quét...";
+      $("imageJson").hidden = false;
+      $("imageJsonStatus").textContent = "Đang xử lý";
+      $("imageJsonCode").textContent = JSON.stringify({ trang_thai: "dang_xu_ly", so_trang: urls.length, danh_sach_nguon: urls }, null, 2);
+      $("imageResults").hidden = true;
       try {
-        const response = await fetch(`/video/images?url=${encodeURIComponent(url)}&key=${encodeURIComponent(currentSessionKey)}`, { cache: "no-store" });
+        const response = await fetch(`/video/images?urls=${encodeURIComponent(urls.join("\n"))}&key=${encodeURIComponent(currentSessionKey)}`, { cache: "no-store" });
         const data = await response.json();
         if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "Không thể lấy ảnh.");
+        $("imageJsonStatus").textContent = `${data.so_luong} ảnh · ${data.da_loc || 0} đã lọc`;
+        $("imageJsonCode").textContent = JSON.stringify(data, null, 2);
         const results = $("imageResults");
         results.hidden = false;
-        results.innerHTML = data.danh_sach_anh.length ? data.danh_sach_anh.map((image, index) => `<article class="image-item"><a href="${escapeHtml(image)}" target="_blank" rel="noopener"><img src="${escapeHtml(image)}" alt="Ảnh ${index + 1}" loading="lazy"></a><div class="image-item-foot"><span title="${escapeHtml(image)}">Ảnh ${index + 1}</span><a href="${escapeHtml(image)}" target="_blank" rel="noopener" download>Tải</a></div></article>`).join("") : '<div class="empty-state">Không tìm thấy ảnh công khai trong trang này.</div>';
-        toast(`Đã tìm thấy ${data.so_luong} ảnh.`);
+        results.innerHTML = data.danh_sach_anh.length ? data.danh_sach_anh.map((image, index) => `<article class="image-item"><a href="${escapeHtml(image)}" target="_blank" rel="noopener"><img src="${escapeHtml(image)}" alt="Ảnh ${index + 1}" loading="lazy"></a><div class="image-item-foot"><span title="${escapeHtml(image)}">Ảnh ${index + 1}</span><a href="${escapeHtml(image)}" target="_blank" rel="noopener" download>Tải</a></div></article>`).join("") : '<div class="empty-state">Không tìm thấy ảnh nội dung sau khi lọc.</div>';
+        toast(`Đã quét ${data.so_trang} trang, giữ lại ${data.so_luong} ảnh.`);
       } catch (error) {
+        $("imageJsonStatus").textContent = "Lỗi";
+        $("imageJsonCode").textContent = JSON.stringify({ trang_thai: "that_bai", thong_bao: error.message }, null, 2);
         toast(error.message, "error");
       } finally {
         button.disabled = false;
-        button.innerHTML = '<i data-lucide="scan-search"></i>Lấy ảnh';
+        button.innerHTML = '<i data-lucide="scan-search"></i>Quét toàn bộ';
         lucide.createIcons();
       }
     }
@@ -248,15 +362,19 @@
     async function playMedia(nodeId, title, requestedId = "") { currentActiveNode = nodeId; const query = `/video?node=${encodeURIComponent(nodeId)}&key=${encodeURIComponent(currentSessionKey)}${requestedId ? `&id=${encodeURIComponent(requestedId)}` : ""}`; try { const response = await fetch(query, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "Không thể truy xuất media."); const mediaUrl = data.link_media || data.link_video || ""; if (!mediaUrl) throw new Error("Máy chủ không trả về link media."); $("modalTitle").textContent = data.ten_file || title; $("modalDesc").textContent = `ID: #${data.id || "Random"} / ${data.tong_so || "N/A"}`; $("btnDirectLink").href = `/video?node=${encodeURIComponent(nodeId)}&raw=true&key=${encodeURIComponent(currentSessionKey)}${requestedId ? `&id=${encodeURIComponent(requestedId)}` : ""}`; $("modalBody").innerHTML = mediaUrl.toLowerCase().split("?")[0].endsWith(".gif") ? `<img class="media-player" src="${escapeHtml(mediaUrl)}" alt="Media stream">` : `<video class="media-player" controls autoplay playsinline><source src="${escapeHtml(mediaUrl)}" type="video/mp4"></video>`; $("playerModal").classList.add("show"); } catch (error) { toast(error.message, "error"); } }
     function openIdPrompt(nodeId, title) { pendingIdRequest = { nodeId, title }; $("requestedMediaId").value = "1"; $("idPromptModal").classList.add("show"); setTimeout(() => $("requestedMediaId").focus(), 0); }
     function closeIdPrompt() { pendingIdRequest = null; $("idPromptModal").classList.remove("show"); }
-    function confirmIdPrompt() { if (!pendingIdRequest) return; const id = $("requestedMediaId").value.trim(); if (!/^[1-9]\\d*$/.test(id)) return toast("ID phải là số nguyên dương.", "error"); const request = pendingIdRequest; closeIdPrompt(); playMedia(request.nodeId, request.title, id); }
+    function confirmIdPrompt() { if (!pendingIdRequest) return; const id = $("requestedMediaId").value.trim(); if (!/^[1-9]\d*$/.test(id)) return toast("ID phải là số nguyên dương.", "error"); const request = pendingIdRequest; closeIdPrompt(); playMedia(request.nodeId, request.title, id); }
     function lock() { currentSessionKey = ""; activeView = "video"; $("lockPanel").hidden = false; $("videoContent").hidden = true; $("imageContent").hidden = true; $("inputApiKey").value = ""; closeModal(); closeIdPrompt(); setView("video"); toast("Đã khóa phiên truy cập."); }
     function closeModal() { $("playerModal").classList.remove("show"); $("modalBody").innerHTML = ""; }
+    $("copyVideoExample").addEventListener("click", () => navigator.clipboard.writeText("/video?node=node_v1&key=YOUR_API_KEY").then(() => toast("Đã sao chép ví dụ.")));
     $("btnUnlockVideo").addEventListener("click", () => { const key = $("inputApiKey").value.trim(); if (!key) return toast("Vui lòng nhập API Key.", "error"); unlock(key); });
     $("inputApiKey").addEventListener("keydown", (event) => { if (event.key === "Enter") $("btnUnlockVideo").click(); });
     $("btnLockVideo").addEventListener("click", lock); $("closeModal").addEventListener("click", closeModal);
     document.querySelectorAll("[data-view]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); if (!currentSessionKey) return toast("Vui lòng nhập API Key trước khi sử dụng tool.", "error"); setView(link.dataset.view); }));
     $("btnBackToVideo").addEventListener("click", () => setView("video"));
+    $("addImageUrl").addEventListener("click", () => addImageUrlRow());
+    $("imageUrlTable").addEventListener("click", (event) => { const remove = event.target.closest("[data-remove-url]"); if (!remove) return; const rows = document.querySelectorAll("#imageUrlTable .image-url-row"); if (rows.length > 1) remove.closest(".image-url-row").remove(); renderImageUrlRows(); });
     $("collect").addEventListener("click", collectImages); $("pageUrl").addEventListener("keydown", (event) => { if (event.key === "Enter") collectImages(); }); $("playerModal").addEventListener("click", (event) => { if (event.target === $("playerModal")) closeModal(); });
+    renderImageUrlRows();
     $("btnNextRandom").addEventListener("click", () => { if (currentActiveNode) playMedia(currentActiveNode, "Đang tải..."); });
     $("gridVideoServers").addEventListener("click", (event) => { const button = event.target.closest("button[data-node]"); if (!button) return; const node = CLUSTER_NODES.find((item) => item[0] === button.dataset.node); if (button.dataset.action === "id") openIdPrompt(node[0], node[1]); else playMedia(node[0], node[1]); });
     $("closeIdPrompt").addEventListener("click", closeIdPrompt); $("cancelIdPrompt").addEventListener("click", closeIdPrompt); $("confirmIdPrompt").addEventListener("click", confirmIdPrompt); $("idPromptModal").addEventListener("click", (event) => { if (event.target === $("idPromptModal")) closeIdPrompt(); }); $("requestedMediaId").addEventListener("keydown", (event) => { if (event.key === "Enter") confirmIdPrompt(); });
