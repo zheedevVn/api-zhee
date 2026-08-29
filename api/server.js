@@ -48,6 +48,7 @@ const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 const shopeeHandler = require("../lib/shopee");
 const lazadaHandler = require("../lib/lazada");
+const tikiHandler = require("../lib/tiki");
 const pinterestHandler = require("../lib/pinterest");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
@@ -400,6 +401,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check tài khoản qua Cookie/IMEI.",
     vi_du_params: "?=0912345678",
     handler: zaloHandler
+  },
+  {
+    prefix: ["/api/mxh/tiki", "/mxh/tiki", "/tiki"],
+    ten: "Tiki Account, Shop & Product Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu dữ liệu Tiki công khai theo product ID, link sản phẩm, shop hoặc slug; không nhận mật khẩu/cookie/session.",
+    vi_du_params: "?=198944761",
+    handler: tikiHandler
   },
   {
     prefix: ["/api/mxh/lazada", "/mxh/lazada", "/lazada"],
