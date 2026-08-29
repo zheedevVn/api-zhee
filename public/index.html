@@ -1032,6 +1032,19 @@
           params: "?url={link_lazada_public}"
         });
       }
+
+      // Keep Tiki visible when the browser still has an older /list response.
+      if (!CATALOG.some((x) => x.path === "/api/mxh/tiki")) {
+        CATALOG.push({
+          id: slug("/api/mxh/tiki"),
+          ten: "Tiki Account, Shop & Product Lookup",
+          mo_ta: "Tra cứu product ID, shop hoặc link public Tiki; không cần mật khẩu/cookie/session.",
+          path: "/api/mxh/tiki",
+          chuyen_muc: "Mạng Xã Hội",
+          vi_du: `${location.origin}/api/mxh/tiki?url={link_tiki_public}`,
+          params: "?url={link_tiki_public}"
+        });
+      }
     }
     function loadUI() {
       const qEl = document.getElementById("q");
