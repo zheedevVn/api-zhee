@@ -47,6 +47,7 @@ const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
 const shopeeHandler = require("../lib/shopee");
+const lazadaHandler = require("../lib/lazada");
 const pinterestHandler = require("../lib/pinterest");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
@@ -399,6 +400,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu nhóm Zalo, chuẩn hóa SĐT hoặc check tài khoản qua Cookie/IMEI.",
     vi_du_params: "?=0912345678",
     handler: zaloHandler
+  },
+  {
+    prefix: ["/api/mxh/lazada", "/mxh/lazada", "/lazada"],
+    ten: "Lazada Shop & Product Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu dữ liệu Lazada công khai theo shop slug, seller ID hoặc link sản phẩm; không nhận mật khẩu/cookie/session.",
+    vi_du_params: "?=https://www.lazada.vn/shop/{slug}/",
+    handler: lazadaHandler
   },
   {
     prefix: ["/api/mxh/shopee", "/mxh/shopee", "/shopee"],
