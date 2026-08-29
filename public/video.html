@@ -13,13 +13,13 @@
   <style>
     :root {
       --bg: #f4f5f8; --sidebar: #fff; --card: #fff; --line: #eceef3;
-      --text: #111827; --muted: #6b7280; --pink: #e11d48; --nav-active: #111827;
+      --text: #111827; --muted: #6b7280; --pink: #e11d48; --link: #be123c; --nav-active: #111827;
       --nav-active-fg: #fff; --code-bg: #0f172a; --shadow: 0 1px 2px rgba(16,24,40,.05);
       --success: #059669; --danger: #dc2626;
     }
     html[data-theme="dark"] {
       --bg: #0b0f17; --sidebar: #111827; --card: #151c28; --line: #243044;
-      --text: #f3f4f6; --muted: #9ca3af; --pink: #fb7185; --nav-active: #f8fafc;
+      --text: #f3f4f6; --muted: #9ca3af; --pink: #fb7185; --link: #fda4af; --nav-active: #f8fafc;
       --nav-active-fg: #111827; --code-bg: #020617; --shadow: none;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,7 +41,8 @@
     .nav-close { display: none; margin-left: auto; }
     .nav { flex: 1; overflow-y: auto; padding: 4px 10px 24px; }
     .nav-section { margin: 14px 0 5px; padding: 0 10px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-    .nav a { display: flex; align-items: center; gap: 10px; margin: 1px 0; padding: 7px 10px 7px 14px; color: var(--text); border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; }
+    .nav a { display: flex; align-items: center; gap: 10px; min-width: 0; margin: 1px 0; padding: 7px 10px 7px 14px; color: var(--text); border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; }
+    .nav a .nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .nav a:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
     .nav a.active { color: var(--nav-active-fg); background: var(--nav-active); box-shadow: 0 2px 8px color-mix(in srgb, var(--nav-active) 16%, transparent); }
     .nav-group { margin: 3px 0; }
@@ -105,7 +106,7 @@
     .docs-card .row-btns { margin-top: auto; }
     .docs-card h3 svg { color: var(--pink); }
     .docs-card p { color: var(--muted); font-size: 12px; line-height: 1.55; }
-    .docs-card .endpoint { margin-top: 10px; }
+    .docs-card .endpoint { margin-top: 10px; color: var(--link); overflow-wrap: anywhere; font: 11px/1.55 "JetBrains Mono", monospace; }
     .code-panel { margin-top: 14px; padding: 16px 18px; overflow: auto; color: var(--code-fg); background: var(--code-bg); border-radius: 14px; }
     .code-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; color: #cbd5e1; font-size: 12px; font-weight: 800; }
     .code-panel pre { font: 12px/1.6 "JetBrains Mono", ui-monospace, monospace; white-space: pre-wrap; }
@@ -113,8 +114,7 @@
     .image-url-table { overflow: hidden; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
     .image-url-head { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px; padding: 9px 10px; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .image-url-row { display: grid; grid-template-columns: 110px minmax(0, 1fr); align-items: start; gap: 8px; padding: 10px; }
-    .image-url-index { padding-top: 11px; color: var(--muted); font: 11px "JetBrains Mono", monospace; }
-    .image-url-index::before { content: "Link "; color: var(--text); font-family: inherit; }
+    .image-url-index { padding-top: 11px; color: var(--text); font: 700 11px "JetBrains Mono", monospace; }
     .image-url-row textarea { width: 100%; min-width: 0; min-height: 190px; padding: 12px; outline: none; resize: vertical; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 10px; font: 13px/1.7 "JetBrains Mono", monospace; }
     .image-url-row textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
     .image-url-help { margin-top: 6px; color: var(--muted); font-size: 11px; }
@@ -244,7 +244,7 @@
 
       <section id="imageContent" class="tool-panel" data-view-panel="image" hidden>
         <div class="section-head"><div><h3>Image Link Collector</h3><p>Quét ảnh công khai ngay trong tab Video VIP này.</p></div><button class="btn btn-outline" id="btnBackToVideo" type="button"><i data-lucide="arrow-left"></i>Video VIP</button></div>
-        <div class="panel"><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Dán mỗi link trên một dòng trong bảng bên dưới, sau đó bấm <strong>Quét toàn bộ</strong> một lần. Tối đa 10 link mỗi lần quét; JSON kết quả hiện trước, ảnh xem trước hiển thị phía dưới.</p><div class="image-form"><div id="imageUrlTable" class="image-url-table"><div class="image-url-head"><span>Danh sách</span><span>Link trang cần quét</span></div><div class="image-url-row"><span class="image-url-index">01–10</span><div><textarea id="pageUrl" rows="8" placeholder="https://example.com/page-1&#10;https://example.com/page-2&#10;https://example.com/page-3&#10;..." autocomplete="off" aria-label="Danh sách link trang nguồn"></textarea><div class="image-url-help">Mỗi dòng là một link. Có thể dán tối đa 10 link cùng lúc.</div></div></div></div><div class="image-form-actions"><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Quét toàn bộ</button></div></div><div id="imageJson" class="image-json" hidden><div class="image-json-head"><span>JSON · Kết quả trước khi xem ảnh</span><span id="imageJsonStatus">--</span></div><pre id="imageJsonCode"></pre></div><div id="imageResults" class="image-results" hidden></div></div>
+        <div class="panel"><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Dán danh sách URL, mỗi link trên một dòng, rồi bấm <strong>Quét toàn bộ</strong>. Bộ lọc sẽ tự loại logo, quảng cáo và ảnh trang trí trước khi hiển thị kết quả.</p><div class="image-form"><div id="imageUrlTable" class="image-url-table"><div class="image-url-head"><span>URL</span><span>Danh sách link cần quét</span></div><div class="image-url-row"><span class="image-url-index">01–10</span><div><textarea id="pageUrl" rows="8" placeholder="https://example.com/page-1&#10;https://example.com/page-2&#10;https://example.com/page-3&#10;..." autocomplete="off" aria-label="Danh sách link trang nguồn"></textarea><div class="image-url-help">Mỗi dòng là một link · tối đa 10 link mỗi lần quét</div></div></div></div><div class="image-form-actions"><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Quét toàn bộ</button></div></div><div id="imageJson" class="image-json" hidden><div class="image-json-head"><span>JSON · Kết quả trước khi xem ảnh</span><span id="imageJsonStatus">--</span></div><pre id="imageJsonCode"></pre></div><div id="imageResults" class="image-results" hidden></div></div>
       </section>
     </div>
   </main>
