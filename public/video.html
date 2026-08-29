@@ -55,22 +55,11 @@
     .tool-head h3 { font-size: 18px; }
     .tool-head svg { color: var(--pink); }
     .tool-copy { margin-bottom: 14px; color: var(--muted); font-size: 12px; line-height: 1.6; }
-    .image-form { display: flex; gap: 10px; }
-    .image-form input { flex: 1; min-width: 0; padding: 11px 13px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
-    .image-form input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
-    .image-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-top: 14px; }
-    .image-item { overflow: hidden; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
-    .image-item img { display: block; width: 100%; height: 120px; object-fit: cover; background: #020617; }
-    .image-item-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px; }
-    .image-item-foot span { overflow: hidden; color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-    .image-item-foot a { flex-shrink: 0; color: var(--pink); font-size: 11px; font-weight: 800; text-decoration: none; }
-    .empty-state { padding: 18px; color: var(--muted); background: var(--bg); border: 1px dashed var(--line); border-radius: 12px; font-size: 12px; text-align: center; }
     .id-modal { width: min(420px, 100%); }
     .id-modal-body { padding: 18px; }
     .id-modal-body label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
     .id-modal-body input { width: 100%; padding: 11px 13px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; }
     .id-modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 17px; border-top: 1px solid var(--line); }
-    @media (max-width: 560px) { .image-form { display: grid; } }
     .sidebar-foot { padding: 12px 16px; color: var(--muted); border-top: 1px solid var(--line); font-size: 11px; line-height: 1.5; }
     .main { width: 100%; min-width: 0; }
     .topbar { display: none; }
@@ -149,7 +138,7 @@
         <summary><span><i data-lucide="shield-check"></i>Khu vực bảo vệ</span><i data-lucide="chevron-down"></i></summary>
         <div class="nav-sub">
           <a class="active" href="/video.html"><i data-lucide="lock-keyhole"></i>Video VIP</a>
-          <a href="#imageTool" data-tool-link="imageTool"><i data-lucide="images"></i>Image Collector</a>
+          <a href="/image.html" target="_blank" rel="noopener"><i data-lucide="images"></i>Image Collector</a>
         </div>
       </details>
     </nav>
@@ -176,12 +165,6 @@
         <div class="notice"><span><i data-lucide="badge-check" style="display:inline-block;vertical-align:middle;margin-right:6px"></i>Đã xác thực. Các cụm media đã sẵn sàng.</span><button class="btn btn-danger" id="btnLockVideo" type="button">Khóa lại</button></div>
         <div class="section-head"><div><h3>Cụm máy chủ media</h3><p>Chọn Random Stream hoặc nhập ID cụ thể để phát.</p></div></div>
         <div class="grid" id="gridVideoServers"></div>
-        <section id="imageTool" class="panel tool-panel" aria-labelledby="imageToolTitle">
-          <div class="tool-head"><i data-lucide="images"></i><h3 id="imageToolTitle">Image Link Collector</h3></div>
-          <p class="tool-copy">Dán link trang công khai để lấy các ảnh có trong trang. Có thể xem và tải từng ảnh hoặc mở toàn bộ danh sách kết quả.</p>
-          <div class="image-form"><input id="imagePageUrl" type="url" placeholder="https://example.com/en/gifs/227379" autocomplete="off" spellcheck="false" aria-label="Link trang chứa ảnh"><button class="btn btn-primary" id="btnCollectImages" type="button"><i data-lucide="scan-search"></i>Lấy ảnh</button></div>
-          <div id="imageResults" class="image-results" hidden></div>
-        </section>
       </section>
     </div>
   </main>
@@ -225,18 +208,16 @@
     function confirmIdPrompt() { if (!pendingIdRequest) return; const id = $("requestedMediaId").value.trim(); if (!/^[1-9]\\d*$/.test(id)) return toast("ID phải là số nguyên dương.", "error"); const request = pendingIdRequest; closeIdPrompt(); playMedia(request.nodeId, request.title, id); }
     function lock() { currentSessionKey = ""; $("lockPanel").hidden = false; $("videoContent").hidden = true; $("inputApiKey").value = ""; closeModal(); closeIdPrompt(); toast("Đã khóa phiên truy cập."); }
     function closeModal() { $("playerModal").classList.remove("show"); $("modalBody").innerHTML = ""; }
-    async function collectImages() { const input = $("imagePageUrl"); const rawUrl = input.value.trim(); if (!/^https?:\/\//i.test(rawUrl)) return toast("Vui lòng nhập URL http hoặc https hợp lệ.", "error"); const button = $("btnCollectImages"); button.disabled = true; button.textContent = "Đang quét..."; try { const response = await fetch(`/video/images?url=${encodeURIComponent(rawUrl)}&key=${encodeURIComponent(currentSessionKey)}`, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "Không thể lấy ảnh từ trang này."); renderImageResults(data); toast(`Đã tìm thấy ${data.so_luong} ảnh.`); } catch (error) { toast(error.message, "error"); } finally { button.disabled = false; button.innerHTML = '<i data-lucide="scan-search"></i>Lấy ảnh'; lucide.createIcons(); } }
-    function renderImageResults(data) { const results = $("imageResults"); results.hidden = false; if (!data.danh_sach_anh.length) { results.innerHTML = '<div class="empty-state">Không tìm thấy ảnh công khai trong trang này.</div>'; return; } results.innerHTML = data.danh_sach_anh.map((url, index) => `<article class="image-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener"><img src="${escapeHtml(url)}" alt="Ảnh ${index + 1}" loading="lazy"></a><div class="image-item-foot"><span title="${escapeHtml(url)}">Ảnh ${index + 1}</span><a href="${escapeHtml(url)}" target="_blank" rel="noopener" download>Tải</a></div></article>`).join(""); }
     $("btnUnlockVideo").addEventListener("click", () => { const key = $("inputApiKey").value.trim(); if (!key) return toast("Vui lòng nhập API Key.", "error"); unlock(key); });
     $("inputApiKey").addEventListener("keydown", (event) => { if (event.key === "Enter") $("btnUnlockVideo").click(); });
     $("btnLockVideo").addEventListener("click", lock); $("closeModal").addEventListener("click", closeModal); $("playerModal").addEventListener("click", (event) => { if (event.target === $("playerModal")) closeModal(); });
     $("btnNextRandom").addEventListener("click", () => { if (currentActiveNode) playMedia(currentActiveNode, "Đang tải..."); });
     $("gridVideoServers").addEventListener("click", (event) => { const button = event.target.closest("button[data-node]"); if (!button) return; const node = CLUSTER_NODES.find((item) => item[0] === button.dataset.node); if (button.dataset.action === "id") openIdPrompt(node[0], node[1]); else playMedia(node[0], node[1]); });
     $("closeIdPrompt").addEventListener("click", closeIdPrompt); $("cancelIdPrompt").addEventListener("click", closeIdPrompt); $("confirmIdPrompt").addEventListener("click", confirmIdPrompt); $("idPromptModal").addEventListener("click", (event) => { if (event.target === $("idPromptModal")) closeIdPrompt(); }); $("requestedMediaId").addEventListener("keydown", (event) => { if (event.key === "Enter") confirmIdPrompt(); });
-    $("btnCollectImages").addEventListener("click", collectImages); $("imagePageUrl").addEventListener("keydown", (event) => { if (event.key === "Enter") collectImages(); });
     [$("themeToggle"), $("mobileThemeToggle")].forEach((button) => button.addEventListener("click", toggleTheme));
     $("navSearch").addEventListener("input", (event) => { const query = event.target.value.toLowerCase(); document.querySelectorAll(".nav a").forEach((link) => { link.hidden = query && !link.textContent.toLowerCase().includes(query); }); });
     setTheme(); lucide.createIcons();
+    if (location.hash === "#imageTool") location.replace("/image.html");
   </script>
 </body>
 </html>
