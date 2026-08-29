@@ -40,6 +40,37 @@
     .nav-section { margin: 14px 0 5px; padding: 0 10px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .nav a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; color: var(--muted); border-radius: 10px; font-size: 13px; text-decoration: none; }
     .nav a:hover, .nav a.active { color: var(--nav-active-fg); background: var(--nav-active); }
+    .nav-group { margin: 3px 0; }
+    .nav-group summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px; color: var(--text); border-radius: 10px; cursor: pointer; list-style: none; font-size: 12px; font-weight: 800; }
+    .nav-group summary::-webkit-details-marker { display: none; }
+    .nav-group summary:hover { background: color-mix(in srgb, var(--nav-active) 7%, transparent); }
+    .nav-group summary span { display: flex; align-items: center; gap: 10px; }
+    .nav-group summary svg { width: 16px; height: 16px; color: var(--muted); transition: transform .2s; }
+    .nav-group[open] summary svg { transform: rotate(180deg); }
+    .nav-sub { margin: 2px 0 6px 14px; padding-left: 8px; border-left: 1px solid var(--line); }
+    .nav-sub a { padding: 8px 10px; font-size: 12px; }
+    .nav-group.search-hidden { display: none; }
+    .tool-panel { margin-top: 22px; }
+    .tool-head { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+    .tool-head h3 { font-size: 18px; }
+    .tool-head svg { color: var(--pink); }
+    .tool-copy { margin-bottom: 14px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .image-form { display: flex; gap: 10px; }
+    .image-form input { flex: 1; min-width: 0; padding: 11px 13px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
+    .image-form input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
+    .image-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-top: 14px; }
+    .image-item { overflow: hidden; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
+    .image-item img { display: block; width: 100%; height: 120px; object-fit: cover; background: #020617; }
+    .image-item-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px; }
+    .image-item-foot span { overflow: hidden; color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .image-item-foot a { flex-shrink: 0; color: var(--pink); font-size: 11px; font-weight: 800; text-decoration: none; }
+    .empty-state { padding: 18px; color: var(--muted); background: var(--bg); border: 1px dashed var(--line); border-radius: 12px; font-size: 12px; text-align: center; }
+    .id-modal { width: min(420px, 100%); }
+    .id-modal-body { padding: 18px; }
+    .id-modal-body label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .id-modal-body input { width: 100%; padding: 11px 13px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; }
+    .id-modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 17px; border-top: 1px solid var(--line); }
+    @media (max-width: 560px) { .image-form { display: grid; } }
     .sidebar-foot { padding: 12px 16px; color: var(--muted); border-top: 1px solid var(--line); font-size: 11px; line-height: 1.5; }
     .main { width: 100%; min-width: 0; }
     .topbar { display: none; }
@@ -109,12 +140,15 @@
     <div class="brand"><div class="brand-mark">Z</div><div><h1>Zhee API</h1><p>Cổng tra cứu công khai</p></div></div>
     <div class="side-tools"><input id="navSearch" type="search" placeholder="Tìm tool..."><button class="icon-btn" id="themeToggle" type="button" aria-label="Đổi giao diện"><i data-lucide="sun-moon"></i></button></div>
     <nav class="nav">
-      <div class="nav-section">Chính</div>
-      <a href="/"><i data-lucide="house"></i>Trang chủ</a>
-      <a href="/list"><i data-lucide="book-open"></i>Tài liệu API</a>
-      <div class="nav-section">Khu vực bảo vệ</div>
-      <a class="active" href="/video.html"><i data-lucide="lock-keyhole"></i>Video VIP</a>
-      <a href="/video"><i data-lucide="server"></i>Video API</a>
+      <div class="nav-section">Điều hướng</div>
+      <details class="nav-group" open data-nav-group>
+        <summary><span><i data-lucide="layout-dashboard"></i>Khám phá</span><i data-lucide="chevron-down"></i></summary>
+        <div class="nav-sub"><a href="/"><i data-lucide="house"></i>Trang chủ</a><a href="/list"><i data-lucide="book-open"></i>Tài liệu API</a></div>
+      </details>
+      <details class="nav-group" open data-nav-group>
+        <summary><span><i data-lucide="shield-check"></i>Khu vực bảo vệ</span><i data-lucide="chevron-down"></i></summary>
+        <div class="nav-sub"><a class="active" href="/video.html"><i data-lucide="lock-keyhole"></i>Video VIP</a><a href="/video"><i data-lucide="server"></i>Video API</a></div>
+      </details>
     </nav>
     <div class="sidebar-foot">Author: Hồ Đức Minh (Zhee Dev)<br>API Key không được lưu trên trình duyệt.</div>
   </aside>
@@ -139,6 +173,12 @@
         <div class="notice"><span><i data-lucide="badge-check" style="display:inline-block;vertical-align:middle;margin-right:6px"></i>Đã xác thực. Các cụm media đã sẵn sàng.</span><button class="btn btn-danger" id="btnLockVideo" type="button">Khóa lại</button></div>
         <div class="section-head"><div><h3>Cụm máy chủ media</h3><p>Chọn Random Stream hoặc nhập ID cụ thể để phát.</p></div></div>
         <div class="grid" id="gridVideoServers"></div>
+        <section class="panel tool-panel" aria-labelledby="imageToolTitle">
+          <div class="tool-head"><i data-lucide="images"></i><h3 id="imageToolTitle">Image Link Collector</h3></div>
+          <p class="tool-copy">Dán link trang công khai để lấy các ảnh có trong trang. Có thể xem và tải từng ảnh hoặc mở toàn bộ danh sách kết quả.</p>
+          <div class="image-form"><input id="imagePageUrl" type="url" placeholder="https://example.com/en/gifs/227379" autocomplete="off" spellcheck="false" aria-label="Link trang chứa ảnh"><button class="btn btn-primary" id="btnCollectImages" type="button"><i data-lucide="scan-search"></i>Lấy ảnh</button></div>
+          <div id="imageResults" class="image-results" hidden></div>
+        </section>
       </section>
     </div>
   </main>
@@ -151,11 +191,19 @@
     </div>
   </div>
   <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+  <div class="modal" id="idPromptModal" role="dialog" aria-modal="true" aria-labelledby="idPromptTitle">
+    <div class="modal-box id-modal">
+      <div class="modal-head"><div class="modal-title" id="idPromptTitle">Phát media theo ID</div><button class="icon-btn" id="closeIdPrompt" type="button" aria-label="Đóng"><i data-lucide="x"></i></button></div>
+      <div class="id-modal-body"><label for="requestedMediaId">Nhập số ID bạn muốn xem</label><input id="requestedMediaId" type="number" min="1" step="1" value="1" inputmode="numeric"></div>
+      <div class="id-modal-foot"><button class="btn btn-outline" id="cancelIdPrompt" type="button">Hủy</button><button class="btn btn-primary" id="confirmIdPrompt" type="button">Phát media</button></div>
+    </div>
+  </div>
 
   <script>
     const AUTHOR = "Hồ Đức Minh (Zhee Dev)";
     let currentSessionKey = "";
     let currentActiveNode = "";
+    let pendingIdRequest = null;
     const CLUSTER_NODES = [
       ["node_v1", "Storage Relay V1", "Dedicated MP4 high-speed buffer node (72 items)."], ["node_v2", "Storage Relay V2", "Dedicated MP4 high-speed buffer node (49 items)."], ["node_v3", "Storage Relay V3", "Dedicated MP4 high-speed buffer node (107 items)."], ["node_v4", "Storage Relay V4", "Dedicated MP4 high-speed buffer node (162 items)."],
       ["node_v5", "Storage Dynamic V5", "Metadata & thumbnail enabled cluster node."], ["node_v6", "Storage Dynamic V6", "Metadata & thumbnail enabled cluster node."], ["node_v7", "Storage Dynamic V7", "Metadata & thumbnail enabled cluster node."], ["node_v8", "Storage Dynamic V8", "Metadata & thumbnail enabled cluster node."], ["node_v9", "Storage Dynamic V9", "Metadata & thumbnail enabled cluster node."], ["node_v10", "Storage Dynamic V10", "Metadata & thumbnail enabled cluster node."], ["node_v11", "Storage Dynamic V11", "Metadata & thumbnail enabled cluster node."], ["node_v12", "Storage Dynamic V12", "Metadata & thumbnail enabled cluster node."], ["node_v13", "Storage Dynamic V13", "Metadata & thumbnail enabled cluster node."], ["node_v14", "Storage Dynamic V14", "Metadata & thumbnail enabled cluster node."], ["node_media_247", "Static Media Relay 247", "Direct video stream cluster (26 items)."], ["node_media_xt", "Static Media Relay XT", "Direct video stream cluster (28 items)."],
@@ -169,13 +217,20 @@
     function renderCards() { $("gridVideoServers").innerHTML = CLUSTER_NODES.map(([id, title, desc]) => `<article class="server-card"><div><div class="card-top"><div class="card-title">${escapeHtml(title)}</div><span class="tag">Online</span></div><p class="card-desc">${escapeHtml(desc)}</p></div><div class="card-actions"><button class="btn btn-primary" type="button" data-node="${id}" data-action="random">Random Stream</button><button class="btn btn-outline" type="button" data-node="${id}" data-action="id">Theo ID</button></div></article>`).join(""); }
     async function unlock(key) { const button = $("btnUnlockVideo"); button.disabled = true; button.textContent = "Đang kiểm tra..."; try { const response = await fetch(`/video?key=${encodeURIComponent(key)}`, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "API Key không hợp lệ."); currentSessionKey = key; renderCards(); $("lockPanel").hidden = true; $("videoContent").hidden = false; toast("Xác thực thành công."); } catch (error) { toast(error.message, "error"); } finally { button.disabled = false; button.innerHTML = '<i data-lucide="key-round"></i>Mở khóa'; lucide.createIcons(); } }
     async function playMedia(nodeId, title, requestedId = "") { currentActiveNode = nodeId; const query = `/video?node=${encodeURIComponent(nodeId)}&key=${encodeURIComponent(currentSessionKey)}${requestedId ? `&id=${encodeURIComponent(requestedId)}` : ""}`; try { const response = await fetch(query, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "Không thể truy xuất media."); const mediaUrl = data.link_media || data.link_video || ""; if (!mediaUrl) throw new Error("Máy chủ không trả về link media."); $("modalTitle").textContent = data.ten_file || title; $("modalDesc").textContent = `ID: #${data.id || "Random"} / ${data.tong_so || "N/A"}`; $("btnDirectLink").href = `/video?node=${encodeURIComponent(nodeId)}&raw=true&key=${encodeURIComponent(currentSessionKey)}${requestedId ? `&id=${encodeURIComponent(requestedId)}` : ""}`; $("modalBody").innerHTML = mediaUrl.toLowerCase().split("?")[0].endsWith(".gif") ? `<img class="media-player" src="${escapeHtml(mediaUrl)}" alt="Media stream">` : `<video class="media-player" controls autoplay playsinline><source src="${escapeHtml(mediaUrl)}" type="video/mp4"></video>`; $("playerModal").classList.add("show"); } catch (error) { toast(error.message, "error"); } }
-    function lock() { currentSessionKey = ""; $("lockPanel").hidden = false; $("videoContent").hidden = true; $("inputApiKey").value = ""; closeModal(); toast("Đã khóa phiên truy cập."); }
+    function openIdPrompt(nodeId, title) { pendingIdRequest = { nodeId, title }; $("requestedMediaId").value = "1"; $("idPromptModal").classList.add("show"); setTimeout(() => $("requestedMediaId").focus(), 0); }
+    function closeIdPrompt() { pendingIdRequest = null; $("idPromptModal").classList.remove("show"); }
+    function confirmIdPrompt() { if (!pendingIdRequest) return; const id = $("requestedMediaId").value.trim(); if (!/^[1-9]\\d*$/.test(id)) return toast("ID phải là số nguyên dương.", "error"); const request = pendingIdRequest; closeIdPrompt(); playMedia(request.nodeId, request.title, id); }
+    function lock() { currentSessionKey = ""; $("lockPanel").hidden = false; $("videoContent").hidden = true; $("inputApiKey").value = ""; closeModal(); closeIdPrompt(); toast("Đã khóa phiên truy cập."); }
     function closeModal() { $("playerModal").classList.remove("show"); $("modalBody").innerHTML = ""; }
+    async function collectImages() { const input = $("imagePageUrl"); const rawUrl = input.value.trim(); if (!/^https?:\/\//i.test(rawUrl)) return toast("Vui lòng nhập URL http hoặc https hợp lệ.", "error"); const button = $("btnCollectImages"); button.disabled = true; button.textContent = "Đang quét..."; try { const response = await fetch(`/video/images?url=${encodeURIComponent(rawUrl)}&key=${encodeURIComponent(currentSessionKey)}`, { cache: "no-store" }); const data = await response.json(); if (!response.ok || data.trang_thai === "that_bai") throw new Error(data.thong_bao || "Không thể lấy ảnh từ trang này."); renderImageResults(data); toast(`Đã tìm thấy ${data.so_luong} ảnh.`); } catch (error) { toast(error.message, "error"); } finally { button.disabled = false; button.innerHTML = '<i data-lucide="scan-search"></i>Lấy ảnh'; lucide.createIcons(); } }
+    function renderImageResults(data) { const results = $("imageResults"); results.hidden = false; if (!data.danh_sach_anh.length) { results.innerHTML = '<div class="empty-state">Không tìm thấy ảnh công khai trong trang này.</div>'; return; } results.innerHTML = data.danh_sach_anh.map((url, index) => `<article class="image-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener"><img src="${escapeHtml(url)}" alt="Ảnh ${index + 1}" loading="lazy"></a><div class="image-item-foot"><span title="${escapeHtml(url)}">Ảnh ${index + 1}</span><a href="${escapeHtml(url)}" target="_blank" rel="noopener" download>Tải</a></div></article>`).join(""); }
     $("btnUnlockVideo").addEventListener("click", () => { const key = $("inputApiKey").value.trim(); if (!key) return toast("Vui lòng nhập API Key.", "error"); unlock(key); });
     $("inputApiKey").addEventListener("keydown", (event) => { if (event.key === "Enter") $("btnUnlockVideo").click(); });
     $("btnLockVideo").addEventListener("click", lock); $("closeModal").addEventListener("click", closeModal); $("playerModal").addEventListener("click", (event) => { if (event.target === $("playerModal")) closeModal(); });
     $("btnNextRandom").addEventListener("click", () => { if (currentActiveNode) playMedia(currentActiveNode, "Đang tải..."); });
-    $("gridVideoServers").addEventListener("click", (event) => { const button = event.target.closest("button[data-node]"); if (!button) return; const node = CLUSTER_NODES.find((item) => item[0] === button.dataset.node); if (button.dataset.action === "id") { const id = window.prompt("Nhập số ID bạn muốn xem:", "1"); if (id) playMedia(node[0], node[1], id.trim()); } else playMedia(node[0], node[1]); });
+    $("gridVideoServers").addEventListener("click", (event) => { const button = event.target.closest("button[data-node]"); if (!button) return; const node = CLUSTER_NODES.find((item) => item[0] === button.dataset.node); if (button.dataset.action === "id") openIdPrompt(node[0], node[1]); else playMedia(node[0], node[1]); });
+    $("closeIdPrompt").addEventListener("click", closeIdPrompt); $("cancelIdPrompt").addEventListener("click", closeIdPrompt); $("confirmIdPrompt").addEventListener("click", confirmIdPrompt); $("idPromptModal").addEventListener("click", (event) => { if (event.target === $("idPromptModal")) closeIdPrompt(); }); $("requestedMediaId").addEventListener("keydown", (event) => { if (event.key === "Enter") confirmIdPrompt(); });
+    $("btnCollectImages").addEventListener("click", collectImages); $("imagePageUrl").addEventListener("keydown", (event) => { if (event.key === "Enter") collectImages(); });
     [$("themeToggle"), $("mobileThemeToggle")].forEach((button) => button.addEventListener("click", toggleTheme));
     $("navSearch").addEventListener("input", (event) => { const query = event.target.value.toLowerCase(); document.querySelectorAll(".nav a").forEach((link) => { link.hidden = query && !link.textContent.toLowerCase().includes(query); }); });
     setTheme(); lucide.createIcons();
