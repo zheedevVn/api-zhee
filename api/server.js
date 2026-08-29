@@ -40,6 +40,7 @@ const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
 const youtubeHandler = require("../lib/youtube");
+const megaHandler = require("../lib/mega");
 const discordHandler = require("../lib/discord");
 const telegramHandler = require("../lib/telegram");
 const twitterHandler = require("../lib/twitter");
@@ -350,6 +351,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Lấy thông tin kênh hoặc link stream video MP4/MP3.",
     vi_du_params: "?=@SonTungMTP",
     handler: youtubeHandler
+  },
+  {
+    prefix: ["/api/mxh/mega", "/mxh/mega", "/mega"],
+    ten: "MEGA Public File & Folder Inspector",
+    chuyen_muc: "Cloud Storage",
+    mo_ta: "Kiểm tra metadata file/folder MEGA được chia sẻ công khai; không tra cứu danh tính user hay nhận mật khẩu/cookie.",
+    vi_du_params: "?url=https://mega.nz/file/{id}#{key}",
+    handler: megaHandler
   },
   {
     prefix: ["/api/mxh/discord", "/mxh/discord", "/discord"],
