@@ -1018,6 +1018,20 @@
           params: "?url={link_mega_public}"
         });
       }
+
+      // Keep Lazada visible in the menu while an older /list response is cached
+      // or before the gateway deployment has propagated to every edge.
+      if (!CATALOG.some((x) => x.path === "/api/mxh/lazada")) {
+        CATALOG.push({
+          id: slug("/api/mxh/lazada"),
+          ten: "Lazada Shop & Product Lookup",
+          mo_ta: "Tra cứu shop, seller ID hoặc sản phẩm Lazada từ dữ liệu public; không cần cookie/session.",
+          path: "/api/mxh/lazada",
+          chuyen_muc: "Mạng Xã Hội",
+          vi_du: `${location.origin}/api/mxh/lazada?url={link_lazada_public}`,
+          params: "?url={link_lazada_public}"
+        });
+      }
     }
     function loadUI() {
       const qEl = document.getElementById("q");
