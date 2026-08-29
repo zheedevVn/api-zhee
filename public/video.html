@@ -111,14 +111,13 @@
     .code-panel pre { font: 12px/1.6 "JetBrains Mono", ui-monospace, monospace; white-space: pre-wrap; }
     .image-form { display: grid; gap: 10px; width: 100%; }
     .image-url-table { overflow: hidden; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
-    .image-url-head { display: grid; grid-template-columns: 82px minmax(0, 1fr) 42px; gap: 8px; padding: 9px 10px; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-    .image-url-row { display: grid; grid-template-columns: 82px minmax(0, 1fr) 42px; align-items: center; gap: 8px; padding: 7px 10px; border-bottom: 1px solid var(--line); }
-    .image-url-row:last-child { border-bottom: 0; }
-    .image-url-index { color: var(--muted); font: 11px "JetBrains Mono", monospace; }
+    .image-url-head { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px; padding: 9px 10px; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .image-url-row { display: grid; grid-template-columns: 110px minmax(0, 1fr); align-items: start; gap: 8px; padding: 10px; }
+    .image-url-index { padding-top: 11px; color: var(--muted); font: 11px "JetBrains Mono", monospace; }
     .image-url-index::before { content: "Link "; color: var(--text); font-family: inherit; }
-    .image-url-row input { width: 100%; min-width: 0; min-height: 42px; padding: 10px 12px; outline: none; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
-    .image-url-row input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
-    .image-url-row .remove-url { width: 34px; height: 34px; padding: 0; }
+    .image-url-row textarea { width: 100%; min-width: 0; min-height: 190px; padding: 12px; outline: none; resize: vertical; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 10px; font: 13px/1.7 "JetBrains Mono", monospace; }
+    .image-url-row textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 12%, transparent); }
+    .image-url-help { margin-top: 6px; color: var(--muted); font-size: 11px; }
     .image-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
     .image-form-actions .btn { min-height: 42px; white-space: nowrap; }
     .image-json { margin-top: 18px; padding: 14px 16px; overflow: auto; color: var(--code-fg); background: var(--code-bg); border-radius: 12px; }
@@ -169,7 +168,7 @@
       .lock-icon { margin-bottom: 12px; }
       .key-row { display: grid; margin-top: 16px; }
       .key-row input, .key-row .btn { width: 100%; }
-      .image-url-head, .image-url-row { grid-template-columns: 58px minmax(0, 1fr) 34px; }
+      .image-url-head, .image-url-row { grid-template-columns: 66px minmax(0, 1fr); }
       .image-form-actions { display: grid; grid-template-columns: 1fr 1fr; }
       .image-form-actions .btn { width: 100%; }
       .notice { align-items: flex-start; flex-direction: column; }
@@ -245,7 +244,7 @@
 
       <section id="imageContent" class="tool-panel" data-view-panel="image" hidden>
         <div class="section-head"><div><h3>Image Link Collector</h3><p>Quét ảnh công khai ngay trong tab Video VIP này.</p></div><button class="btn btn-outline" id="btnBackToVideo" type="button"><i data-lucide="arrow-left"></i>Video VIP</button></div>
-        <div class="panel"><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Nhập các link vào danh sách bên dưới, sau đó bấm <strong>Quét toàn bộ</strong> một lần. Tối đa 10 link mỗi lần quét; JSON kết quả hiện trước, ảnh xem trước hiển thị phía dưới.</p><div class="image-form"><div id="imageUrlTable" class="image-url-table"><div class="image-url-head"><span>STT</span><span>Link trang cần quét</span><span></span></div><div class="image-url-row"><span class="image-url-index">01</span><input id="pageUrl" type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="Link 1"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa Link 1"><i data-lucide="x"></i></button></div><div class="image-url-row"><span class="image-url-index">02</span><input type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="Link 2"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa Link 2"><i data-lucide="x"></i></button></div><div class="image-url-row"><span class="image-url-index">03</span><input type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="Link 3"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa Link 3"><i data-lucide="x"></i></button></div><div class="image-url-row"><span class="image-url-index">04</span><input type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="Link 4"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa Link 4"><i data-lucide="x"></i></button></div></div><div class="image-form-actions"><button class="btn btn-outline" id="addImageUrl" type="button"><i data-lucide="plus"></i>Thêm dòng</button><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Quét toàn bộ</button></div></div><div id="imageJson" class="image-json" hidden><div class="image-json-head"><span>JSON · Kết quả trước khi xem ảnh</span><span id="imageJsonStatus">--</span></div><pre id="imageJsonCode"></pre></div><div id="imageResults" class="image-results" hidden></div></div>
+        <div class="panel"><div class="tool-head"><i data-lucide="images"></i><h3>Quét ảnh từ trang công khai</h3></div><p class="tool-copy">Dán mỗi link trên một dòng trong bảng bên dưới, sau đó bấm <strong>Quét toàn bộ</strong> một lần. Tối đa 10 link mỗi lần quét; JSON kết quả hiện trước, ảnh xem trước hiển thị phía dưới.</p><div class="image-form"><div id="imageUrlTable" class="image-url-table"><div class="image-url-head"><span>Danh sách</span><span>Link trang cần quét</span></div><div class="image-url-row"><span class="image-url-index">01–10</span><div><textarea id="pageUrl" rows="8" placeholder="https://example.com/page-1&#10;https://example.com/page-2&#10;https://example.com/page-3&#10;..." autocomplete="off" aria-label="Danh sách link trang nguồn"></textarea><div class="image-url-help">Mỗi dòng là một link. Có thể dán tối đa 10 link cùng lúc.</div></div></div></div><div class="image-form-actions"><button class="btn btn-primary" id="collect" type="button"><i data-lucide="scan-search"></i>Quét toàn bộ</button></div></div><div id="imageJson" class="image-json" hidden><div class="image-json-head"><span>JSON · Kết quả trước khi xem ảnh</span><span id="imageJsonStatus">--</span></div><pre id="imageJsonCode"></pre></div><div id="imageResults" class="image-results" hidden></div></div>
       </section>
     </div>
   </main>
@@ -312,24 +311,7 @@
       $("pageLead").textContent = imageView ? "Quét ảnh công khai từ một trang HTML ngay trong tab Video VIP này." : "Truy cập các cụm media chỉ sau khi xác thực bằng API Key hợp lệ. Nội dung và các nút phát video sẽ không được tải cho đến khi máy chủ xác nhận key.";
     }
     function imageUrlValues() {
-      return [...document.querySelectorAll("#imageUrlTable input")].map((input) => input.value.trim()).filter(Boolean);
-    }
-    function renderImageUrlRows() {
-      document.querySelectorAll("#imageUrlTable .image-url-row").forEach((row, index) => {
-        row.querySelector(".image-url-index").textContent = String(index + 1).padStart(2, "0");
-        row.querySelector("[data-remove-url]").disabled = document.querySelectorAll("#imageUrlTable .image-url-row").length === 1;
-      });
-      lucide.createIcons();
-    }
-    function addImageUrlRow(value = "") {
-      const table = $("imageUrlTable");
-      if (table.children.length >= 10) return toast("Tối đa 10 URL mỗi lần quét.", "error");
-      const row = document.createElement("div");
-      row.className = "image-url-row";
-      row.innerHTML = `<span class="image-url-index"></span><input type="url" placeholder="https://example.com/page" autocomplete="off" aria-label="Link trang nguồn"><button class="btn btn-outline remove-url" type="button" data-remove-url aria-label="Xóa link"><i data-lucide="x"></i></button>`;
-      row.querySelector("input").value = value;
-      table.appendChild(row);
-      renderImageUrlRows();
+      return $("pageUrl").value.split(/[\n,]+/).map((value) => value.trim()).filter(Boolean).slice(0, 10);
     }
     async function collectImages() {
       const urls = imageUrlValues();
@@ -374,10 +356,7 @@
     $("btnLockVideo").addEventListener("click", lock); $("closeModal").addEventListener("click", closeModal);
     document.querySelectorAll("[data-view]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); if (!currentSessionKey) return toast("Vui lòng nhập API Key trước khi sử dụng tool.", "error"); setView(link.dataset.view); }));
     $("btnBackToVideo").addEventListener("click", () => setView("video"));
-    $("addImageUrl").addEventListener("click", () => addImageUrlRow());
-    $("imageUrlTable").addEventListener("click", (event) => { const remove = event.target.closest("[data-remove-url]"); if (!remove) return; const rows = document.querySelectorAll("#imageUrlTable .image-url-row"); if (rows.length > 1) remove.closest(".image-url-row").remove(); renderImageUrlRows(); });
-    $("collect").addEventListener("click", collectImages); $("imageUrlTable").addEventListener("keydown", (event) => { if (event.key === "Enter" && event.target.matches("input")) collectImages(); }); $("playerModal").addEventListener("click", (event) => { if (event.target === $("playerModal")) closeModal(); });
-    renderImageUrlRows();
+    $("collect").addEventListener("click", collectImages); $("pageUrl").addEventListener("keydown", (event) => { if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) collectImages(); }); $("playerModal").addEventListener("click", (event) => { if (event.target === $("playerModal")) closeModal(); });
     $("btnNextRandom").addEventListener("click", () => { if (currentActiveNode) playMedia(currentActiveNode, "Đang tải..."); });
     $("gridVideoServers").addEventListener("click", (event) => { const button = event.target.closest("button[data-node]"); if (!button) return; const node = CLUSTER_NODES.find((item) => item[0] === button.dataset.node); if (button.dataset.action === "id") openIdPrompt(node[0], node[1]); else playMedia(node[0], node[1]); });
     $("closeIdPrompt").addEventListener("click", closeIdPrompt); $("cancelIdPrompt").addEventListener("click", closeIdPrompt); $("confirmIdPrompt").addEventListener("click", confirmIdPrompt); $("idPromptModal").addEventListener("click", (event) => { if (event.target === $("idPromptModal")) closeIdPrompt(); }); $("requestedMediaId").addEventListener("keydown", (event) => { if (event.key === "Enter") confirmIdPrompt(); });
