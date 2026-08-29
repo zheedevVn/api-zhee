@@ -3,7 +3,6 @@ const path = require("path");
 
 const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "index.html");
 const VIDEO_HTML_PATH = path.join(__dirname, "..", "public", "video.html");
-const IMAGE_HTML_PATH = path.join(__dirname, "..", "public", "image.html");
 
 function servePageHtml(res, filePath) {
   const html = fs.readFileSync(filePath, "utf8");
@@ -529,11 +528,6 @@ module.exports = async (req, res) => {
       servePageHtml(res, VIDEO_HTML_PATH);
       return;
     }
-    if (pathname === "/image.html" || pathname === "/image") {
-      servePageHtml(res, IMAGE_HTML_PATH);
-      return;
-    }
-
     // Route /list
     if (pathname === "/list" || pathname === "/api/list") {
       res.setHeader("Access-Control-Allow-Origin", "*");
