@@ -55,6 +55,7 @@ const shopeeHandler = require("../lib/shopee");
 const lazadaHandler = require("../lib/lazada");
 const tikiHandler = require("../lib/tiki");
 const pinterestHandler = require("../lib/pinterest");
+const redditHandler = require("../lib/reddit");
 const checkimeiHandler = require("../lib/checkimei");
 const checksdtHandler = require("../lib/checksdt");
 const locketHandler = require("../lib/locket");
@@ -438,6 +439,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu hồ sơ Pinterest (followers, pins, boards, avatar, bio), chi tiết Pin và bảng ghim.",
     vi_du_params: "?=pinterest",
     handler: pinterestHandler
+  },
+  {
+    prefix: ["/api/mxh/reddit", "/mxh/reddit", "/reddit"],
+    ten: "Reddit User, Subreddit & Post Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu thông tin công khai đầy đủ của Reddit user, subreddit hoặc bài đăng kèm karma, bài viết, bình luận và thống kê.",
+    vi_du_params: "?=spez",
+    handler: redditHandler
   },
   {
     prefix: ["/mxh", "/api/mxh"],
