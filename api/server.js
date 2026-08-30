@@ -44,6 +44,7 @@ const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
+const twitchHandler = require("../lib/twitch");
 const youtubeHandler = require("../lib/youtube");
 const megaHandler = require("../lib/mega");
 const discordHandler = require("../lib/discord");
@@ -350,6 +351,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Lấy thông tin profile hoặc tải video TikTok không watermark.",
     vi_du_params: "?=tiktok",
     handler: tiktokHandler
+  },
+  {
+    prefix: ["/api/mxh/twitch", "/mxh/twitch", "/twitch"],
+    ten: "Twitch Channel, Live Stream, VOD & Clips Lookup",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Tra cứu thông tin công khai của kênh Twitch gồm profile, trạng thái livestream, danh mục, VOD và clips gần đây.",
+    vi_du_params: "?=shroud",
+    handler: twitchHandler
   },
   {
     prefix: ["/api/mxh/youtube", "/mxh/youtube", "/youtube"],
