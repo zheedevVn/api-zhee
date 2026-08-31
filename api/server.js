@@ -45,7 +45,6 @@ const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
 const tiktokHandler = require("../lib/tiktok");
 const twitchHandler = require("../lib/twitch");
-const linkedlnHandler = require("../lib/linkedin");
 const youtubeHandler = require("../lib/youtube");
 const megaHandler = require("../lib/mega");
 const discordHandler = require("../lib/discord");
@@ -352,14 +351,6 @@ const ROUTES_REGISTRY = [
     mo_ta: "Lấy thông tin profile hoặc tải video TikTok không watermark.",
     vi_du_params: "?=tiktok",
     handler: tiktokHandler
-  },
-  {
-    prefix: ["/api/mxh/linkedln", "/mxh/linkedln", "/linkedln"],
-    ten: "LinkedIn Public Profile Lookup",
-    chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Tra cứu thông tin công khai của hồ sơ LinkedIn từ username hoặc link linkedin.com/in/.",
-    vi_du_params: "?=https://www.linkedin.com/in/username/",
-    handler: linkedlnHandler
   },
   {
     prefix: ["/api/mxh/twitch", "/mxh/twitch", "/twitch"],
