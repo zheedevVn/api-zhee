@@ -705,7 +705,9 @@
       else if (/mail\/check|checkmail/i.test(p)) ["email", "mk", "action", "uid"].forEach(add);
       else if (/checkkeyai/i.test(p)) ["key"].forEach(add);
       else if (/downloads/i.test(p)) ["url"].forEach(add);
-      else if (/instagram|tiktok|github|roblox|twitter|facebook|zalo|telegram|discord|ngl|youtube|soundcloud/i.test(p)) {
+      else if (/\/nasa/i.test(p)) {
+        ["action", "rover", "sol", "earth_date", "start_date", "end_date", "date", "count", "feedtype"].forEach(add);
+      } else if (/instagram|tiktok|github|roblox|twitter|facebook|zalo|telegram|discord|ngl|youtube|soundcloud/i.test(p)) {
         ["", "username", "url"].forEach(add);
       } else {
         add("");
@@ -715,6 +717,16 @@
       return keys;
     }
     function exampleFields(t) {
+      if (/\/nasa/i.test(String(t.path || ""))) {
+        return [
+          { key: "action", value: "apod" },
+          { key: "rover", value: "curiosity" },
+          { key: "sol", value: "" },
+          { key: "earth_date", value: "" },
+          { key: "start_date", value: "" },
+          { key: "end_date", value: "" }
+        ];
+      }
       let search = String(t.params || "");
       if (!search && t.vi_du) {
         const i = String(t.vi_du).indexOf("?");
@@ -905,6 +917,7 @@
       panel.innerHTML = `
         <h2 style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
+        ${/\/nasa/i.test(t.path) ? '<p class="muted" style="margin:-10px 0 16px">NASA parameters: <strong>action</strong> = apod | neo | epic | donki; NEO dùng <strong>start_date</strong> và <strong>end_date</strong>. Trường <strong>rover</strong>, <strong>sol</strong> và <strong>earth_date</strong> được giữ để tham khảo Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
         <div class="cards">
           <div class="card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
             <h3>Endpoint</h3>
