@@ -299,7 +299,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/tools/nasa", "/tools/nasa", "/nasa"],
     ten: "NASA Space Data & Astronomy Lookup",
     chuyen_muc: "Tools & AI",
-    mo_ta: "Tra cứu APOD, vật thể gần Trái Đất, ảnh Mars Rover, EPIC và DONKI từ NASA Open APIs.",
+    mo_ta: "Tra cứu APOD, vật thể gần Trái Đất, EPIC và DONKI từ NASA Open APIs. NASA đã lưu trữ Mars Rover Photos API.",
     vi_du_params: "?action=apod",
     handler: nasaHandler
   },
