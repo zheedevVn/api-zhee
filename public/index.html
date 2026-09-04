@@ -718,12 +718,7 @@
     }
     function exampleFields(t) {
       if (/\/nasa/i.test(String(t.path || ""))) {
-        return [
-          { key: "action", value: "apod" },
-          { key: "rover", value: "curiosity" },
-          { key: "sol", value: "" },
-          { key: "start_date", value: "" }
-        ];
+        return [{ key: "action", value: "action=apod" }];
       }
       let search = String(t.params || "");
       if (!search && t.vi_du) {
@@ -769,7 +764,9 @@
       }
       const iv = document.createElement("input");
       iv.setAttribute("data-try-val", "1");
-      iv.placeholder = "dán link, username hoặc nội dung";
+      iv.placeholder = /\/nasa/i.test(String(currentTool?.path || ""))
+        ? "action=neo&start_date=YYYY-MM-DD&end_date=YYYY-MM-DD"
+        : "dán link, username hoặc nội dung";
       iv.value = value || "";
       iv.spellcheck = false;
       row.append(sel, iv);
@@ -807,7 +804,9 @@
         let key = sel ? sel.value : "";
         key = smartKey(val, keys, key);
         if (sel && sel.value !== key) sel.value = key;
-        if (!key) parts.push("=" + encodeURIComponent(val));
+        if (/\/nasa/i.test(String(currentTool.path || "")) && key === "action" && /^[?]?(?:action|type)=/i.test(val)) {
+          parts.push(val.replace(/^\?/, ""));
+        } else if (!key) parts.push("=" + encodeURIComponent(val));
         else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
       });
       return currentTool.path + (parts.length ? "?" + parts.join("&") : "");
@@ -915,7 +914,7 @@
       panel.innerHTML = `
         <h2 style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
-        ${/\/nasa/i.test(t.path) ? '<p class="muted" style="margin:-10px 0 16px">NASA parameters: <strong>action</strong> = apod | neo | epic | donki; NEO dùng <strong>start_date</strong> và <strong>end_date</strong>. Trường <strong>rover</strong>, <strong>sol</strong> và <strong>earth_date</strong> được giữ để tham khảo Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
+        ${/\/nasa/i.test(t.path) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
         <div class="cards">
           <div class="card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
             <h3>Endpoint</h3>
