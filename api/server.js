@@ -40,6 +40,7 @@ const domainHandler = require("../lib/domain");
 const endpointHandler = require("../lib/endpoint");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
+const nasaHandler = require("../lib/nasa");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
@@ -293,6 +294,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Làm nét, khử mờ và tăng độ phân giải hình ảnh.",
     vi_du_params: "?url=https://photo360.com/uploads/worigin/2018/08/16/logo-avatar-game-lien-quan-mobile5b7543dc6943f_485f7a07eaecddff272fdbdbb5ef5c20.jpg",
     handler: toolsHandler
+  },
+  {
+    prefix: ["/api/tools/nasa", "/tools/nasa", "/nasa"],
+    ten: "NASA Space Data & Astronomy Lookup",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Tra cứu APOD, vật thể gần Trái Đất, ảnh Mars Rover, EPIC và DONKI từ NASA Open APIs.",
+    vi_du_params: "?action=apod",
+    handler: nasaHandler
   },
   {
     prefix: ["/tools", "/api/tools"],
