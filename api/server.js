@@ -227,7 +227,7 @@ const ROUTES_REGISTRY = [
   {
     prefix: ["/api/tools/ngl", "/tools/ngl", "/ngl", "/api/ngl"],
     ten: "NGL Username Lookup & One-shot Anonymous Message",
-    chuyen_muc: "Tools & Utilities",
+    chuyen_muc: "Mạng Xã Hội",
     mo_ta: "Check username NGL.link và gửi đúng 1 tin nhắn ẩn danh mỗi lần. Không hỗ trợ spam / multi-thread.",
     vi_du_params: "?=hoducminh",
     handler: nglHandler
@@ -235,7 +235,7 @@ const ROUTES_REGISTRY = [
   {
     prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
     ten: "Locket Username Lookup & Account Tools",
-    chuyen_muc: "Tools & Utilities",
+    chuyen_muc: "Mạng Xã Hội",
     mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment, gửi/hủy 1 lời mời, tạo 1 tài khoản / 5 phút.",
     vi_du_params: "?=minh",
     handler: locketHandler
