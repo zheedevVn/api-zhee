@@ -51,7 +51,6 @@ const twitchHandler = require("../lib/twitch");
 const youtubeHandler = require("../lib/youtube");
 const megaHandler = require("../lib/mega");
 const discordHandler = require("../lib/discord");
-const telegramHandler = require("../lib/telegram");
 const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
