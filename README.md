@@ -750,4 +750,4 @@ Tổng cộng **52 route tài liệu** đang được đăng ký trong gateway.
 
 ---
 
-> `readed.md` được tạo để làm tài liệu tham khảo cho Zhee API. Hãy kiểm tra response thực tế trước khi tích hợp production.
+> Nếu sử dụng lại, vui lòng ghi credit **Hồ Đức Minh (Zhee Dev)**.
