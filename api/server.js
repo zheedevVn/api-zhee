@@ -357,7 +357,7 @@ const ROUTES_REGISTRY = [
   {
     prefix: ["/api/mxh/github", "/mxh/github", "/github"],
     ten: "GitHub Info & Repos",
-    chuyen_muc: "Developer",
+    chuyen_muc: "Mạng Xã Hội",
     mo_ta: "Lấy thông tin cá nhân và danh sách kho lưu trữ GitHub.",
     vi_du_params: "?=hoducminh123",
     handler: githubHandler
