@@ -41,6 +41,7 @@ const endpointHandler = require("../lib/endpoint");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
 const nasaHandler = require("../lib/nasa");
+const ipCheckHandler = require("../lib/ipcheck");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
@@ -302,6 +303,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu APOD, vật thể gần Trái Đất, EPIC và DONKI từ NASA Open APIs. NASA đã lưu trữ Mars Rover Photos API.",
     vi_du_params: "?action=apod",
     handler: nasaHandler
+  },
+  {
+    prefix: ["/api/tools/ipcheck", "/tools/ipcheck", "/ipcheck"],
+    ten: "IP Address Intelligence (IPStack)",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Tra cứu vị trí, quốc gia, múi giờ, nhà mạng, ASN và các tín hiệu proxy/Tor/crawler của IPv4 hoặc IPv6 qua IPStack.",
+    vi_du_params: "?ip=113.175.232.110",
+    handler: ipCheckHandler
   },
   {
     prefix: ["/tools", "/api/tools"],
