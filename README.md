@@ -68,6 +68,51 @@ GET https://api-zhee.vercel.app/mxh
 }
 ```
 
+## Mạng xã hội & nền tảng
+
+Các nền tảng dưới đây được hiển thị bằng icon thương hiệu và có endpoint riêng trong Zhee API.
+
+<table>
+  <tr>
+    <td align="center"><a href="https://api-zhee.vercel.app/spotify"><img src="https://cdn.simpleicons.org/spotify/1DB954" width="32" alt="Spotify"><br><sub><b>Spotify</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/soundcloud"><img src="https://cdn.simpleicons.org/soundcloud/FF5500" width="32" alt="SoundCloud"><br><sub><b>SoundCloud</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/instagram"><img src="https://cdn.simpleicons.org/instagram/E4405F" width="32" alt="Instagram"><br><sub><b>Instagram</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/tiktok"><img src="https://cdn.simpleicons.org/tiktok/FFFFFF" width="32" alt="TikTok"><br><sub><b>TikTok</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/twitch"><img src="https://cdn.simpleicons.org/twitch/9146FF" width="32" alt="Twitch"><br><sub><b>Twitch</b></sub></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://api-zhee.vercel.app/youtube"><img src="https://cdn.simpleicons.org/youtube/FF0000" width="32" alt="YouTube"><br><sub><b>YouTube</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/discord"><img src="https://cdn.simpleicons.org/discord/5865F2" width="32" alt="Discord"><br><sub><b>Discord</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/telegram"><img src="https://cdn.simpleicons.org/telegram/26A5E4" width="32" alt="Telegram"><br><sub><b>Telegram</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/twitter"><img src="https://cdn.simpleicons.org/x/FFFFFF" width="32" alt="X"><br><sub><b>X / Twitter</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/facebook"><img src="https://cdn.simpleicons.org/facebook/1877F2" width="32" alt="Facebook"><br><sub><b>Facebook</b></sub></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://api-zhee.vercel.app/github"><img src="https://cdn.simpleicons.org/github/F0F6FC" width="32" alt="GitHub"><br><sub><b>GitHub</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/roblox"><img src="https://cdn.simpleicons.org/roblox/FFFFFF" width="32" alt="Roblox"><br><sub><b>Roblox</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/zalo"><img src="https://cdn.simpleicons.org/zalo/0068FF" width="32" alt="Zalo"><br><sub><b>Zalo</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/shopee"><img src="https://cdn.simpleicons.org/shopee/EE4D2D" width="32" alt="Shopee"><br><sub><b>Shopee</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/pinterest"><img src="https://cdn.simpleicons.org/pinterest/BD081C" width="32" alt="Pinterest"><br><sub><b>Pinterest</b></sub></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://api-zhee.vercel.app/mega"><img src="https://cdn.simpleicons.org/mega/FF333A" width="32" alt="MEGA"><br><sub><b>MEGA</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/lazada"><img src="https://www.lazada.vn/favicon.ico" width="32" alt="Lazada"><br><sub><b>Lazada</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/tiki"><img src="https://www.google.com/s2/favicons?domain=tiki.vn&sz=64" width="32" alt="Tiki"><br><sub><b>Tiki</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/locket"><img src="https://locket.camera/favicon.ico" width="32" alt="Locket"><br><sub><b>Locket</b></sub></a></td>
+    <td align="center"><a href="https://api-zhee.vercel.app/ngl"><img src="https://www.google.com/s2/favicons?domain=ngl.link&sz=64" width="32" alt="NGL"><br><sub><b>NGL</b></sub></a></td>
+  </tr>
+</table>
+
+## Liên hệ hỗ trợ
+
+<table>
+  <tr>
+    <td width="70"><img src="https://cdn.simpleicons.org/telegram/26A5E4" width="42" alt="Telegram"></td>
+    <td><strong>Hỗ trợ tích hợp API</strong><br>Gửi câu hỏi, báo lỗi endpoint hoặc yêu cầu hỗ trợ kỹ thuật trực tiếp cho Hồ Đức Minh.</td>
+    <td align="right"><a href="https://t.me/zheedev"><strong>Liên hệ Telegram</strong></a></td>
+  </tr>
+</table>
+
 ## Danh mục đầy đủ từng API
 
 Tổng cộng **52 route tài liệu** đang được đăng ký trong gateway.
