@@ -42,7 +42,7 @@ const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
 const nasaHandler = require("../lib/nasa");
 const ipCheckHandler = require("../lib/ipcheck");
-const telegramHandler = require("../lib/telegram");
+const telegramBotHandler = require("../lib/telegramBot");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
@@ -51,6 +51,7 @@ const twitchHandler = require("../lib/twitch");
 const youtubeHandler = require("../lib/youtube");
 const megaHandler = require("../lib/mega");
 const discordHandler = require("../lib/discord");
+const telegramHandler = require("../lib/telegram");
 const twitterHandler = require("../lib/twitter");
 const facebookHandler = require("../lib/facebook");
 const zaloHandler = require("../lib/zalo");
@@ -544,7 +545,7 @@ module.exports = async (req, res) => {
     const pathname = url.split("?")[0].toLowerCase();
 
     if (pathname === "/api/telegram/webhook") {
-      return await telegramHandler(req, res);
+      return await telegramBotHandler(req, res);
     }
 
     if (wantsDocsHtml(req, pathname)) {
