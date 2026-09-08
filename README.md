@@ -75,6 +75,15 @@ TWITCH_CLIENT_SECRET=your_twitch_client_secret
 # Twilio — tùy chọn cho phone lookup
 TWILIO_ACCOUNT_SID=your_twilio_account_sid
 TWILIO_AUTH_TOKEN=your_twilio_auth_token
+
+# Telegram API Bot — bắt buộc nếu dùng bot
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_ADMIN_IDS=123456789
+PUBLIC_BASE_URL=https://api-zhee.vercel.app
+
+# Upstash Redis — khuyến nghị để lưu license bền vững trên Vercel
+UPSTASH_REDIS_REST_URL=https://your-instance.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_upstash_rest_token
 ```
 
 Các biến không cần dùng có thể bỏ trống. Không đưa API key thật vào source code, README hoặc commit Git.
