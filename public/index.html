@@ -405,6 +405,33 @@
       background: color-mix(in srgb, var(--tool-accent) 10%, transparent);
     }
     .sample { border: 1px solid color-mix(in srgb, var(--tool-accent, #3b82f6) 22%, transparent); }
+    .home-hero {
+      position: relative; overflow: hidden; padding: 28px 30px; margin-bottom: 18px;
+      border: 1px solid color-mix(in srgb, #3b82f6 28%, var(--line));
+      border-radius: 22px; background: linear-gradient(135deg, color-mix(in srgb, #2563eb 16%, var(--card)), color-mix(in srgb, #7c3aed 10%, var(--card)));
+      box-shadow: 0 18px 45px rgba(37, 99, 235, .10);
+    }
+    .home-hero::after { content: ""; position: absolute; width: 240px; height: 240px; right: -100px; top: -140px; border-radius: 50%; background: rgba(96, 165, 250, .18); }
+    .home-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #60a5fa; font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .home-hero h2 { margin: 10px 0 8px; max-width: 720px; }
+    .home-hero .lead { margin-bottom: 0; max-width: 700px; }
+    .home-actions { position: relative; z-index: 1; }
+    .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
+    .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+    .home-section-head p { margin: 0; color: var(--muted); font-size: 12px; }
+    .social-panel { padding: 20px; margin-bottom: 18px; }
+    .home-social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 9px; }
+    .social-link { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); text-decoration: none; background: color-mix(in srgb, var(--card) 80%, var(--tool-accent) 20%); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+    .social-link:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--tool-accent) 46%, var(--line)); box-shadow: 0 8px 20px color-mix(in srgb, var(--tool-accent) 15%, transparent); }
+    .social-link .ico-brand-img, .social-link svg, .social-link i { width: 20px; height: 20px; flex: 0 0 20px; }
+    .social-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 700; }
+    .support-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px; margin-bottom: 18px; border: 1px solid color-mix(in srgb, #26a5e4 28%, var(--line)); border-radius: 18px; background: linear-gradient(110deg, color-mix(in srgb, #26a5e4 10%, var(--card)), var(--card)); }
+    .support-copy { display: flex; align-items: center; gap: 13px; min-width: 0; }
+    .support-icon { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 14px; background: #26a5e4; color: white; box-shadow: 0 8px 20px rgba(38, 165, 228, .25); }
+    .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
+    .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
+    .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
+    @media (max-width: 640px) { .home-hero { padding: 22px 20px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } }
   </style>
 </head>
 <body>
@@ -803,34 +830,36 @@
     });
 
     function renderHome() {
-      const tiles = CATALOG.slice(0, 12).map((t) => `
+      const socialTools = CATALOG.filter((t) => /mạng xã hội/i.test(String(t.chuyen_muc || "")) && !/\/mxh$/i.test(t.path));
+      const socialTiles = socialTools.map((t) => `
+        <a class="social-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
+          ${ico(iconFor(t.path, t.chuyen_muc))}<span>${esc(t.ten.replace(/\s+(Profile|Lookup|Downloader|&.*)$/i, ""))}</span>
+        </a>`).join("");
+      const tiles = CATALOG.filter((t) => !/mạng xã hội/i.test(String(t.chuyen_muc || ""))).slice(0, 8).map((t) => `
         <a class="home-tile" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}">
           <div class="home-tile-top">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
           <span>${esc(t.mo_ta)}</span>
         </a>`).join("");
       panel.innerHTML = `
-        <h2>${ico("globe-2", "ico-head")} Public API</h2>
-        <p class="lead">Cổng tra cứu REST API công khai. Chọn công cụ ở cột trái.</p>
-        <div class="cards">
-          <div class="card">
-            <h3>Tác giả</h3>
-            <p><strong>Hồ Đức Minh (Zhee Dev)</strong></p>
-            <p class="muted">Full-Stack Developer & API Specialist</p>
-            <div class="row-btns">
-              <a class="act" href="https://t.me/zheedev" target="_blank" rel="noopener">${ico("telegram")} Telegram</a>
-              <a class="act" href="/list" rel="nofollow">${ico("link-2")} JSON /list</a>
-            </div>
+        <section class="home-hero">
+          <div class="home-eyebrow">${ico("sparkles")} ZHEE API DIRECTORY</div>
+          <h2>${ico("globe-2", "ico-head")} Công cụ API cho mọi dự án</h2>
+          <p class="lead">Tra cứu dữ liệu, tích hợp tiện ích và thử nghiệm endpoint công khai của Hồ Đức Minh (Zhee Dev) trong một giao diện gọn, nhanh và dễ dùng.</p>
+          <div class="row-btns home-actions">
+            <a class="act act-dark" href="/list" rel="nofollow">${ico("list")} Xem toàn bộ API</a>
+            <a class="act" href="/tools" rel="nofollow">${ico("wrench")} Khám phá Tools</a>
           </div>
-          <div class="card">
-            <h3>JSON gốc</h3>
-            <div class="label">Endpoint</div>
-            <div class="endpoint">GET ${ORIGIN}/?format=json</div>
-            <div class="row-btns">
-              <a class="act act-dark" href="/?format=json">${ico("external-link")} Mở JSON</a>
-              <button class="act" type="button" data-copy="${ORIGIN}/?format=json">${ico("copy")} Sao chép</button>
-            </div>
+        </section>
+        <div class="support-card">
+          <div class="support-copy">
+            <div class="support-icon"><img src="https://cdn.simpleicons.org/telegram/FFFFFF" alt="Telegram"></div>
+            <div><h3>Cần hỗ trợ hoặc báo lỗi?</h3><p>Liên hệ trực tiếp với Hồ Đức Minh để được hỗ trợ tích hợp API.</p></div>
           </div>
+          <a class="act act-dark" href="https://t.me/zheedev" target="_blank" rel="noopener">${ico("send")} Liên hệ Telegram</a>
         </div>
+        <div class="home-section-head"><div><h3>Mạng xã hội & nền tảng</h3><p>Danh sách dịch vụ có icon thương hiệu và endpoint riêng.</p></div></div>
+        <section class="card social-panel"><div class="home-social-grid">${socialTiles}</div></section>
+        <div class="home-section-head"><div><h3>Công cụ nổi bật</h3><p>Truy cập nhanh các API phổ biến nhất.</p></div></div>
         <div class="home-grid">${tiles}</div>`;
     }
 
