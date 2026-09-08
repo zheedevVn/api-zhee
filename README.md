@@ -190,7 +190,7 @@ Các nền tảng dưới đây được hiển thị bằng icon thương hiệ
   <tr>
     <td width="70"><img src="https://cdn.simpleicons.org/telegram/26A5E4" width="42" alt="Telegram"></td>
     <td><strong>Hỗ trợ tích hợp API</strong><br>Gửi câu hỏi, báo lỗi endpoint hoặc yêu cầu hỗ trợ kỹ thuật trực tiếp cho Hồ Đức Minh.</td>
-    <td align="right"><a href="https://t.me/zheedev"><strong>Liên hệ Telegram</strong></a></td>
+    <td align="right"><a href="https://t.me/zheevipv1"><strong>Liên hệ Telegram</strong></a></td>
   </tr>
 </table>
 
@@ -745,7 +745,7 @@ Tổng cộng **52 route tài liệu** đang được đăng ký trong gateway.
 **Hồ Đức Minh (Zhee Dev)**
 
 - Website: https://api-zhee.vercel.app/
-- Telegram: https://t.me/zheedev
+- Telegram: https://t.me/zheevipv1
 - API directory: https://api-zhee.vercel.app/list
 
 ---
