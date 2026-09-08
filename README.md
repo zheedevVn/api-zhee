@@ -36,6 +36,87 @@ GET https://api-zhee.vercel.app/tools
 GET https://api-zhee.vercel.app/mxh
 ```
 
+## Cài đặt và chạy trên máy cá nhân
+
+### Yêu cầu hệ thống
+
+- Git
+- Node.js **22.x** hoặc mới hơn
+- npm đi kèm Node.js
+
+### Clone repository
+
+```bash
+git clone https://github.com/zheedevVn/api-zhee.git
+cd api-zhee
+```
+
+### Cài dependencies
+
+```bash
+npm install
+```
+
+### Cấu hình biến môi trường
+
+Tạo file `.env` ở thư mục gốc project. Không commit file này lên GitHub.
+
+```env
+# IPStack — bắt buộc nếu dùng /ipcheck
+IPSTACK_API_KEY=your_ipstack_api_key
+
+# NASA — bắt buộc nếu dùng /nasa
+NASA_API_KEY=your_nasa_api_key
+
+# Twitch — tùy chọn
+TWITCH_CLIENT_ID=your_twitch_client_id
+TWITCH_CLIENT_SECRET=your_twitch_client_secret
+
+# Twilio — tùy chọn cho phone lookup
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+```
+
+Các biến không cần dùng có thể bỏ trống. Không đưa API key thật vào source code, README hoặc commit Git.
+
+### Chạy API gateway
+
+```bash
+npm start
+```
+
+Server mặc định chạy tại:
+
+```text
+http://localhost:3000
+```
+
+Thử nhanh sau khi chạy:
+
+```bash
+curl "http://localhost:3000/ipcheck?ip=8.8.8.8"
+curl "http://localhost:3000/list"
+curl "http://localhost:3000/tools"
+```
+
+### Chạy giao diện tĩnh riêng
+
+Nếu chỉ muốn xem giao diện tài liệu:
+
+```bash
+python3 -m http.server 4173 --directory public
+```
+
+Mở trình duyệt tại:
+
+```text
+http://localhost:4173/index.html
+```
+
+### Chạy bằng Docker hoặc deploy Vercel
+
+Project dùng entrypoint `api/server.js` và đã có `vercel.json`. Có thể import repository trực tiếp vào Vercel, sau đó thêm các Environment Variables giống phần trên trước khi deploy Production.
+
 ## Quy tắc sử dụng
 
 - Sử dụng HTTPS và encode các giá trị có dấu cách hoặc ký tự đặc biệt bằng `encodeURIComponent`.
