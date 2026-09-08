@@ -372,13 +372,20 @@
       tiktok: "tiktok",
       discord: "discord",
       zalo: "zalo",
-      shopee: "shopee"
+      shopee: "shopee",
+      roblox: "roblox",
+      mega: "mega"
+    };
+    const BRAND_ASSET_URLS = {
+      tiki: "https://www.google.com/s2/favicons?domain=tiki.vn&sz=64",
+      lazada: "https://www.lazada.vn/favicon.ico",
+      locket: "https://locket.camera/favicon.ico"
     };
     const BRAND_COLORS = {
       telegram: "26A5E4",
       instagram: "E4405F",
       youtube: "FF0000",
-      twitter: "111111",
+      twitter: "FFFFFF",
       facebook: "1877F2",
       pinterest: "BD081C",
       spotify: "1DB954",
@@ -387,7 +394,9 @@
       tiktok: "FFFFFF",
       discord: "5865F2",
       zalo: "0068FF",
-      shopee: "EE4D2D"
+      shopee: "EE4D2D",
+      roblox: "FFFFFF",
+      mega: "FF333A"
     };
     const LUCIDE_FALLBACK = {
       instagram: "camera",
@@ -408,9 +417,11 @@
 
     function ico(name, cls) {
       const brand = BRAND_SLUGS[name];
-      if (brand) {
+      const assetUrl = BRAND_ASSET_URLS[name];
+      if (brand || assetUrl) {
         const color = BRAND_COLORS[name] || "FFFFFF";
-        return `<img class="ico-brand-img ${cls || ""}" src="https://cdn.simpleicons.org/${brand}/${color}" alt="" aria-hidden="true" width="18" height="18" loading="eager">`;
+        const src = assetUrl || `https://cdn.simpleicons.org/${brand}/${color}`;
+        return `<img class="ico-brand-img ${cls || ""}" src="${src}" alt="" aria-hidden="true" width="18" height="18" loading="eager">`;
       }
       const lucideName = LUCIDE_FALLBACK[name] || name || "circle-help";
       return `<i data-lucide="${lucideName}" class="${cls || ""}"></i>`;
@@ -451,7 +462,7 @@
       if (/captcha/.test(p)) return "scan-line";
       if (/trans/.test(p)) return "languages";
       if (/ngl/.test(p)) return "message-circle";
-      if (/locket/.test(p)) return "camera";
+      if (/locket/.test(p)) return "locket";
       if (/checksdt/.test(p)) return "smartphone";
       if (/checkimei/.test(p)) return "cpu";
       if (/\/chat/.test(p)) return "bot";
@@ -465,7 +476,10 @@
       if (/soundcloud/.test(p)) return "soundcloud";
       if (/pinterest|pin\.it/.test(p)) return "pinterest";
       if (/instagram/.test(p)) return "instagram";
-      if (/roblox/.test(p)) return "gamepad-2";
+      if (/roblox/.test(p)) return "roblox";
+      if (/mega/.test(p)) return "mega";
+      if (/tiki/.test(p)) return "tiki";
+      if (/lazada/.test(p)) return "lazada";
       if (/github/.test(p)) return "github";
       if (/tiktok/.test(p)) return "tiktok";
       if (/youtube/.test(p)) return "youtube";
