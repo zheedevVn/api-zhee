@@ -59,6 +59,7 @@ const endpointHandler = require("../lib/endpoint");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
 const regHandler = require("../lib/reg");
+const animeHandler = require("../lib/anime");
 const nasaHandler = require("../lib/nasa");
 const ipCheckHandler = require("../lib/ipcheck");
 const telegramBotHandler = require("../lib/telegramBot");
@@ -339,6 +340,14 @@ const ROUTES_REGISTRY = [
     mo_ta: "Sinh User-Agent phục vụ kiểm thử nội bộ và kiểm tra proxy từ proxies.txt hoặc danh sách proxy được cung cấp.",
     vi_du_params: "?count=1&check_proxy=false",
     handler: regHandler
+  },
+  {
+    prefix: ["/api/anime", "/anime", "/api/anime/images", "/anime/images", "/api/anime/tags", "/anime/tags"],
+    ten: "Anime Images & Tags (Waifu.im)",
+    chuyen_muc: "Tools & AI",
+    mo_ta: "Lấy ảnh anime phân trang, lọc tag và xem danh sách tag từ Waifu.im; PageSize tối đa 20.",
+    vi_du_params: "/images?PageSize=10&Page=1",
+    handler: animeHandler
   },
   {
     prefix: ["/tools", "/api/tools"],
