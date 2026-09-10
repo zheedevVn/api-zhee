@@ -58,6 +58,7 @@ const domainHandler = require("../lib/domain");
 const endpointHandler = require("../lib/endpoint");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
+const giaitriHandler = require("../lib/giaitri");
 const regHandler = require("../lib/reg");
 const animeHandler = require("../lib/anime");
 const nasaHandler = require("../lib/nasa");
@@ -364,6 +365,70 @@ const ROUTES_REGISTRY = [
     mo_ta: "Rút gọn link dài bằng TinyURL hoặc Bitly; Bitly cần BITLY_ACCESS_TOKEN.",
     vi_du_params: "?url=https%3A%2F%2Fexample.com&provider=tinyurl",
     handler: toolsHandler
+  },
+  {
+    prefix: ["/api/metadata", "/metadata", "/api/tools/metadata", "/tools/metadata"],
+    ten: "Link Metadata & Open Graph (Microlink)",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Bóc tách title, description, ảnh preview và Open Graph metadata từ URL.",
+    vi_du_params: "?url=https%3A%2F%2Fexample.com",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/api/quiz", "/quiz", "/api/giaitri/quiz"],
+    ten: "Open Trivia DB Quiz Room",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Tạo phòng đố vui trắc nghiệm với câu hỏi và 4 đáp án từ Open Trivia DB.",
+    vi_du_params: "?category=history&amount=5",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/quote/daily", "/quote/daily", "/api/giaitri/quote"],
+    ten: "Daily Quote & Advice",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Lấy câu nói truyền cảm hứng từ ZenQuotes hoặc lời khuyên từ Advice Slip.",
+    vi_du_params: "",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/lunar", "/vn/lunar", "/api/giaitri/lunar"],
+    ten: "Vietnamese Lunar Calendar",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Đổi ngày dương sang âm, can chi và giờ tốt theo thuật toán Hồ Ngọc Đức.",
+    vi_du_params: "?date=2026-09-10",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/plate", "/vn/plate", "/api/giaitri/plate"],
+    ten: "Vietnam License Plate Lookup",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Tra cứu mã biển số xe theo tỉnh/thành phố Việt Nam.",
+    vi_du_params: "?code=29",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/fuel", "/vn/fuel", "/api/giaitri/fuel"],
+    ten: "Petrolimex Fuel Prices",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Lấy dữ liệu giá xăng dầu Petrolimex và trạng thái kỳ điều hành.",
+    vi_du_params: "",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/text", "/vn/text", "/api/giaitri/text"],
+    ten: "Vietnamese Text Tools",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Bỏ dấu tiếng Việt và tạo slug URL từ văn bản.",
+    vi_du_params: "?text=Học Lập Trình&action=slug",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/number-to-words", "/vn/number-to-words", "/api/giaitri/number-to-words"],
+    ten: "Vietnamese Number To Words",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Đổi số tiền thành chữ tiếng Việt dùng cho hóa đơn.",
+    vi_du_params: "?number=1500000",
+    handler: giaitriHandler
   },
   {
     prefix: ["/tools", "/api/tools"],
