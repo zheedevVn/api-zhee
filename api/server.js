@@ -497,6 +497,38 @@ const ROUTES_REGISTRY = [
     handler: twitchHandler
   },
   {
+    prefix: ["/api/yt/trending-vn", "/yt/trending-vn"],
+    ten: "YouTube Trending Việt Nam",
+    chuyen_muc: "Media",
+    mo_ta: "Danh sách video thịnh hành tại Việt Nam qua YouTube Data API.",
+    vi_du_params: "?limit=10&videoCategoryId=10",
+    handler: youtubeHandler
+  },
+  {
+    prefix: ["/api/yt/thumbnail", "/yt/thumbnail"],
+    ten: "YouTube Thumbnail HD",
+    chuyen_muc: "Media",
+    mo_ta: "Lấy thumbnail maxres, HQ và SD từ link YouTube hoặc video ID.",
+    vi_du_params: "?url=https://youtu.be/dQw4w9WgXcQ",
+    handler: youtubeHandler
+  },
+  {
+    prefix: ["/api/yt/transcript", "/yt/transcript"],
+    ten: "YouTube Transcript",
+    chuyen_muc: "Media",
+    mo_ta: "Lấy phụ đề YouTube kèm mốc thời gian bằng youtubei.js.",
+    vi_du_params: "?videoId=dQw4w9WgXcQ&lang=vi",
+    handler: youtubeHandler
+  },
+  {
+    prefix: ["/api/yt/channel-stats", "/yt/channel-stats"],
+    ten: "YouTube Channel Statistics",
+    chuyen_muc: "Media",
+    mo_ta: "Tra cứu subscriber, lượt xem, video, avatar và banner kênh qua YouTube Data API.",
+    vi_du_params: "?id=UC... hoặc ?handle=@kenh",
+    handler: youtubeHandler
+  },
+  {
     prefix: ["/api/mxh/youtube", "/mxh/youtube", "/youtube"],
     ten: "YouTube Channel & Video Stream",
     chuyen_muc: "Media",

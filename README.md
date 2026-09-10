@@ -68,6 +68,9 @@ IPSTACK_API_KEY=your_ipstack_api_key
 # NASA — bắt buộc nếu dùng /nasa
 NASA_API_KEY=your_nasa_api_key
 
+# YouTube Data API v3 — bắt buộc cho /api/yt/trending-vn và /api/yt/channel-stats
+YOUTUBE_API_KEY=your_google_cloud_youtube_data_api_key
+
 # Twitch — tùy chọn
 TWITCH_CLIENT_ID=your_twitch_client_id
 TWITCH_CLIENT_SECRET=your_twitch_client_secret
