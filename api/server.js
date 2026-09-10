@@ -59,7 +59,6 @@ const endpointHandler = require("../lib/endpoint");
 const downloadsHandler = require("../lib/downloads");
 const toolsHandler = require("../lib/tools");
 const giaitriHandler = require("../lib/giaitri");
-const regHandler = require("../lib/reg");
 const animeHandler = require("../lib/anime");
 const nasaHandler = require("../lib/nasa");
 const ipCheckHandler = require("../lib/ipcheck");
@@ -333,14 +332,6 @@ const ROUTES_REGISTRY = [
     mo_ta: "Tra cứu vị trí, quốc gia, múi giờ, nhà mạng, ASN và các tín hiệu proxy/Tor/crawler của IPv4 hoặc IPv6 qua IPStack.",
     vi_du_params: "?ip=113.175.232.110",
     handler: ipCheckHandler
-  },
-  {
-    prefix: ["/reg", "/api/reg"],
-    ten: "Internal User-Agent & Proxy Checker",
-    chuyen_muc: "Tools & AI",
-    mo_ta: "Sinh User-Agent phục vụ kiểm thử nội bộ và kiểm tra proxy từ proxies.txt hoặc danh sách proxy được cung cấp.",
-    vi_du_params: "?count=1&check_proxy=false",
-    handler: regHandler
   },
   {
     prefix: ["/api/anime", "/anime", "/api/anime/images", "/anime/images", "/api/anime/tags", "/anime/tags"],
