@@ -587,6 +587,8 @@
     function iconFor(path, chuyen) {
       const p = String(path || "").toLowerCase();
       if (/anime|waifu/.test(p) || /anime|waifu/.test(String(chuyen || "").toLowerCase())) return "waifu";
+      if (/qr/.test(p)) return "qr-code";
+      if (/shorten|tinyurl|bitly/.test(p)) return "link-2";
       if (/taomail/.test(p)) return "mail-plus";
       if (/mail\/check|hopthu|inbox/.test(p)) return "inbox";
       if (/\/mail$/.test(p)) return "mail";

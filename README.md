@@ -76,6 +76,9 @@ TWITCH_CLIENT_SECRET=your_twitch_client_secret
 TWILIO_ACCOUNT_SID=your_twilio_account_sid
 TWILIO_AUTH_TOKEN=your_twilio_auth_token
 
+# Bitly — tùy chọn; dùng khi gọi URL Shortener với provider=bitly
+BITLY_ACCESS_TOKEN=your_bitly_access_token
+
 # Telegram API Bot — bắt buộc nếu dùng bot
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 TELEGRAM_ADMIN_IDS=123456789

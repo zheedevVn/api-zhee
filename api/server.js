@@ -350,6 +350,22 @@ const ROUTES_REGISTRY = [
     handler: animeHandler
   },
   {
+    prefix: ["/api/tools/qr", "/tools/qr", "/qr"],
+    ten: "QR Code Generator (goQR.me)",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tạo nhanh mã QR từ URL hoặc chuỗi văn bản bằng link ảnh goQR.me.",
+    vi_du_params: "?text=https%3A%2F%2Fexample.com&size=300",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/api/tools/shortener", "/tools/shortener", "/shortener", "/api/tools/shorten", "/tools/shorten", "/tinyurl", "/bitly"],
+    ten: "URL Shortener (TinyURL / Bitly)",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Rút gọn link dài bằng TinyURL hoặc Bitly; Bitly cần BITLY_ACCESS_TOKEN.",
+    vi_du_params: "?url=https%3A%2F%2Fexample.com&provider=tinyurl",
+    handler: toolsHandler
+  },
+  {
     prefix: ["/tools", "/api/tools"],
     ten: "Công Cụ & Tiện Ích Đa Năng AI",
     chuyen_muc: "Tools & AI",
