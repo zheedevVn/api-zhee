@@ -359,7 +359,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/metadata", "/metadata", "/api/tools/metadata", "/tools/metadata"],
-    ten: "Link Metadata & Open Graph (Microlink)",
+    ten: "Bóc Tách Metadata & Open Graph (Microlink)",
     chuyen_muc: "Tools & Utilities",
     mo_ta: "Bóc tách title, description, ảnh preview và Open Graph metadata từ URL.",
     vi_du_params: "?url=https%3A%2F%2Fexample.com",
@@ -367,7 +367,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/quiz", "/quiz", "/api/giaitri/quiz"],
-    ten: "Open Trivia DB Quiz Room",
+    ten: "Phòng Đố Vui Trắc Nghiệm (Open Trivia DB)",
     chuyen_muc: "Giải trí",
     mo_ta: "Tạo phòng đố vui trắc nghiệm với câu hỏi và 4 đáp án từ Open Trivia DB.",
     vi_du_params: "?category=history&amount=5",
@@ -375,7 +375,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/quote/daily", "/quote/daily", "/api/giaitri/quote"],
-    ten: "Daily Quote & Advice",
+    ten: "Danh Ngôn & Lời Khuyên Hàng Ngày",
     chuyen_muc: "Giải trí",
     mo_ta: "Lấy câu nói truyền cảm hứng từ ZenQuotes hoặc lời khuyên từ Advice Slip.",
     vi_du_params: "",
@@ -383,7 +383,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/vn/lunar", "/vn/lunar", "/api/giaitri/lunar"],
-    ten: "Vietnamese Lunar Calendar",
+    ten: "Lịch Âm Việt Nam",
     chuyen_muc: "Giải trí",
     mo_ta: "Đổi ngày dương sang âm, can chi và giờ tốt theo thuật toán Hồ Ngọc Đức.",
     vi_du_params: "?date=2026-09-10",
@@ -391,7 +391,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/vn/plate", "/vn/plate", "/api/giaitri/plate"],
-    ten: "Vietnam License Plate Lookup",
+    ten: "Tra Cứu Biển Số Xe Việt Nam",
     chuyen_muc: "Giải trí",
     mo_ta: "Tra cứu mã biển số xe theo tỉnh/thành phố Việt Nam.",
     vi_du_params: "?code=29",
@@ -399,7 +399,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/vn/fuel", "/vn/fuel", "/api/giaitri/fuel"],
-    ten: "Petrolimex Fuel Prices",
+    ten: "Giá Xăng Dầu Petrolimex",
     chuyen_muc: "Giải trí",
     mo_ta: "Lấy dữ liệu giá xăng dầu Petrolimex và trạng thái kỳ điều hành.",
     vi_du_params: "",
@@ -407,7 +407,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/vn/text", "/vn/text", "/api/giaitri/text"],
-    ten: "Vietnamese Text Tools",
+    ten: "Công Cụ Xử Lý Văn Bản Tiếng Việt",
     chuyen_muc: "Giải trí",
     mo_ta: "Bỏ dấu tiếng Việt và tạo slug URL từ văn bản.",
     vi_du_params: "?text=Học Lập Trình&action=slug",
@@ -415,7 +415,7 @@ const ROUTES_REGISTRY = [
   },
   {
     prefix: ["/api/vn/number-to-words", "/vn/number-to-words", "/api/giaitri/number-to-words"],
-    ten: "Vietnamese Number To Words",
+    ten: "Chuyển Số Thành Chữ Tiếng Việt",
     chuyen_muc: "Giải trí",
     mo_ta: "Đổi số tiền thành chữ tiếng Việt dùng cho hóa đơn.",
     vi_du_params: "?number=1500000",
