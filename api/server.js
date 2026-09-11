@@ -214,6 +214,14 @@ const ROUTES_REGISTRY = [
     handler: checkmailHandler
   },
   {
+    prefix: ["/api/mail/temp-check", "/mail/temp-check", "/temp-email-check", "/temporary-email-check"],
+    ten: "Temporary Email Checker",
+    chuyen_muc: "Mail Service",
+    mo_ta: "Kiểm tra domain email tạm/rác phổ biến để hạn chế spam đăng ký.",
+    vi_du_params: "?email=user@10minutemail.com",
+    handler: mailHandler
+  },
+  {
     prefix: ["/mail/taomail", "/api/mail/taomail", "/taomail", "/api/taomail"],
     ten: "Tạo mail tạm (1secmail / Mail.tm)",
     chuyen_muc: "Mail Service",
@@ -342,6 +350,30 @@ const ROUTES_REGISTRY = [
     handler: animeHandler
   },
   {
+    prefix: ["/api/tools/ua-parser", "/tools/ua-parser", "/ua-parser", "/user-agent-parser"],
+    ten: "User-Agent Parser",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Phân tích thiết bị, hệ điều hành và trình duyệt từ chuỗi User-Agent.",
+    vi_du_params: "?ua=Mozilla%2F5.0%20(iPhone)",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/api/badge", "/badge", "/api/tools/badge", "/tools/badge"],
+    ten: "Dynamic SVG Badge Generator",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tạo badge SVG động để nhúng vào README hoặc Markdown.",
+    vi_du_params: "?label=Build&status=Passing&color=green",
+    handler: toolsHandler
+  },
+  {
+    prefix: ["/api/avatar", "/avatar", "/api/tools/avatar", "/tools/avatar"],
+    ten: "Dynamic Avatar Initial Generator",
+    chuyen_muc: "Tools & Utilities",
+    mo_ta: "Tạo avatar SVG tròn với chữ cái đầu và màu nền theo hash tên.",
+    vi_du_params: "?name=Nguyen%20Van%20A",
+    handler: toolsHandler
+  },
+  {
     prefix: ["/api/tools/qr", "/tools/qr", "/qr"],
     ten: "QR Code Generator (goQR.me)",
     chuyen_muc: "Tools & Utilities",
@@ -403,6 +435,22 @@ const ROUTES_REGISTRY = [
     chuyen_muc: "Giải trí",
     mo_ta: "Lấy dữ liệu giá xăng dầu Petrolimex và trạng thái kỳ điều hành.",
     vi_du_params: "",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/holidays", "/vn/holidays", "/api/giaitri/holidays"],
+    ten: "Ngày Lễ & Ngày Nghỉ Việt Nam",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Tra cứu ngày lễ, ngày nghỉ chính thức và kỳ nghỉ tiếp theo tại Việt Nam.",
+    vi_du_params: "?date=2026-09-02",
+    handler: giaitriHandler
+  },
+  {
+    prefix: ["/api/vn/thesaurus", "/vn/thesaurus", "/api/giaitri/thesaurus"],
+    ten: "Từ Điển Đồng Nghĩa & Trái Nghĩa Tiếng Việt",
+    chuyen_muc: "Giải trí",
+    mo_ta: "Tra cứu từ đồng nghĩa, trái nghĩa, từ láy và thành ngữ phổ biến.",
+    vi_du_params: "?word=đẹp",
     handler: giaitriHandler
   },
   {
@@ -472,11 +520,19 @@ const ROUTES_REGISTRY = [
     handler: githubHandler
   },
   {
-    prefix: ["/api/mxh/tiktok", "/mxh/tiktok", "/tiktok"],
-    ten: "TikTok Profile & Downloader",
+    prefix: ["/api/mxh/tiktok", "/mxh/tiktok", "/tiktok", "/douyin", "/api/douyin"],
+    ten: "TikTok / Douyin Profile & Downloader",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Lấy thông tin profile hoặc tải video TikTok không watermark.",
-    vi_du_params: "?=tiktok",
+    mo_ta: "Lấy profile TikTok hoặc bóc tách link tải video TikTok/Douyin không watermark qua TikWM và Cobalt.",
+    vi_du_params: "?=https://www.tiktok.com/@user/video/123456789",
+    handler: tiktokHandler
+  },
+  {
+    prefix: ["/api/mxh/cobalt", "/mxh/cobalt", "/cobalt"],
+    ten: "Cobalt Multi-platform Media Downloader",
+    chuyen_muc: "Mạng Xã Hội",
+    mo_ta: "Lấy link tải/stream media từ TikTok, Douyin, Facebook, SoundCloud và Twitter/X qua Cobalt.",
+    vi_du_params: "?url=https://www.tiktok.com/@user/video/123456789",
     handler: tiktokHandler
   },
   {
