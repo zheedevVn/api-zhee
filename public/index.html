@@ -203,6 +203,7 @@
     html[data-theme="dark"] .telegram-role { color: #5eead4; }
     article { padding: 8px 28px 48px; max-width: 1080px; }
     article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+    .api-title { user-select: none; -webkit-user-select: none; cursor: default; }
     .lead { color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 22px; }
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
     .card {
@@ -1284,7 +1285,7 @@
       currentTool = t;
       const full = t.vi_du || (ORIGIN + t.path);
       panel.innerHTML = `
-        <h2 style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
+        <h2 class="api-title" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
         ${/\/nasa/i.test(t.path) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
         <div class="cards">
