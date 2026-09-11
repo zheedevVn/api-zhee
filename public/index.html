@@ -433,8 +433,23 @@
     }
     .home-hero::after { content: ""; position: absolute; width: 240px; height: 240px; right: -100px; top: -140px; border-radius: 50%; background: rgba(96, 165, 250, .18); }
     .home-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #60a5fa; font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
-    .home-hero h2 { margin: 10px 0 8px; max-width: 720px; }
-    .home-hero .lead { margin-bottom: 0; max-width: 700px; }
+    @keyframes titleIn {
+      from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes accentSweep {
+      from { background-position: 0% 50%; }
+      to { background-position: 100% 50%; }
+    }
+    .home-hero h2 { margin: 10px 0 8px; max-width: 720px; animation: titleIn .65s cubic-bezier(.22, 1, .36, 1) both; }
+    .home-hero h2:not(:has(.ico-head)) { color: var(--text); }
+    article > h2 { animation: titleIn .55s cubic-bezier(.22, 1, .36, 1) both; }
+    article > h2 .tool-icon { animation: titleIn .55s .08s cubic-bezier(.22, 1, .36, 1) both; }
+    .home-hero h2, article > h2 { text-shadow: 0 8px 22px rgba(37, 99, 235, .12); }
+    .home-hero .lead { margin-bottom: 0; max-width: 700px; animation: titleIn .65s .1s cubic-bezier(.22, 1, .36, 1) both; }
+    .home-drop .drop-panel { height: auto !important; }
+    .home-drop .drop-panel-inner { display: block; }
+    .home-drop a { min-height: 36px; }
     .home-actions { position: relative; z-index: 1; }
     .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
     .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
@@ -847,7 +862,7 @@
       const open = new Set(JSON.parse(localStorage.getItem("zhee-open-v2") || "[]"));
       const here = currentId();
       navEl.innerHTML = `
-        <details class="drop is-open" open>
+        <details class="drop home-drop is-open" open>
           <summary title="Chính">${ico("home")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
             <a href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
