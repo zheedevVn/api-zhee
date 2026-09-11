@@ -90,7 +90,7 @@
     .icon-btn [data-lucide] { width: 18px; height: 18px; }
 
     .sidebar {
-      width: 280px; background: var(--sidebar); border-right: 1px solid var(--line);
+      width: 310px; background: var(--sidebar); border-right: 1px solid var(--line);
       display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow: hidden;
       flex-shrink: 0;
       transition: width .32s cubic-bezier(.22, 1, .36, 1);
@@ -159,7 +159,11 @@
     .drop a {
       display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);
       font-size: 13.5px; font-weight: 600; padding: 7px 10px 7px 14px; border-radius: 10px; margin: 1px 0;
-      white-space: nowrap; overflow: hidden;
+      white-space: nowrap; overflow: hidden; min-width: 0;
+    }
+    .drop a .nav-label {
+      display: block; min-width: 0; flex: 1 1 auto; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
     }
     .drop a:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
     .drop a.active { background: var(--nav-active); color: var(--nav-active-fg); }
@@ -209,9 +213,20 @@
       font: inherit; font-size: 13px; outline: none; background: var(--bg); color: var(--text);
     }
     .try-row input:focus, .try-row select:focus { border-color: color-mix(in srgb, var(--pink) 45%, var(--line)); }
-    .try-media { margin-bottom: 16px; }
+    .try-media { margin: 0 0 16px; }
     .try-media audio, .try-media video { width: 100%; max-width: 560px; }
     .try-media img { max-width: 100%; max-height: 360px; border-radius: 12px; border: 1px solid var(--line); }
+    .media-preview {
+      display: flex; align-items: center; justify-content: center; min-height: 92px;
+      padding: 18px; border: 1px solid color-mix(in srgb, var(--tool-accent, #3b82f6) 20%, var(--line));
+      border-radius: 18px; background: linear-gradient(145deg, color-mix(in srgb, var(--card) 88%, var(--tool-accent, #3b82f6) 12%), var(--card));
+      box-shadow: 0 12px 28px color-mix(in srgb, var(--tool-accent, #3b82f6) 10%, transparent);
+    }
+    .media-preview img { display: block; width: auto; height: auto; max-width: min(100%, 360px); max-height: 260px; object-fit: contain; }
+    .avatar-preview { width: min(100%, 430px); min-height: 0; padding: 24px 28px; margin: 0 auto 16px; }
+    .avatar-preview img { width: clamp(112px, 22vw, 196px); height: clamp(112px, 22vw, 196px); max-width: none; max-height: none; border: 0; border-radius: 50%; filter: drop-shadow(0 10px 18px rgba(15, 23, 42, .18)); }
+    .media-caption { margin-top: 12px; text-align: center; color: var(--muted); font-size: 12px; }
+    .media-stack { display: flex; flex-direction: column; align-items: center; gap: 0; }
     @media (max-width: 900px) {
       .try-row { grid-template-columns: 1fr; }
     }
@@ -616,6 +631,12 @@
       if (/vn\/text/.test(p)) return "languages";
       if (/number-to-words/.test(p)) return "calculator";
       if (/metadata/.test(p)) return "scan-text";
+      if (/ua-parser|user-agent/.test(p)) return "scan-face";
+      if (/badge/.test(p)) return "badge-check";
+      if (/avatar/.test(p)) return "circle-user-round";
+      if (/temp-check|temporary-email/.test(p)) return "mail-check";
+      if (/holidays/.test(p)) return "calendar-heart";
+      if (/thesaurus/.test(p)) return "book-a";
       if (/spotify/.test(p)) return "spotify";
       if (/soundcloud/.test(p)) return "soundcloud";
       if (/pinterest|pin\.it/.test(p)) return "pinterest";
@@ -1066,7 +1087,12 @@
           if (type.includes("image")) {
             const blob = new Blob([out.buf], { type: out.type || "image/png" });
             const src = URL.createObjectURL(blob);
-            if (media) media.innerHTML = `<img src="${src}" alt="Kết quả API">`;
+            const isAvatar = /avatar/i.test(String(currentTool?.path || ""));
+            if (media) {
+              media.innerHTML = isAvatar
+                ? `<div class="media-preview avatar-preview"><div class="media-stack"><img src="${src}" alt="Avatar chữ cái được tạo"><div class="media-caption">Avatar SVG · ${out.buf.byteLength} bytes</div></div></div>`
+                : `<div class="media-preview"><img src="${src}" alt="Kết quả API"></div>`;
+            }
             pre.textContent = "HTTP " + out.status + " · " + (out.type || "image") + " · " + out.buf.byteLength + " bytes";
             if (status) status.textContent = "Ảnh";
             if (copyBtn) copyBtn.setAttribute("data-copy", url);
