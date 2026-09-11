@@ -179,6 +179,20 @@
       background: var(--card); border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px;
     }
     .uptime strong { color: var(--text); font-weight: 700; }
+    .telegram-user {
+      display: inline-flex; align-items: center; gap: 9px; max-width: min(360px, 100%);
+      padding: 6px 10px 6px 6px; border: 1px solid color-mix(in srgb, #2aabee 30%, var(--line));
+      border-radius: 999px; background: color-mix(in srgb, #2aabee 8%, var(--card));
+      color: var(--text); font-size: 12px; line-height: 1.2;
+    }
+    .telegram-user[hidden] { display: none; }
+    .telegram-user img, .telegram-user-fallback { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #2aabee; }
+    .telegram-user-fallback { display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 12px; }
+    .telegram-user-copy { min-width: 0; display: grid; gap: 2px; }
+    .telegram-user-name { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .telegram-user-meta { color: var(--muted); font-size: 10px; }
+    .telegram-role { color: #0f766e; font-weight: 800; }
+    html[data-theme="dark"] .telegram-role { color: #5eead4; }
     article { padding: 8px 28px 48px; max-width: 1080px; }
     article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
     .lead { color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 22px; }
@@ -547,6 +561,7 @@
     <div class="topbar">
       <button class="icon-btn nav-toggle" id="navToggle" type="button" title="Menu" aria-label="Mở menu"></button>
       <div class="crumb" id="crumb"></div>
+      <div class="telegram-user" id="telegramUser" hidden></div>
       <div class="uptime" id="uptime"></div>
     </div>
     <article id="panel"></article>
@@ -559,6 +574,7 @@
     </div>
   </div>
 
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
     const ORIGIN = location.origin;
@@ -770,6 +786,38 @@
     const dialogMsg = document.getElementById("dialogMsg");
     let toastTimer;
     let CATALOG = [];
+    const telegramUser = document.getElementById("telegramUser");
+
+    async function initTelegramIdentity() {
+      const webApp = window.Telegram && window.Telegram.WebApp;
+      if (!webApp || !webApp.initData) return;
+      webApp.ready();
+      webApp.expand();
+      try {
+        const response = await fetch("/api/telegram/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ initData: webApp.initData }),
+          cache: "no-store"
+        });
+        const account = await response.json();
+        if (!response.ok || account.authenticated !== true) return;
+        const initials = String(account.name || "T")
+          .split(/\s+/)
+          .map((part) => part[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase();
+        const avatar = account.avatar_url
+          ? `<img src="${esc(account.avatar_url)}" alt="" aria-hidden="true">`
+          : `<span class="telegram-user-fallback" aria-hidden="true">${esc(initials)}</span>`;
+        const username = account.username ? `@${esc(account.username)} · ` : "";
+        telegramUser.innerHTML = `${avatar}<span class="telegram-user-copy"><span class="telegram-user-name">${esc(account.name)}</span><span class="telegram-user-meta">${username}<span class="telegram-role">${esc(account.role_label)}</span></span></span>`;
+        telegramUser.hidden = false;
+      } catch (_) {
+        telegramUser.hidden = true;
+      }
+    }
 
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
@@ -1430,6 +1478,7 @@
     const u = tinhUptime();
     document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
     paintIcons();
+    initTelegramIdentity();
     loadUI();
   </script>
 </body>
