@@ -515,7 +515,7 @@
     .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
     .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
     .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
-    .support-contacts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .support-contacts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
     .contact-card, .qr-card {
       display: flex; align-items: center; gap: 11px; min-width: 0; padding: 13px 14px;
       border: 1px solid var(--line); border-radius: 14px; color: var(--text); text-decoration: none;
@@ -528,6 +528,11 @@
     .contact-card-copy { display: grid; gap: 3px; min-width: 0; }
     .contact-card-copy strong { font-size: 13px; }
     .contact-card-copy span { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .contact-card-facebook { padding: 8px 9px; gap: 7px; }
+    .contact-main { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1; color: inherit; text-decoration: none; }
+    .contact-copy-icon { width: 28px; height: 28px; display: grid; place-items: center; flex: 0 0 28px; border: 1px solid color-mix(in srgb, var(--tool-accent) 32%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--tool-accent) 10%, var(--card)); color: var(--text); cursor: pointer; }
+    .contact-copy-icon svg, .contact-copy-icon i { width: 15px; height: 15px; }
+    .contact-copy-icon:hover { background: color-mix(in srgb, var(--tool-accent) 22%, var(--card)); }
     .qr-card { --tool-accent: #0ea5e9; justify-content: center; }
     .qr-card .qr-mini { width: 38px; height: 38px; padding: 3px; border-radius: 8px; background: #fff; object-fit: contain; flex: 0 0 38px; }
     .qr-card strong { font-size: 12px; }
@@ -1089,12 +1094,12 @@
           <h2>${ico("globe-2", "ico-head")} Công cụ API cho mọi dự án</h2>
           <p class="lead">Tra cứu dữ liệu, tích hợp tiện ích và thử nghiệm endpoint công khai của Hồ Đức Minh (Zhee Dev) trong một giao diện gọn, nhanh và dễ dùng.</p>
           <div class="support-contacts" aria-label="Thông tin hỗ trợ quản trị viên">
-            <a class="contact-card" style="--tool-accent:#1877f2" href="${facebookUrl}" target="_blank" rel="noopener noreferrer">
-              ${ico("facebook")}<span class="contact-card-copy"><strong>Facebook Admin</strong><span>hoducminh.depzai</span></span>
-            </a>
-            <button class="contact-card copy-card" style="--tool-accent:#64748b" type="button" data-copy="${esc(facebookUrl)}">
-              ${ico("copy")}<span class="contact-card-copy"><strong>Copy link FB</strong><span>TinyURL</span></span>
-            </button>
+            <div class="contact-card contact-card-facebook" style="--tool-accent:#1877f2">
+              <a class="contact-main" href="${facebookUrl}" target="_blank" rel="noopener noreferrer">
+                ${ico("facebook")}<span class="contact-card-copy"><strong>Facebook Admin</strong><span>hoducminh.depzai</span></span>
+              </a>
+              <button class="contact-copy-icon" type="button" title="Copy link Facebook" aria-label="Copy link Facebook" data-copy="${esc(facebookUrl)}">${ico("copy")}</button>
+            </div>
             <a class="contact-card" style="--tool-accent:#0068ff" href="${zaloUrl}" target="_blank" rel="noopener noreferrer">
               ${ico("zalo")}<span class="contact-card-copy"><strong>Zalo Admin</strong><span>0944921186</span></span>
             </a>
