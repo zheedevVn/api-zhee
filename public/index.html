@@ -953,7 +953,10 @@
         <a class="social-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
           ${ico(iconFor(t.path, t.chuyen_muc))}<span>${esc(t.ten.replace(/\s+(Profile|Lookup|Downloader|&.*)$/i, ""))}</span>
         </a>`).join("");
-      const tiles = CATALOG.filter((t) => !/mạng xã hội/i.test(String(t.chuyen_muc || ""))).slice(0, 8).map((t) => `
+      const tiles = CATALOG.filter((t) => {
+        const category = String(t.chuyen_muc || "");
+        return !/mạng xã hội|gaming|probability|tài xỉu/i.test(category);
+      }).slice(0, 8).map((t) => `
         <a class="home-tile" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}">
           <div class="home-tile-top">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
           <span>${esc(t.mo_ta)}</span>
