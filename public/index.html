@@ -515,7 +515,7 @@
     .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
     .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
     .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
-    .support-contacts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .support-contacts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
     .contact-card, .qr-card {
       display: flex; align-items: center; gap: 11px; min-width: 0; padding: 13px 14px;
       border: 1px solid var(--line); border-radius: 14px; color: var(--text); text-decoration: none;
@@ -1092,6 +1092,9 @@
             <a class="contact-card" style="--tool-accent:#1877f2" href="${facebookUrl}" target="_blank" rel="noopener noreferrer">
               ${ico("facebook")}<span class="contact-card-copy"><strong>Facebook Admin</strong><span>hoducminh.depzai</span></span>
             </a>
+            <button class="contact-card copy-card" style="--tool-accent:#64748b" type="button" data-copy="${esc(facebookUrl)}">
+              ${ico("copy")}<span class="contact-card-copy"><strong>Copy link FB</strong><span>TinyURL</span></span>
+            </button>
             <a class="contact-card" style="--tool-accent:#0068ff" href="${zaloUrl}" target="_blank" rel="noopener noreferrer">
               ${ico("zalo")}<span class="contact-card-copy"><strong>Zalo Admin</strong><span>0944921186</span></span>
             </a>
