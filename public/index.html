@@ -469,7 +469,9 @@
     .home-link.active::before { content: ""; position: absolute; left: 9px; width: 3px; height: 22px; border-radius: 0 4px 4px 0; background: #60a5fa; }
     .home-link.active { position: relative; }
     .home-link.active .nav-label { margin-left: 2px; }
-    .home-drop { display: none; }
+    .home-drop { margin-top: 4px; }
+    .home-drop .drop-panel { height: 0; }
+    .home-drop.is-open .drop-panel { height: auto; }
     .home-actions { position: relative; z-index: 1; }
     .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
     .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
@@ -882,10 +884,12 @@
       const open = new Set(JSON.parse(localStorage.getItem("zhee-open-v2") || "[]"));
       const here = currentId();
       navEl.innerHTML = `
-        <details class="drop is-open" open>
-          <summary title="Chính">${ico("home")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
-        </details>
-        <a class="home-link" href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>` + groups.map((g) => `
+        <details class="drop home-drop is-open" data-group="__home" open>
+          <summary title="Chính">${ico("layout-dashboard")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
+          <div class="drop-panel"><div class="drop-panel-inner">
+            <a class="home-link" href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
+          </div></div>
+        </details>` + groups.map((g) => `
         <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
           <summary title="${esc(g.label)}">${ico(g.icon)}<span class="nav-label">${esc(g.label)}</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
