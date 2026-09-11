@@ -515,7 +515,7 @@
     .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
     .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
     .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
-    .support-contacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .support-contacts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
     .contact-card, .qr-card {
       display: flex; align-items: center; gap: 11px; min-width: 0; padding: 13px 14px;
       border: 1px solid var(--line); border-radius: 14px; color: var(--text); text-decoration: none;
@@ -576,7 +576,9 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
-    @media (max-width: 640px) { .home-hero { padding: 22px 20px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } .support-contacts { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .support-contacts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px) { .home-hero { padding: 22px 20px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } .support-contacts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .contact-card, .qr-card { padding: 11px 10px; } .contact-card-copy span { font-size: 10px; } }
+
   </style>
 </head>
 <body>
@@ -1064,7 +1066,7 @@
     });
 
     function renderHome() {
-      const facebookUrl = "https://m.facebook.com/hoducminh.depzai";
+      const facebookUrl = "https://www.facebook.com/profile.php?id=100092250998605";
       const zaloUrl = "https://zalo.me/0944921186";
       const facebookQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(facebookUrl)}`;
       const zaloQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(zaloUrl)}`;
