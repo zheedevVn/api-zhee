@@ -530,7 +530,7 @@ const ROUTES_REGISTRY = [
   {
     prefix: ["/api/mxh/cobalt", "/mxh/cobalt", "/cobalt"],
     ten: "Cobalt Multi-platform Media Downloader",
-    chuyen_muc: "Mạng Xã Hội",
+    chuyen_muc: "Tải media",
     mo_ta: "Lấy link tải/stream media từ TikTok, Douyin, Facebook, SoundCloud và Twitter/X qua Cobalt.",
     vi_du_params: "?url=https://www.tiktok.com/@user/video/123456789",
     handler: tiktokHandler
