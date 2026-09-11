@@ -187,6 +187,8 @@
       background: var(--card); border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px;
     }
     .uptime strong { color: var(--text); font-weight: 700; }
+    .site-footer { display: flex; justify-content: center; padding: 0 28px 22px; }
+    .site-footer .uptime { justify-content: center; }
     .telegram-user {
       display: inline-flex; align-items: center; gap: 9px; max-width: min(360px, 100%);
       padding: 6px 10px 6px 6px; border: 1px solid color-mix(in srgb, #2aabee 30%, var(--line));
@@ -347,7 +349,8 @@
       .sample { padding: 14px; }
       .sample-head { flex-wrap: wrap; gap: 8px; }
       .row-btns .act { flex: 1; justify-content: center; }
-      .uptime { display: none; }
+      .site-footer { padding: 0 14px max(18px, env(safe-area-inset-bottom)); }
+      .site-footer .uptime { display: inline-flex; max-width: 100%; font-size: 11px; }
       .toast { left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
       .lead { font-size: 14px; }
     }
@@ -571,9 +574,11 @@
       <button class="icon-btn nav-toggle" id="navToggle" type="button" title="Menu" aria-label="Mở menu"></button>
       <div class="crumb" id="crumb"></div>
       <div class="telegram-user" id="telegramUser" hidden></div>
-      <div class="uptime" id="uptime"></div>
     </div>
     <article id="panel"></article>
+    <footer class="site-footer">
+      <div class="uptime" id="uptime"></div>
+    </footer>
   </div>
   <div class="toast" id="toast" role="status"></div>
   <div class="dialog-backdrop" id="dialog" role="dialog" aria-modal="true">
@@ -783,7 +788,8 @@
       const d = Math.floor(h / 24);
       const gio = h % 24;
       const phut = Math.floor((ms % 3600000) / 60000);
-      return { chuoi: d + " ngày " + gio + " giờ " + phut + " phút", moc: "28/8/2026" };
+      const giay = Math.floor((ms % 60000) / 1000);
+      return { chuoi: d + " ngày " + gio + " giờ " + phut + " phút " + String(giay).padStart(2, "0") + " giây", moc: "28/8/2026" };
     }
 
     const themeBtn = document.getElementById("themeBtn");
@@ -1491,9 +1497,13 @@
       if (e.target.closest("a") && isMobile()) closeNav();
     });
 
-    const u = tinhUptime();
-    document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
-    paintIcons();
+    function updateUptime() {
+      const u = tinhUptime();
+      document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
+      paintIcons();
+    }
+    updateUptime();
+    setInterval(updateUptime, 1000);
     initTelegramIdentity();
     loadUI();
   </script>
