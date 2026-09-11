@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "api/server.js": {
+      "includeFiles": ["lib/NotoSans-Regular.ttf"]
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
