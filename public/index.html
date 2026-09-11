@@ -471,7 +471,8 @@
     .home-link.active .nav-label { margin-left: 2px; }
     .home-drop { margin-top: 4px; }
     .home-drop .drop-panel { height: 0; }
-    .home-drop.is-open .drop-panel { height: auto; }
+    .home-drop.is-open > .drop-panel { display: block; height: auto !important; visibility: visible; opacity: 1; }
+    .home-drop:not(.is-open) > .drop-panel { display: none; }
     .home-actions { position: relative; z-index: 1; }
     .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
     .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
