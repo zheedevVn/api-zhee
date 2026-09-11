@@ -1064,9 +1064,10 @@
     });
 
     function renderHome() {
-      const facebookUrl = "https://www.facebook.com/hoducminh.depzai";
+      const facebookUrl = "https://m.facebook.com/hoducminh.depzai";
       const zaloUrl = "https://zalo.me/0944921186";
       const facebookQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(facebookUrl)}`;
+      const zaloQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(zaloUrl)}`;
       const socialTools = CATALOG.filter((t) => /mạng xã hội/i.test(String(t.chuyen_muc || "")) && !/\/mxh$/i.test(t.path));
       const socialTiles = socialTools.map((t) => `
         <a class="social-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
@@ -1093,7 +1094,10 @@
               ${ico("zalo")}<span class="contact-card-copy"><strong>Zalo Admin</strong><span>0944921186</span></span>
             </a>
             <button class="qr-card" type="button" data-qr-url="${esc(facebookUrl)}" data-qr-title="QR Facebook hỗ trợ">
-              <img class="qr-mini" src="${facebookQr}" alt="QR Facebook hỗ trợ"><strong>Phóng to QR hỗ trợ</strong>
+              <img class="qr-mini" src="${facebookQr}" alt="QR Facebook hỗ trợ"><strong>QR hỗ trợ</strong>
+            </button>
+            <button class="qr-card" type="button" data-qr-url="${esc(zaloUrl)}" data-qr-title="QR Zalo hỗ trợ">
+              <img class="qr-mini" src="${zaloQr}" alt="QR Zalo hỗ trợ"><strong>QR hỗ trợ</strong>
             </button>
           </div>
         </section>
