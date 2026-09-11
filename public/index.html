@@ -275,6 +275,11 @@
       body.nav-collapsed .side-tools input,
       body.nav-collapsed .nav-label,
       body.nav-collapsed .chevron { display: none !important; }
+      body.nav-collapsed .home-link {
+        display: grid; place-items: center; width: 40px; height: 40px; min-height: 40px;
+        margin: 2px auto 6px; padding: 0; border-radius: 12px;
+      }
+      body.nav-collapsed .home-link.active::before { left: -3px; height: 22px; }
       body.nav-collapsed .side-tools { justify-content: center; padding: 8px 18px 6px; gap: 0; }
       body.nav-collapsed .nav { padding: 6px 16px 20px; overflow-x: hidden; }
       body.nav-collapsed .drop { width: 40px; margin: 2px auto; overflow: hidden; }
@@ -445,11 +450,26 @@
     .home-hero h2:not(:has(.ico-head)) { color: var(--text); }
     article > h2 { animation: titleIn .55s cubic-bezier(.22, 1, .36, 1) both; }
     article > h2 .tool-icon { animation: titleIn .55s .08s cubic-bezier(.22, 1, .36, 1) both; }
-    .home-hero h2, article > h2 { text-shadow: 0 8px 22px rgba(37, 99, 235, .12); }
+    .home-hero h2, article > h2 { position: relative; text-shadow: 0 8px 22px rgba(37, 99, 235, .12); }
+    .home-hero h2::after, article > h2::after {
+      content: ""; position: absolute; left: 0; bottom: -8px; width: 76px; height: 3px;
+      border-radius: 99px; background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+      background-size: 200% 100%; animation: accentSweep 2.8s ease-in-out infinite alternate;
+    }
     .home-hero .lead { margin-bottom: 0; max-width: 700px; animation: titleIn .65s .1s cubic-bezier(.22, 1, .36, 1) both; }
-    .home-drop .drop-panel { height: auto !important; }
-    .home-drop .drop-panel-inner { display: block; }
-    .home-drop a { min-height: 36px; }
+    .home-link {
+      display: flex; align-items: center; gap: 10px; min-height: 36px; margin: 1px 0 5px;
+      padding: 7px 10px; border-radius: 10px; color: var(--text); text-decoration: none;
+      font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+    .home-link:hover { background: color-mix(in srgb, var(--text) 7%, transparent); transform: translateX(2px); }
+    .home-link.active { background: var(--nav-active); color: var(--nav-active-fg); box-shadow: 0 6px 18px rgba(15, 23, 42, .08); }
+    .home-link .nav-label { display: block; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; }
+    .home-link.active::before { content: ""; position: absolute; left: 9px; width: 3px; height: 22px; border-radius: 0 4px 4px 0; background: #60a5fa; }
+    .home-link.active { position: relative; }
+    .home-link.active .nav-label { margin-left: 2px; }
+    .home-drop { display: none; }
     .home-actions { position: relative; z-index: 1; }
     .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
     .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
@@ -862,12 +882,10 @@
       const open = new Set(JSON.parse(localStorage.getItem("zhee-open-v2") || "[]"));
       const here = currentId();
       navEl.innerHTML = `
-        <details class="drop home-drop is-open" open>
+        <details class="drop is-open" open>
           <summary title="Chính">${ico("home")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
-          <div class="drop-panel"><div class="drop-panel-inner">
-            <a href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
-          </div></div>
-        </details>` + groups.map((g) => `
+        </details>
+        <a class="home-link" href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>` + groups.map((g) => `
         <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
           <summary title="${esc(g.label)}">${ico(g.icon)}<span class="nav-label">${esc(g.label)}</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
