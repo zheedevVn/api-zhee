@@ -515,6 +515,33 @@
     .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
     .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
     .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
+    .support-contacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .contact-card, .qr-card {
+      display: flex; align-items: center; gap: 11px; min-width: 0; padding: 13px 14px;
+      border: 1px solid var(--line); border-radius: 14px; color: var(--text); text-decoration: none;
+      background: color-mix(in srgb, var(--card) 90%, var(--tool-accent) 10%);
+      font: inherit; text-align: left; cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .contact-card:hover, .qr-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--tool-accent) 46%, var(--line)); box-shadow: 0 8px 20px color-mix(in srgb, var(--tool-accent) 15%, transparent); }
+    .contact-card .ico-brand-img { width: 26px; height: 26px; flex: 0 0 26px; }
+    .contact-card-copy { display: grid; gap: 3px; min-width: 0; }
+    .contact-card-copy strong { font-size: 13px; }
+    .contact-card-copy span { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .qr-card { --tool-accent: #0ea5e9; justify-content: center; }
+    .qr-card .qr-mini { width: 38px; height: 38px; padding: 3px; border-radius: 8px; background: #fff; object-fit: contain; flex: 0 0 38px; }
+    .qr-card strong { font-size: 12px; }
+    .qr-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center;
+      padding: 24px; background: rgba(2, 6, 23, .72); backdrop-filter: blur(5px);
+    }
+    .qr-backdrop.show { display: flex; }
+    .qr-dialog { position: relative; width: min(360px, 100%); padding: 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--text); text-align: center; box-shadow: 0 24px 70px rgba(0,0,0,.38); }
+    .qr-dialog h3 { margin: 0 28px 6px; font-size: 17px; }
+    .qr-dialog p { margin: 0 0 16px; color: var(--muted); font-size: 12px; }
+    .qr-dialog img { display: block; width: min(280px, 100%); aspect-ratio: 1; margin: 0 auto; padding: 10px; border-radius: 14px; background: #fff; object-fit: contain; cursor: zoom-out; }
+    .qr-close { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 50%; background: var(--bg); color: var(--text); font-size: 21px; line-height: 1; cursor: pointer; }
+    .qr-close:hover { background: var(--nav-active); color: var(--nav-active-fg); }
 
     /* Interaction polish: make every clickable surface feel responsive and visible. */
     a, button, summary, select { cursor: pointer; }
@@ -549,7 +576,7 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
-    @media (max-width: 640px) { .home-hero { padding: 22px 20px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } }
+    @media (max-width: 640px) { .home-hero { padding: 22px 20px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } .support-contacts { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -585,6 +612,14 @@
     <div class="dialog-box">
       <p id="dialogMsg"></p>
       <button class="act act-dark" type="button" id="dialogOk">OK</button>
+    </div>
+  </div>
+  <div class="qr-backdrop" id="qrBackdrop" role="dialog" aria-modal="true" aria-label="Mã QR hỗ trợ">
+    <div class="qr-dialog">
+      <button class="qr-close" id="qrClose" type="button" aria-label="Đóng mã QR">×</button>
+      <h3 id="qrTitle">QR hỗ trợ</h3>
+      <p id="qrText">Quét mã để mở trang hỗ trợ.</p>
+      <img id="qrImage" src="" alt="Mã QR hỗ trợ">
     </div>
   </div>
 
@@ -799,6 +834,11 @@
     const toast = document.getElementById("toast");
     const dialog = document.getElementById("dialog");
     const dialogMsg = document.getElementById("dialogMsg");
+    const qrBackdrop = document.getElementById("qrBackdrop");
+    const qrClose = document.getElementById("qrClose");
+    const qrTitle = document.getElementById("qrTitle");
+    const qrText = document.getElementById("qrText");
+    const qrImage = document.getElementById("qrImage");
     let toastTimer;
     let CATALOG = [];
     const telegramUser = document.getElementById("telegramUser");
@@ -922,6 +962,17 @@
     }
     document.getElementById("dialogOk").addEventListener("click", () => dialog.classList.remove("show"));
     dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.classList.remove("show"); });
+    function closeQr() { qrBackdrop.classList.remove("show"); qrImage.src = ""; }
+    function showQr(url, title) {
+      qrTitle.textContent = title || "QR hỗ trợ";
+      qrText.textContent = "Quét mã để mở trang hỗ trợ của Hồ Đức Minh.";
+      qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=640x640&margin=12&data=${encodeURIComponent(url)}`;
+      qrBackdrop.classList.add("show");
+    }
+    qrClose.addEventListener("click", closeQr);
+    qrBackdrop.addEventListener("click", (e) => { if (e.target === qrBackdrop) closeQr(); });
+    qrImage.addEventListener("click", closeQr);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeQr(); });
 
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => notify("Đã sao chép.")).catch(() => appAlert("Không sao chép được. Hãy copy thủ công."));
@@ -1013,6 +1064,9 @@
     });
 
     function renderHome() {
+      const facebookUrl = "https://www.facebook.com/hoducminh.depzai";
+      const zaloUrl = "https://zalo.me/0944921186";
+      const facebookQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(facebookUrl)}`;
       const socialTools = CATALOG.filter((t) => /mạng xã hội/i.test(String(t.chuyen_muc || "")) && !/\/mxh$/i.test(t.path));
       const socialTiles = socialTools.map((t) => `
         <a class="social-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
@@ -1031,9 +1085,16 @@
           <div class="home-eyebrow">${ico("sparkles")} ZHEE API DIRECTORY</div>
           <h2>${ico("globe-2", "ico-head")} Công cụ API cho mọi dự án</h2>
           <p class="lead">Tra cứu dữ liệu, tích hợp tiện ích và thử nghiệm endpoint công khai của Hồ Đức Minh (Zhee Dev) trong một giao diện gọn, nhanh và dễ dùng.</p>
-          <div class="row-btns home-actions">
-            <a class="act act-dark" href="/list" rel="nofollow">${ico("list")} Xem toàn bộ API</a>
-            <a class="act" href="/tools" rel="nofollow">${ico("wrench")} Khám phá Tools</a>
+          <div class="support-contacts" aria-label="Thông tin hỗ trợ quản trị viên">
+            <a class="contact-card" style="--tool-accent:#1877f2" href="${facebookUrl}" target="_blank" rel="noopener noreferrer">
+              ${ico("facebook")}<span class="contact-card-copy"><strong>Facebook Admin</strong><span>hoducminh.depzai</span></span>
+            </a>
+            <a class="contact-card" style="--tool-accent:#0068ff" href="${zaloUrl}" target="_blank" rel="noopener noreferrer">
+              ${ico("zalo")}<span class="contact-card-copy"><strong>Zalo Admin</strong><span>0944921186</span></span>
+            </a>
+            <button class="qr-card" type="button" data-qr-url="${esc(facebookUrl)}" data-qr-title="QR Facebook hỗ trợ">
+              <img class="qr-mini" src="${facebookQr}" alt="QR Facebook hỗ trợ"><strong>Phóng to QR hỗ trợ</strong>
+            </button>
           </div>
         </section>
         <div class="support-card">
@@ -1377,6 +1438,12 @@
       paintIcons();
     });
     document.body.addEventListener("click", (e) => {
+      const qrCard = e.target.closest("[data-qr-url]");
+      if (qrCard) {
+        e.preventDefault();
+        showQr(qrCard.getAttribute("data-qr-url"), qrCard.getAttribute("data-qr-title"));
+        return;
+      }
       const telegramLink = e.target.closest("[data-telegram-link]");
       const webApp = window.Telegram && window.Telegram.WebApp;
       if (telegramLink && webApp && typeof webApp.openTelegramLink === "function") {
