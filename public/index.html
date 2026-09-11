@@ -77,7 +77,15 @@
       stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
     }
     .ico-brand { width: 18px; height: 18px; display: block; flex-shrink: 0; fill: currentColor; }
-    .ico-brand-img { width: 18px; height: 18px; display: block; flex-shrink: 0; object-fit: contain; }
+    .ico-brand-img {
+      width: 18px; height: 18px; display: block; flex-shrink: 0; object-fit: contain;
+      padding: 2px; border-radius: 5px; background: #f1f5f9;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--line) 85%, #94a3b8 15%);
+    }
+    html[data-theme="dark"] .ico-brand-img {
+      background: #e2e8f0;
+      box-shadow: 0 0 0 1px rgba(148, 163, 184, .38);
+    }
     .ico-btn { width: 18px; height: 18px; }
     .ico-head { width: 20px; height: 20px; }
     .ico-card { width: 18px; height: 18px; }
@@ -628,17 +636,17 @@
       telegram: "26A5E4",
       instagram: "E4405F",
       youtube: "FF0000",
-      twitter: "FFFFFF",
+      twitter: "111827",
       facebook: "1877F2",
       pinterest: "BD081C",
       spotify: "1DB954",
       soundcloud: "FF5500",
-      github: "F0F6FC",
-      tiktok: "FFFFFF",
+      github: "24292F",
+      tiktok: "111827",
       discord: "5865F2",
       zalo: "0068FF",
       shopee: "EE4D2D",
-      roblox: "FFFFFF",
+      roblox: "111827",
       mega: "FF333A"
     };
     const LUCIDE_FALLBACK = {
