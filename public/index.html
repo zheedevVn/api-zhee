@@ -451,6 +451,40 @@
     .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
     .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
     .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
+
+    /* Interaction polish: make every clickable surface feel responsive and visible. */
+    a, button, summary, select { cursor: pointer; }
+    input { cursor: text; }
+    a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--tool-accent, #60a5fa) 58%, transparent);
+      outline-offset: 3px;
+    }
+    .icon-btn, button.act, a.act {
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .icon-btn:hover, button.act:hover, a.act:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(15, 23, 42, .14); }
+    .icon-btn:active, button.act:active, a.act:active { transform: translateY(0) scale(.97); }
+    .drop a { cursor: pointer; }
+    .drop a .nav-label { transition: color .18s ease, transform .18s ease; }
+    .drop a:hover .nav-label { transform: translateX(2px); }
+    .drop a:hover svg, .drop a:hover .ico-brand-img { transform: scale(1.12); }
+    .drop a svg, .drop a .ico-brand-img { transition: transform .18s ease; }
+    .home-tile { cursor: pointer; }
+    .home-tile::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,.12) 45%, transparent 68%);
+      transform: translateX(-100%); transition: opacity .2s ease, transform .6s ease;
+    }
+    .home-tile:hover::before { opacity: 1; transform: translateX(100%); }
+    .home-tile-top .ico-head { transition: transform .2s ease, filter .2s ease; }
+    .home-tile:hover .home-tile-top .ico-head { transform: translateY(-2px) rotate(-5deg) scale(1.08); filter: drop-shadow(0 4px 6px color-mix(in srgb, var(--tool-accent) 35%, transparent)); }
+    .social-link { cursor: pointer; }
+    .social-link:hover svg, .social-link:hover .ico-brand-img { transform: scale(1.12) rotate(-3deg); }
+    .social-link svg, .social-link .ico-brand-img { transition: transform .18s ease; }
+    ::selection { background: color-mix(in srgb, #60a5fa 35%, transparent); color: var(--text); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
     @media (max-width: 640px) { .home-hero { padding: 22px 20px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } }
   </style>
 </head>
