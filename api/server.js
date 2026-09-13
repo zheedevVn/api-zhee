@@ -315,7 +315,7 @@ const ROUTES_REGISTRY = [
     ten: "AI Background Remover",
     chuyen_muc: "Tools & AI",
     mo_ta: "Xóa nền ảnh tự động bằng engine Remove.bg Pro.",
-    vi_du_params: "?url=https://photo360.com/uploads/worigin/2018/08/16/logo-avatar-game-lien-quan-mobile5b7543dc6943f_485f7a07eaecddff272fdbdbb5ef5c20.jpg",
+    vi_du_params: "?url=https://placehold.co/1200x800/png?text=Zhee%20API",
     handler: toolsHandler
   },
   {
@@ -323,7 +323,7 @@ const ROUTES_REGISTRY = [
     ten: "AI Image Enhancer (HD 2K/4K)",
     chuyen_muc: "Tools & AI",
     mo_ta: "Làm nét, khử mờ và tăng độ phân giải hình ảnh.",
-    vi_du_params: "?url=https://photo360.com/uploads/worigin/2018/08/16/logo-avatar-game-lien-quan-mobile5b7543dc6943f_485f7a07eaecddff272fdbdbb5ef5c20.jpg",
+    vi_du_params: "?url=https://placehold.co/1200x800/png?text=Zhee%20API",
     handler: toolsHandler
   },
   {
