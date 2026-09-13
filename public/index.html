@@ -238,6 +238,10 @@
       font: inherit; font-size: 13px; outline: none; background: var(--bg); color: var(--text);
     }
     .try-row input:focus, .try-row select:focus { border-color: color-mix(in srgb, var(--pink) 45%, var(--line)); }
+    .preset-actions { display: flex; flex-wrap: wrap; gap: 7px; margin: 6px 0 12px; }
+    .preset-actions .preset-label { width: 100%; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .preset-actions button { border: 1px solid color-mix(in srgb, var(--tool-accent, #3b82f6) 30%, var(--line)); background: color-mix(in srgb, var(--tool-accent, #3b82f6) 9%, var(--card)); color: var(--text); border-radius: 9px; padding: 7px 10px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .preset-actions button:hover { background: color-mix(in srgb, var(--tool-accent, #3b82f6) 18%, var(--card)); }
     .try-media { margin: 0 0 16px; }
     .try-media audio, .try-media video { width: 100%; max-width: 560px; }
     .try-media img { max-width: 100%; max-height: 360px; border-radius: 12px; border: 1px solid var(--line); }
@@ -1371,6 +1375,38 @@
         .finally(() => clearTimeout(timer));
     }
 
+    function badgePresetMarkup() {
+      return `<div class="preset-actions" style="--tool-accent:#e11d48">
+        <span class="preset-label">Từ khóa và ví dụ có sẵn</span>
+        <button type="button" data-badge-preset data-label="Build" data-status="Passing" data-color="green">Build · Passing</button>
+        <button type="button" data-badge-preset data-label="Status" data-status="Online" data-color="blue">Status · Online</button>
+        <button type="button" data-badge-preset data-label="Version" data-status="v1.0.0" data-color="purple">Version · v1.0.0</button>
+        <button type="button" data-badge-preset data-label="License" data-status="MIT" data-color="orange">License · MIT</button>
+        <button type="button" data-badge-preset data-label="Downloads" data-status="1.2k" data-color="indigo">Downloads · 1.2k</button>
+        <button type="button" data-badge-preset data-label="API" data-status="Live" data-color="crimson">API · Live</button>
+      </div>`;
+    }
+
+    function applyBadgePreset(button) {
+      const values = {
+        label: button.dataset.label || "Build",
+        status: button.dataset.status || "Passing",
+        color: button.dataset.color || "green"
+      };
+      const rows = [...document.querySelectorAll("#tryFields .try-row")];
+      Object.entries(values).forEach(([key, value], index) => {
+        const row = rows[index];
+        if (!row) return;
+        const select = row.querySelector("[data-try-key]");
+        const input = row.querySelector("[data-try-val]");
+        if (select) select.value = key;
+        if (input) input.value = value;
+      });
+      updateTryUrl();
+      const url = collectTryUrl();
+      loadLive(url, 10000);
+    }
+
     function renderTool(id) {
       const t = CATALOG.find((x) => x.id === id);
       if (!t) return renderHome();
@@ -1402,6 +1438,7 @@
           <h3>Chạy trên giao diện</h3>
           <p class="muted" style="margin-top:0">Chọn tham số có sẵn, dán link hoặc giá trị. Link dùng được thì ra dữ liệu; không dùng được thì API trả hướng dẫn.</p>
           <div id="tryFields"></div>
+          ${/\/badge(?:$|\/)/i.test(t.path) ? badgePresetMarkup() : ''}
           <p class="endpoint" id="tryUrl"></p>
           <div class="row-btns">
             <button class="act act-dark" type="button" id="tryRun">${ico("play")} Chạy API</button>
@@ -1483,6 +1520,12 @@
       if (e.target.closest(".try-card")) updateTryUrl();
     });
     panel.addEventListener("click", (e) => {
+      const preset = e.target.closest("[data-badge-preset]");
+      if (preset) {
+        e.preventDefault();
+        applyBadgePreset(preset);
+        return;
+      }
       if (e.target.closest("#tryAdd")) {
         const box = document.getElementById("tryFields");
         if (!box || !currentTool) return;
