@@ -1209,7 +1209,9 @@
       else if (/downloads/i.test(p)) ["url"].forEach(add);
       else if (/\/nasa/i.test(p)) {
         ["action", "rover", "sol", "earth_date", "start_date", "end_date", "date", "count", "feedtype"].forEach(add);
-      } else if (/instagram|tiktok|github|roblox|twitter|facebook|zalo|telegram|discord|ngl|youtube|soundcloud/i.test(p)) {
+      } else if (/tiktok/i.test(p)) {
+        ["", "username", "url", "action"].forEach(add);
+      } else if (/instagram|github|roblox|twitter|facebook|zalo|telegram|discord|ngl|youtube|soundcloud/i.test(p)) {
         ["", "username", "url"].forEach(add);
       } else {
         add("");
