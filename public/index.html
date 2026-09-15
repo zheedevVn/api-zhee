@@ -1303,9 +1303,11 @@
         const sel = row.querySelector("[data-try-key]");
         const val = String((row.querySelector("[data-try-val]") || {}).value || "").trim();
         if (!val) return;
-        let key = sel ? sel.value : "";
-        key = smartKey(val, keys, key);
-        if (sel && sel.value !== key) sel.value = key;
+        // Keep an explicitly selected parameter name. Previously smartKey()
+        // re-selected `url` whenever the value looked like a URL, so changing
+        // the dropdown to `username` or the raw `link / từ khóa` option had
+        // no visible effect in the generated endpoint.
+        let key = sel ? sel.value : smartKey(val, keys, "");
         if (/\/nasa/i.test(String(currentTool.path || "")) && key === "action" && /^[?]?(?:action|type)=/i.test(val)) {
           parts.push(val.replace(/^\?/, ""));
         } else if (!key) parts.push("=" + encodeURIComponent(val));
@@ -1556,6 +1558,9 @@
     });
     panel.addEventListener("input", (e) => {
       if (e.target.closest(".try-card")) updateTryUrl();
+    });
+    panel.addEventListener("change", (e) => {
+      if (e.target.matches("[data-try-key]")) updateTryUrl();
     });
     panel.addEventListener("click", (e) => {
       const preset = e.target.closest("[data-badge-preset]");
