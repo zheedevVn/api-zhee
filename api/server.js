@@ -27,6 +27,65 @@ function serveDocsHtml(res) {
   servePageHtml(res, DOCS_HTML_PATH);
 }
 
+const SEO_ORIGIN = "https://api-zhee.vercel.app";
+
+function escapeXml(value) {
+  return String(value ?? "").replace(/[&<>\"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '\"': "&quot;",
+    "'": "&apos;"
+  }[char]));
+}
+
+function serveRobotsTxt(res) {
+  const body = [
+    "User-agent: *",
+    "Allow: /",
+    "Disallow: /api/telegram/webhook",
+    "Disallow: /api/telegram/auth",
+    `Sitemap: ${SEO_ORIGIN}/sitemap.xml`,
+    ""
+  ].join("\\n");
+
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  return res.status(200).send(body);
+}
+
+function serveSitemapXml(res) {
+  const publicPages = [
+    "/",
+    "/docs",
+    "/ui",
+    "/list",
+    "/tools",
+    "/mxh",
+    "/web",
+    "/domain",
+    "/bank",
+    "/mail",
+    "/downloads",
+    "/nasa",
+    "/ipcheck"
+  ];
+  const urls = publicPages.map((page) => `  <url><loc>${escapeXml(`${SEO_ORIGIN}${page}`)}</loc></url>`).join("\\n");
+  const body = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    urls,
+    "</urlset>",
+    ""
+  ].join("\\n");
+
+  res.setHeader("Content-Type", "application/xml; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  return res.status(200).send(body);
+}
+
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;", "'": "&#039;" }[char]));
 }
@@ -715,6 +774,14 @@ module.exports = async (req, res) => {
     const url = req.url || "/";
     const pathname = url.split("?")[0].toLowerCase();
     const accept = String(req.headers.accept || "");
+
+    if (pathname === "/robots.txt") {
+      return serveRobotsTxt(res);
+    }
+
+    if (pathname === "/sitemap.xml") {
+      return serveSitemapXml(res);
+    }
 
     if (pathname === "/api/telegram/webhook") {
       return await telegramBotHandler(req, res);
