@@ -47,7 +47,7 @@ function serveRobotsTxt(res) {
     "Disallow: /api/telegram/auth",
     `Sitemap: ${SEO_ORIGIN}/sitemap.xml`,
     ""
-  ].join("\\n");
+  ].join("\n");
 
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=86400");
@@ -78,7 +78,7 @@ function serveSitemapXml(res) {
     urls,
     "</urlset>",
     ""
-  ].join("\\n");
+  ].join("\n");
 
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=86400");
