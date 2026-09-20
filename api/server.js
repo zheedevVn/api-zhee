@@ -13,14 +13,21 @@ function servePageHtml(res, filePath) {
   res.end(html);
 }
 
+function isCliClient(req) {
+  const ua = String(req.headers["user-agent"] || "").toLowerCase();
+  return /(?:^|[\s\/])(curl|wget|httpie|aria2|go-http-client|python-requests|python-urllib|node-fetch|axios|postmanruntime|insomnia|okhttp|libwww-perl|powershell|fetch)(?:\/|\s|$)/i.test(ua);
+}
+
 function wantsDocsHtml(req, pathname) {
   if (pathname === "/docs" || pathname === "/index.html" || pathname === "/ui") return true;
   if (pathname !== "/") return false;
   const url = req.url || "/";
   if (/[?&]format=json(?:&|$)/i.test(url)) return false;
-  const accept = String(req.headers.accept || "");
+  if (isCliClient(req)) return false;
+  const accept = String(req.headers.accept || "*/*").toLowerCase();
   if (accept.includes("application/json") && !accept.includes("text/html")) return false;
-  return accept.includes("text/html");
+  if (!accept.includes("text/html")) return false;
+  return true;
 }
 
 function serveDocsHtml(res) {
