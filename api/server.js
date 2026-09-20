@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "index.html");
+const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "ui.html");
 const VIDEO_HTML_PATH = path.join(__dirname, "..", "public", "video.html");
 
 function servePageHtml(res, filePath) {
