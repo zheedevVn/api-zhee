@@ -719,7 +719,7 @@ const ROUTES_REGISTRY = [
     ten: "Media Downloader Đa Nền Tảng",
     chuyen_muc: "Download",
     mo_ta: "Bóc tách ảnh chương truyện/bài viết và luồng video MP4/M3U8 từ URL trang công khai.",
-    vi_du_params: "?url=https://damconuong.name/truyen/roi-can-phong/chap-1",
+    vi_du_params: "?url=https://vi.wikipedia.org/wiki/H%C3%A0_N%E1%BB%99i",
     handler: downloadsHandler
   },
   {
