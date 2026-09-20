@@ -1201,7 +1201,7 @@
       exampleFields(t).forEach((f) => add(f.key));
       const p = String(t.path || "");
       if (/spotify/i.test(p)) ["", "q", "artist", "url"].forEach(add);
-      else if (/pinterest/i.test(p)) ["", "username", "url", "pin"].forEach(add);
+      else if (/pinterest/i.test(p)) ["", "username", "url", "pin", "q", "site", "page", "action"].forEach(add);
       else if (/trans/i.test(p)) ["", "text", "to", "from", "giong", "action", "format"].forEach(add);
       else if (/taomail/i.test(p)) ["kieu", "so", "ten", "mk", "action"].forEach(add);
       else if (/mail\/check|checkmail/i.test(p)) ["email", "mk", "action", "uid"].forEach(add);
