@@ -718,8 +718,8 @@ const ROUTES_REGISTRY = [
     prefix: ["/downloads", "/api/downloads"],
     ten: "Media Downloader Đa Nền Tảng",
     chuyen_muc: "Download",
-    mo_ta: "Bóc tách link video không logo, audio chất lượng cao.",
-    vi_du_params: "?url=https://www.tiktok.com/@example/video/123456789",
+    mo_ta: "Bóc tách ảnh chương truyện/bài viết và luồng video MP4/M3U8 từ URL trang công khai.",
+    vi_du_params: "?url=https://damconuong.name/truyen/roi-can-phong/chap-1",
     handler: downloadsHandler
   },
   {
