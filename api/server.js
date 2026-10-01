@@ -63,21 +63,7 @@ function serveRobotsTxt(res) {
 }
 
 function serveSitemapXml(res) {
-  const publicPages = [
-    "/",
-    "/docs",
-    "/ui",
-    "/list",
-    "/tools",
-    "/mxh",
-    "/web",
-    "/domain",
-    "/bank",
-    "/mail",
-    "/downloads",
-    "/nasa",
-    "/ipcheck"
-  ];
+  const publicPages = ["/", "/docs", "/ui", "/list"];
   const urls = publicPages.map((page) => `  <url><loc>${escapeXml(`${SEO_ORIGIN}${page}`)}</loc></url>`).join("\n");
   const body = [
     '<?xml version="1.0" encoding="UTF-8"?>',
@@ -97,8 +83,8 @@ function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;", "'": "&#039;" }[char]));
 }
 
-function serveTaixiuImagePage(req, res) {
-  const requestUrl = new URL(req.url || "/", `${req.headers["x-forwarded-proto"] || "https"}://${req.headers.host || "api-zhee.vercel.app"}`);
+function serveTaixiuImagePage(req, res, publicUrl) {
+  const requestUrl = new URL(publicUrl || req.url || "/", `${req.headers["x-forwarded-proto"] || "https"}://${req.headers.host || "api-zhee.vercel.app"}`);
   const imageUrl = `${requestUrl.pathname}${requestUrl.search}`;
   const title = requestUrl.searchParams.get("image") || requestUrl.searchParams.get("img") || "Kết quả xúc xắc";
   const html = `<!doctype html>
@@ -112,6 +98,7 @@ function serveTaixiuImagePage(req, res) {
 }
 
 // 1. IMPORT TOÀN BỘ MODULE HANDLERS (../lib/)
+const { buildSealMap, resolveToken, matchesRegistered, sealBody, publicPathFor } = require("../lib/routeSeal");
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const spotifyHandler = require("../lib/spotify");
@@ -772,6 +759,16 @@ const ROUTES_REGISTRY = [
   }
 ];
 
+const ROUTE_SEAL = buildSealMap(ROUTES_REGISTRY);
+
+function installResponseSeal(res) {
+  if (typeof res.json !== "function" || res.json.__zheeSealed) return;
+  const original = res.json.bind(res);
+  const wrapped = (body) => original(res.zheeNoSeal ? body : sealBody(body, ROUTE_SEAL));
+  wrapped.__zheeSealed = true;
+  res.json = wrapped;
+}
+
 module.exports = async (req, res) => {
   try {
     const protocol = req.headers["x-forwarded-proto"] || "https";
@@ -779,8 +776,27 @@ module.exports = async (req, res) => {
     const baseUrl = `${protocol}://${host}`;
 
     const url = req.url || "/";
-    const pathname = url.split("?")[0].toLowerCase();
+    const queryIndex = url.indexOf("?");
+    const rawPath = queryIndex >= 0 ? url.slice(0, queryIndex) : url;
+    const search = queryIndex >= 0 ? url.slice(queryIndex) : "";
+    let pathname = rawPath.toLowerCase();
+    let sealed = false;
+    installResponseSeal(res);
     const accept = String(req.headers.accept || "");
+
+    if (pathname.startsWith("/g/")) {
+      let token = rawPath.slice(3);
+      try { token = decodeURIComponent(token); } catch (_) {}
+      const canonical = resolveToken(token, ROUTE_SEAL);
+      if (!canonical) {
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Endpoint không tồn tại." });
+      }
+      req.url = canonical + search;
+      req.zheePublicUrl = rawPath + search;
+      pathname = canonical.toLowerCase();
+      sealed = true;
+    }
 
     if (pathname === "/robots.txt") {
       return serveRobotsTxt(res);
@@ -811,10 +827,12 @@ module.exports = async (req, res) => {
       return;
     }
     if (/\/api\/taixiu\//i.test(pathname) && /[?&](?:image|img)=/i.test(url) && accept.includes("text/html")) {
-      return serveTaixiuImagePage(req, res);
+      return serveTaixiuImagePage(req, res, req.zheePublicUrl || url);
     }
-    // Route /list
+    // Route /list. The directory keeps the internal mark for the UI icons only.
+    // duong_dan and link_vi_du are the long public gateway paths.
     if (pathname === "/list" || pathname === "/api/list") {
+      res.zheeNoSeal = true;
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
       res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -822,15 +840,16 @@ module.exports = async (req, res) => {
       const danhSach = {};
       ROUTES_REGISTRY.filter((route) => !route.prefix.some((p) => p === "/video" || p === "/api/video")).forEach((route) => {
         const mainPath = route.prefix[0];
+        const publicPath = publicPathFor(mainPath, ROUTE_SEAL);
         const keyName = mainPath.replace(/^\//, "").replace(/\//g, "_").replace(/-/g, "_");
 
         danhSach[keyName] = {
           ten_api: route.ten,
           chuyen_muc: route.chuyen_muc,
-          duong_dan: mainPath,
+          duong_dan: publicPath,
+          ma_giao_dien: mainPath,
           mo_ta: route.mo_ta,
-          tat_ca_prefix_ho_tro: route.prefix,
-          link_vi_du: `${baseUrl}${mainPath}${route.vi_du_params}`
+          link_vi_du: `${baseUrl}${publicPath}${route.vi_du_params}`
         };
       });
 
@@ -842,6 +861,11 @@ module.exports = async (req, res) => {
         tong_so_api_da_dang_ky: Object.keys(danhSach).length,
         danh_sach: danhSach
       });
+    }
+
+    if (!sealed && matchesRegistered(pathname, ROUTE_SEAL)) {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Endpoint không tồn tại." });
     }
 
     for (const route of ROUTES_REGISTRY) {

@@ -140,6 +140,8 @@ Project dùng entrypoint `api/server.js` và đã có `vercel.json`. Có thể i
 - Các endpoint trả JSON UTF-8; hãy kiểm tra HTTP status trước khi parse dữ liệu.
 - Tác giả không đảm bảo dữ liệu upstream luôn sẵn sàng hoặc chính xác tuyệt đối.
 
+Mỗi endpoint công khai chỉ gọi được qua cổng `/g/` với một chuỗi khóa rất dài, bắt đầu bằng `AIzaSy`. Đường dẫn ngắn như `/tools/freefire` trả về 404. Chuỗi khóa của từng công cụ là cố định; copy nguyên URL trên trang chủ để gọi.
+
 ## Các endpoint nổi bật
 
 | Chức năng | Cách gọi |

@@ -785,6 +785,9 @@
     function slug(path) {
       return String(path || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
     }
+    function toolMark(t) {
+      return String((t && (t.kind || t.path)) || "");
+    }
     function groupOf(chuyen) {
       const hit = GROUP_META.find((g) => g.match.test(String(chuyen || "")));
       return hit || { label: chuyen || "Khác", icon: "sparkles" };
@@ -1047,7 +1050,7 @@
       const map = new Map();
       CATALOG.forEach((t) => {
         const g = groupOf(t.chuyen_muc);
-        if (q && !(t.ten + t.mo_ta + t.path).toLowerCase().includes(q)) return;
+        if (q && !(t.ten + t.mo_ta + toolMark(t)).toLowerCase().includes(q)) return;
         if (!map.has(g.label)) {
           const node = { label: g.label, icon: g.icon, items: [] };
           map.set(g.label, node);
@@ -1067,7 +1070,7 @@
         <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
           <summary title="${esc(g.label)}">${ico(g.icon)}<span class="nav-label">${esc(g.label)}</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
-          ${g.items.map((t) => `<a class="tool-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" data-id="${t.id}" title="${esc(t.ten)}">${ico(iconFor(t.path, t.chuyen_muc))}<span class="nav-label">${esc(t.ten)}</span></a>`).join("")}
+          ${g.items.map((t) => `<a class="tool-link" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}" data-id="${t.id}" title="${esc(t.ten)}">${ico(iconFor(toolMark(t), t.chuyen_muc))}<span class="nav-label">${esc(t.ten)}</span></a>`).join("")}
           </div></div>
         </details>`).join("");
     }
@@ -1125,17 +1128,17 @@
       const zaloUrl = "https://zalo.me/0944921186";
       const facebookQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(facebookUrl)}`;
       const zaloQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(zaloUrl)}`;
-      const socialTools = CATALOG.filter((t) => /mạng xã hội/i.test(String(t.chuyen_muc || "")) && !/\/mxh$/i.test(t.path));
+      const socialTools = CATALOG.filter((t) => /mạng xã hội/i.test(String(t.chuyen_muc || "")) && !/\/mxh$/i.test(toolMark(t)));
       const socialTiles = socialTools.map((t) => `
-        <a class="social-link" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
-          ${ico(iconFor(t.path, t.chuyen_muc))}<span>${esc(t.ten.replace(/\s+(Profile|Lookup|Downloader|&.*)$/i, ""))}</span>
+        <a class="social-link" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
+          ${ico(iconFor(toolMark(t), t.chuyen_muc))}<span>${esc(t.ten.replace(/\s+(Profile|Lookup|Downloader|&.*)$/i, ""))}</span>
         </a>`).join("");
       const tiles = CATALOG.filter((t) => {
         const category = String(t.chuyen_muc || "");
         return !/mạng xã hội|gaming|probability|tài xỉu/i.test(category);
       }).slice(0, 8).map((t) => `
-        <a class="home-tile" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}" href="#${t.id}">
-          <div class="home-tile-top">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
+        <a class="home-tile" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}">
+          <div class="home-tile-top">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
           <span>${esc(t.mo_ta)}</span>
         </a>`).join("");
       panel.innerHTML = `
@@ -1199,7 +1202,7 @@
       const add = (k) => { if (k === undefined || seen.has(k)) return; seen.add(k); keys.push(k); };
       extra && extra.forEach(add);
       exampleFields(t).forEach((f) => add(f.key));
-      const p = String(t.path || "");
+      const p = toolMark(t);
       if (/spotify/i.test(p)) ["", "q", "artist", "url"].forEach(add);
       else if (/pinterest/i.test(p)) ["", "username", "url", "pin", "q", "site", "page", "action"].forEach(add);
       else if (/trans/i.test(p)) ["", "text", "to", "from", "giong", "action", "format"].forEach(add);
@@ -1221,7 +1224,7 @@
       return keys;
     }
     function exampleFields(t) {
-      if (/\/nasa/i.test(String(t.path || ""))) {
+      if (/\/nasa/i.test(toolMark(t))) {
         return [{ key: "action", value: "action=apod" }];
       }
       let search = String(t.params || "");
@@ -1268,7 +1271,7 @@
       }
       const iv = document.createElement("input");
       iv.setAttribute("data-try-val", "1");
-      iv.placeholder = /\/nasa/i.test(String(currentTool?.path || ""))
+      iv.placeholder = /\/nasa/i.test(toolMark(currentTool))
         ? "action=neo&start_date=YYYY-MM-DD&end_date=YYYY-MM-DD"
         : "dán link, username hoặc nội dung";
       iv.value = value || "";
@@ -1310,7 +1313,7 @@
         // the dropdown to `username` or the raw `link / từ khóa` option had
         // no visible effect in the generated endpoint.
         let key = sel ? sel.value : smartKey(val, keys, "");
-        if (/\/nasa/i.test(String(currentTool.path || "")) && key === "action" && /^[?]?(?:action|type)=/i.test(val)) {
+        if (/\/nasa/i.test(toolMark(currentTool)) && key === "action" && /^[?]?(?:action|type)=/i.test(val)) {
           parts.push(val.replace(/^\?/, ""));
         } else if (!key) parts.push("=" + encodeURIComponent(val));
         else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
@@ -1364,7 +1367,7 @@
           if (type.includes("image")) {
             const blob = new Blob([out.buf], { type: out.type || "image/png" });
             const src = URL.createObjectURL(blob);
-            const isAvatar = /avatar/i.test(String(currentTool?.path || ""));
+            const isAvatar = /avatar/i.test(toolMark(currentTool));
             if (media) {
               media.innerHTML = isAvatar
                 ? `<div class="media-preview avatar-preview"><div class="media-stack"><img src="${src}" alt="Avatar chữ cái được tạo"><div class="media-caption">Avatar SVG · ${out.buf.byteLength} bytes</div></div></div>`
@@ -1455,11 +1458,11 @@
       currentTool = t;
       const full = t.vi_du || (ORIGIN + t.path);
       panel.innerHTML = `
-        <h2 class="api-title" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(t.path, t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
+        <h2 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
-        ${/\/nasa/i.test(t.path) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
+        ${/\/nasa/i.test(toolMark(t)) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
         <div class="cards">
-          <div class="card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
+          <div class="card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
             <h3>Endpoint</h3>
             <div class="label">GET</div>
             <div class="endpoint">${esc(full)}</div>
@@ -1469,18 +1472,18 @@
               <button class="act" type="button" data-copy="${esc(full)}">${ico("copy")} Sao chép</button>
             </div>
           </div>
-          <div class="card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
+          <div class="card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
             <h3>Đường dẫn</h3>
             <div class="label">Path</div>
             <div class="endpoint">${esc(t.path)}</div>
             <p class="muted">${esc(t.chuyen_muc)}</p>
           </div>
         </div>
-        <div class="card try-card tool-card" style="--tool-accent:${accentFor(t.path, t.chuyen_muc)}">
+        <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
           <h3>Chạy trên giao diện</h3>
           <p class="muted" style="margin-top:0">Chọn tham số có sẵn, dán link hoặc giá trị. Link dùng được thì ra dữ liệu; không dùng được thì API trả hướng dẫn.</p>
           <div id="tryFields"></div>
-          ${/\/badge(?:$|\/)/i.test(t.path) ? badgePresetMarkup() : ''}
+          ${/\/badge(?:$|\/)/i.test(toolMark(t)) ? badgePresetMarkup() : ''}
           <p class="endpoint" id="tryUrl"></p>
           <div class="row-btns">
             <button class="act act-dark" type="button" id="tryRun">${ico("play")} Chạy API</button>
@@ -1590,57 +1593,17 @@
     function applyCatalog(data) {
       const ds = (data && data.danh_sach) || {};
       CATALOG = Object.values(ds)
-        .filter((x) => x && x.duong_dan && !/\/video$/i.test(x.duong_dan))
+        .filter((x) => x && x.duong_dan && !/\/video$/i.test(x.ma_giao_dien || x.duong_dan))
         .map((x) => ({
-          id: slug(x.duong_dan),
+          id: slug(x.ma_giao_dien || x.ten_api),
           ten: x.ten_api,
           mo_ta: x.mo_ta,
           path: x.duong_dan,
+          kind: x.ma_giao_dien || "",
           chuyen_muc: x.chuyen_muc,
           vi_du: x.link_vi_du,
           params: (x.link_vi_du || "").split(x.duong_dan)[1] || ""
         }));
-
-      // Keep the newly-added Mega tool visible even if an old cached /list
-      // response is returned by a browser, proxy, or stale deployment.
-      if (!CATALOG.some((x) => x.path === "/api/mxh/mega")) {
-        CATALOG.push({
-          id: slug("/api/mxh/mega"),
-          ten: "MEGA Public File & Folder Inspector",
-          mo_ta: "Kiểm tra metadata file/folder MEGA public; không tra cứu user riêng tư.",
-          path: "/api/mxh/mega",
-          chuyen_muc: "Cloud Storage",
-          vi_du: `${location.origin}/api/mxh/mega?url={link_mega_public}`,
-          params: "?url={link_mega_public}"
-        });
-      }
-
-      // Keep Lazada visible in the menu while an older /list response is cached
-      // or before the gateway deployment has propagated to every edge.
-      if (!CATALOG.some((x) => x.path === "/api/mxh/lazada")) {
-        CATALOG.push({
-          id: slug("/api/mxh/lazada"),
-          ten: "Lazada Shop & Product Lookup",
-          mo_ta: "Tra cứu shop, seller ID hoặc sản phẩm Lazada từ dữ liệu public; không cần cookie/session.",
-          path: "/api/mxh/lazada",
-          chuyen_muc: "Mạng Xã Hội",
-          vi_du: `${location.origin}/api/mxh/lazada?url={link_lazada_public}`,
-          params: "?url={link_lazada_public}"
-        });
-      }
-
-      // Keep Tiki visible when the browser still has an older /list response.
-      if (!CATALOG.some((x) => x.path === "/api/mxh/tiki")) {
-        CATALOG.push({
-          id: slug("/api/mxh/tiki"),
-          ten: "Tiki Account, Shop & Product Lookup",
-          mo_ta: "Tra cứu product ID, shop hoặc link public Tiki; không cần mật khẩu/cookie/session.",
-          path: "/api/mxh/tiki",
-          chuyen_muc: "Mạng Xã Hội",
-          vi_du: `${location.origin}/api/mxh/tiki?url={link_tiki_public}`,
-          params: "?url={link_tiki_public}"
-        });
-      }
     }
     function loadUI() {
       const qEl = document.getElementById("q");
