@@ -245,19 +245,19 @@
     article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
     .api-title { user-select: none; -webkit-user-select: none; cursor: default; }
     .lead { color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 22px; }
-    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; min-width: 0; }
     .card {
       background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 20px 22px; box-shadow: var(--shadow);
+      padding: 20px 22px; box-shadow: var(--shadow); min-width: 0; max-width: 100%;
     }
     .card.tool-card { border-top: 3px solid var(--tool-accent); }
     .card.tool-card h3 { color: var(--tool-accent); }
     .card h3 { font-size: 16px; margin-bottom: 12px; }
     .label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
-    .endpoint { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--link); word-break: break-all; line-height: 1.55; }
+    .endpoint { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--link); word-break: break-all; overflow-wrap: anywhere; line-height: 1.55; max-width: 100%; min-width: 0; }
     .tool-icon { display: inline-grid; place-items: center; width: 34px; height: 34px; color: var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 13%, transparent); border: 1px solid color-mix(in srgb, var(--tool-accent) 30%, var(--line)); border-radius: 10px; }
     .tool-icon svg { width: 19px; height: 19px; }
-    .muted { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .muted { color: var(--muted); font-size: 13px; margin-top: 8px; overflow-wrap: anywhere; word-break: break-all; max-width: 100%; }
     .row-btns { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
     button.act, a.act {
       font: inherit; font-size: 13px; font-weight: 700; border-radius: 10px; padding: 8px 12px; cursor: pointer;
@@ -490,10 +490,14 @@
     }
     .card.tool-card { border-top-width: 3px; }
     .endpoint {
+      display: block;
+      box-sizing: border-box;
       padding: 10px 12px;
       border-radius: 10px;
       background: color-mix(in srgb, var(--bg) 82%, var(--tool-accent) 18%);
       border: 1px solid color-mix(in srgb, var(--tool-accent) 18%, var(--line));
+      overflow-wrap: anywhere;
+      word-break: break-all;
     }
     .try-card { position: relative; overflow: hidden; }
     .try-card::after {
