@@ -769,6 +769,13 @@ function installResponseSeal(res) {
   res.json = wrapped;
 }
 
+// Video VIP and Image Collector call /video directly and are gated by API key.
+// They stay off /list, and their media URLs must not be rewritten into /g/<token>.
+function isVideoPath(pathname) {
+  return pathname === "/video" || pathname.startsWith("/video/")
+    || pathname === "/api/video" || pathname.startsWith("/api/video/");
+}
+
 module.exports = async (req, res) => {
   try {
     const protocol = req.headers["x-forwarded-proto"] || "https";
@@ -863,7 +870,9 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (!sealed && matchesRegistered(pathname, ROUTE_SEAL)) {
+    if (isVideoPath(pathname)) res.zheeNoSeal = true;
+
+    if (!sealed && !isVideoPath(pathname) && matchesRegistered(pathname, ROUTE_SEAL)) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Endpoint không tồn tại." });
     }
