@@ -200,6 +200,19 @@
     }
     .drop.is-open .chevron { transform: rotate(180deg); }
     svg.lucide { overflow: visible; flex-shrink: 0; display: block; }
+    morph-icon { display: block; flex-shrink: 0; color: inherit; line-height: 0; }
+    morph-icon svg { width: 100% !important; height: 100% !important; display: block; overflow: visible; }
+    .drop a.tool-link morph-icon, .home-tile morph-icon, .tool-icon morph-icon { color: var(--tool-accent); }
+    img.ico-brand-img[data-fx] { transform-origin: center; }
+    a:hover img.ico-brand-img[data-fx],
+    button:hover img.ico-brand-img[data-fx],
+    summary:hover img.ico-brand-img[data-fx],
+    h2:hover img.ico-brand-img[data-fx],
+    .tool-icon:hover img.ico-brand-img[data-fx],
+    .home-tile:hover img.ico-brand-img[data-fx],
+    .social-link:hover img.ico-brand-img[data-fx] {
+      animation: var(--zhee-fx) .78s cubic-bezier(.22, 1, .36, 1);
+    }
     .drop-panel { overflow: hidden; height: 0; transition: height .28s cubic-bezier(.22, 1, .36, 1); }
     .drop.is-open .drop-panel { height: auto; }
     .drop a {
@@ -614,8 +627,6 @@
     .drop a { cursor: pointer; }
     .drop a .nav-label { transition: color .18s ease, transform .18s ease; }
     .drop a:hover .nav-label { transform: translateX(2px); }
-    .drop a:hover svg, .drop a:hover .ico-brand-img { transform: scale(1.12); }
-    .drop a svg, .drop a .ico-brand-img { transition: transform .18s ease; }
     .home-tile { cursor: pointer; }
     .home-tile::before {
       content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
@@ -623,11 +634,7 @@
       transform: translateX(-100%); transition: opacity .2s ease, transform .6s ease;
     }
     .home-tile:hover::before { opacity: 1; transform: translateX(100%); }
-    .home-tile-top .ico-head { transition: transform .2s ease, filter .2s ease; }
-    .home-tile:hover .home-tile-top .ico-head { transform: translateY(-2px) rotate(-5deg) scale(1.08); filter: drop-shadow(0 4px 6px color-mix(in srgb, var(--tool-accent) 35%, transparent)); }
     .social-link { cursor: pointer; }
-    .social-link:hover svg, .social-link:hover .ico-brand-img { transform: scale(1.12) rotate(-3deg); }
-    .social-link svg, .social-link .ico-brand-img { transition: transform .18s ease; }
     ::selection { background: color-mix(in srgb, #60a5fa 35%, transparent); color: var(--text); }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
@@ -682,7 +689,13 @@
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.7.0/dist/umd/lucide.min.js"></script>
+  <script type="module">
+    import { defineMorphIcon } from "https://cdn.jsdelivr.net/npm/morphicons@1.7.1/dist/element.js";
+    defineMorphIcon();
+    window.__zheeMorphReady = true;
+    window.dispatchEvent(new Event("zhee-morph-ready"));
+  </script>
   <script>
     const ORIGIN = location.origin;
     const START = new Date("2026-08-28T00:00:00+07:00");
@@ -778,11 +791,206 @@
       const lucideName = LUCIDE_FALLBACK[name] || name || "circle-help";
       return `<i data-lucide="${lucideName}" class="${cls || ""}"></i>`;
     }
+    const morphState = { pool: [], cursor: 0, pairs: new Set(), springs: new Set(), slots: new Map() };
+    const brandMoves = [
+      (a) => `rotate(${a}deg)`,
+      (a) => `rotate(${-a}deg)`,
+      (a) => `translateX(${a % 2 ? a : -a}px)`,
+      (a) => `translateY(${a % 2 ? -a : a}px)`,
+      (a) => `scale(${(1.08 + (a % 6) * 0.035).toFixed(3)})`,
+      (a) => `skewX(${a % 2 ? a : -a}deg)`,
+      (a) => `skewY(${a % 2 ? -a : a}deg)`,
+      (a) => `scaleX(${(0.78 + (a % 5) * 0.06).toFixed(3)})`,
+      (a) => `scaleY(${(1.1 + (a % 4) * 0.05).toFixed(3)})`,
+      (a) => `translate(${(a % 5) - 2}px, ${2 - (a % 5)}px)`
+    ];
+    const brandUsed = new Set();
+    let brandSerial = 0;
+    const brandStyle = document.createElement("style");
+    document.head.appendChild(brandStyle);
+
+    function pascalName(name) {
+      return String(name || "").split("-").map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1) : "").join("");
+    }
+    function iconNode(name) {
+      if (!window.lucide || !lucide.icons) return null;
+      return lucide.icons[pascalName(name)] || null;
+    }
+    function ensureMorphPool() {
+      if (morphState.pool.length || !window.lucide || !lucide.icons) return;
+      const keys = Object.keys(lucide.icons);
+      for (let i = keys.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const swap = keys[i];
+        keys[i] = keys[j];
+        keys[j] = swap;
+      }
+      morphState.pool = keys;
+    }
+    function nextMorphEffect(fromName) {
+      ensureMorphPool();
+      const fromKey = pascalName(fromName);
+      let toKey = "";
+      for (let n = 0; n < morphState.pool.length; n += 1) {
+        const candidate = morphState.pool[morphState.cursor % morphState.pool.length];
+        morphState.cursor += 1;
+        if (!candidate || candidate === fromKey) continue;
+        const pair = fromName + ">" + candidate;
+        if (morphState.pairs.has(pair)) continue;
+        morphState.pairs.add(pair);
+        toKey = candidate;
+        break;
+      }
+      if (!toKey || !lucide.icons[toKey]) return null;
+      let stiffness = 220;
+      let damping = 22;
+      for (let n = 0; n < 5000; n += 1) {
+        const index = morphState.springs.size + n;
+        stiffness = 148 + ((index * 31) % 390);
+        const zeta = 0.36 + ((index * 5) % 17) * 0.04;
+        damping = Math.max(8, Math.round(2 * Math.sqrt(stiffness) * zeta));
+        const springKey = stiffness + ":" + damping;
+        if (morphState.springs.has(springKey)) continue;
+        morphState.springs.add(springKey);
+        break;
+      }
+      return { toKey, toNode: lucide.icons[toKey], spring: { stiffness, damping } };
+    }
+    function morphSlotKey(svg, fromName) {
+      const owner = svg.closest("a, button, summary, h2, .uptime, .crumb, .icon-btn, .home-tile");
+      const ownerText = owner ? (owner.getAttribute("aria-label") || owner.getAttribute("title") || owner.textContent || "") : "";
+      const group = svg.closest("article, details, .home-hero, .support-card");
+      const groupText = group && group.querySelector ? ((group.querySelector("h2, summary, h3") || {}).textContent || "") : "";
+      return fromName + "|" + ownerText.trim().slice(0, 72) + "|" + groupText.trim().slice(0, 72);
+    }
+    function effectForSlot(svg, fromName) {
+      const base = morphSlotKey(svg, fromName);
+      const seen = morphState.seen || (morphState.seen = new Map());
+      const count = seen.get(base) || 0;
+      seen.set(base, count + 1);
+      const key = base + "#" + count;
+      if (!morphState.slots.has(key)) morphState.slots.set(key, nextMorphEffect(fromName));
+      return morphState.slots.get(key);
+    }
+    function upgradeMorphIcons(root) {
+      if (!customElements.get("morph-icon") || !window.lucide) return;
+      morphState.seen = new Map();
+      root.querySelectorAll("svg.lucide").forEach((svg) => {
+        if (svg.closest("morph-icon")) return;
+        const named = [...svg.classList].find((name) => name.startsWith("lucide-") && name !== "lucide");
+        const fromName = named ? named.slice("lucide-".length) : "";
+        const fromNode = iconNode(fromName);
+        const effect = fromNode ? effectForSlot(svg, fromName) : null;
+        if (!fromNode || !effect) return;
+        const host = document.createElement("morph-icon");
+        [...svg.classList].filter((name) => name !== "lucide" && !name.startsWith("lucide-")).forEach((name) => host.classList.add(name));
+        const box = getComputedStyle(svg);
+        const width = parseFloat(box.width);
+        const height = parseFloat(box.height);
+        const size = width > 0 ? width : 18;
+        host.style.display = "block";
+        host.style.width = size + "px";
+        host.style.height = (height > 0 ? height : size) + "px";
+        host.setAttribute("size", String(size));
+        host.setAttribute("stroke-width", svg.getAttribute("stroke-width") || "1.9");
+        host.setAttribute("color", "currentColor");
+        host.setAttribute("reduced-motion", "user");
+        host.icon = fromNode;
+        host._fromNode = fromNode;
+        host._toNode = effect.toNode;
+        host._spring = effect.spring;
+        host.dataset.morphPair = fromName + ">" + effect.toKey + "@" + effect.spring.stiffness + ":" + effect.spring.damping;
+        svg.replaceWith(host);
+      });
+    }
+    const brandSlots = new Map();
+    function assignBrandEffects(root) {
+      const seen = new Map();
+      root.querySelectorAll("img.ico-brand-img").forEach((img) => {
+        if (img.dataset.fx) return;
+        const base = morphSlotKey(img, "brand:" + (img.getAttribute("src") || ""));
+        const count = seen.get(base) || 0;
+        seen.set(base, count + 1);
+        const key = base + "#" + count;
+        let name = brandSlots.get(key);
+        if (!name) {
+          let frames = "";
+          let guard = 0;
+          while (guard < 120) {
+            const index = brandSerial + guard;
+            const amount = 7 + (index * 3) % 22;
+            const picks = [index % brandMoves.length, (index * 3 + 2) % brandMoves.length, (index * 5 + 4) % brandMoves.length];
+            if (new Set(picks).size < 3) {
+              guard += 1;
+              continue;
+            }
+            const mid = brandMoves[picks[0]](amount) + " " + brandMoves[picks[1]](amount + 2);
+            const late = brandMoves[picks[2]](amount + 1);
+            frames = `0%{transform:none}36%{transform:${mid}}68%{transform:${late}}100%{transform:none}`;
+            if (!brandUsed.has(frames)) break;
+            guard += 1;
+          }
+          brandSerial += guard + 1;
+          name = "zheeBrand" + brandUsed.size;
+          brandUsed.add(frames);
+          brandSlots.set(key, name);
+          brandStyle.appendChild(document.createTextNode(`@keyframes ${name}{${frames}}`));
+        }
+        img.dataset.fx = name;
+        img.style.setProperty("--zhee-fx", name);
+      });
+    }
+    function bindMorphHover() {
+      if (window.__zheeMorphHover) return;
+      window.__zheeMorphHover = true;
+      const zone = (node) => node && node.closest && node.closest("a, button, summary, .home-tile, h2, .uptime, .crumb, .icon-btn, .tool-icon");
+      const play = (area, forward) => {
+        if (!area) return;
+        area.querySelectorAll("morph-icon").forEach((host) => {
+          const icon = forward ? host._toNode : host._fromNode;
+          if (icon) host.morphTo(icon, host._spring);
+        });
+      };
+      document.addEventListener("pointerover", (event) => {
+        const area = zone(event.target);
+        if (!area || area.contains(event.relatedTarget)) return;
+        play(area, true);
+      });
+      document.addEventListener("pointerout", (event) => {
+        const area = zone(event.target);
+        if (!area || area.contains(event.relatedTarget)) return;
+        play(area, false);
+      });
+      document.addEventListener("focusin", (event) => play(zone(event.target), true));
+      document.addEventListener("focusout", (event) => {
+        const area = zone(event.target);
+        if (!area || area.contains(event.relatedTarget)) return;
+        play(area, false);
+      });
+    }
     function paintIcons() {
       if (!window.lucide) return;
       const attrs = { "stroke-width": "1.9", "stroke-linecap": "round", "stroke-linejoin": "round" };
       lucide.createIcons({ attrs });
+      if (window.__zheeMorphReady) {
+        upgradeMorphIcons(document);
+        assignBrandEffects(document);
+        bindMorphHover();
+      }
     }
+    function paintOrMorph(container, name, className) {
+      const node = iconNode(name);
+      const host = container && container.querySelector("morph-icon");
+      if (host && node && window.__zheeMorphReady) {
+        host.morphTo(node, host._spring || { stiffness: 280, damping: 24 });
+        host._fromNode = node;
+        host.dataset.morphFrom = name;
+        return;
+      }
+      container.innerHTML = ico(name, className);
+      paintIcons();
+    }
+    window.addEventListener("zhee-morph-ready", () => paintIcons());
     function esc(s) {
       return String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     }
@@ -941,8 +1149,7 @@
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
       localStorage.setItem("zhee-theme", theme);
-      themeBtn.innerHTML = ico(theme === "dark" ? "sun" : "moon", "ico-btn");
-      paintIcons();
+      paintOrMorph(themeBtn, theme === "dark" ? "sun" : "moon", "ico-btn");
     }
     applyTheme(localStorage.getItem("zhee-theme") || "light");
     themeBtn.addEventListener("click", () => {
@@ -956,9 +1163,8 @@
     function isMobile() { return window.matchMedia("(max-width: 900px)").matches; }
     function syncNavBtn() {
       const collapsed = isMobile() ? !sidebar.classList.contains("open") : document.body.classList.contains("nav-collapsed");
-      navToggle.innerHTML = ico(collapsed ? "menu" : "panel-left-close");
-      navClose.innerHTML = ico("x");
-      paintIcons();
+      paintOrMorph(navToggle, collapsed ? "menu" : "panel-left-close");
+      paintOrMorph(navClose, "x");
     }
     function openNav() {
       if (isMobile()) {
@@ -1646,8 +1852,14 @@
 
     function updateUptime() {
       const u = tinhUptime();
-      document.getElementById("uptime").innerHTML = ico("clock-3") + " Từ " + u.moc + " · <strong>" + u.chuoi + "</strong>";
-      paintIcons();
+      const el = document.getElementById("uptime");
+      let copy = el.querySelector(".uptime-copy");
+      if (!copy) {
+        el.innerHTML = ico("clock-3") + '<span class="uptime-copy"></span>';
+        paintIcons();
+        copy = el.querySelector(".uptime-copy");
+      }
+      if (copy) copy.innerHTML = "Từ " + esc(u.moc) + " · <strong>" + esc(u.chuoi) + "</strong>";
     }
     updateUptime();
     setInterval(updateUptime, 1000);
