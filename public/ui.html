@@ -200,9 +200,18 @@
     }
     .drop.is-open .chevron { transform: rotate(180deg); }
     svg.lucide { overflow: visible; flex-shrink: 0; display: block; }
-    morph-icon { display: block; flex-shrink: 0; color: inherit; line-height: 0; }
-    morph-icon svg { width: 100% !important; height: 100% !important; display: block; overflow: visible; }
-    .drop a.tool-link morph-icon, .home-tile morph-icon, .tool-icon morph-icon { color: var(--tool-accent); }
+    svg.zhee-glyph { transform-origin: center; transform-box: fill-box; }
+    a:hover svg.zhee-glyph,
+    button:hover svg.zhee-glyph,
+    summary:hover svg.zhee-glyph,
+    h2:hover svg.zhee-glyph,
+    .uptime:hover svg.zhee-glyph,
+    .crumb:hover svg.zhee-glyph,
+    .icon-btn:hover svg.zhee-glyph,
+    .tool-icon:hover svg.zhee-glyph,
+    .home-tile:hover svg.zhee-glyph {
+      animation: var(--zhee-self) .62s cubic-bezier(.22, 1, .36, 1);
+    }
     img.ico-brand-img[data-fx] { transform-origin: center; }
     a:hover img.ico-brand-img[data-fx],
     button:hover img.ico-brand-img[data-fx],
@@ -212,6 +221,9 @@
     .home-tile:hover img.ico-brand-img[data-fx],
     .social-link:hover img.ico-brand-img[data-fx] {
       animation: var(--zhee-fx) .78s cubic-bezier(.22, 1, .36, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      svg.zhee-glyph, img.ico-brand-img[data-fx] { animation: none !important; }
     }
     .drop-panel { overflow: hidden; height: 0; transition: height .28s cubic-bezier(.22, 1, .36, 1); }
     .drop.is-open .drop-panel { height: auto; }
@@ -690,12 +702,6 @@
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/lucide@1.7.0/dist/umd/lucide.min.js"></script>
-  <script type="module">
-    import { defineMorphIcon } from "https://cdn.jsdelivr.net/npm/morphicons@1.7.1/dist/element.js";
-    defineMorphIcon();
-    window.__zheeMorphReady = true;
-    window.dispatchEvent(new Event("zhee-morph-ready"));
-  </script>
   <script>
     const ORIGIN = location.origin;
     const START = new Date("2026-08-28T00:00:00+07:00");
@@ -791,206 +797,118 @@
       const lucideName = LUCIDE_FALLBACK[name] || name || "circle-help";
       return `<i data-lucide="${lucideName}" class="${cls || ""}"></i>`;
     }
-    const morphState = { pool: [], cursor: 0, pairs: new Set(), springs: new Set(), slots: new Map() };
-    const brandMoves = [
-      (a) => `rotate(${a}deg)`,
-      (a) => `rotate(${-a}deg)`,
-      (a) => `translateX(${a % 2 ? a : -a}px)`,
-      (a) => `translateY(${a % 2 ? -a : a}px)`,
-      (a) => `scale(${(1.08 + (a % 6) * 0.035).toFixed(3)})`,
-      (a) => `skewX(${a % 2 ? a : -a}deg)`,
-      (a) => `skewY(${a % 2 ? -a : a}deg)`,
-      (a) => `scaleX(${(0.78 + (a % 5) * 0.06).toFixed(3)})`,
-      (a) => `scaleY(${(1.1 + (a % 4) * 0.05).toFixed(3)})`,
-      (a) => `translate(${(a % 5) - 2}px, ${2 - (a % 5)}px)`
-    ];
-    const brandUsed = new Set();
-    let brandSerial = 0;
-    const brandStyle = document.createElement("style");
-    document.head.appendChild(brandStyle);
+    // Giữ nguyên nét Lucide. Hover chỉ xoay hoặc nhích đúng icon đó, rồi trả về hình gốc.
+    const SELF_POSES = {
+      "party-popper": ["rotate(-16deg) scale(1.12)", "rotate(10deg) scale(1.04)"],
+      "wrench": ["rotate(-28deg)", "rotate(8deg)"],
+      "dices": ["rotate(-12deg) translateY(-2px)", "rotate(8deg)"],
+      "landmark": ["translateY(-3px)", "translateY(0)"],
+      "globe-2": ["rotate(20deg)", "rotate(-8deg)"],
+      "cloud": ["translateX(3px)", "translateX(-2px)"],
+      "download": ["translateY(3px)", "translateY(-1px)"],
+      "layout-dashboard": ["scale(1.1)", "scale(1)"],
+      "home": ["translateY(-2px) scale(1.06)", "translateY(0)"],
+      "x": ["rotate(90deg)", "rotate(0deg)"],
+      "loader": ["rotate(180deg)", "rotate(360deg)"],
+      "qr-code": ["scale(1.1)", "scale(1)"],
+      "bot": ["rotate(-8deg) translateY(-2px)", "rotate(4deg)"],
+      "gamepad-2": ["rotate(-10deg)", "rotate(6deg)"],
+      "smartphone": ["translateY(-2px)", "translateY(0)"],
+      "cpu": ["rotate(12deg)", "rotate(-4deg)"],
+      "satellite": ["rotate(16deg)", "rotate(-6deg)"],
+      "brain": ["scale(1.08)", "scale(1)"],
+      "calendar-days": ["translateY(-2px)", "translateY(0)"],
+      "calendar-heart": ["scale(1.1)", "scale(1)"],
+      "car-front": ["translateX(3px)", "translateX(0)"],
+      "fish": ["rotate(-8deg) translateX(2px)", "rotate(6deg)"],
+      "target": ["scale(1.12)", "scale(1)"],
+      "layers": ["translateY(-2px)", "translateY(1px)"],
+      "inbox": ["translateY(2px)", "translateY(0)"],
+      "languages": ["scale(1.08)", "scale(1)"],
+      "scan-line": ["translateY(2px)", "translateY(-1px)"],
+      "scan-text": ["translateY(-2px)", "translateY(0)"],
+      "scan-face": ["scale(1.08)", "scale(1)"],
+      "message-circle": ["translateY(-2px)", "translateY(0)"],
+      "message-square-quote": ["rotate(-6deg)", "rotate(4deg)"],
+      "link-2": ["rotate(-12deg)", "rotate(8deg)"],
+      "image": ["scale(1.08)", "scale(1)"],
+      "wand-sparkles": ["rotate(16deg)", "rotate(-8deg)"],
+      "badge-check": ["scale(1.1)", "scale(1)"],
+      "circle-user-round": ["scale(1.08)", "scale(1)"],
+      "book-a": ["rotate(-8deg)", "rotate(4deg)"],
+      "app-window": ["scale(1.06)", "scale(1)"],
+      "unplug": ["translateY(2px)", "translateY(0)"],
+      "fuel": ["translateY(2px)", "translateY(-1px)"],
+      "circle-dot": ["scale(1.12)", "scale(1)"],
+      "calculator": ["translateY(-2px)", "translateY(0)"]
+    };
+    const glyphStyle = document.createElement("style");
+    document.head.appendChild(glyphStyle);
+    const glyphMotions = new Map();
 
-    function pascalName(name) {
-      return String(name || "").split("-").map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1) : "").join("");
-    }
-    function iconNode(name) {
-      if (!window.lucide || !lucide.icons) return null;
-      return lucide.icons[pascalName(name)] || null;
-    }
-    function ensureMorphPool() {
-      if (morphState.pool.length || !window.lucide || !lucide.icons) return;
-      const keys = Object.keys(lucide.icons);
-      for (let i = keys.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const swap = keys[i];
-        keys[i] = keys[j];
-        keys[j] = swap;
+    function selfMotion(iconName) {
+      if (glyphMotions.has(iconName)) return glyphMotions.get(iconName);
+      const pose = SELF_POSES[iconName];
+      let mid;
+      let late;
+      if (pose) {
+        mid = pose[0];
+        late = pose[1];
+      } else {
+        const n = [...iconName].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const dir = n % 2 ? 1 : -1;
+        const angle = 8 + (n % 5) * 3;
+        mid = `rotate(${dir * angle}deg) scale(1.08)`;
+        late = `rotate(${dir * -Math.round(angle / 3)}deg)`;
       }
-      morphState.pool = keys;
+      const frames = `0%{transform:none}38%{transform:${mid}}70%{transform:${late}}100%{transform:none}`;
+      const name = "zheeSelf" + glyphMotions.size;
+      glyphStyle.appendChild(document.createTextNode(`@keyframes ${name}{${frames}}`));
+      glyphMotions.set(iconName, name);
+      return name;
     }
-    function nextMorphEffect(fromName) {
-      ensureMorphPool();
-      const fromKey = pascalName(fromName);
-      let toKey = "";
-      for (let n = 0; n < morphState.pool.length; n += 1) {
-        const candidate = morphState.pool[morphState.cursor % morphState.pool.length];
-        morphState.cursor += 1;
-        if (!candidate || candidate === fromKey) continue;
-        const pair = fromName + ">" + candidate;
-        if (morphState.pairs.has(pair)) continue;
-        morphState.pairs.add(pair);
-        toKey = candidate;
-        break;
-      }
-      if (!toKey || !lucide.icons[toKey]) return null;
-      let stiffness = 220;
-      let damping = 22;
-      for (let n = 0; n < 5000; n += 1) {
-        const index = morphState.springs.size + n;
-        stiffness = 148 + ((index * 31) % 390);
-        const zeta = 0.36 + ((index * 5) % 17) * 0.04;
-        damping = Math.max(8, Math.round(2 * Math.sqrt(stiffness) * zeta));
-        const springKey = stiffness + ":" + damping;
-        if (morphState.springs.has(springKey)) continue;
-        morphState.springs.add(springKey);
-        break;
-      }
-      return { toKey, toNode: lucide.icons[toKey], spring: { stiffness, damping } };
-    }
-    function morphSlotKey(svg, fromName) {
-      const owner = svg.closest("a, button, summary, h2, .uptime, .crumb, .icon-btn, .home-tile");
-      const ownerText = owner ? (owner.getAttribute("aria-label") || owner.getAttribute("title") || owner.textContent || "") : "";
-      const group = svg.closest("article, details, .home-hero, .support-card");
-      const groupText = group && group.querySelector ? ((group.querySelector("h2, summary, h3") || {}).textContent || "") : "";
-      return fromName + "|" + ownerText.trim().slice(0, 72) + "|" + groupText.trim().slice(0, 72);
-    }
-    function effectForSlot(svg, fromName) {
-      const base = morphSlotKey(svg, fromName);
-      const seen = morphState.seen || (morphState.seen = new Map());
-      const count = seen.get(base) || 0;
-      seen.set(base, count + 1);
-      const key = base + "#" + count;
-      if (!morphState.slots.has(key)) morphState.slots.set(key, nextMorphEffect(fromName));
-      return morphState.slots.get(key);
-    }
-    function upgradeMorphIcons(root) {
-      if (!customElements.get("morph-icon") || !window.lucide) return;
-      morphState.seen = new Map();
+    function markSelfGlyphs(root) {
       root.querySelectorAll("svg.lucide").forEach((svg) => {
-        if (svg.closest("morph-icon")) return;
+        if (svg.classList.contains("chevron")) return;
         const named = [...svg.classList].find((name) => name.startsWith("lucide-") && name !== "lucide");
-        const fromName = named ? named.slice("lucide-".length) : "";
-        const fromNode = iconNode(fromName);
-        const effect = fromNode ? effectForSlot(svg, fromName) : null;
-        if (!fromNode || !effect) return;
-        const host = document.createElement("morph-icon");
-        [...svg.classList].filter((name) => name !== "lucide" && !name.startsWith("lucide-")).forEach((name) => host.classList.add(name));
-        const box = getComputedStyle(svg);
-        const width = parseFloat(box.width);
-        const height = parseFloat(box.height);
-        const size = width > 0 ? width : 18;
-        host.style.display = "block";
-        host.style.width = size + "px";
-        host.style.height = (height > 0 ? height : size) + "px";
-        host.setAttribute("size", String(size));
-        host.setAttribute("stroke-width", svg.getAttribute("stroke-width") || "1.9");
-        host.setAttribute("color", "currentColor");
-        host.setAttribute("reduced-motion", "user");
-        host.icon = fromNode;
-        host._fromNode = fromNode;
-        host._toNode = effect.toNode;
-        host._spring = effect.spring;
-        host.dataset.morphPair = fromName + ">" + effect.toKey + "@" + effect.spring.stiffness + ":" + effect.spring.damping;
-        svg.replaceWith(host);
+        const fromName = named ? named.slice("lucide-".length) : "icon";
+        if (svg.dataset.self === fromName) return;
+        svg.classList.add("zhee-glyph");
+        svg.dataset.self = fromName;
+        svg.style.setProperty("--zhee-self", selfMotion(fromName));
       });
     }
     const brandSlots = new Map();
+    const brandStyle = document.createElement("style");
+    document.head.appendChild(brandStyle);
     function assignBrandEffects(root) {
-      const seen = new Map();
       root.querySelectorAll("img.ico-brand-img").forEach((img) => {
         if (img.dataset.fx) return;
-        const base = morphSlotKey(img, "brand:" + (img.getAttribute("src") || ""));
-        const count = seen.get(base) || 0;
-        seen.set(base, count + 1);
-        const key = base + "#" + count;
-        let name = brandSlots.get(key);
+        const src = img.getAttribute("src") || "";
+        let name = brandSlots.get(src);
         if (!name) {
-          let frames = "";
-          let guard = 0;
-          while (guard < 120) {
-            const index = brandSerial + guard;
-            const amount = 7 + (index * 3) % 22;
-            const picks = [index % brandMoves.length, (index * 3 + 2) % brandMoves.length, (index * 5 + 4) % brandMoves.length];
-            if (new Set(picks).size < 3) {
-              guard += 1;
-              continue;
-            }
-            const mid = brandMoves[picks[0]](amount) + " " + brandMoves[picks[1]](amount + 2);
-            const late = brandMoves[picks[2]](amount + 1);
-            frames = `0%{transform:none}36%{transform:${mid}}68%{transform:${late}}100%{transform:none}`;
-            if (!brandUsed.has(frames)) break;
-            guard += 1;
-          }
-          brandSerial += guard + 1;
-          name = "zheeBrand" + brandUsed.size;
-          brandUsed.add(frames);
-          brandSlots.set(key, name);
-          brandStyle.appendChild(document.createTextNode(`@keyframes ${name}{${frames}}`));
+          const n = [...src].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+          const angle = (n % 2 ? 1 : -1) * (7 + (n % 4));
+          name = "zheeBrand" + brandSlots.size;
+          brandSlots.set(src, name);
+          brandStyle.appendChild(document.createTextNode(`@keyframes ${name}{0%{transform:none}45%{transform:rotate(${angle}deg)}100%{transform:none}}`));
         }
         img.dataset.fx = name;
         img.style.setProperty("--zhee-fx", name);
-      });
-    }
-    function bindMorphHover() {
-      if (window.__zheeMorphHover) return;
-      window.__zheeMorphHover = true;
-      const zone = (node) => node && node.closest && node.closest("a, button, summary, .home-tile, h2, .uptime, .crumb, .icon-btn, .tool-icon");
-      const play = (area, forward) => {
-        if (!area) return;
-        area.querySelectorAll("morph-icon").forEach((host) => {
-          const icon = forward ? host._toNode : host._fromNode;
-          if (icon) host.morphTo(icon, host._spring);
-        });
-      };
-      document.addEventListener("pointerover", (event) => {
-        const area = zone(event.target);
-        if (!area || area.contains(event.relatedTarget)) return;
-        play(area, true);
-      });
-      document.addEventListener("pointerout", (event) => {
-        const area = zone(event.target);
-        if (!area || area.contains(event.relatedTarget)) return;
-        play(area, false);
-      });
-      document.addEventListener("focusin", (event) => play(zone(event.target), true));
-      document.addEventListener("focusout", (event) => {
-        const area = zone(event.target);
-        if (!area || area.contains(event.relatedTarget)) return;
-        play(area, false);
       });
     }
     function paintIcons() {
       if (!window.lucide) return;
       const attrs = { "stroke-width": "1.9", "stroke-linecap": "round", "stroke-linejoin": "round" };
       lucide.createIcons({ attrs });
-      if (window.__zheeMorphReady) {
-        upgradeMorphIcons(document);
-        assignBrandEffects(document);
-        bindMorphHover();
-      }
+      markSelfGlyphs(document);
+      assignBrandEffects(document);
     }
     function paintOrMorph(container, name, className) {
-      const node = iconNode(name);
-      const host = container && container.querySelector("morph-icon");
-      if (host && node && window.__zheeMorphReady) {
-        host.morphTo(node, host._spring || { stiffness: 280, damping: 24 });
-        host._fromNode = node;
-        host.dataset.morphFrom = name;
-        return;
-      }
+      if (!container) return;
       container.innerHTML = ico(name, className);
       paintIcons();
     }
-    window.addEventListener("zhee-morph-ready", () => paintIcons());
     function esc(s) {
       return String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     }
