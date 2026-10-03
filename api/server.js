@@ -53,6 +53,9 @@ function serveRobotsTxt(res) {
     "Disallow: /api/telegram/webhook",
     "Disallow: /api/telegram/auth",
     "Disallow: /api/auth/",
+    "Disallow: /api/account",
+    "Disallow: /api/admin",
+    "Disallow: /api/run",
     `Sitemap: ${SEO_ORIGIN}/sitemap.xml`,
     ""
   ].join("\n");
@@ -99,7 +102,7 @@ function serveTaixiuImagePage(req, res, publicUrl) {
 }
 
 // 1. IMPORT TOÀN BỘ MODULE HANDLERS (../lib/)
-const { buildSealMap, resolveToken, matchesRegistered, sealBody, publicPathFor } = require("../lib/routeSeal");
+const { buildSealMap, resolveToken, matchesRegistered, sealBody } = require("../lib/routeSeal");
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const spotifyHandler = require("../lib/spotify");
@@ -119,6 +122,7 @@ const ipCheckHandler = require("../lib/ipcheck");
 const telegramBotHandler = require("../lib/telegramBot");
 const telegramAuthHandler = require("../lib/telegramAuth");
 const googleAuthHandler = require("../lib/googleAuth");
+const accountsHandler = require("../lib/accounts");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
@@ -778,12 +782,38 @@ function isVideoPath(pathname) {
     || pathname === "/api/video" || pathname.startsWith("/api/video/");
 }
 
+function routeSlug(pathname) {
+  return String(pathname || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
+}
+
+function readJsonBody(req) {
+  if (!req.body) return {};
+  if (typeof req.body === "string") {
+    try { return JSON.parse(req.body || "{}"); } catch (_) { return {}; }
+  }
+  return req.body;
+}
+
+async function runTool(req, res) {
+  const access = await accountsHandler.accessForRequest(req);
+  if (!access.ok) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(access.status).json({ trang_thai: "that_bai", thong_bao: access.thong_bao });
+  }
+  const body = readJsonBody(req);
+  const ma = String(body.ma || "").trim();
+  const query = String(body.query || "").replace(/^\?/, "").replace(/[\r\n]/g, "").slice(0, 4000);
+  const route = ROUTES_REGISTRY.find((item) => routeSlug(item.prefix[0]) === ma);
+  if (!route) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Không thấy công cụ." });
+  }
+  req.url = route.prefix[0] + (query ? `?${query}` : "");
+  return route.handler(req, res);
+}
+
 module.exports = async (req, res) => {
   try {
-    const protocol = req.headers["x-forwarded-proto"] || "https";
-    const host = req.headers.host || "api-zhee.vercel.app";
-    const baseUrl = `${protocol}://${host}`;
-
     const url = req.url || "/";
     const queryIndex = url.indexOf("?");
     const rawPath = queryIndex >= 0 ? url.slice(0, queryIndex) : url;
@@ -833,6 +863,22 @@ module.exports = async (req, res) => {
       return await googleAuthHandler(req, res);
     }
 
+    if (
+      pathname === "/api/auth/admin" ||
+      pathname === "/api/account" ||
+      pathname.startsWith("/api/account/") ||
+      pathname === "/api/admin" ||
+      pathname.startsWith("/api/admin/")
+    ) {
+      res.zheeNoSeal = true;
+      return await accountsHandler(req, res);
+    }
+
+    if (pathname === "/api/run" && req.method === "POST") {
+      res.zheeNoSeal = true;
+      return await runTool(req, res);
+    }
+
     if (wantsDocsHtml(req, pathname)) {
       try {
         serveDocsHtml(res);
@@ -848,8 +894,7 @@ module.exports = async (req, res) => {
     if (/\/api\/taixiu\//i.test(pathname) && /[?&](?:image|img)=/i.test(url) && accept.includes("text/html")) {
       return serveTaixiuImagePage(req, res, req.zheePublicUrl || url);
     }
-    // Route /list. The directory keeps the internal mark for the UI icons only.
-    // duong_dan and link_vi_du are the long public gateway paths.
+    // /list names the tools for the interface. It does not publish callable URLs.
     if (pathname === "/list" || pathname === "/api/list") {
       res.zheeNoSeal = true;
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -859,16 +904,14 @@ module.exports = async (req, res) => {
       const danhSach = {};
       ROUTES_REGISTRY.filter((route) => !route.prefix.some((p) => p === "/video" || p === "/api/video")).forEach((route) => {
         const mainPath = route.prefix[0];
-        const publicPath = publicPathFor(mainPath, ROUTE_SEAL);
         const keyName = mainPath.replace(/^\//, "").replace(/\//g, "_").replace(/-/g, "_");
 
         danhSach[keyName] = {
           ten_api: route.ten,
           chuyen_muc: route.chuyen_muc,
-          duong_dan: publicPath,
           ma_giao_dien: mainPath,
           mo_ta: route.mo_ta,
-          link_vi_du: `${baseUrl}${publicPath}${route.vi_du_params}`
+          tham_so: route.vi_du_params || ""
         };
       });
 
@@ -887,6 +930,18 @@ module.exports = async (req, res) => {
     if (!sealed && !isVideoPath(pathname) && matchesRegistered(pathname, ROUTE_SEAL)) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Endpoint không tồn tại." });
+    }
+
+    const matchedRoute = ROUTES_REGISTRY.find((route) => route.prefix.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    ));
+    if (matchedRoute && !isVideoPath(pathname)) {
+      const access = await accountsHandler.accessForRequest(req);
+      if (!access.ok) {
+        res.zheeNoSeal = true;
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        return res.status(access.status).json({ trang_thai: "that_bai", thong_bao: access.thong_bao });
+      }
     }
 
     for (const route of ROUTES_REGISTRY) {

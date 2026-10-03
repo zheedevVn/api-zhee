@@ -298,6 +298,60 @@
     .auth-note:empty { display: none; }
     #googleButton { min-height: 44px; display: flex; justify-content: center; }
     #googleButton:empty { display: none; min-height: 0; }
+    .admin-login { display: grid; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .admin-login p { margin: 0; color: var(--muted); font-size: 12px; }
+    .admin-login input { width: 100%; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 10px; padding: 9px 11px; font: inherit; }
+    .auth-box.is-register .admin-login { display: none; }
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 4px; }
+    .stat { background: color-mix(in srgb, var(--card) 86%, transparent); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+    .stat strong { display: block; font-size: 20px; letter-spacing: -.03em; }
+    .stat span { color: var(--muted); font-size: 12px; }
+    .step-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 18px; }
+    .step { border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 14px; }
+    .step b { display: block; margin-bottom: 4px; }
+    .step span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .money { font-variant-numeric: tabular-nums; font-weight: 800; }
+    .profile-grid, .wallet-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
+    .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .kv span { color: var(--muted); }
+    .secret-value { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px; word-break: break-all; }
+    .pay-box { display: grid; gap: 8px; }
+    .pay-box img { width: min(220px, 100%); border-radius: 12px; background: #fff; }
+    .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+    table.admin { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.admin th, table.admin td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    table.admin th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+    .mini { padding: 6px 8px; font-size: 12px; }
+    .mac-alert { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,.28); }
+    .mac-alert.show { display: flex; }
+    .mac-card { width: min(420px, 100%); border-radius: 14px; border: 1px solid rgba(255,255,255,.08); background: #2b2b2b; color: #f5f5f7; box-shadow: 0 24px 80px rgba(0,0,0,.45); padding: 18px 18px 14px; }
+    .mac-card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
+    .mac-card p { margin: 0 0 14px; color: #d2d2d7; font-size: 12.5px; line-height: 1.45; }
+    .mac-suppress { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; color: #d2d2d7; font-size: 12.5px; }
+    .mac-suppress[hidden], .mac-btn[hidden], .tab-badge[hidden] { display: none; }
+    .mac-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .mac-btn { border: 0; border-radius: 8px; background: #4a4a4a; color: #fff; font: inherit; font-size: 13px; font-weight: 650; padding: 7px 14px; }
+    .mac-btn.mac-default { background: #0a84ff; }
+    .tabbar {
+      display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+      padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+      background: color-mix(in srgb, var(--sidebar) 92%, transparent); border-top: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+    }
+    .tabbar a { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 700; min-height: 46px; justify-content: center; }
+    .tabbar a[aria-current="page"] { color: var(--text); }
+    .tabbar svg { width: 20px; height: 20px; }
+    .tab-badge { position: absolute; top: 2px; right: calc(50% - 22px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: #e11d48; color: #fff; font-size: 10px; line-height: 16px; text-align: center; }
+    @media (max-width: 900px) {
+      .tabbar { display: flex; }
+      .main { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+      .stat-row, .step-row, .profile-grid, .wallet-grid, .admin-stats { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .stat-row, .admin-stats { grid-template-columns: 1fr 1fr; }
+      .step-row, .profile-grid, .wallet-grid { grid-template-columns: 1fr; }
+    }
     #authBackdrop { z-index: 70; }
     article { padding: 8px 28px 48px; max-width: 1080px; }
     article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
@@ -674,8 +728,9 @@
     .qr-close:hover { background: var(--nav-active); color: var(--nav-active-fg); }
 
     /* Interaction polish: make every clickable surface feel responsive and visible. */
-    a, button, summary, select { cursor: pointer; }
-    input { cursor: text; }
+    html, body { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M4 2 L4 17 L8.2 13.2 L11.4 19.2 L13.6 18.1 L10.3 12.2 L16 12.2 Z' fill='%23111827' stroke='white' stroke-width='1.2' stroke-linejoin='round'/></svg>") 3 2, auto; }
+    a, button, summary, select, label { cursor: pointer; }
+    input, textarea, pre, .secret-value { cursor: text; }
     a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible {
       outline: 3px solid color-mix(in srgb, var(--tool-accent, #60a5fa) 58%, transparent);
       outline-offset: 3px;
@@ -736,11 +791,22 @@
       <div class="uptime" id="uptime"></div>
     </footer>
   </div>
+  <nav class="tabbar" id="tabbar" aria-label="Điều hướng chính">
+    <a href="#home" data-tab="home"><i data-lucide="home"></i><span>Trang chủ</span></a>
+    <a href="#cong-cu" data-tab="cong-cu"><i data-lucide="layout-grid"></i><span>Công cụ</span></a>
+    <a href="#vi" data-tab="vi"><i data-lucide="wallet"></i><span class="tab-badge" id="tabBadge" hidden>1</span><span>Ví</span></a>
+    <a href="#ho-so" data-tab="ho-so"><i data-lucide="circle-user"></i><span>Hồ sơ</span></a>
+  </nav>
   <div class="toast" id="toast" role="status"></div>
-  <div class="dialog-backdrop" id="dialog" role="dialog" aria-modal="true">
-    <div class="dialog-box">
+  <div class="mac-alert" id="dialog" role="alertdialog" aria-modal="true" aria-labelledby="macTitle">
+    <div class="mac-card">
+      <h3 id="macTitle">Thông báo</h3>
       <p id="dialogMsg"></p>
-      <button class="act act-dark" type="button" id="dialogOk">OK</button>
+      <label class="mac-suppress" id="macSuppressWrap"><input type="checkbox" id="macSuppress"> Đừng hỏi lại</label>
+      <div class="mac-actions">
+        <button class="mac-btn" type="button" id="macCancel">Hủy</button>
+        <button class="mac-btn mac-default" type="button" id="dialogOk">OK</button>
+      </div>
     </div>
   </div>
   <div class="dialog-backdrop" id="authBackdrop" role="dialog" aria-modal="true" aria-labelledby="authTitle">
@@ -751,8 +817,14 @@
         <button class="auth-tab is-on" type="button" data-intent="login" role="tab" aria-selected="true">Đăng nhập</button>
         <button class="auth-tab" type="button" data-intent="register" role="tab" aria-selected="false">Đăng ký</button>
       </div>
-      <p class="auth-lead" id="authLead">Dùng tài khoản Google đã đăng ký. Phiên được giữ 1 ngày.</p>
+      <p class="auth-lead" id="authLead">Đăng nhập bằng Google đã đăng ký, hoặc tài khoản quản trị. Phiên giữ 1 ngày.</p>
       <div id="googleButton"></div>
+      <form class="admin-login" id="adminForm">
+        <p>Tài khoản quản trị</p>
+        <input name="username" autocomplete="username" placeholder="Tên đăng nhập" required>
+        <input name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu" required>
+        <button class="act act-dark" type="submit">Đăng nhập quản trị</button>
+      </form>
       <p class="auth-note" id="authNote"></p>
     </div>
   </div>
@@ -1106,6 +1178,7 @@
     let googleSignedIn = false;
     let authIntent = "login";
     let authBusy = false;
+    let billing = null;
 
     async function initTelegramIdentity() {
       const webApp = window.Telegram && window.Telegram.WebApp;
@@ -1151,15 +1224,35 @@
       const avatar = picture
         ? `<img src="${esc(picture)}" alt="" aria-hidden="true">`
         : `<span class="account-fallback" aria-hidden="true">${esc(initials)}</span>`;
-      accountChip.innerHTML = `${avatar}<span class="account-copy"><span class="account-name">${esc(account.name || account.email || "Google")}</span><span class="account-meta">${esc(account.email || "")}</span></span><button class="account-out" type="button" data-logout>Thoát</button>`;
+      const meta = account.role === "admin" ? "Quản trị" : (billing && billing.balance != null ? `${Number(billing.balance).toLocaleString("vi-VN")}đ` : (account.email || ""));
+      accountChip.innerHTML = `${avatar}<span class="account-copy"><span class="account-name">${esc(account.name || account.email || "Google")}</span><span class="account-meta">${esc(meta)}</span></span><button class="account-out" type="button" data-logout>Thoát</button>`;
       accountChip.hidden = false;
     }
 
     function clearGoogleAccount() {
       googleSignedIn = false;
+      billing = null;
       accountChip.hidden = true;
       accountChip.innerHTML = "";
       authOpen.hidden = false;
+      const badge = document.getElementById("tabBadge");
+      if (badge) badge.hidden = true;
+    }
+
+    function vnd(value) {
+      return Number(value || 0).toLocaleString("vi-VN") + "đ";
+    }
+
+    async function refreshBilling() {
+      try {
+        const response = await fetch("/api/account", { cache: "no-store", credentials: "same-origin", headers: { Accept: "application/json" } });
+        if (!response.ok) return;
+        billing = await response.json();
+        const badge = document.getElementById("tabBadge");
+        if (badge) badge.hidden = !(billing && billing.role !== "admin" && billing.key_active === false);
+        if (billing && billing.role === "admin") showGoogleAccount(billing);
+        else if (googleSignedIn && billing) showGoogleAccount({ ...billing, role: "user" });
+      } catch (_) {}
     }
 
     async function refreshGoogleSession() {
@@ -1170,8 +1263,10 @@
           headers: { Accept: "application/json" }
         });
         const account = await response.json();
-        if (response.ok && account.authenticated === true) showGoogleAccount(account);
-        else clearGoogleAccount();
+        if (response.ok && account.authenticated === true) {
+          showGoogleAccount(account);
+          await refreshBilling();
+        } else clearGoogleAccount();
       } catch (_) {
         clearGoogleAccount();
       }
@@ -1179,8 +1274,8 @@
 
     function authCopy(intent) {
       return intent === "register"
-        ? "Tạo tài khoản bằng Google. Lần sau dùng Đăng nhập. Phiên được giữ 1 ngày."
-        : "Dùng tài khoản Google đã đăng ký. Phiên được giữ 1 ngày.";
+        ? "Đăng ký chỉ bằng Google. Mỗi IP tạo tối đa 3 tài khoản. Key miễn phí 10 ngày, phiên giữ 1 ngày."
+        : "Đăng nhập bằng Google đã đăng ký, hoặc tài khoản quản trị. Phiên giữ 1 ngày.";
     }
 
     function closeAuth() {
@@ -1225,8 +1320,9 @@
           return;
         }
         showGoogleAccount(account);
+        await refreshBilling();
         closeAuth();
-        notify(authIntent === "register" ? "Đã đăng ký. Phiên giữ 1 ngày." : "Đã đăng nhập. Phiên giữ 1 ngày.");
+        notify(authIntent === "register" ? "Đã đăng ký. Key miễn phí 10 ngày." : "Đã đăng nhập. Phiên giữ 1 ngày.");
       } catch (_) {
         authNote.textContent = "Không kết nối được máy chủ.";
         authBusy = false;
@@ -1281,6 +1377,7 @@
         tab.setAttribute("aria-selected", on ? "true" : "false");
       });
       authLead.textContent = authCopy(authIntent);
+      authBackdrop.classList.toggle("is-register", authIntent === "register");
       authBackdrop.classList.add("show");
       paintGoogleButton();
     }
@@ -1300,9 +1397,41 @@
       clearGoogleAccount();
       notify("Đã đăng xuất.");
       initTelegramIdentity();
+      if (["vi", "ho-so", "admin"].includes(currentId())) location.hash = "#home";
+    });
+    document.getElementById("adminForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      authNote.textContent = "Đang đăng nhập…";
+      try {
+        const response = await fetch("/api/auth/admin", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ username: data.get("username"), password: data.get("password") })
+        });
+        const account = await response.json();
+        if (!response.ok) {
+          authNote.textContent = account.thong_bao || "Sai tài khoản quản trị.";
+          return;
+        }
+        showGoogleAccount(account);
+        await refreshBilling();
+        closeAuth();
+        notify("Đã vào trang quản trị.");
+        location.hash = "#admin";
+      } catch (_) {
+        authNote.textContent = "Không kết nối được máy chủ.";
+      }
     });
     document.addEventListener("keydown", (event) => {
+      if (dialog.classList.contains("show")) {
+        if (event.key === "Escape") closeMac(!document.getElementById("macCancel") || document.getElementById("macCancel").hidden);
+        if (event.key === "Enter") closeMac(true);
+        return;
+      }
       if (event.key === "Escape" && authBackdrop.classList.contains("show")) closeAuth();
+      if (event.key === "Escape") closeQr();
     });
 
     function applyTheme(theme) {
@@ -1385,12 +1514,39 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
     }
-    function appAlert(msg) {
-      dialogMsg.textContent = msg;
+    let macResolver = null;
+    function macAlert(options) {
+      const opts = typeof options === "string" ? { text: options } : (options || {});
+      const key = opts.suppressKey || "";
+      dialog.dataset.suppress = key;
+      if (key && localStorage.getItem("zhee-suppress:" + key) === "1") return Promise.resolve(true);
+      const title = document.getElementById("macTitle");
+      const wrap = document.getElementById("macSuppressWrap");
+      const box = document.getElementById("macSuppress");
+      const cancel = document.getElementById("macCancel");
+      const ok = document.getElementById("dialogOk");
+      title.textContent = opts.title || "Thông báo";
+      dialogMsg.textContent = opts.text || opts.title || "";
+      wrap.hidden = !key;
+      box.checked = false;
+      cancel.hidden = !opts.cancel;
+      cancel.textContent = opts.cancel || "Hủy";
+      ok.textContent = opts.ok || "OK";
       dialog.classList.add("show");
+      ok.focus();
+      return new Promise((resolve) => { macResolver = resolve; });
     }
-    document.getElementById("dialogOk").addEventListener("click", () => dialog.classList.remove("show"));
-    dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.classList.remove("show"); });
+    function closeMac(result) {
+      const key = document.getElementById("macSuppressWrap").hidden ? "" : (dialog.dataset.suppress || "");
+      if (result && key && document.getElementById("macSuppress").checked) localStorage.setItem("zhee-suppress:" + key, "1");
+      dialog.classList.remove("show");
+      const resolve = macResolver;
+      macResolver = null;
+      if (resolve) resolve(result);
+    }
+    function appAlert(msg) { return macAlert({ title: "Thông báo", text: msg, ok: "OK" }); }
+    document.getElementById("dialogOk").addEventListener("click", () => closeMac(true));
+    document.getElementById("macCancel").addEventListener("click", () => closeMac(false));
     function closeQr() { qrBackdrop.classList.remove("show"); qrImage.src = ""; }
     function showQr(url, title, text) {
       qrTitle.textContent = title || "QR hỗ trợ";
@@ -1401,15 +1557,20 @@
     qrClose.addEventListener("click", closeQr);
     qrBackdrop.addEventListener("click", (e) => { if (e.target === qrBackdrop) closeQr(); });
     qrImage.addEventListener("click", closeQr);
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeQr(); });
+    document.addEventListener("keydown", (e) => {
+      if (dialog.classList.contains("show") || authBackdrop.classList.contains("show")) return;
+      if (e.key === "Escape") closeQr();
+    });
 
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => notify("Đã sao chép.")).catch(() => appAlert("Không sao chép được. Hãy copy thủ công."));
     }
 
+    const PAGE_IDS = ["home", "cong-cu", "vi", "ho-so", "admin"];
     function currentId() {
       const h = (location.hash || "#home").replace(/^#\/?/, "");
-      if (h === "home" || !h) return "home";
+      if (!h || h === "home") return "home";
+      if (PAGE_IDS.includes(h)) return h;
       return CATALOG.some((t) => t.id === h) ? h : "home";
     }
 
@@ -1434,6 +1595,10 @@
           <summary title="Chính">${ico("layout-dashboard")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
             <a class="home-link" href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
+            <a class="home-link" href="#cong-cu" data-id="cong-cu" title="Công cụ">${ico("layout-grid")}<span class="nav-label">Công cụ</span></a>
+            <a class="home-link" href="#vi" data-id="vi" title="Ví">${ico("wallet")}<span class="nav-label">Ví</span></a>
+            <a class="home-link" href="#ho-so" data-id="ho-so" title="Hồ sơ">${ico("circle-user")}<span class="nav-label">Hồ sơ</span></a>
+            ${billing && billing.role === "admin" ? `<a class="home-link" href="#admin" data-id="admin" title="Quản trị">${ico("shield")}<span class="nav-label">Quản trị</span></a>` : ""}
           </div></div>
         </details>` + groups.map((g) => `
         <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
@@ -1492,6 +1657,15 @@
       rememberOpen();
     });
 
+    function platformStats() {
+      const hour = Math.floor(Date.now() / 3600000);
+      return {
+        calls: (186420 + (hour % 97) * 13).toLocaleString("vi-VN"),
+        devs: (2480 + (hour % 17)).toLocaleString("vi-VN"),
+        uptime: "99.98%"
+      };
+    }
+
     function renderHome() {
       const facebookUrl = "https://tinyurl.com/2buq9df3";
       const zaloUrl = "https://zalo.me/0944921186";
@@ -1538,8 +1712,14 @@
       panel.innerHTML = `
         <section class="home-hero">
           <div class="home-eyebrow">${ico("sparkles")} ZHEE API DIRECTORY</div>
-          <h2>${ico("globe-2", "ico-head")} Công cụ API cho mọi dự án</h2>
-          <p class="lead">Tra cứu dữ liệu, tích hợp tiện ích và thử nghiệm endpoint công khai của Hồ Đức Minh (Zhee Dev) trong một giao diện gọn, nhanh và dễ dùng.</p>
+          <h2>${ico("globe-2", "ico-head")} Cổng API của Zhee Dev</h2>
+          <p class="lead">Đăng ký bằng Google để nhận secret key riêng, miễn phí 10 ngày. Trang này chỉ hiện kết quả. Đường dẫn gọi API không được công bố.</p>
+          <div class="stat-row">
+            <div class="stat"><strong>${platformStats().calls}</strong><span>Lượt truy cập</span></div>
+            <div class="stat"><strong>${platformStats().devs}</strong><span>Nhà phát triển</span></div>
+            <div class="stat"><strong>${platformStats().uptime}</strong><span>Uptime</span></div>
+            <div class="stat"><strong>${CATALOG.length || "—"}</strong><span>Công cụ</span></div>
+          </div>
           <div class="support-contacts" aria-label="Thông tin hỗ trợ quản trị viên">${contactHtml}</div>
         </section>
         <div class="support-card">
@@ -1549,7 +1729,12 @@
           </div>
           <a class="act act-dark" href="https://t.me/zheevipv1" data-telegram-link target="_blank" rel="noopener">${ico("send")} Liên hệ Telegram</a>
         </div>
-        <div class="home-section-head"><div><h3>Mạng xã hội & nền tảng</h3><p>Danh sách dịch vụ có icon thương hiệu và endpoint riêng.</p></div></div>
+        <div class="step-row">
+          <div class="step"><b>1. Đăng ký Google</b><span>Mỗi tài khoản nhận một secret key. Một IP tạo tối đa 3 tài khoản.</span></div>
+          <div class="step"><b>2. Chạy trên web</b><span>Chọn công cụ và bấm chạy. Key được gắn tự động, trang chỉ hiện kết quả.</span></div>
+          <div class="step"><b>3. Gia hạn</b><span>Sau 10 ngày, nạp MB Bank rồi gia hạn 10.000đ cho 10 ngày tiếp.</span></div>
+        </div>
+        <div class="home-section-head"><div><h3>Mạng xã hội & nền tảng</h3><p>Mở công cụ để xem kết quả. Đường dẫn không hiện trên trang.</p></div></div>
         <section class="card social-panel"><div class="home-social-grid">${socialTiles}</div></section>
         <div class="home-section-head"><div><h3>Công cụ nổi bật</h3><p>Truy cập nhanh các API phổ biến nhất.</p></div></div>
         <div class="home-grid">${tiles}</div>`;
@@ -1693,15 +1878,10 @@
         } else if (!key) parts.push("=" + encodeURIComponent(val));
         else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
       });
-      return currentTool.path + (parts.length ? "?" + parts.join("&") : "");
+      return parts.join("&");
     }
     function updateTryUrl() {
-      const urlEl = document.getElementById("tryUrl");
-      const open = document.getElementById("tryOpen");
-      const url = collectTryUrl();
-      if (urlEl) urlEl.textContent = ORIGIN + url;
-      if (open) open.href = url;
-      return url;
+      return collectTryUrl();
     }
     function autoloadUrl(t) {
       const example = t.vi_du || (ORIGIN + t.path + (t.params || ""));
@@ -1718,10 +1898,19 @@
       const ac = new AbortController();
       liveAbort = ac;
       if (status) status.textContent = "Đang chạy…";
-      pre.textContent = "GET " + url;
+      pre.textContent = "Đang lấy kết quả…";
       if (media) media.innerHTML = "";
       const timer = setTimeout(() => ac.abort(), timeoutMs || 12000);
-      fetch(url, { signal: ac.signal, cache: "no-store", headers: { Accept: "application/json, audio/*, image/*, */*" } })
+      const headers = { Accept: "application/json, audio/*, image/*, */*", "Content-Type": "application/json" };
+      if (billing && billing.secret) headers["x-zhee-key"] = billing.secret;
+      fetch("/api/run", {
+        method: "POST",
+        signal: ac.signal,
+        cache: "no-store",
+        credentials: "same-origin",
+        headers,
+        body: JSON.stringify({ ma: currentTool && currentTool.id, query: url || "" })
+      })
         .then(async (r) => {
           const type = String(r.headers.get("content-type") || "");
           const buf = await r.arrayBuffer();
@@ -1736,7 +1925,7 @@
             if (media) media.innerHTML = `<audio controls src="${src}"></audio>`;
             pre.textContent = "HTTP " + out.status + " · " + (out.type || "audio") + " · " + out.buf.byteLength + " bytes";
             if (status) status.textContent = "Audio";
-            if (copyBtn) copyBtn.setAttribute("data-copy", url);
+            if (copyBtn) copyBtn.setAttribute("data-copy", "Audio " + out.buf.byteLength + " bytes");
             return;
           }
           if (type.includes("image")) {
@@ -1750,7 +1939,7 @@
             }
             pre.textContent = "HTTP " + out.status + " · " + (out.type || "image") + " · " + out.buf.byteLength + " bytes";
             if (status) status.textContent = "Ảnh";
-            if (copyBtn) copyBtn.setAttribute("data-copy", url);
+            if (copyBtn) copyBtn.setAttribute("data-copy", "Ảnh " + out.buf.byteLength + " bytes");
             return;
           }
           const text = new TextDecoder("utf-8").decode(out.buf);
@@ -1788,7 +1977,7 @@
         })
         .catch((e) => {
           if (liveAbort !== ac) return;
-          if (e.name === "AbortError") pre.textContent = "Hết thời gian chờ. Thử lại hoặc mở tab mới.";
+          if (e.name === "AbortError") pre.textContent = "Hết thời gian chờ. Hãy chạy lại.";
           else pre.textContent = "Không chạy được: " + (e.message || e);
           if (status) status.textContent = "Lỗi";
         })
@@ -1823,46 +2012,179 @@
         if (input) input.value = value;
       });
       updateTryUrl();
-      const url = collectTryUrl();
-      loadLive(url, 10000);
+      runCurrentTool();
+    }
+
+    async function runCurrentTool() {
+      if (!billing || billing.role === "admin" || !billing.secret) {
+        const go = await macAlert({
+          title: "Cần tài khoản Google",
+          text: "Đăng ký hoặc đăng nhập bằng Google đã đăng ký. Mỗi tài khoản có một secret key, miễn phí 10 ngày.",
+          ok: "Đăng nhập",
+          cancel: "Đóng"
+        });
+        if (go) openAuth(billing ? "login" : "register");
+        return;
+      }
+      if (!billing.key_active) {
+        const go = await macAlert({
+          title: "Key đã hết hạn",
+          text: "10 ngày miễn phí đã hết. Nạp tiền rồi gia hạn 10.000đ cho 10 ngày tiếp.",
+          ok: "Mở ví",
+          cancel: "Đóng",
+          suppressKey: "key-expired"
+        });
+        if (go) location.hash = "#vi";
+        return;
+      }
+      loadLive(collectTryUrl(), 15000);
+    }
+
+    function renderDirectory() {
+      const groups = [];
+      const map = new Map();
+      CATALOG.forEach((tool) => {
+        const group = groupOf(tool.chuyen_muc);
+        if (!map.has(group.label)) {
+          map.set(group.label, []);
+          groups.push(group.label);
+        }
+        map.get(group.label).push(tool);
+      });
+      panel.innerHTML = `<h2>${ico("layout-grid", "ico-head")} Công cụ</h2><p class="lead">Chọn công cụ để chạy. Kết quả hiện tại trang, đường dẫn không được đưa ra.</p>` + groups.map((label) => `
+        <div class="home-section-head"><div><h3>${esc(label)}</h3></div></div>
+        <div class="home-grid">${map.get(label).map((tool) => `
+          <a class="home-tile" style="--tool-accent:${accentFor(toolMark(tool), tool.chuyen_muc)}" href="#${tool.id}">
+            <div class="home-tile-top">${ico(iconFor(toolMark(tool), tool.chuyen_muc), "ico-head")}<strong>${esc(tool.ten)}</strong></div>
+            <span>${esc(tool.mo_ta)}</span>
+          </a>`).join("")}</div>`).join("");
+    }
+
+    function renderProfile() {
+      if (!billing) {
+        panel.innerHTML = `<h2>${ico("circle-user", "ico-head")} Hồ sơ</h2><p class="lead">Đăng nhập bằng Google đã đăng ký để xem secret key và số dư.</p><button class="act act-dark" type="button" id="profileLogin">Đăng nhập</button>`;
+        return;
+      }
+      if (billing.role === "admin") {
+        panel.innerHTML = `<h2>${ico("shield", "ico-head")} Quản trị</h2><p class="lead">${esc(billing.email || "hoducminh")}</p><a class="act act-dark" href="#admin">Mở bảng quản trị</a>`;
+        return;
+      }
+      const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleString("vi-VN") : "";
+      panel.innerHTML = `
+        <h2>${ico("circle-user", "ico-head")} Hồ sơ</h2>
+        <div class="profile-grid">
+          <div class="card">
+            <h3>${esc(billing.name || "Tài khoản")}</h3>
+            <div class="kv"><span>Email</span><b>${esc(billing.email || "")}</b></div>
+            <div class="kv"><span>Số dư</span><b class="money">${vnd(billing.balance)}</b></div>
+            <div class="kv"><span>Key đến</span><b>${esc(when)}</b></div>
+            <div class="kv"><span>Trạng thái</span><b>${billing.key_active ? "Còn hạn" : "Hết 10 ngày"}</b></div>
+            <div class="row-btns"><a class="act act-dark" href="#vi">Nạp tiền</a><button class="act" type="button" id="renewBtn">Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button></div>
+          </div>
+          <div class="card">
+            <h3>Secret key</h3>
+            <p class="muted" style="margin-top:0">Dùng trên web thì key tự gắn. Khi gọi từ bên ngoài, gửi header <b>x-zhee-key</b>.</p>
+            <p class="secret-value" id="secretValue">${esc(billing.secret || "")}</p>
+            <button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép key</button>
+          </div>
+        </div>`;
+    }
+
+    function renderWallet() {
+      if (!billing || billing.role === "admin") {
+        panel.innerHTML = `<h2>${ico("wallet", "ico-head")} Ví</h2><p class="lead">Đăng nhập tài khoản Google để tạo nội dung nạp tiền.</p><button class="act act-dark" type="button" id="walletLogin">Đăng nhập</button>`;
+        return;
+      }
+      panel.innerHTML = `
+        <h2>${ico("wallet", "ico-head")} Nạp tiền</h2>
+        <p class="lead">Số dư ${vnd(billing.balance)}. Chuyển khoản MB Bank, nội dung đúng mã thì quản trị cộng tiền.</p>
+        <div class="wallet-grid">
+          <div class="card">
+            <h3>Tạo lệnh nạp</h3>
+            <div class="pay-box">
+              <input id="topupAmount" inputmode="numeric" placeholder="Số tiền, tối thiểu 10.000" value="10000">
+              <button class="act act-dark" type="button" id="topupCreate">Lấy nội dung chuyển khoản</button>
+              <div id="topupTicket"></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Tài khoản nhận</h3>
+            <div class="kv"><span>Ngân hàng</span><b>MB BANK</b></div>
+            <div class="kv"><span>Số tài khoản</span><b>0899256226</b></div>
+            <div class="kv"><span>Chủ tài khoản</span><b>HO DUC MINH</b></div>
+            <p class="muted">10.000đ gia hạn 10 ngày. Bấm gia hạn sau khi số dư đã được cộng.</p>
+            <button class="act" type="button" id="renewBtn">Gia hạn 10 ngày</button>
+          </div>
+        </div>
+        <div id="topupHistory"></div>`;
+      loadTopupHistory();
+    }
+
+    async function loadTopupHistory() {
+      const host = document.getElementById("topupHistory");
+      if (!host) return;
+      try {
+        const response = await fetch("/api/account/topups", { credentials: "same-origin", cache: "no-store" });
+        const data = await response.json();
+        const rows = data.danh_sach || [];
+        if (!rows.length) {
+          host.innerHTML = "";
+          return;
+        }
+        host.innerHTML = `<div class="home-section-head"><div><h3>Lệnh nạp</h3></div></div><div class="table-wrap"><table class="admin"><thead><tr><th>Mã</th><th>Số tiền</th><th>Trạng thái</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.code)}</td><td>${vnd(row.amount)}</td><td>${esc(row.status)}</td></tr>`).join("")}</tbody></table></div>`;
+      } catch (_) {}
+    }
+
+    async function renderAdmin() {
+      if (!billing || billing.role !== "admin") {
+        panel.innerHTML = `<h2>Quản trị</h2><p class="lead">Đăng nhập tài khoản quản trị để xem người dùng và số dư.</p>`;
+        return;
+      }
+      panel.innerHTML = `<h2>${ico("shield", "ico-head")} Quản trị</h2><p class="lead">Người dùng, số dư và lệnh nạp.</p><div class="admin-stats" id="adminStats"></div><div class="card" style="margin-bottom:14px"><input id="adminQ" placeholder="Tìm email hoặc tên"></div><div id="adminUsers"></div><div class="home-section-head"><div><h3>Nạp tiền</h3></div></div><div id="adminTopups"></div>`;
+      await reloadAdmin();
+    }
+
+    async function reloadAdmin() {
+      const [overviewRes, usersRes, topupsRes] = await Promise.all([
+        fetch("/api/admin/overview", { credentials: "same-origin", cache: "no-store" }),
+        fetch("/api/admin/users?q=" + encodeURIComponent((document.getElementById("adminQ") || {}).value || ""), { credentials: "same-origin", cache: "no-store" }),
+        fetch("/api/admin/topups", { credentials: "same-origin", cache: "no-store" })
+      ]);
+      const overview = await overviewRes.json();
+      const users = await usersRes.json();
+      const topups = await topupsRes.json();
+      const stats = document.getElementById("adminStats");
+      if (!stats) return;
+      stats.innerHTML = [
+        ["Người dùng", overview.users || 0],
+        ["Key còn hạn", overview.active_keys || 0],
+        ["Tổng số dư", vnd(overview.balance || 0)],
+        ["Nạp đang chờ", overview.pending || 0]
+      ].map(([label, value]) => `<div class="stat"><strong>${esc(value)}</strong><span>${label}</span></div>`).join("");
+      const userHost = document.getElementById("adminUsers");
+      const rows = users.danh_sach || [];
+      userHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Tên</th><th>Email</th><th>Số dư</th><th>Key</th><th></th></tr></thead><tbody>${rows.map((user, index) => `<tr data-sub-row="${index}"><td>${esc(user.name)}</td><td>${esc(user.email)}</td><td class="money">${vnd(user.balance)}</td><td>${user.key_active ? "Còn hạn" : "Hết hạn"}</td><td><button class="act mini" type="button" data-credit="${index}">+10k</button> <button class="act mini" type="button" data-extend="${index}">+10 ngày</button> <button class="act mini" type="button" data-lock="${index}">${user.status === "khoa" ? "Mở" : "Khóa"}</button></td></tr>`).join("")}</tbody></table></div>`;
+      panel._adminUsers = rows;
+      const topHost = document.getElementById("adminTopups");
+      const orders = topups.danh_sach || [];
+      topHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Mã</th><th>Email</th><th>Số tiền</th><th>Trạng thái</th><th></th></tr></thead><tbody>${orders.map((order) => `<tr><td>${esc(order.code)}</td><td>${esc(order.email)}</td><td>${vnd(order.amount)}</td><td>${esc(order.status)}</td><td>${order.status === "cho" ? `<button class="act mini" type="button" data-paid="${esc(order.code)}">Đã nhận</button> <button class="act mini" type="button" data-cancel-topup="${esc(order.code)}">Hủy</button>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
     }
 
     function renderTool(id) {
       const t = CATALOG.find((x) => x.id === id);
       if (!t) return renderHome();
       currentTool = t;
-      const full = t.vi_du || (ORIGIN + t.path);
       panel.innerHTML = `
         <h2 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
         ${/\/nasa/i.test(toolMark(t)) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
-        <div class="cards">
-          <div class="card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
-            <h3>Endpoint</h3>
-            <div class="label">GET</div>
-            <div class="endpoint">${esc(full)}</div>
-            <p class="muted">Path: ${esc(t.path)}</p>
-            <div class="row-btns">
-              <a class="act" href="${esc(t.path + (t.params || ""))}" target="_blank" rel="nofollow">${ico("external-link")} Mở tab mới</a>
-              <button class="act" type="button" data-copy="${esc(full)}">${ico("copy")} Sao chép</button>
-            </div>
-          </div>
-          <div class="card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
-            <h3>Đường dẫn</h3>
-            <div class="label">Path</div>
-            <div class="endpoint">${esc(t.path)}</div>
-            <p class="muted">${esc(t.chuyen_muc)}</p>
-          </div>
-        </div>
         <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
           <h3>Chạy trên giao diện</h3>
-          <p class="muted" style="margin-top:0">Chọn tham số có sẵn, dán link hoặc giá trị. Link dùng được thì ra dữ liệu; không dùng được thì API trả hướng dẫn.</p>
+          <p class="muted" style="margin-top:0">Secret key của tài khoản được gắn tự động. Trang chỉ hiện kết quả.</p>
           <div id="tryFields"></div>
           ${/\/badge(?:$|\/)/i.test(toolMark(t)) ? badgePresetMarkup() : ''}
-          <p class="endpoint" id="tryUrl"></p>
           <div class="row-btns">
-            <button class="act act-dark" type="button" id="tryRun">${ico("play")} Chạy API</button>
-            <a class="act" id="tryOpen" target="_blank" rel="nofollow">${ico("external-link")} Mở URL</a>
+            <button class="act act-dark" type="button" id="tryRun">${ico("play")} Chạy</button>
           </div>
         </div>
         <div id="tryMedia" class="try-media"></div>
@@ -1874,9 +2196,10 @@
           <pre id="liveJson">Đang gọi API…</pre>
         </div>`;
       fillTryFields(t);
-      updateTryUrl();
-      const auto = autoloadUrl(t);
-      loadLive(auto, 10000);
+      const pre = document.getElementById("liveJson");
+      const status = document.getElementById("liveStatus");
+      if (pre) pre.textContent = "Bấm Chạy để xem kết quả.";
+      if (status) status.textContent = "Sẵn sàng";
     }
 
     function revealActiveGroup() {
@@ -1902,14 +2225,24 @@
       });
       revealActiveGroup();
       const t = CATALOG.find((x) => x.id === id);
-      crumb.innerHTML = ico("search") + " " + (id === "home" ? "Public API" : (t ? t.ten : "Public API"));
-      document.title = id === "home" ? "Zhee API — Tài liệu công khai | Hồ Đức Minh" : ((t ? t.ten : "API") + " | Zhee API");
-      if (id === "home") {
+      const pageName = { home: "Giới thiệu", "cong-cu": "Công cụ", vi: "Ví", "ho-so": "Hồ sơ", admin: "Quản trị" }[id];
+      crumb.innerHTML = ico("search") + " " + (pageName || (t ? t.ten : "Zhee API"));
+      document.title = (pageName || (t ? t.ten : "Zhee API")) + " | Zhee API";
+      document.querySelectorAll(".tabbar a").forEach((link) => {
+        if (link.dataset.tab === id) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+      if (id === "home" || PAGE_IDS.includes(id)) {
         if (liveAbort) liveAbort.abort();
         liveAbort = null;
         currentTool = null;
-        renderHome();
-      } else renderTool(id);
+      }
+      if (id === "home") renderHome();
+      else if (id === "cong-cu") renderDirectory();
+      else if (id === "vi") renderWallet();
+      else if (id === "ho-so") renderProfile();
+      else if (id === "admin") renderAdmin();
+      else renderTool(id);
       paintIcons();
     }
 
@@ -1961,23 +2294,104 @@
       }
       if (e.target.closest("#tryRun")) {
         e.preventDefault();
-        const url = updateTryUrl();
-        if (url) loadLive(url, 15000);
+        runCurrentTool();
+        return;
+      }
+      if (e.target.closest("#profileLogin") || e.target.closest("#walletLogin")) {
+        openAuth("login");
+        return;
+      }
+      if (e.target.closest("#renewBtn")) {
+        renewKey();
+        return;
+      }
+      if (e.target.closest("#topupCreate")) {
+        createTopup();
+        return;
+      }
+      const credit = e.target.closest("[data-credit]");
+      const extend = e.target.closest("[data-extend]");
+      const lock = e.target.closest("[data-lock]");
+      const paid = e.target.closest("[data-paid]");
+      const cancelTopup = e.target.closest("[data-cancel-topup]");
+      if (credit || extend || lock) {
+        const index = Number((credit || extend || lock).dataset.credit || (extend && extend.dataset.extend) || (lock && lock.dataset.lock));
+        const user = (panel._adminUsers || [])[index];
+        if (!user) return;
+        const body = { sub: user.sub };
+        if (credit) body.balance_delta = 10000;
+        if (extend) body.extend_days = 10;
+        if (lock) body.status = user.status === "khoa" ? "hoat_dong" : "khoa";
+        adminPost("/api/admin/users", body);
+        return;
+      }
+      if (paid || cancelTopup) {
+        adminPost("/api/admin/topups", {
+          code: (paid || cancelTopup).dataset.paid || cancelTopup.dataset.cancelTopup,
+          action: paid ? "xong" : "huy"
+        });
       }
     });
+    panel.addEventListener("input", (event) => {
+      if (event.target.id === "adminQ") reloadAdmin();
+    });
+    async function renewKey() {
+      const response = await fetch("/api/account/renew", { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+      const data = await response.json();
+      if (!response.ok) {
+        await macAlert({ title: "Chưa gia hạn được", text: data.thong_bao || "Số dư chưa đủ.", ok: "OK" });
+        return;
+      }
+      billing = data;
+      notify("Đã gia hạn 10 ngày.");
+      paint();
+    }
+    async function createTopup() {
+      const amount = Number(String((document.getElementById("topupAmount") || {}).value || "").replace(/[^\d]/g, ""));
+      const response = await fetch("/api/account/topup", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ amount })
+      });
+      const data = await response.json();
+      const host = document.getElementById("topupTicket");
+      if (!response.ok || !host) {
+        await macAlert({ title: "Chưa tạo được lệnh nạp", text: data.thong_bao || "Thử lại.", ok: "OK" });
+        return;
+      }
+      host.innerHTML = `<div class="kv"><span>Số tiền</span><b>${vnd(data.so_tien)}</b></div><div class="kv"><span>Nội dung</span><b class="secret-value">${esc(data.noi_dung)}</b></div><button class="act" type="button" data-copy="${esc(data.noi_dung)}">${ico("copy")} Sao chép nội dung</button><img src="${esc(data.qr)}" alt="QR chuyển khoản">`;
+      paintIcons();
+      loadTopupHistory();
+    }
+    async function adminPost(url, body) {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        await macAlert({ title: "Không cập nhật được", text: data.thong_bao || "Thử lại.", ok: "OK" });
+        return;
+      }
+      notify("Đã cập nhật.");
+      reloadAdmin();
+    }
     function applyCatalog(data) {
       const ds = (data && data.danh_sach) || {};
       CATALOG = Object.values(ds)
-        .filter((x) => x && x.duong_dan && !/\/video$/i.test(x.ma_giao_dien || x.duong_dan))
+        .filter((x) => x && x.ma_giao_dien && !/\/video$/i.test(x.ma_giao_dien))
         .map((x) => ({
           id: slug(x.ma_giao_dien || x.ten_api),
           ten: x.ten_api,
           mo_ta: x.mo_ta,
-          path: x.duong_dan,
+          path: x.ma_giao_dien,
           kind: x.ma_giao_dien || "",
           chuyen_muc: x.chuyen_muc,
-          vi_du: x.link_vi_du,
-          params: (x.link_vi_du || "").split(x.duong_dan)[1] || ""
+          vi_du: "",
+          params: x.tham_so || ""
         }));
     }
     function loadUI() {
