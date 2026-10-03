@@ -1269,8 +1269,28 @@
     function renderHome() {
       const facebookUrl = "https://tinyurl.com/2buq9df3";
       const zaloUrl = "https://zalo.me/0944921186";
-      const facebookQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(facebookUrl)}`;
-      const zaloQr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(zaloUrl)}`;
+      const contacts = [
+        { name: "Facebook", handle: "hoducminh.depzai", url: facebookUrl, accent: "#1877f2", icon: "facebook" },
+        { name: "Zalo", handle: "0944921186", url: zaloUrl, accent: "#0068ff", icon: "zalo" },
+        { name: "TikTok", handle: "@nv1qda", url: "https://www.tiktok.com/@nv1qda", accent: "#fe2c55", icon: "tiktok" },
+        { name: "Discord", handle: "@hoducminh_1602", url: "https://discord.gg/hoducminh_1602", accent: "#5865f2", icon: "discord" },
+        { name: "Telegram", handle: "@zheevipv1", url: "https://t.me/zheevipv1", accent: "#26a5e4", icon: "telegram" }
+      ];
+      const contactHtml = contacts.map((c) => {
+        const qr = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(c.url)}`;
+        return `<div class="contact-card" style="--tool-accent:${c.accent}">
+              <a class="contact-main" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
+                <span class="contact-mark">${ico(c.icon)}</span>
+                <span class="contact-card-copy"><strong>${esc(c.name)}</strong><span>${esc(c.handle)}</span></span>
+              </a>
+              <div class="contact-actions">
+                <button class="contact-copy-icon" type="button" title="Copy link ${esc(c.name)}" aria-label="Copy link ${esc(c.name)}" data-copy="${esc(c.url)}">${ico("copy")}</button>
+                <button class="qr-chip" type="button" data-qr-url="${esc(c.url)}" data-qr-title="QR ${esc(c.name)} hỗ trợ" title="Mở QR ${esc(c.name)}" aria-label="Mở QR ${esc(c.name)}">
+                  <img class="qr-mini" src="${qr}" alt="">
+                </button>
+              </div>
+            </div>`;
+      }).join("");
       const socialTools = CATALOG.filter((t) => /mạng xã hội/i.test(String(t.chuyen_muc || "")) && !/\/mxh$/i.test(toolMark(t)));
       const socialTiles = socialTools.map((t) => `
         <a class="social-link" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
@@ -1289,32 +1309,7 @@
           <div class="home-eyebrow">${ico("sparkles")} ZHEE API DIRECTORY</div>
           <h2>${ico("globe-2", "ico-head")} Công cụ API cho mọi dự án</h2>
           <p class="lead">Tra cứu dữ liệu, tích hợp tiện ích và thử nghiệm endpoint công khai của Hồ Đức Minh (Zhee Dev) trong một giao diện gọn, nhanh và dễ dùng.</p>
-          <div class="support-contacts" aria-label="Thông tin hỗ trợ quản trị viên">
-            <div class="contact-card" style="--tool-accent:#1877f2">
-              <a class="contact-main" href="${facebookUrl}" target="_blank" rel="noopener noreferrer">
-                <span class="contact-mark">${ico("facebook")}</span>
-                <span class="contact-card-copy"><strong>Facebook</strong><span>hoducminh.depzai</span></span>
-              </a>
-              <div class="contact-actions">
-                <button class="contact-copy-icon" type="button" title="Copy link Facebook" aria-label="Copy link Facebook" data-copy="${esc(facebookUrl)}">${ico("copy")}</button>
-                <button class="qr-chip" type="button" data-qr-url="${esc(facebookUrl)}" data-qr-title="QR Facebook hỗ trợ" title="Mở QR Facebook" aria-label="Mở QR Facebook">
-                  <img class="qr-mini" src="${facebookQr}" alt="">
-                </button>
-              </div>
-            </div>
-            <div class="contact-card" style="--tool-accent:#0068ff">
-              <a class="contact-main" href="${zaloUrl}" target="_blank" rel="noopener noreferrer">
-                <span class="contact-mark">${ico("zalo")}</span>
-                <span class="contact-card-copy"><strong>Zalo</strong><span>0944921186</span></span>
-              </a>
-              <div class="contact-actions">
-                <button class="contact-copy-icon" type="button" title="Copy link Zalo" aria-label="Copy link Zalo" data-copy="${esc(zaloUrl)}">${ico("copy")}</button>
-                <button class="qr-chip" type="button" data-qr-url="${esc(zaloUrl)}" data-qr-title="QR Zalo hỗ trợ" title="Mở QR Zalo" aria-label="Mở QR Zalo">
-                  <img class="qr-mini" src="${zaloQr}" alt="">
-                </button>
-              </div>
-            </div>
-          </div>
+          <div class="support-contacts" aria-label="Thông tin hỗ trợ quản trị viên">${contactHtml}</div>
         </section>
         <div class="support-card">
           <div class="support-copy">
