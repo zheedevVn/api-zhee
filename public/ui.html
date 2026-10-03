@@ -281,7 +281,13 @@
     .account-copy { min-width: 0; display: grid; gap: 1px; }
     .account-name, .account-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .account-name { font-weight: 800; }
-    .account-meta { color: var(--muted); font-size: 10px; }
+    .account-meta { color: var(--text); font-size: 11px; font-weight: 800; }
+    .account-meta[hidden] { display: none; }
+    .act.mini.danger { color: #fb7185; border-color: color-mix(in srgb, #fb7185 45%, var(--line)); }
+    .act.icon-only { padding: 6px 8px; }
+    .secret-card h3 .act { margin-left: auto; }
+    .secret-value.is-open { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+    .home-tile-compact { min-height: 0; }
     .account-out {
       border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 11px; font-weight: 800;
       cursor: pointer; padding: 7px 10px; border-radius: 999px;
@@ -448,15 +454,20 @@
 
     .toast, .dialog-backdrop { z-index: 40; }
     .toast {
-      position: fixed; left: 50%; bottom: 20px; z-index: 60;
-      display: inline-flex; align-items: center; gap: 8px; width: max-content; max-width: calc(100% - 24px);
-      padding: 10px 15px 10px 12px; border: 1px solid rgba(96, 165, 250, .45); border-radius: 999px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, .97), rgba(30, 41, 59, .97));
-      color: #e0f2fe; box-shadow: 0 14px 34px rgba(2, 6, 23, .32), 0 0 0 4px rgba(96, 165, 250, .08);
-      font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      opacity: 0; transform: translate(-50%, 10px) scale(.96); pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+      position: fixed; left: 50%; bottom: 22px; z-index: 80;
+      display: flex; align-items: flex-start; gap: 10px; width: min(380px, calc(100% - 24px));
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px;
+      background: var(--card); color: var(--text);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .28);
+      opacity: 0; transform: translate(-50%, 12px) scale(.98); pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
     }
-    .toast::before { content: "✓"; display: grid; place-items: center; width: 20px; height: 20px; flex: 0 0 20px; border-radius: 50%; background: #22c55e; color: #052e16; font-size: 13px; font-weight: 900; }
+    .toast-mark { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; background: #22c55e; color: #052e16; }
+    .toast-mark svg { width: 16px; height: 16px; }
+    .toast-copy { min-width: 0; display: grid; gap: 2px; }
+    .toast-copy strong { font-size: 14px; }
+    .toast-copy strong[hidden] { display: none; }
+    .toast-copy span { color: var(--muted); font-size: 13px; font-weight: 650; white-space: normal; }
     .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
     .dialog-backdrop {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45);
@@ -687,7 +698,7 @@
     .home-drop:not(.is-open) > .drop-panel { display: none; }
     .home-actions { position: relative; z-index: 1; }
     .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
-    .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+    .home-section-head h3 { margin: 0; font-size: 18px; letter-spacing: -.02em; display: flex; align-items: center; gap: 8px; }
     .home-section-head p { margin: 0; color: var(--muted); font-size: 12px; }
     .social-panel { padding: 20px; margin-bottom: 18px; }
     .home-social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 9px; }
@@ -842,7 +853,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .run-status { display: inline-flex; align-items: center; gap: 8px; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-    .notice-card h3 { margin: 0 0 8px; font-size: 16px; }
+    .notice-card h3 { margin: 0 0 8px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+    #macIcon { display: inline-flex; color: #34d399; }
+    #macIcon[hidden] { display: none; }
     .notice-card p { margin: 0 0 14px; color: var(--muted); line-height: 1.5; }
     .notice-card .mac-suppress { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 13px; }
     .notice-card .mac-actions { display: flex; justify-content: flex-end; gap: 8px; }
@@ -907,10 +920,10 @@
     <a href="#vi" data-tab="vi"><i data-lucide="wallet"></i><span class="tab-badge" id="tabBadge" hidden>1</span><span>Ví</span></a>
     <a href="#ho-so" data-tab="ho-so"><i data-lucide="circle-user"></i><span>Hồ sơ</span></a>
   </nav>
-  <div class="toast" id="toast" role="status"></div>
+  <div class="toast" id="toast" role="status"><span class="toast-mark" id="toastMark" aria-hidden="true"></span><span class="toast-copy"><strong id="toastTitle" hidden></strong><span id="toastText"></span></span></div>
   <dialog class="modal" id="noticeDialog" aria-labelledby="macTitle">
     <div class="modal-card notice-card">
-      <h3 id="macTitle">Thông báo</h3>
+      <h3 id="macTitle"><span id="macIcon" hidden></span><span id="macTitleText">Thông báo</span></h3>
       <p id="dialogMsg"></p>
       <label class="mac-suppress" id="macSuppressWrap"><input type="checkbox" id="macSuppress"> Đừng hỏi lại</label>
       <div class="mac-actions">
@@ -1391,6 +1404,8 @@
     let authIntent = "login";
     let authBusy = false;
     let billing = null;
+    let secretShown = false;
+    let tokenShown = false;
     let accountState = "loading";
     let sessionEpoch = 0;
 
@@ -1438,8 +1453,8 @@
       const avatar = picture
         ? `<img src="${esc(picture)}" alt="" aria-hidden="true">`
         : `<span class="account-fallback" aria-hidden="true">${esc(initials)}</span>`;
-      const meta = account.role === "admin" ? "Đã đăng nhập" : (billing && billing.balance != null ? `${Number(billing.balance).toLocaleString("vi-VN")}đ` : (account.email || ""));
-      accountChip.innerHTML = `${avatar}<span class="account-copy"><span class="account-name">${esc(account.name || account.email || "Google")}</span><span class="account-meta">${esc(meta)}</span></span><button class="account-out" type="button" data-logout>Thoát</button>`;
+      const meta = billing && billing.balance != null ? vnd(billing.balance) : "";
+      accountChip.innerHTML = `${avatar}<span class="account-copy"><span class="account-name">${esc(account.name || account.email || "Google")}</span><span class="account-meta"${meta ? "" : " hidden"}>${esc(meta)}</span></span><button class="account-out" type="button" data-logout>Thoát</button>`;
       accountChip.hidden = false;
     }
 
@@ -1563,7 +1578,12 @@
         await refreshBilling();
         closeAuth();
         paintAccountSurface();
-        notify(authIntent === "register" ? "Đã đăng ký. Key miễn phí 10 ngày." : "Đã đăng nhập. Phiên giữ 1 ngày.");
+        macAlert({
+          title: authIntent === "register" ? "Đã đăng ký" : "Đã đăng nhập",
+          text: authIntent === "register" ? "Key miễn phí 10 ngày." : `${account.name || "Tài khoản"} · phiên giữ 1 ngày.`,
+          ok: "Tiếp tục",
+          icon: "circle-check"
+        });
       } catch (_) {
         authNote.textContent = "Không kết nối được máy chủ.";
         authBusy = false;
@@ -1663,7 +1683,12 @@
         await refreshBilling();
         closeAuth();
         paintAccountSurface();
-        notify("Đã đăng nhập. Phiên giữ 1 ngày.");
+        macAlert({
+          title: "Đã đăng nhập",
+          text: `${account.name || "Tài khoản"} · phiên giữ 1 ngày.`,
+          ok: "Tiếp tục",
+          icon: "circle-check"
+        });
       } catch (_) {
         authNote.textContent = "Không kết nối được máy chủ.";
       }
@@ -1751,11 +1776,19 @@
       syncNavBtn();
     });
 
-    function notify(msg) {
-      toast.textContent = msg;
+    function notify(msg, title) {
+      const mark = document.getElementById("toastMark");
+      const head = document.getElementById("toastTitle");
+      const text = document.getElementById("toastText");
+      if (mark) mark.innerHTML = ico("circle-check");
+      if (head) {
+        head.textContent = title || "";
+        head.hidden = !title;
+      }
+      if (text) text.textContent = msg || "";
       toast.classList.add("show");
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
     }
     let macResolver = null;
     function finishMac(result) {
@@ -1770,11 +1803,16 @@
       const key = opts.suppressKey || "";
       noticeDialog.dataset.suppress = key;
       if (key && localStorage.getItem("zhee-suppress:" + key) === "1") return Promise.resolve(true);
-      const title = document.getElementById("macTitle");
+      const title = document.getElementById("macTitleText");
       const wrap = document.getElementById("macSuppressWrap");
       const box = document.getElementById("macSuppress");
       const cancel = document.getElementById("macCancel");
       const ok = document.getElementById("dialogOk");
+      const icon = document.getElementById("macIcon");
+      if (icon) {
+        icon.hidden = !opts.icon;
+        icon.innerHTML = opts.icon ? ico(opts.icon) : "";
+      }
       title.textContent = opts.title || "Thông báo";
       dialogMsg.textContent = opts.text || opts.title || "";
       wrap.hidden = !key;
@@ -1925,13 +1963,9 @@
         <a class="social-link" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}" title="${esc(t.ten)}">
           ${ico(iconFor(toolMark(t), t.chuyen_muc))}<span>${esc(t.ten.replace(/\s+(Profile|Lookup|Downloader|&.*)$/i, ""))}</span>
         </a>`).join("");
-      const tiles = CATALOG.filter((t) => {
-        const category = String(t.chuyen_muc || "");
-        return !/mạng xã hội|gaming|probability|tài xỉu/i.test(category);
-      }).slice(0, 8).map((t) => `
-        <a class="home-tile" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}">
+      const tiles = [...CATALOG].sort((a, b) => (b.luot || 0) - (a.luot || 0)).slice(0, 6).map((t) => `
+        <a class="home-tile home-tile-compact" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}" href="#${t.id}">
           <div class="home-tile-top">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}<strong>${esc(t.ten)}</strong></div>
-          <span>${esc(t.mo_ta)}</span>
         </a>`).join("");
       panel.innerHTML = `
         <section class="home-hero">
@@ -1960,7 +1994,7 @@
         </div>
         <div class="home-section-head"><div><h3>Mạng xã hội & nền tảng</h3><p>Mở công cụ để xem kết quả. Đường dẫn không hiện trên trang.</p></div></div>
         <section class="card social-panel"><div class="home-social-grid">${socialTiles}</div></section>
-        <div class="home-section-head"><div><h3>Công cụ nổi bật</h3><p>Truy cập nhanh các API phổ biến nhất.</p></div></div>
+        <div class="home-section-head"><div><h3>${ico("flame")} Công cụ nổi bật</h3></div></div>
         <div class="home-grid">${tiles}</div>`;
     }
 
@@ -2338,9 +2372,12 @@
             <div class="row-btns"><a class="act act-dark" href="#vi">${ico("wallet")} Nạp tiền</a><button class="act" type="button" id="renewBtn">${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button>${adminLink}</div>
           </div>
           <div class="card secret-card">
-            <h3>${ico("key-round")} Secret key</h3>
-            <div class="secret-box"><p class="secret-value" id="secretValue">${esc(maskSecret(billing.secret))}</p></div>
+            <h3>${ico("key-round")} Secret key <button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></h3>
+            <div class="secret-box"><p class="secret-value${secretShown ? " is-open" : ""}" id="secretValue" data-secret-view>${esc(secretShown ? billing.secret : maskSecret(billing.secret))}</p></div>
             <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép</button></div>
+            <h3>${ico("key")} Token <button class="act icon-only" type="button" id="toggleToken" aria-label="Hiện hoặc ẩn token">${ico(tokenShown ? "eye-off" : "eye")}</button></h3>
+            <div class="secret-box"><p class="secret-value${tokenShown ? " is-open" : ""}" data-token-view>${esc(tokenShown ? billing.token : maskSecret(billing.token))}</p></div>
+            <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.token || "")}">${ico("copy")} Sao chép token</button><button class="act" type="button" data-copy="${esc(location.origin + "/api/auth/verify?token=" + (billing.token || ""))}">${ico("shield-check")} Link xác thực</button></div>
           </div>
         </div>`;
     }
@@ -2431,11 +2468,11 @@
       ].map(([label, value]) => `<div class="stat"><strong>${esc(value)}</strong><span>${label}</span></div>`).join("");
       const userHost = document.getElementById("adminUsers");
       const rows = users.danh_sach || [];
-      userHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Tên</th><th>Email</th><th>Số dư</th><th>Key</th><th></th></tr></thead><tbody>${rows.map((user, index) => `<tr data-sub-row="${index}"><td>${esc(user.name)}</td><td>${esc(user.email)}</td><td class="money">${vnd(user.balance)}</td><td>${user.key_active ? "Còn hạn" : "Hết hạn"}</td><td><button class="act mini" type="button" data-credit="${index}">+10k</button> <button class="act mini" type="button" data-extend="${index}">+10 ngày</button> <button class="act mini" type="button" data-lock="${index}">${user.status === "khoa" ? "Mở" : "Khóa"}</button></td></tr>`).join("")}</tbody></table></div>`;
+      userHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Tên</th><th>Email</th><th>Số dư</th><th>Key</th><th></th></tr></thead><tbody>${rows.map((user, index) => `<tr data-sub-row="${index}"><td>${esc(user.name)}</td><td>${esc(user.email)}</td><td class="money">${vnd(user.balance)}</td><td>${user.key_active ? "Còn hạn" : "Hết hạn"}</td><td><button class="act mini" type="button" data-credit="${index}">+10k</button> <button class="act mini" type="button" data-extend="${index}">+10 ngày</button> <button class="act mini" type="button" data-lock="${index}">${user.status === "khoa" ? "Mở" : "Khóa"}</button>${user.sub === "admin" ? "" : ` <button class="act mini danger" type="button" data-delete="${index}">${ico("trash-2")} Xóa</button>`}</td></tr>`).join("")}</tbody></table></div>`;
       panel._adminUsers = rows;
       const topHost = document.getElementById("adminTopups");
       const orders = topups.danh_sach || [];
-      topHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Mã</th><th>Email</th><th>Số tiền</th><th>Trạng thái</th><th></th></tr></thead><tbody>${orders.map((order) => `<tr><td>${esc(order.code)}</td><td>${esc(order.email)}</td><td>${vnd(order.amount)}</td><td>${esc(order.status)}</td><td>${order.status === "cho" ? `<button class="act mini" type="button" data-paid="${esc(order.code)}">Đã nhận</button> <button class="act mini" type="button" data-cancel-topup="${esc(order.code)}">Hủy</button>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
+      topHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Mã</th><th>Email</th><th>Số tiền</th><th>Trạng thái</th><th></th></tr></thead><tbody>${orders.map((order) => `<tr><td>${esc(order.code)}</td><td>${esc(order.email)}</td><td>${vnd(order.amount)}</td><td>${esc(order.status)}</td><td>${order.status === "cho" ? `<button class="act mini" type="button" data-paid="${esc(order.code)}">Đã nhận</button> <button class="act mini" type="button" data-cancel-topup="${esc(order.code)}">Hủy</button> ` : ""}<button class="act mini danger" type="button" data-delete-topup="${esc(order.code)}">${ico("trash-2")} Xóa</button></td></tr>`).join("")}</tbody></table></div>`;
     }
 
     function renderTool(id) {
@@ -2447,8 +2484,7 @@
         <p class="lead">${esc(t.mo_ta)}</p>
         ${/\/nasa/i.test(toolMark(t)) ? `<p class="muted" style="margin:-10px 0 16px">${ico("satellite")} apod, neo, epic, donki. Điền action và ngày.</p>` : ''}
         <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
-          <h3>${ico("play")} Chạy</h3>
-          ${billing && billing.secret ? `<label class="key-slot">${ico("key-round")}<input class="field" value="${esc(maskSecret(billing.secret))}" readonly tabindex="-1" aria-label="Secret key đã gắn" autocomplete="off"></label>` : ""}
+          ${billing && billing.secret ? `<label class="key-slot">${ico("key-round")}<input class="field" data-secret-view value="${esc(secretShown ? billing.secret : maskSecret(billing.secret))}" readonly tabindex="-1" aria-label="Secret key đã gắn" autocomplete="off"><button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></label>` : ""}
           <div id="tryFields"></div>
           ${/\/badge(?:$|\/)/i.test(toolMark(t)) ? badgePresetMarkup() : ''}
           <div class="row-btns">
@@ -2540,7 +2576,7 @@
     panel.addEventListener("change", (e) => {
       if (e.target.matches("[data-try-key]")) updateTryUrl();
     });
-    panel.addEventListener("click", (e) => {
+    panel.addEventListener("click", async (e) => {
       const preset = e.target.closest("[data-badge-preset]");
       if (preset) {
         e.preventDefault();
@@ -2570,6 +2606,16 @@
         refreshBilling().then((ok) => { if (ok) paint(); });
         return;
       }
+      if (e.target.closest("#toggleSecret")) {
+        secretShown = !secretShown;
+        paintSecretViews();
+        return;
+      }
+      if (e.target.closest("#toggleToken")) {
+        tokenShown = !tokenShown;
+        paintSecretViews();
+        return;
+      }
       if (e.target.closest("#renewBtn")) {
         renewKey();
         return;
@@ -2581,17 +2627,31 @@
       const credit = e.target.closest("[data-credit]");
       const extend = e.target.closest("[data-extend]");
       const lock = e.target.closest("[data-lock]");
+      const removeUser = e.target.closest("[data-delete]");
+      const removeTopup = e.target.closest("[data-delete-topup]");
       const paid = e.target.closest("[data-paid]");
       const cancelTopup = e.target.closest("[data-cancel-topup]");
-      if (credit || extend || lock) {
-        const index = Number((credit || extend || lock).dataset.credit || (extend && extend.dataset.extend) || (lock && lock.dataset.lock));
+      if (credit || extend || lock || removeUser) {
+        const index = Number((credit || extend || lock || removeUser).dataset.credit || (extend && extend.dataset.extend) || (lock && lock.dataset.lock) || (removeUser && removeUser.dataset.delete));
         const user = (panel._adminUsers || [])[index];
         if (!user) return;
+        if (removeUser) {
+          const ok = await macAlert({ title: "Xóa tài khoản", text: user.email || user.name || "Tài khoản này", ok: "Xóa", cancel: "Hủy" });
+          if (!ok) return;
+          adminPost("/api/admin/users", { sub: user.sub, action: "xoa" });
+          return;
+        }
         const body = { sub: user.sub };
         if (credit) body.balance_delta = 10000;
         if (extend) body.extend_days = 10;
         if (lock) body.status = user.status === "khoa" ? "hoat_dong" : "khoa";
         adminPost("/api/admin/users", body);
+        return;
+      }
+      if (removeTopup) {
+        const ok = await macAlert({ title: "Xóa lệnh nạp", text: removeTopup.dataset.deleteTopup, ok: "Xóa", cancel: "Hủy" });
+        if (!ok) return;
+        adminPost("/api/admin/topups", { code: removeTopup.dataset.deleteTopup, action: "xoa" });
         return;
       }
       if (paid || cancelTopup) {
@@ -2604,6 +2664,27 @@
     panel.addEventListener("input", (event) => {
       if (event.target.id === "adminQ") reloadAdmin();
     });
+    function paintSecretViews() {
+      const secret = (billing && billing.secret) || "";
+      const token = (billing && billing.token) || "";
+      document.querySelectorAll("[data-secret-view]").forEach((node) => {
+        const shown = secretShown ? secret : maskSecret(secret);
+        if (node.tagName === "INPUT") node.value = shown;
+        else {
+          node.textContent = shown;
+          node.classList.toggle("is-open", secretShown);
+        }
+      });
+      document.querySelectorAll("[data-token-view]").forEach((node) => {
+        node.textContent = tokenShown ? token : maskSecret(token);
+        node.classList.toggle("is-open", tokenShown);
+      });
+      const secretBtn = document.getElementById("toggleSecret");
+      const tokenBtn = document.getElementById("toggleToken");
+      if (secretBtn) secretBtn.innerHTML = ico(secretShown ? "eye-off" : "eye");
+      if (tokenBtn) tokenBtn.innerHTML = ico(tokenShown ? "eye-off" : "eye");
+      paintIcons();
+    }
     async function renewKey() {
       const response = await fetch("/api/account/renew", { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
       const data = await response.json();
@@ -2660,7 +2741,8 @@
           kind: x.ma_giao_dien || "",
           chuyen_muc: x.chuyen_muc,
           vi_du: "",
-          params: x.tham_so || ""
+          params: x.tham_so || "",
+          luot: Number(x.luot || 0)
         }));
     }
     function loadUI() {

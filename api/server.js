@@ -833,6 +833,7 @@ async function runTool(req, res) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Không thấy công cụ." });
   }
+  accountsHandler.noteToolHit(route.prefix[0]).catch(() => {});
   req.url = route.prefix[0] + (query ? `?${query}` : "");
   return route.handler(req, res);
 }
@@ -896,6 +897,8 @@ module.exports = async (req, res) => {
 
     if (
       pathname === "/api/auth/admin" ||
+      pathname === "/api/auth/token" ||
+      pathname === "/api/auth/verify" ||
       pathname === "/api/account" ||
       pathname.startsWith("/api/account/") ||
       pathname === "/api/admin" ||
@@ -932,6 +935,7 @@ module.exports = async (req, res) => {
       res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
       res.setHeader("Content-Type", "application/json; charset=utf-8");
 
+      const hits = await accountsHandler.toolHits();
       const danhSach = {};
       ROUTES_REGISTRY.filter((route) => !route.prefix.some((p) => p === "/video" || p === "/api/video")).forEach((route) => {
         const mainPath = route.prefix[0];
@@ -942,7 +946,8 @@ module.exports = async (req, res) => {
           chuyen_muc: route.chuyen_muc,
           ma_giao_dien: mainPath,
           mo_ta: route.mo_ta,
-          tham_so: route.vi_du_params || ""
+          tham_so: route.vi_du_params || "",
+          luot: Number(hits[mainPath] || 0)
         };
       });
 
@@ -973,6 +978,9 @@ module.exports = async (req, res) => {
         res.setHeader("Content-Type", "application/json; charset=utf-8");
         return res.status(access.status).json({ trang_thai: "that_bai", thong_bao: access.thong_bao });
       }
+      accountsHandler.noteToolHit(matchedRoute.prefix[0]).catch(() => {});
+    } else if (matchedRoute && isAdminBot(req)) {
+      accountsHandler.noteToolHit(matchedRoute.prefix[0]).catch(() => {});
     }
 
     for (const route of ROUTES_REGISTRY) {
