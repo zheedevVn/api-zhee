@@ -1047,7 +1047,7 @@
       paintIcons();
     }
     function esc(s) {
-      return String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     }
     function slug(path) {
       return String(path || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
