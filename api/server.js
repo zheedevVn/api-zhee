@@ -4,6 +4,16 @@ const path = require("path");
 
 const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "ui.html");
 const VIDEO_HTML_PATH = path.join(__dirname, "..", "public", "video.html");
+const FAVICON_PATH = path.join(__dirname, "..", "public", "favicon.png");
+
+function serveFavicon(res) {
+  const body = fs.readFileSync(FAVICON_PATH);
+  res.setHeader("Content-Type", "image/png");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.statusCode = 200;
+  res.end(body);
+}
 
 function servePageHtml(res, filePath) {
   const html = fs.readFileSync(filePath, "utf8");
@@ -161,7 +171,7 @@ function serveTaixiuImagePage(req, res, publicUrl) {
   const imageUrl = `${requestUrl.pathname}${requestUrl.search}`;
   const title = requestUrl.searchParams.get("image") || requestUrl.searchParams.get("img") || "Kết quả xúc xắc";
   const html = `<!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kết quả Tài Xỉu — ${escapeHtml(title)}</title>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/favicon.png"><title>Kết quả Tài Xỉu — ${escapeHtml(title)}</title>
 <style> :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top,#172554,#020617 70%);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#e2e8f0}.card{width:min(760px,calc(100% - 32px));padding:28px;border:1px solid #334155;border-radius:28px;background:rgba(15,23,42,.9);box-shadow:0 24px 80px rgba(0,0,0,.45);text-align:center}.eyebrow{color:#38bdf8;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.card h1{margin:18px 0 30px;font-size:clamp(22px,5vw,36px);line-height:1.2}.preview{position:relative;display:grid;place-items:center;margin-top:8px;padding:30px 16px 20px;border-radius:20px;background:#020617;border:1px solid #1e40af;overflow:visible}.preview img{display:block;width:min(420px,100%);height:auto;max-height:250px;object-fit:contain}.back{display:inline-block;margin-top:18px;color:#bae6fd;text-decoration:none;font-weight:700}.back:hover{color:#fff}</style></head>
 <body><main class="card"><div class="eyebrow">Zhee API · Tài Xỉu</div><h1>Kết quả Tài Xỉu</h1><div class="preview"><img src="${escapeHtml(imageUrl)}" alt="Kết quả xúc xắc ${escapeHtml(title)}"></div><a class="back" href="/">← Về Zhee API</a></main></body></html>`;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -943,6 +953,10 @@ module.exports = async (req, res) => {
       req.zheePublicUrl = rawPath + search;
       pathname = canonical.toLowerCase();
       sealed = true;
+    }
+
+    if (pathname === "/favicon.png" || pathname === "/favicon.ico") {
+      return serveFavicon(res);
     }
 
     if (pathname === "/google1d1d8cc07ec81095.html") {
