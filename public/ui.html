@@ -2,9 +2,9 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zhee API — REST API miễn phí Việt Nam | Hồ Đức Minh</title>
-  <meta name="description" content="Zhee API là cổng REST API miễn phí của Hồ Đức Minh (Zhee Dev), cung cấp API AI, tra cứu IP, NASA, mạng xã hội, media, mail, VietQR và nhiều công cụ cho lập trình viên Việt Nam.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Zhee API — Cổng REST API miễn phí của Hồ Đức Minh</title>
+  <meta name="description" content="Zhee API là cổng REST API của Hồ Đức Minh (Zhee Dev): mail tạm, tài xỉu, mạng xã hội, AI, VietQR và hơn 70 công cụ. Đăng ký nhận secret key, dùng thử 10 ngày, gia hạn 10.000đ.">
   <meta name="keywords" content="Zhee API, API miễn phí Việt Nam, REST API Việt Nam, API AI, API tra cứu IP, NASA API, VietQR API, Hồ Đức Minh, Zhee Dev">
   <meta name="author" content="Hồ Đức Minh (Zhee Dev)">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -32,7 +32,7 @@
         "url":"https://api-zhee.vercel.app/",
         "name":"Zhee API",
         "alternateName":"Zhee Dev API",
-        "description":"Cổng REST API miễn phí Việt Nam của Hồ Đức Minh (Zhee Dev).",
+        "description":"Cổng REST API của Hồ Đức Minh (Zhee Dev): mail tạm, tài xỉu, mạng xã hội, AI, VietQR và hơn 70 công cụ.",
         "inLanguage":"vi-VN",
         "publisher":{"@id":"https://api-zhee.vercel.app/#person"}
       },
@@ -52,7 +52,22 @@
         "name":"Hồ Đức Minh",
         "alternateName":"Zhee Dev",
         "url":"https://api-zhee.vercel.app/",
-        "sameAs":["https://github.com/zheedevVn/api-zhee"]
+        "sameAs":["https://github.com/zheedevVn/api-zhee","https://t.me/zheevipv1"]
+      },
+      {
+        "@type":"ItemList",
+        "@id":"https://api-zhee.vercel.app/#navigation",
+        "name":"Chuyển trang Zhee API",
+        "itemListElement":[
+          {"@type":"SiteNavigationElement","position":1,"name":"Giới thiệu","url":"https://api-zhee.vercel.app/"},
+          {"@type":"SiteNavigationElement","position":2,"name":"Công cụ","url":"https://api-zhee.vercel.app/cong-cu"},
+          {"@type":"SiteNavigationElement","position":3,"name":"Tài xỉu","url":"https://api-zhee.vercel.app/tai-xiu"},
+          {"@type":"SiteNavigationElement","position":4,"name":"Mail","url":"https://api-zhee.vercel.app/mail"},
+          {"@type":"SiteNavigationElement","position":5,"name":"Đăng nhập","url":"https://api-zhee.vercel.app/dang-nhap"},
+          {"@type":"SiteNavigationElement","position":6,"name":"Hồ sơ","url":"https://api-zhee.vercel.app/ho-so"},
+          {"@type":"SiteNavigationElement","position":7,"name":"Nạp tiền","url":"https://api-zhee.vercel.app/vi"},
+          {"@type":"SiteNavigationElement","position":8,"name":"Liên hệ","url":"https://api-zhee.vercel.app/lien-he"}
+        ]
       }
     ]
   }
@@ -91,7 +106,9 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     body {
+      --side: 310px;
       font-family: "Plus Jakarta Sans", system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -252,8 +269,15 @@
       background: var(--card); border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px;
     }
     .uptime strong { color: var(--text); font-weight: 700; }
-    .site-footer { display: flex; justify-content: center; padding: 0 28px 22px; }
+    .site-footer { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 28px 22px; }
     .site-footer .uptime { justify-content: center; }
+    .jump-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 14px 0 0; }
+    .jump-row a {
+      display: inline-flex; align-items: center; min-height: 36px; padding: 7px 12px;
+      border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--card) 88%, transparent);
+      color: var(--text); text-decoration: none; font-size: 13px; font-weight: 800;
+    }
+    .jump-row a:hover { border-color: color-mix(in srgb, #60a5fa 50%, var(--line)); }
     .telegram-user {
       display: inline-flex; align-items: center; gap: 9px; max-width: min(360px, 100%);
       padding: 6px 10px 6px 6px; border: 1px solid color-mix(in srgb, #2aabee 30%, var(--line));
@@ -286,7 +310,7 @@
     .act.mini.danger { color: #fb7185; border-color: color-mix(in srgb, #fb7185 45%, var(--line)); }
     .act.icon-only { padding: 6px 8px; }
     .secret-card h3 .act { margin-left: auto; }
-    .secret-value.is-open { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+    .secret-value.is-open { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; word-break: break-all; }
     .home-tile.home-tile-compact { min-height: 0; gap: 0; padding: 14px 16px; }
     .account-out {
       border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 11px; font-weight: 800;
@@ -318,10 +342,12 @@
     .step b { display: block; margin-bottom: 4px; }
     .step span { color: var(--muted); font-size: 13px; line-height: 1.45; }
     .money { font-variant-numeric: tabular-nums; font-weight: 800; }
-    .profile-grid, .wallet-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
-    .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-    .kv span { color: var(--muted); }
-    .secret-card h3, .key-slot { display: flex; align-items: center; gap: 8px; }
+    .profile-grid, .wallet-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; gap: 14px; }
+    .profile-grid > .card, .wallet-grid > .card { height: 100%; min-width: 0; }
+    .kv { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; min-width: 0; }
+    .kv span { color: var(--muted); flex: 0 0 auto; }
+    .kv b { min-width: 0; text-align: right; overflow-wrap: anywhere; }
+    .secret-card h3, .key-slot { display: flex; align-items: center; gap: 8px; width: 100%; }
     .secret-box, .key-slot { min-width: 0; max-width: 100%; }
     .key-slot { margin: 0 0 12px; }
     .key-slot .field { flex: 1; min-width: 0; }
@@ -454,7 +480,7 @@
 
     .toast, .dialog-backdrop { z-index: 40; }
     .toast {
-      position: fixed; left: 50%; bottom: 22px; z-index: 80;
+      position: fixed; left: calc(var(--side) + (100% - var(--side)) / 2); bottom: 22px; z-index: 80;
       display: flex; align-items: flex-start; gap: 10px; width: min(380px, calc(100% - 24px));
       padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px;
       background: var(--card); color: var(--text);
@@ -482,6 +508,7 @@
 
     @media (min-width: 901px) {
       .nav-toggle { display: grid; }
+      body.nav-collapsed { --side: 72px; }
       body.nav-collapsed .sidebar { width: 72px; overflow: hidden; }
       body.nav-collapsed .brand {
         justify-content: center; padding: 16px 17px 10px; gap: 0;
@@ -518,6 +545,7 @@
       }
     }
     @media (max-width: 900px) {
+      body, body.nav-collapsed { --side: 0px; }
       .nav-toggle, .icon-btn.nav-close { display: grid; }
       .sidebar {
         position: fixed; left: 0; top: 0; bottom: 0;
@@ -542,7 +570,7 @@
       .row-btns .act { flex: 1; justify-content: center; }
       .site-footer { padding: 0 14px max(18px, env(safe-area-inset-bottom)); }
       .site-footer .uptime { display: inline-flex; max-width: 100%; font-size: 11px; }
-      .toast { left: 50%; right: auto; bottom: max(12px, env(safe-area-inset-bottom)); max-width: calc(100% - 24px); }
+      .toast { left: calc(var(--side) + (100% - var(--side)) / 2); right: auto; bottom: max(12px, env(safe-area-inset-bottom)); max-width: calc(100% - 24px); }
       .lead { font-size: 14px; }
     }
 
@@ -617,7 +645,11 @@
       background: color-mix(in srgb, var(--bg) 78%, transparent);
       backdrop-filter: blur(14px);
     }
-    article { max-width: 1160px; padding-top: 16px; }
+    .topbar, article, .site-footer {
+      width: min(1160px, 100%);
+      margin-inline: auto;
+    }
+    article { max-width: none; padding-top: 16px; }
     article h2 {
       font-size: clamp(24px, 3vw, 32px);
       letter-spacing: -.035em;
@@ -800,12 +832,15 @@
     .theme-switch input:checked::after { transform: translateX(18px); }
     .hamburger { width: 18px; height: 18px; display: block; }
     dialog.modal {
-      position: fixed; inset: 0; width: min(440px, calc(100vw - 24px)); height: fit-content;
-      max-height: calc(100dvh - 24px); margin: auto; padding: 0; border: 0; background: transparent;
+      position: fixed; inset: auto; top: 50%;
+      left: calc(var(--side) + (100% - var(--side)) / 2);
+      translate: -50% -50%;
+      width: min(440px, calc(100vw - var(--side) - 24px)); height: fit-content;
+      max-height: calc(100dvh - 24px); margin: 0; padding: 0; border: 0; background: transparent;
       color: var(--text); overflow: auto;
     }
-    dialog.modal[open] { animation: dialogIn .2s ease; }
-    dialog.modal.is-closing { opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
+    dialog.modal[open] .modal-card { animation: dialogIn .2s ease; }
+    dialog.modal.is-closing .modal-card { opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
     dialog.modal::backdrop { background: rgba(2, 6, 23, .62); backdrop-filter: blur(8px); animation: scrimIn .2s ease; }
     @keyframes dialogIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     dialog.modal.is-closing::backdrop { animation: scrimOut .18s ease forwards; }
@@ -872,6 +907,9 @@
     @media (prefers-reduced-motion: reduce) {
       .sk, .spinner, dialog.modal::backdrop { animation: none; }
     }
+    @media (max-width: 900px) {
+      input, select, textarea { font-size: 16px !important; }
+    }
 
   </style>
 </head>
@@ -911,14 +949,24 @@
     </div>
     <article id="panel" aria-busy="true"></article>
     <footer class="site-footer">
+      <nav class="jump-row" aria-label="Chuyển trang">
+        <a href="/">Giới thiệu</a>
+        <a href="/cong-cu">Công cụ</a>
+        <a href="/tai-xiu">Tài xỉu</a>
+        <a href="/mail">Mail</a>
+        <a href="/dang-nhap">Đăng nhập</a>
+        <a href="/ho-so">Hồ sơ</a>
+        <a href="/vi">Nạp tiền</a>
+        <a href="/lien-he">Liên hệ</a>
+      </nav>
       <div class="uptime" id="uptime"></div>
     </footer>
   </div>
   <nav class="tabbar" id="tabbar" aria-label="Điều hướng chính">
-    <a href="#home" data-tab="home"><i data-lucide="home"></i><span>Trang chủ</span></a>
-    <a href="#cong-cu" data-tab="cong-cu"><i data-lucide="layout-grid"></i><span>Công cụ</span></a>
-    <a href="#vi" data-tab="vi"><i data-lucide="wallet"></i><span class="tab-badge" id="tabBadge" hidden>1</span><span>Ví</span></a>
-    <a href="#ho-so" data-tab="ho-so"><i data-lucide="circle-user"></i><span>Hồ sơ</span></a>
+    <a href="/" data-tab="home"><i data-lucide="home"></i><span>Trang chủ</span></a>
+    <a href="/cong-cu" data-tab="cong-cu"><i data-lucide="layout-grid"></i><span>Công cụ</span></a>
+    <a href="/vi" data-tab="vi"><i data-lucide="wallet"></i><span class="tab-badge" id="tabBadge" hidden>1</span><span>Ví</span></a>
+    <a href="/ho-so" data-tab="ho-so"><i data-lucide="circle-user"></i><span>Hồ sơ</span></a>
   </nav>
   <div class="toast" id="toast" role="status"><span class="toast-mark" id="toastMark" aria-hidden="true"></span><span class="toast-copy"><strong id="toastTitle" hidden></strong><span id="toastText"></span></span></div>
   <dialog class="modal" id="noticeDialog" aria-labelledby="macTitle">
@@ -1658,7 +1706,7 @@
       clearGoogleAccount();
       notify("Đã đăng xuất.");
       initTelegramIdentity();
-      if (["vi", "ho-so", "admin"].includes(currentId())) location.hash = "#home";
+      if (["vi", "ho-so", "admin"].includes(currentId())) location.href = "/";
       else paintAccountSurface();
     });
     document.getElementById("adminForm").addEventListener("submit", async (event) => {
@@ -1859,12 +1907,29 @@
       navigator.clipboard.writeText(text).then(() => notify("Đã sao chép.")).catch(() => appAlert("Không sao chép được. Hãy copy thủ công."));
     }
 
-    const PAGE_IDS = ["home", "cong-cu", "vi", "ho-so", "admin"];
+    const PAGE_IDS = ["home", "cong-cu", "vi", "ho-so", "admin", "tai-xiu", "mail", "dang-nhap", "lien-he"];
+    const PATH_PAGE = {
+      "/": "home",
+      "/docs": "home",
+      "/ui": "home",
+      "/index.html": "home",
+      "/gioi-thieu": "home",
+      "/cong-cu": "cong-cu",
+      "/tai-xiu": "tai-xiu",
+      "/mail": "mail",
+      "/dang-nhap": "dang-nhap",
+      "/ho-so": "ho-so",
+      "/vi": "vi",
+      "/lien-he": "lien-he"
+    };
     function currentId() {
-      const h = (location.hash || "#home").replace(/^#\/?/, "");
-      if (!h || h === "home") return "home";
-      if (PAGE_IDS.includes(h)) return h;
-      return CATALOG.some((t) => t.id === h) ? h : "home";
+      const hash = (location.hash || "").replace(/^#\/?/, "");
+      if (hash && hash !== "home") {
+        if (PAGE_IDS.includes(hash)) return hash;
+        if (CATALOG.some((t) => t.id === hash)) return hash;
+      }
+      const path = (location.pathname || "/").replace(/\/+$/, "") || "/";
+      return PATH_PAGE[path] || "home";
     }
 
     function renderNav(filter) {
@@ -1887,10 +1952,12 @@
         <details class="drop home-drop is-open" data-group="__home" open>
           <summary title="Chính">${ico("layout-dashboard")}<span class="nav-label">Chính</span>${ico("chevron-down", "chevron")}</summary>
           <div class="drop-panel"><div class="drop-panel-inner">
-            <a class="home-link" href="#home" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
-            <a class="home-link" href="#cong-cu" data-id="cong-cu" title="Công cụ">${ico("layout-grid")}<span class="nav-label">Công cụ</span></a>
-            <a class="home-link" href="#vi" data-id="vi" title="Ví">${ico("wallet")}<span class="nav-label">Ví</span></a>
-            <a class="home-link" href="#ho-so" data-id="ho-so" title="Hồ sơ">${ico("circle-user")}<span class="nav-label">Hồ sơ</span></a>
+            <a class="home-link" href="/" data-id="home" title="Trang chủ">${ico("home")}<span class="nav-label">Trang chủ</span></a>
+            <a class="home-link" href="/cong-cu" data-id="cong-cu" title="Công cụ">${ico("layout-grid")}<span class="nav-label">Công cụ</span></a>
+            <a class="home-link" href="/tai-xiu" data-id="tai-xiu" title="Tài xỉu">${ico("dices")}<span class="nav-label">Tài xỉu</span></a>
+            <a class="home-link" href="/mail" data-id="mail" title="Mail">${ico("mail")}<span class="nav-label">Mail</span></a>
+            <a class="home-link" href="/vi" data-id="vi" title="Ví">${ico("wallet")}<span class="nav-label">Ví</span></a>
+            <a class="home-link" href="/ho-so" data-id="ho-so" title="Hồ sơ">${ico("circle-user")}<span class="nav-label">Hồ sơ</span></a>
             ${billing && billing.role === "admin" ? `<a class="home-link" href="#admin" data-id="admin" title="Bảng điều khiển">${ico("shield")}<span class="nav-label">Bảng điều khiển</span></a>` : ""}
           </div></div>
         </details>` + groups.map((g) => `
@@ -1971,8 +2038,18 @@
       panel.innerHTML = `
         <section class="home-hero">
           <div class="home-eyebrow">${ico("sparkles")} ZHEE API DIRECTORY</div>
-          <h2>${ico("globe-2", "ico-head")} ${scrambleHtml("Cổng API của Zhee Dev")}</h2>
-          <p class="lead">Đăng ký bằng Google để nhận secret key riêng, miễn phí 10 ngày. Trang này chỉ hiện kết quả. Đường dẫn gọi API không được công bố.</p>
+          <h2>${ico("globe-2", "ico-head")} ${scrambleHtml("Zhee API của Hồ Đức Minh")}</h2>
+          <p class="lead">Zhee API là cổng REST API của Hồ Đức Minh (Zhee Dev). Một tài khoản nhận một secret key, dùng được mail tạm, tài xỉu, mạng xã hội, AI, VietQR và hơn 70 công cụ. Đăng ký để dùng thử 10 ngày. Hết hạn thì nạp MB Bank và gia hạn 10.000đ.</p>
+          <nav class="jump-row" aria-label="Mục chính">
+            <a href="/">Giới thiệu</a>
+            <a href="/cong-cu">Công cụ</a>
+            <a href="/tai-xiu">Tài xỉu</a>
+            <a href="/mail">Mail</a>
+            <a href="/dang-nhap">Đăng nhập</a>
+            <a href="/ho-so">Hồ sơ</a>
+            <a href="/vi">Nạp tiền</a>
+            <a href="/lien-he">Liên hệ</a>
+          </nav>
           <div class="stat-row">
             <div class="stat"><strong>${platformStats().calls}</strong><span>Lượt truy cập</span></div>
             <div class="stat"><strong>${platformStats().devs}</strong><span>Nhà phát triển</span></div>
@@ -2311,18 +2388,20 @@
       loadLive(collectTryUrl(), 15000);
     }
 
-    function renderDirectory() {
+    function renderDirectory(onlyLabel, title, lead) {
       const groups = [];
       const map = new Map();
       CATALOG.forEach((tool) => {
         const group = groupOf(tool.chuyen_muc);
+        if (onlyLabel && group.label !== onlyLabel) return;
         if (!map.has(group.label)) {
           map.set(group.label, []);
           groups.push(group.label);
         }
         map.get(group.label).push(tool);
       });
-      panel.innerHTML = `<h2>${ico("layout-grid", "ico-head")} ${scrambleHtml("Công cụ")}</h2>` + groups.map((label) => `
+      const heading = title || "Công cụ";
+      panel.innerHTML = `<h2>${ico(onlyLabel === "Tài xỉu" ? "dices" : onlyLabel === "Mail" ? "mail" : "layout-grid", "ico-head")} ${scrambleHtml(heading)}</h2>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}` + (groups.length ? "" : `<p class="lead">Chưa có công cụ trong mục này.</p>`) + groups.map((label) => `
         <div class="home-section-head"><div><h3>${esc(label)}</h3></div></div>
         <div class="home-grid">${map.get(label).map((tool) => `
           <a class="home-tile" style="--tool-accent:${accentFor(toolMark(tool), tool.chuyen_muc)}" href="#${tool.id}">
@@ -2524,9 +2603,16 @@
       });
       revealActiveGroup();
       const t = CATALOG.find((x) => x.id === id);
-      const pageName = { home: "Giới thiệu", "cong-cu": "Công cụ", vi: "Ví", "ho-so": "Hồ sơ", admin: "Bảng điều khiển" }[id];
+      const pageName = { home: "Giới thiệu", "cong-cu": "Công cụ", vi: "Ví", "ho-so": "Hồ sơ", admin: "Bảng điều khiển", "tai-xiu": "Tài xỉu", mail: "Mail", "dang-nhap": "Đăng nhập", "lien-he": "Liên hệ" }[id];
+      const pageTitle = {
+        home: "Zhee API — Cổng REST API miễn phí của Hồ Đức Minh",
+        "lien-he": "Liên hệ Hồ Đức Minh | Zhee API",
+        "dang-nhap": "Đăng nhập | Zhee API",
+        "tai-xiu": "Tài xỉu B52, Sunwin, Hitclub, SUKA88 | Zhee API",
+        mail: "Mail tạm, IMAP và OTP | Zhee API"
+      }[id];
       crumb.innerHTML = ico("search") + " " + (pageName || (t ? t.ten : "Zhee API"));
-      document.title = (pageName || (t ? t.ten : "Zhee API")) + " | Zhee API";
+      document.title = pageTitle || ((pageName || (t ? t.ten : "Zhee API")) + " | Zhee API");
       document.querySelectorAll(".tabbar a").forEach((link) => {
         if (link.dataset.tab === id) link.setAttribute("aria-current", "page");
         else link.removeAttribute("aria-current");
@@ -2536,8 +2622,11 @@
         liveAbort = null;
         currentTool = null;
       }
-      if (id === "home") renderHome();
+      if (id === "home" || id === "lien-he") renderHome();
       else if (id === "cong-cu") renderDirectory();
+      else if (id === "tai-xiu") renderDirectory("Tài xỉu", "Tài xỉu", "B52 Club, 789Club, Sunwin, Hitclub và SUKA88. Mở một sảnh để xem kết quả xúc xắc, bài tây, bầu cua hoặc baccarat.");
+      else if (id === "mail") renderDirectory("Mail", "Mail", "Tạo mail tạm, kiểm tra email rác và đọc hộp thư IMAP.");
+      else if (id === "dang-nhap") renderHome();
       else if (id === "vi") renderWallet();
       else if (id === "ho-so") renderProfile();
       else if (id === "admin") renderAdmin();
@@ -2546,6 +2635,10 @@
       else panel.setAttribute("aria-busy", "false");
       mountScrambles(panel);
       paintIcons();
+      if (id === "dang-nhap" && !paint.authBoot) {
+        paint.authBoot = true;
+        openAuth("login");
+      }
     }
 
     document.getElementById("q").addEventListener("input", (e) => {

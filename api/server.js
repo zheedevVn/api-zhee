@@ -19,20 +19,88 @@ function isCliClient(req) {
   return /(?:^|[\s\/])(curl|wget|httpie|aria2|go-http-client|python-requests|python-urllib|node-fetch|axios|postmanruntime|insomnia|okhttp|libwww-perl|powershell|fetch)(?:\/|\s|$)/i.test(ua);
 }
 
+const SEO_PAGES = {
+  "/": {
+    title: "Zhee API — Cổng REST API miễn phí của Hồ Đức Minh",
+    description: "Zhee API là cổng REST API của Hồ Đức Minh (Zhee Dev): mail tạm, tài xỉu, mạng xã hội, AI, VietQR và hơn 70 công cụ. Đăng ký nhận secret key, dùng thử 10 ngày, gia hạn 10.000đ."
+  },
+  "/cong-cu": {
+    title: "Công cụ API | Zhee API",
+    description: "Danh sách công cụ Zhee API: AI, captcha, check scam, dịch thuật, rút gọn link, QR, IP, NASA và các tiện ích cho lập trình viên."
+  },
+  "/tai-xiu": {
+    title: "Tài xỉu B52, Sunwin, Hitclub, SUKA88 | Zhee API",
+    description: "API tài xỉu của Zhee: B52 Club, 789Club, Sunwin, Hitclub và SUKA88 gồm xúc xắc, bài tây, bầu cua, baccarat."
+  },
+  "/mail": {
+    title: "Mail tạm, IMAP và OTP | Zhee API",
+    description: "Tạo mail tạm 1secmail hoặc Mail.tm, kiểm tra email rác và đọc hộp thư IMAP trên Zhee API."
+  },
+  "/dang-nhap": {
+    title: "Đăng nhập | Zhee API",
+    description: "Đăng nhập Zhee API bằng tên và mật khẩu hoặc Google để nhận secret key và dùng các công cụ."
+  },
+  "/ho-so": {
+    title: "Hồ sơ và secret key | Zhee API",
+    description: "Xem số dư, hạn secret key và token đăng nhập của tài khoản Zhee API."
+  },
+  "/vi": {
+    title: "Nạp tiền và gia hạn | Zhee API",
+    description: "Nạp tiền MB Bank và gia hạn secret key Zhee API: 10.000đ cho 10 ngày."
+  },
+  "/lien-he": {
+    title: "Liên hệ Hồ Đức Minh | Zhee API",
+    description: "Liên hệ Hồ Đức Minh qua Facebook, Zalo, TikTok, Discord và Telegram để được hỗ trợ Zhee API."
+  }
+};
+
+function docsPageFor(pathname) {
+  if (pathname === "/docs" || pathname === "/ui" || pathname === "/index.html" || pathname === "/gioi-thieu") return SEO_PAGES["/"];
+  return SEO_PAGES[pathname] || null;
+}
+
+function canonicalPathFor(pathname) {
+  if (!SEO_PAGES[pathname]) return "/";
+  return pathname;
+}
+
 function wantsDocsHtml(req, pathname) {
-  if (pathname === "/docs" || pathname === "/index.html" || pathname === "/ui") return true;
-  if (pathname !== "/") return false;
+  if (!docsPageFor(pathname)) return false;
   const url = req.url || "/";
-  if (/[?&]format=json(?:&|$)/i.test(url)) return false;
+  const search = url.includes("?") ? url.slice(url.indexOf("?")) : "";
+  if (pathname === "/" && /[?&]format=json(?:&|$)/i.test(url)) return false;
+  if (pathname === "/mail" && search) return false;
   if (isCliClient(req)) return false;
   const accept = String(req.headers.accept || "*/*").toLowerCase();
   if (accept.includes("application/json") && !accept.includes("text/html")) return false;
-  if (!accept.includes("text/html")) return false;
+  if (!accept.includes("text/html") && accept !== "*/*") return false;
+  if (pathname === "/" && !accept.includes("text/html")) return false;
   return true;
 }
 
-function serveDocsHtml(res) {
-  servePageHtml(res, DOCS_HTML_PATH);
+function applyDocsSeo(html, pathname) {
+  const page = docsPageFor(pathname) || SEO_PAGES["/"];
+  const title = escapeHtml(page.title);
+  const description = escapeHtml(page.description);
+  const canonical = escapeHtml(`${SEO_ORIGIN}${canonicalPathFor(pathname)}`);
+  return html
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
+    .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${description}">`)
+    .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${canonical}">`)
+    .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title}">`)
+    .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${description}">`)
+    .replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${canonical}">`)
+    .replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${title}">`)
+    .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${description}">`);
+}
+
+function serveDocsHtml(res, pathname) {
+  const html = applyDocsSeo(fs.readFileSync(DOCS_HTML_PATH, "utf8"), pathname || "/");
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, must-revalidate");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.statusCode = 200;
+  res.end(html);
 }
 
 const SEO_ORIGIN = "https://api-zhee.vercel.app";
@@ -68,7 +136,7 @@ function serveRobotsTxt(res) {
 }
 
 function serveSitemapXml(res) {
-  const publicPages = ["/", "/docs", "/ui", "/list"];
+  const publicPages = ["/", "/cong-cu", "/tai-xiu", "/mail", "/dang-nhap", "/ho-so", "/vi", "/lien-he"];
   const urls = publicPages.map((page) => `  <url><loc>${escapeXml(`${SEO_ORIGIN}${page}`)}</loc></url>`).join("\n");
   const body = [
     '<?xml version="1.0" encoding="UTF-8"?>',
@@ -103,7 +171,7 @@ function serveTaixiuImagePage(req, res, publicUrl) {
 }
 
 // 1. IMPORT TOÀN BỘ MODULE HANDLERS (../lib/)
-const { buildSealMap, resolveToken, matchesRegistered, sealBody } = require("../lib/routeSeal");
+const { buildSealMap, resolveToken, sealBody } = require("../lib/routeSeal");
 const homeHandler = require("../lib/home");
 const mxhHandler = require("../lib/mxh");
 const spotifyHandler = require("../lib/spotify");
@@ -807,6 +875,17 @@ function isVideoPath(pathname) {
     || pathname === "/api/video" || pathname.startsWith("/api/video/");
 }
 
+// Dice and card pictures are drawn from the query. The result page and chat
+// apps request them as images, so they stay on the old short path and do not
+// need a secret. Data lookups on the same tools stay gated.
+function isGeneratedPicture(req, pathname, url) {
+  const method = String((req && req.method) || "GET").toUpperCase();
+  if (method !== "GET" && method !== "HEAD") return false;
+  const picturePath = /\/(?:taixiu|bai|baucua|bcr|baccarat|b52club|789club|sunwin|hitclub|suka88|cards)(?:\/|$)/i.test(pathname);
+  if (!picturePath) return false;
+  return /[?&](?:image|img|combo)=/i.test(String(url || ""));
+}
+
 function routeSlug(pathname) {
   return String(pathname || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
 }
@@ -847,8 +926,9 @@ module.exports = async (req, res) => {
     let pathname = rawPath.toLowerCase();
     let sealed = false;
     installResponseSeal(res);
-    const internalBot = isInternalBot(req);
-    if (internalBot) res.zheeNoSeal = true;
+    // Callers still use the short paths. Keep those paths in JSON instead of
+    // rewriting them into the long /g/ token.
+    res.zheeNoSeal = true;
     const accept = String(req.headers.accept || "");
 
     if (pathname.startsWith("/g/")) {
@@ -915,7 +995,7 @@ module.exports = async (req, res) => {
 
     if (wantsDocsHtml(req, pathname)) {
       try {
-        serveDocsHtml(res);
+        serveDocsHtml(res, pathname);
         return;
       } catch (_) {}
     }
@@ -963,15 +1043,11 @@ module.exports = async (req, res) => {
 
     if (isVideoPath(pathname)) res.zheeNoSeal = true;
 
-    if (!sealed && !internalBot && !isVideoPath(pathname) && matchesRegistered(pathname, ROUTE_SEAL)) {
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
-      return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Endpoint không tồn tại." });
-    }
-
     const matchedRoute = ROUTES_REGISTRY.find((route) => route.prefix.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     ));
-    if (matchedRoute && !isAdminBot(req)) {
+    const generatedPicture = isGeneratedPicture(req, pathname, url);
+    if (matchedRoute && !generatedPicture && !isAdminBot(req)) {
       const access = await accountsHandler.accessForRequest(req);
       if (!access.ok) {
         res.zheeNoSeal = true;
@@ -979,7 +1055,7 @@ module.exports = async (req, res) => {
         return res.status(access.status).json({ trang_thai: "that_bai", thong_bao: access.thong_bao });
       }
       accountsHandler.noteToolHit(matchedRoute.prefix[0]).catch(() => {});
-    } else if (matchedRoute && isAdminBot(req)) {
+    } else if (matchedRoute && !generatedPicture && isAdminBot(req)) {
       accountsHandler.noteToolHit(matchedRoute.prefix[0]).catch(() => {});
     }
 
