@@ -942,8 +942,73 @@
       body.nav-collapsed .theme-caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
       body.nav-collapsed .theme-switch { justify-content: center; }
     }
+    .inline-alert {
+      display: flex; align-items: center; gap: 10px; margin: 0 0 16px; padding: 10px 12px 10px 12px;
+      border-radius: 14px; color: var(--text);
+      background: color-mix(in srgb, #f59e0b 14%, var(--card));
+      border: 1px solid color-mix(in srgb, #f59e0b 32%, var(--line));
+      border-inline-start: 3px solid #d97706;
+    }
+    .inline-alert .alert-ico { display: grid; place-items: center; width: 18px; height: 18px; flex: 0 0 18px; color: #d97706; }
+    .inline-alert .alert-ico svg { width: 18px; height: 18px; }
+    .inline-alert p { margin: 0; flex: 1; min-width: 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
+    .inline-alert .act { flex: 0 0 auto; }
+    .auth-note {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+      margin: 12px 0 0; padding: 10px 14px; border-radius: 999px; text-align: center;
+      font-size: 13px; font-weight: 700; line-height: 1.35; color: var(--text);
+      background: color-mix(in srgb, var(--text) 6%, transparent);
+    }
+    .auth-note:empty, .auth-note[hidden] { display: none; }
+    .auth-note.is-alert {
+      justify-content: flex-start; text-align: start; border-radius: 14px;
+      background: color-mix(in srgb, #f59e0b 16%, var(--card));
+      border-inline-start: 3px solid #d97706;
+    }
+    dialog.sheet {
+      top: 18px; bottom: auto; translate: -50% 0;
+      width: min(420px, calc(100vw - var(--side) - 32px));
+    }
+    dialog.sheet .sheet-card { padding: 18px 18px 14px; border-radius: 16px; }
+    dialog.sheet .sheet-card h3 { margin: 0 0 6px; font-size: 16px; letter-spacing: -.02em; }
+    dialog.sheet .sheet-card p { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    dialog.sheet[open] .modal-card { animation: sheetIn .28s cubic-bezier(.22, 1, .36, 1); }
+    @keyframes sheetIn { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+    dialog.sheet.is-closing .modal-card { transform: translateY(-12px); }
+    .topbar, .tabbar, .toast, .icon-btn, button.act, a.act, .mac-btn, .uptime, dialog.modal .modal-card {
+      background: color-mix(in srgb, var(--card) 72%, transparent);
+      backdrop-filter: blur(22px) saturate(1.8);
+      -webkit-backdrop-filter: blur(22px) saturate(1.8);
+      border: 1px solid color-mix(in srgb, #fff 32%, var(--line));
+      box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 50%, transparent), inset 0 -1px 0 color-mix(in srgb, #000 14%, transparent), 0 12px 32px rgba(0, 0, 0, .14);
+    }
+    html[data-theme="dark"] .topbar,
+    html[data-theme="dark"] .tabbar,
+    html[data-theme="dark"] .toast,
+    html[data-theme="dark"] dialog.modal .modal-card {
+      background: color-mix(in srgb, #121a2b 78%, transparent);
+    }
+    .icon-btn, button.act, a.act, .mac-btn, .uptime { border-radius: 999px; }
+    .act-dark {
+      background: color-mix(in srgb, var(--nav-active) 92%, transparent);
+      color: var(--nav-active-fg); border-color: color-mix(in srgb, var(--nav-active) 70%, #fff);
+    }
+    .mac-btn { padding: 8px 16px; }
+    .mac-btn.mac-default { background: #0a84ff; color: #fff; border-color: #0a84ff; }
+    .tabbar { left: 12px; right: 12px; bottom: max(10px, env(safe-area-inset-bottom)); border-radius: 28px; padding: 6px 8px; }
+    html[data-theme="dark"] dialog.modal { color-scheme: dark; }
+    html[data-theme="light"] dialog.modal { color-scheme: light; }
+    .login-form button .spinner { width: 15px; height: 15px; vertical-align: 0; }
     @media (prefers-reduced-motion: reduce) {
-      .sk, .spinner, dialog.modal::backdrop { animation: none; }
+      .sk, .spinner, dialog.modal::backdrop, dialog.modal .modal-card, dialog.sheet[open] .modal-card { animation: none; }
+      .icon-btn, button.act, a.act, .icon-btn:hover, button.act:hover, a.act:hover { transition: none; transform: none; }
+    }
+    @media (prefers-reduced-transparency: reduce) {
+      .topbar, .tabbar, .toast, .icon-btn, button.act, a.act, .mac-btn, .uptime, dialog.modal .modal-card {
+        backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--card);
+      }
+      .act-dark { background: var(--nav-active); }
+      .mac-btn.mac-default { background: #0a84ff; }
     }
     @media (max-width: 900px) {
       input, select, textarea { font-size: 16px !important; }
@@ -1018,6 +1083,16 @@
       </div>
     </div>
   </dialog>
+  <dialog class="modal sheet" id="sheetDialog" aria-labelledby="sheetTitle">
+    <div class="modal-card sheet-card">
+      <h3 id="sheetTitle">Xóa tài khoản?</h3>
+      <p id="sheetMsg"></p>
+      <div class="mac-actions">
+        <button class="mac-btn" type="button" id="sheetCancel">Hủy</button>
+        <button class="mac-btn mac-default" type="button" id="sheetOk">Xóa</button>
+      </div>
+    </div>
+  </dialog>
   <dialog class="modal" id="authDialog" aria-labelledby="authTitle">
     <div class="modal-card auth-card">
       <button class="qr-close" id="authClose" type="button" aria-label="Đóng">×</button>
@@ -1034,7 +1109,7 @@
         <label>Mật khẩu
           <input name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu" required>
         </label>
-        <button class="act act-dark" type="submit">Đăng nhập</button>
+        <button class="act act-dark" id="authSubmit" type="submit">Đăng nhập</button>
       </form>
       <div class="auth-or" id="authOr"><span>hoặc</span></div>
       <div id="googleButton"></div>
@@ -1342,6 +1417,18 @@
     function gateHtml(title, text, buttonId) {
       return `<div class="gate"><div class="gate-card"><h2>${scrambleHtml(title)}</h2><p class="lead">${esc(text)}</p>${buttonId ? `<button class="act act-dark" type="button" id="${buttonId}">Đăng nhập</button>` : ""}</div></div>`;
     }
+    function keySoonHtml(account) {
+      if (!account || !account.key_expires_at || account.role === "admin") return "";
+      const end = new Date(account.key_expires_at).getTime();
+      if (!Number.isFinite(end)) return "";
+      const left = end - Date.now();
+      const day = 24 * 60 * 60 * 1000;
+      if (account.key_active && left > 2 * day) return "";
+      const msg = !account.key_active || left <= 0
+        ? "Secret key đã hết hạn."
+        : `Secret key hết hạn sau ${Math.max(1, Math.ceil(left / day))} ngày.`;
+      return `<div class="inline-alert"><span class="alert-ico" aria-hidden="true">${ico("triangle-alert")}</span><p>${esc(msg)}</p><a class="act" href="#vi">Gia hạn</a></div>`;
+    }
     function openDialog(node) {
       if (!node) return;
       node.classList.remove("is-closing");
@@ -1355,7 +1442,9 @@
         if (settled) return;
         settled = true;
         node.classList.remove("is-closing");
+        node.dataset.zheeClose = node.returnValue || "";
         if (node.open) node.close();
+        node.returnValue = "";
       };
       node.addEventListener("transitionend", done, { once: true });
       setTimeout(done, 200);
@@ -1617,9 +1706,24 @@
         : "Nhập tên đăng nhập và mật khẩu. Phiên giữ 1 ngày.";
     }
 
+    function setAuthBusy(on) {
+      const button = document.getElementById("authSubmit");
+      if (!button) return;
+      button.disabled = on;
+      button.innerHTML = on ? `<span class="spinner" aria-hidden="true"></span><span>Đang đăng nhập</span>` : "Đăng nhập";
+    }
+    function setAuthNote(text, mode) {
+      authNote.hidden = !text;
+      authNote.textContent = text || "";
+      authNote.classList.toggle("is-alert", mode === "alert");
+      if (mode === "alert") authNote.setAttribute("role", "alert");
+      else authNote.setAttribute("role", "status");
+    }
     function closeAuth() {
       closeDialog(authDialog);
       authBusy = false;
+      setAuthBusy(false);
+      setAuthNote("");
     }
 
     function ensureGoogleScript() {
@@ -1644,7 +1748,7 @@
     async function onGoogleCredential(response) {
       if (authBusy) return;
       authBusy = true;
-      authNote.textContent = "Đang xác thực…";
+      setAuthNote("Đang xác thực…", "status");
       try {
         const result = await fetch("/api/auth/google", {
           method: "POST",
@@ -1654,7 +1758,7 @@
         });
         const account = await result.json();
         if (!result.ok || account.authenticated !== true) {
-          authNote.textContent = account.thong_bao || "Không đăng nhập được.";
+          setAuthNote(account.thong_bao || "Không đăng nhập được.", "alert");
           authBusy = false;
           return;
         }
@@ -1671,30 +1775,30 @@
           icon: "circle-check"
         });
       } catch (_) {
-        authNote.textContent = "Không kết nối được máy chủ.";
+        setAuthNote("Không kết nối được máy chủ.", "alert");
         authBusy = false;
       }
     }
 
     async function paintGoogleButton() {
       googleButton.innerHTML = "";
-      authNote.textContent = "";
+      setAuthNote("");
       let config;
       try {
         const response = await fetch("/api/auth/config", { cache: "no-store", credentials: "same-origin", headers: { Accept: "application/json" } });
         config = await response.json();
       } catch (_) {
-        authNote.textContent = "Không tải được cấu hình đăng nhập.";
+        setAuthNote("Không tải được cấu hình đăng nhập.", "alert");
         return;
       }
       if (!config || !config.enabled || !config.client_id) {
-        authNote.textContent = "Chưa cấu hình GOOGLE_CLIENT_ID. Tạo OAuth Web client, thêm origin https://api-zhee.vercel.app, rồi đặt biến này trên Vercel.";
+        setAuthNote("Chưa cấu hình đăng nhập Google.", "alert");
         return;
       }
       try {
         await ensureGoogleScript();
       } catch (_) {
-        authNote.textContent = "Không tải được nút Google.";
+        setAuthNote("Không tải được nút Google.", "alert");
         return;
       }
       const width = Math.max(240, Math.min(360, Math.floor(googleButton.getBoundingClientRect().width) || 320));
@@ -1749,8 +1853,11 @@
     });
     document.getElementById("adminForm").addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (authBusy) return;
+      authBusy = true;
       const data = new FormData(event.currentTarget);
-      authNote.textContent = "Đang đăng nhập…";
+      setAuthNote("");
+      setAuthBusy(true);
       try {
         const response = await fetch("/api/auth/admin", {
           method: "POST",
@@ -1760,7 +1867,9 @@
         });
         const account = await response.json();
         if (!response.ok) {
-          authNote.textContent = account.thong_bao || "Sai tên đăng nhập hoặc mật khẩu.";
+          authBusy = false;
+          setAuthBusy(false);
+          setAuthNote(account.thong_bao || "Sai tên đăng nhập hoặc mật khẩu.", "alert");
           return;
         }
         sessionEpoch += 1;
@@ -1776,7 +1885,9 @@
           icon: "circle-check"
         });
       } catch (_) {
-        authNote.textContent = "Không kết nối được máy chủ.";
+        authBusy = false;
+        setAuthBusy(false);
+        setAuthNote("Không kết nối được máy chủ.", "alert");
       }
     });
     document.addEventListener("keydown", (event) => {
@@ -1910,7 +2021,7 @@
       ok.focus();
       return new Promise((resolve) => { macResolver = resolve; });
     }
-    noticeDialog.addEventListener("close", () => finishMac(noticeDialog.returnValue === "ok"));
+    noticeDialog.addEventListener("close", () => finishMac(noticeDialog.dataset.zheeClose === "ok"));
     noticeDialog.addEventListener("click", (event) => {
       if (event.target === noticeDialog) {
         noticeDialog.returnValue = "cancel";
@@ -1918,6 +2029,47 @@
       }
     });
     function appAlert(msg) { return macAlert({ title: "Thông báo", text: msg, ok: "OK" }); }
+    const sheetDialog = document.getElementById("sheetDialog");
+    let sheetPromise = null;
+    let sheetResolver = null;
+    function finishSheet(result) {
+      const resolve = sheetResolver;
+      sheetResolver = null;
+      sheetPromise = null;
+      if (resolve) resolve(Boolean(result));
+    }
+    function macSheet(options) {
+      if (sheetDialog.open || sheetPromise) return Promise.resolve(false);
+      const opts = options || {};
+      document.getElementById("sheetTitle").textContent = opts.title || "Xóa?";
+      document.getElementById("sheetMsg").textContent = opts.text || "";
+      document.getElementById("sheetOk").textContent = opts.ok || "Xóa";
+      document.getElementById("sheetCancel").textContent = opts.cancel || "Hủy";
+      sheetDialog.returnValue = "";
+      openDialog(sheetDialog);
+      document.getElementById("sheetCancel").focus();
+      sheetPromise = new Promise((resolve) => { sheetResolver = resolve; });
+      return sheetPromise;
+    }
+    sheetDialog.addEventListener("close", () => finishSheet(sheetDialog.dataset.zheeClose === "ok"));
+    sheetDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      sheetDialog.returnValue = "cancel";
+      closeDialog(sheetDialog);
+    });
+    sheetDialog.addEventListener("click", (event) => {
+      if (event.target !== sheetDialog) return;
+      sheetDialog.returnValue = "cancel";
+      closeDialog(sheetDialog);
+    });
+    document.getElementById("sheetOk").addEventListener("click", () => {
+      sheetDialog.returnValue = "ok";
+      closeDialog(sheetDialog);
+    });
+    document.getElementById("sheetCancel").addEventListener("click", () => {
+      sheetDialog.returnValue = "cancel";
+      closeDialog(sheetDialog);
+    });
     document.getElementById("dialogOk").addEventListener("click", () => {
       noticeDialog.returnValue = "ok";
       closeDialog(noticeDialog);
@@ -2480,6 +2632,7 @@
       const adminLink = billing.role === "admin" ? `<a class="act" href="#admin">${ico("shield")} Bảng điều khiển</a>` : "";
       panel.innerHTML = `
         <h2>${ico("circle-user", "ico-head")} ${scrambleHtml("Hồ sơ")}</h2>
+        ${keySoonHtml(billing)}
         <div class="profile-grid">
           <div class="card">
             <h3>${ico("circle-user")} ${esc(billing.name || "Tài khoản")}</h3>
@@ -2513,6 +2666,7 @@
       }
       panel.innerHTML = `
         <h2>${ico("wallet", "ico-head")} ${scrambleHtml("Nạp tiền")}</h2>
+        ${keySoonHtml(billing)}
         <p class="lead">${ico("landmark")} ${vnd(billing.balance)} · MB Bank · nội dung đúng mã</p>
         <div class="wallet-grid">
           <div class="card">
@@ -2600,6 +2754,7 @@
       panel.innerHTML = `
         <h2 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${scrambleHtml(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
+        ${keySoonHtml(billing)}
         ${/\/nasa/i.test(toolMark(t)) ? `<p class="muted" style="margin:-10px 0 16px">${ico("satellite")} apod, neo, epic, donki. Điền action và ngày.</p>` : ''}
         <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
           ${billing && billing.secret ? `<label class="key-slot">${ico("key-round")}<input class="field" data-secret-view value="${esc(secretShown ? billing.secret : maskSecret(billing.secret))}" readonly tabindex="-1" aria-label="Secret key đã gắn" autocomplete="off"><button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></label>` : ""}
@@ -2768,7 +2923,8 @@
         const user = (panel._adminUsers || [])[index];
         if (!user) return;
         if (removeUser) {
-          const ok = await macAlert({ title: "Xóa tài khoản", text: user.email || user.name || "Tài khoản này", ok: "Xóa", cancel: "Hủy" });
+          const who = user.email || user.name || "tài khoản này";
+          const ok = await macSheet({ title: "Xóa tài khoản?", text: `Chỉ xóa ${who}. Các tài khoản khác không đổi.`, ok: "Xóa", cancel: "Hủy" });
           if (!ok) return;
           adminPost("/api/admin/users", { sub: user.sub, action: "xoa" });
           return;
@@ -2781,7 +2937,7 @@
         return;
       }
       if (removeTopup) {
-        const ok = await macAlert({ title: "Xóa lệnh nạp", text: removeTopup.dataset.deleteTopup, ok: "Xóa", cancel: "Hủy" });
+        const ok = await macSheet({ title: "Xóa lệnh nạp?", text: `Chỉ xóa mã ${removeTopup.dataset.deleteTopup}.`, ok: "Xóa", cancel: "Hủy" });
         if (!ok) return;
         adminPost("/api/admin/topups", { code: removeTopup.dataset.deleteTopup, action: "xoa" });
         return;
