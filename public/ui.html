@@ -640,10 +640,8 @@
       from { background-position: 0% 50%; }
       to { background-position: 100% 50%; }
     }
-    .home-hero h2 { margin: 10px 0 8px; max-width: 720px; animation: titleIn .65s cubic-bezier(.22, 1, .36, 1) both; }
+    .home-hero h2 { margin: 10px 0 8px; max-width: 720px; }
     .home-hero h2:not(:has(.ico-head)) { color: var(--text); }
-    article > h2 { animation: titleIn .55s cubic-bezier(.22, 1, .36, 1) both; }
-    article > h2 .tool-icon { animation: titleIn .55s .08s cubic-bezier(.22, 1, .36, 1) both; }
     .home-hero h2, article > h2 { position: relative; text-shadow: 0 8px 22px rgba(37, 99, 235, .12); }
     .home-hero h2::after, article > h2::after {
       content: ""; position: absolute; left: 0; bottom: -8px; width: 76px; height: 3px;
@@ -757,10 +755,95 @@
     }
     @media (max-width: 640px) { .home-hero { padding: 22px 18px 16px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } }
 
+    .theme-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; flex-shrink: 0; color: var(--text); font-size: 12px; font-weight: 800; }
+    .theme-switch input {
+      appearance: none; width: 42px; height: 24px; margin: 0; flex: 0 0 42px; border-radius: 999px;
+      border: 1px solid var(--line); background: color-mix(in srgb, var(--text) 12%, var(--card));
+      position: relative; cursor: pointer;
+    }
+    .theme-switch input::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .18s ease;
+    }
+    .theme-switch input:checked { background: #2563eb; border-color: #2563eb; }
+    .theme-switch input:checked::after { transform: translateX(18px); }
+    .hamburger { width: 18px; height: 18px; display: block; }
+    dialog.modal {
+      position: fixed; inset: 0; width: min(440px, calc(100vw - 24px)); height: fit-content;
+      max-height: calc(100dvh - 24px); margin: auto; padding: 0; border: 0; background: transparent;
+      color: var(--text); overflow: auto;
+    }
+    dialog.modal[open] { animation: dialogIn .2s ease; }
+    dialog.modal.is-closing { opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
+    dialog.modal::backdrop { background: rgba(2, 6, 23, .62); backdrop-filter: blur(8px); animation: scrimIn .2s ease; }
+    @keyframes dialogIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    dialog.modal.is-closing::backdrop { animation: scrimOut .18s ease forwards; }
+    dialog.modal .modal-card {
+      background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.38); padding: 22px 20px 18px;
+    }
+    @keyframes scrimIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scrimOut { from { opacity: 1; } to { opacity: 0; } }
+    .auth-card { position: relative; }
+    .auth-card h3 { margin: 0 36px 14px 0; font-size: 22px; letter-spacing: -.03em; }
+    .segment { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 14px; }
+    .segment-item {
+      display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px;
+      border: 1px solid var(--line); border-radius: 12px; background: transparent; font-size: 13px; font-weight: 800;
+    }
+    .segment-item input { width: 16px; height: 16px; margin: 0; accent-color: #2563eb; }
+    .segment-item:has(input:checked) { background: var(--nav-active); color: var(--nav-active-fg); border-color: var(--nav-active); }
+    .login-form { display: grid; gap: 12px; }
+    .login-form label { display: grid; gap: 6px; font-size: 12px; font-weight: 800; color: var(--muted); }
+    .login-form input {
+      width: 100%; height: 46px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px;
+      background: var(--bg); color: var(--text); font: inherit; font-size: 14px; font-weight: 600;
+    }
+    .login-form input:focus { border-color: #60a5fa; outline: 3px solid color-mix(in srgb, #60a5fa 35%, transparent); outline-offset: 1px; }
+    .login-form button { width: 100%; min-height: 46px; justify-content: center; border-radius: 12px; }
+    .auth-or { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin: 14px 0 12px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .auth-or::before, .auth-or::after { content: ""; height: 1px; background: var(--line); }
+    dialog.is-register .login-form, dialog.is-register .auth-or { display: none; }
+    .gate { display: grid; place-items: center; min-height: min(520px, calc(100dvh - 180px)); padding: 8px 0 28px; }
+    .gate-card { width: min(440px, 100%); margin: 0 auto; padding: 22px 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+    .gate-card h2 { margin-top: 0; }
+    .gate-card .lead { margin-bottom: 0; }
+    .gate-card .act { width: 100%; justify-content: center; margin-top: 16px; min-height: 44px; }
+    .scramble-line { display: inline-block; min-width: 0; }
+    .scramble { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: pre; }
+    .skeleton-wrap { position: relative; }
+    .sk { border-radius: 12px; background: linear-gradient(90deg, color-mix(in srgb, var(--line) 80%, transparent), color-mix(in srgb, var(--card) 55%, var(--text) 8%), color-mix(in srgb, var(--line) 80%, transparent)); background-size: 200% 100%; animation: sk 1.1s ease infinite; }
+    .sk-title { height: 28px; width: min(280px, 72%); margin-bottom: 12px; }
+    .sk-line { height: 14px; width: min(460px, 92%); margin-bottom: 18px; }
+    .sk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .sk-card { height: 120px; }
+    @keyframes sk { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+    .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid color-mix(in srgb, currentColor 28%, transparent); border-top-color: currentColor; animation: spin .7s linear infinite; display: inline-block; vertical-align: -3px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .run-status { display: inline-flex; align-items: center; gap: 8px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .notice-card h3 { margin: 0 0 8px; font-size: 16px; }
+    .notice-card p { margin: 0 0 14px; color: var(--muted); line-height: 1.5; }
+    .notice-card .mac-suppress { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 13px; }
+    .notice-card .mac-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    @media (max-width: 640px) {
+      .sk-grid { grid-template-columns: 1fr; }
+      .gate { min-height: calc(100dvh - 150px); align-items: start; }
+      .gate-card, dialog.modal { width: calc(100vw - 20px); }
+      .auth-card h3 { font-size: 20px; }
+    }
+    @media (min-width: 901px) {
+      body.nav-collapsed .theme-caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+      body.nav-collapsed .theme-switch { justify-content: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sk, .spinner, dialog.modal::backdrop { animation: none; }
+    }
+
   </style>
 </head>
 <body>
-  <aside class="sidebar">
+  <aside class="sidebar" id="siteNav">
     <div class="brand">
       <div class="brand-mark">Z</div>
       <div class="brand-copy">
@@ -771,14 +854,21 @@
     </div>
     <div class="side-tools">
       <input id="q" type="search" placeholder="Tìm tool…" autocomplete="off">
-      <button class="icon-btn" id="themeBtn" type="button" title="Đổi giao diện" aria-label="Đổi giao diện"></button>
+      <label class="theme-switch">
+        <input id="themeSwitch" type="checkbox" role="switch" aria-label="Giao diện tối">
+        <span class="theme-caption">Tối</span>
+      </label>
     </div>
     <nav class="nav" id="nav" aria-label="Danh mục API"></nav>
   </aside>
   <div class="backdrop" id="backdrop"></div>
   <div class="main">
     <div class="topbar">
-      <button class="icon-btn nav-toggle" id="navToggle" type="button" title="Menu" aria-label="Mở menu"></button>
+      <button class="icon-btn nav-toggle" id="navToggle" type="button" aria-controls="siteNav" aria-expanded="false" aria-label="Mở menu">
+        <svg class="hamburger" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+        </svg>
+      </button>
       <div class="crumb" id="crumb"></div>
       <div class="account-bar">
         <div class="telegram-user" id="telegramUser" hidden></div>
@@ -786,7 +876,7 @@
         <button class="act auth-open" id="authOpen" type="button">Đăng nhập</button>
       </div>
     </div>
-    <article id="panel"></article>
+    <article id="panel" aria-busy="true"></article>
     <footer class="site-footer">
       <div class="uptime" id="uptime"></div>
     </footer>
@@ -798,8 +888,8 @@
     <a href="#ho-so" data-tab="ho-so"><i data-lucide="circle-user"></i><span>Hồ sơ</span></a>
   </nav>
   <div class="toast" id="toast" role="status"></div>
-  <div class="mac-alert" id="dialog" role="alertdialog" aria-modal="true" aria-labelledby="macTitle">
-    <div class="mac-card">
+  <dialog class="modal" id="noticeDialog" aria-labelledby="macTitle">
+    <div class="modal-card notice-card">
       <h3 id="macTitle">Thông báo</h3>
       <p id="dialogMsg"></p>
       <label class="mac-suppress" id="macSuppressWrap"><input type="checkbox" id="macSuppress"> Đừng hỏi lại</label>
@@ -808,34 +898,38 @@
         <button class="mac-btn mac-default" type="button" id="dialogOk">OK</button>
       </div>
     </div>
-  </div>
-  <div class="dialog-backdrop" id="authBackdrop" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-    <div class="dialog-box auth-box">
+  </dialog>
+  <dialog class="modal" id="authDialog" aria-labelledby="authTitle">
+    <div class="modal-card auth-card">
       <button class="qr-close" id="authClose" type="button" aria-label="Đóng">×</button>
-      <h3 id="authTitle">Tài khoản Google</h3>
-      <div class="auth-tabs" role="tablist">
-        <button class="auth-tab is-on" type="button" data-intent="login" role="tab" aria-selected="true">Đăng nhập</button>
-        <button class="auth-tab" type="button" data-intent="register" role="tab" aria-selected="false">Đăng ký</button>
+      <h3 id="authTitle">Đăng nhập</h3>
+      <div class="segment" role="radiogroup" aria-label="Hình thức">
+        <label class="segment-item"><input type="radio" name="authIntent" value="login" checked> Đăng nhập</label>
+        <label class="segment-item"><input type="radio" name="authIntent" value="register"> Đăng ký</label>
       </div>
-      <p class="auth-lead" id="authLead">Đăng nhập bằng Google đã đăng ký, hoặc tài khoản quản trị. Phiên giữ 1 ngày.</p>
-      <div id="googleButton"></div>
-      <form class="admin-login" id="adminForm">
-        <p>Tài khoản quản trị</p>
-        <input name="username" autocomplete="username" placeholder="Tên đăng nhập" required>
-        <input name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu" required>
-        <button class="act act-dark" type="submit">Đăng nhập quản trị</button>
+      <p class="auth-lead" id="authLead">Nhập tên đăng nhập và mật khẩu. Phiên giữ 1 ngày.</p>
+      <form class="login-form" id="adminForm">
+        <label>Tên đăng nhập
+          <input name="username" autocomplete="username" placeholder="Tên đăng nhập" required>
+        </label>
+        <label>Mật khẩu
+          <input name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu" required>
+        </label>
+        <button class="act act-dark" type="submit">Đăng nhập</button>
       </form>
+      <div class="auth-or" id="authOr"><span>hoặc</span></div>
+      <div id="googleButton"></div>
       <p class="auth-note" id="authNote"></p>
     </div>
-  </div>
-  <div class="qr-backdrop" id="qrBackdrop" role="dialog" aria-modal="true" aria-label="Mã QR hỗ trợ">
-    <div class="qr-dialog">
+  </dialog>
+  <dialog class="modal" id="qrDialog" aria-labelledby="qrTitle">
+    <div class="modal-card qr-dialog">
       <button class="qr-close" id="qrClose" type="button" aria-label="Đóng mã QR">×</button>
       <h3 id="qrTitle">QR hỗ trợ</h3>
       <p id="qrText">Quét mã để mở trang hỗ trợ.</p>
       <img id="qrImage" src="" alt="Mã QR hỗ trợ">
     </div>
-  </div>
+  </dialog>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/lucide@1.7.0/dist/umd/lucide.min.js"></script>
@@ -1049,6 +1143,84 @@
     function esc(s) {
       return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     }
+    const SCRAMBLE_GLYPHS = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#$%&*";
+    function scrambleHtml(text) {
+      return `<span class="scramble-line" data-scramble="${esc(text)}"></span>`;
+    }
+    function startScramble(el, text) {
+      if (el._cancelScramble) el._cancelScramble();
+      el.setAttribute("aria-label", text);
+      const churn = document.createElement("span");
+      churn.className = "scramble";
+      churn.setAttribute("aria-hidden", "true");
+      el.replaceChildren(churn);
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const chars = Array.from(text);
+      if (reduce || !chars.length) {
+        churn.textContent = text;
+        el.dataset.scrambleDone = text;
+        return;
+      }
+      const started = performance.now();
+      let frame = 0;
+      const finish = () => {
+        churn.textContent = text;
+        el.dataset.scrambleDone = text;
+      };
+      const tick = (now) => {
+        let out = "";
+        let done = true;
+        const elapsed = now - started;
+        for (let i = 0; i < chars.length; i += 1) {
+          const ch = chars[i];
+          if (ch === " " || elapsed >= 140 + i * 28) out += ch;
+          else {
+            done = false;
+            out += SCRAMBLE_GLYPHS[(Math.random() * SCRAMBLE_GLYPHS.length) | 0];
+          }
+        }
+        churn.textContent = out;
+        if (done) finish();
+        else frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+      const backup = setTimeout(finish, 180 + chars.length * 28);
+      el._cancelScramble = () => {
+        cancelAnimationFrame(frame);
+        clearTimeout(backup);
+      };
+    }
+    function mountScrambles(root) {
+      (root || document).querySelectorAll("[data-scramble]").forEach((el) => {
+        const text = el.getAttribute("data-scramble") || "";
+        if (el.dataset.scrambleDone === text) return;
+        startScramble(el, text);
+      });
+    }
+    function skeletonHtml(status) {
+      return `<div class="skeleton-wrap" aria-busy="true"><p class="sr-only" role="status">${esc(status || "Đang tải")}</p><div class="sk sk-title"></div><div class="sk sk-line"></div><div class="sk-grid"><div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div></div></div>`;
+    }
+    function gateHtml(title, text, buttonId) {
+      return `<div class="gate"><div class="gate-card"><h2>${scrambleHtml(title)}</h2><p class="lead">${esc(text)}</p>${buttonId ? `<button class="act act-dark" type="button" id="${buttonId}">Đăng nhập</button>` : ""}</div></div>`;
+    }
+    function openDialog(node) {
+      if (!node) return;
+      node.classList.remove("is-closing");
+      if (!node.open) node.showModal();
+    }
+    function closeDialog(node) {
+      if (!node || !node.open) return;
+      node.classList.add("is-closing");
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        node.classList.remove("is-closing");
+        if (node.open) node.close();
+      };
+      node.addEventListener("transitionend", done, { once: true });
+      setTimeout(done, 200);
+    }
     function slug(path) {
       return String(path || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
     }
@@ -1154,14 +1326,14 @@
       return { chuoi: d + " ngày " + gio + " giờ " + phut + " phút " + String(giay).padStart(2, "0") + " giây", moc: "28/8/2026" };
     }
 
-    const themeBtn = document.getElementById("themeBtn");
+    const themeSwitch = document.getElementById("themeSwitch");
     const navEl = document.getElementById("nav");
     const panel = document.getElementById("panel");
     const crumb = document.getElementById("crumb");
     const toast = document.getElementById("toast");
-    const dialog = document.getElementById("dialog");
+    const noticeDialog = document.getElementById("noticeDialog");
     const dialogMsg = document.getElementById("dialogMsg");
-    const qrBackdrop = document.getElementById("qrBackdrop");
+    const qrDialog = document.getElementById("qrDialog");
     const qrClose = document.getElementById("qrClose");
     const qrTitle = document.getElementById("qrTitle");
     const qrText = document.getElementById("qrText");
@@ -1171,7 +1343,7 @@
     const telegramUser = document.getElementById("telegramUser");
     const accountChip = document.getElementById("accountChip");
     const authOpen = document.getElementById("authOpen");
-    const authBackdrop = document.getElementById("authBackdrop");
+    const authDialog = document.getElementById("authDialog");
     const authLead = document.getElementById("authLead");
     const authNote = document.getElementById("authNote");
     const googleButton = document.getElementById("googleButton");
@@ -1179,6 +1351,8 @@
     let authIntent = "login";
     let authBusy = false;
     let billing = null;
+    let accountState = "loading";
+    let sessionEpoch = 0;
 
     async function initTelegramIdentity() {
       const webApp = window.Telegram && window.Telegram.WebApp;
@@ -1224,7 +1398,7 @@
       const avatar = picture
         ? `<img src="${esc(picture)}" alt="" aria-hidden="true">`
         : `<span class="account-fallback" aria-hidden="true">${esc(initials)}</span>`;
-      const meta = account.role === "admin" ? "Quản trị" : (billing && billing.balance != null ? `${Number(billing.balance).toLocaleString("vi-VN")}đ` : (account.email || ""));
+      const meta = account.role === "admin" ? "Đã đăng nhập" : (billing && billing.balance != null ? `${Number(billing.balance).toLocaleString("vi-VN")}đ` : (account.email || ""));
       accountChip.innerHTML = `${avatar}<span class="account-copy"><span class="account-name">${esc(account.name || account.email || "Google")}</span><span class="account-meta">${esc(meta)}</span></span><button class="account-out" type="button" data-logout>Thoát</button>`;
       accountChip.hidden = false;
     }
@@ -1232,11 +1406,19 @@
     function clearGoogleAccount() {
       googleSignedIn = false;
       billing = null;
+      accountState = "out";
       accountChip.hidden = true;
       accountChip.innerHTML = "";
       authOpen.hidden = false;
       const badge = document.getElementById("tabBadge");
       if (badge) badge.hidden = true;
+    }
+
+    function paintAccountSurface() {
+      const raw = (location.hash || "#home").replace(/^#\/?/, "") || "home";
+      if (raw === "ho-so" || raw === "vi" || raw === "admin") paint();
+      const qEl = document.getElementById("q");
+      if (CATALOG.length) renderNav(qEl ? qEl.value : "");
     }
 
     function vnd(value) {
@@ -1246,16 +1428,21 @@
     async function refreshBilling() {
       try {
         const response = await fetch("/api/account", { cache: "no-store", credentials: "same-origin", headers: { Accept: "application/json" } });
-        if (!response.ok) return;
+        if (!response.ok) return false;
         billing = await response.json();
+        accountState = "in";
         const badge = document.getElementById("tabBadge");
         if (badge) badge.hidden = !(billing && billing.role !== "admin" && billing.key_active === false);
         if (billing && billing.role === "admin") showGoogleAccount(billing);
         else if (googleSignedIn && billing) showGoogleAccount({ ...billing, role: "user" });
-      } catch (_) {}
+        return true;
+      } catch (_) {
+        return false;
+      }
     }
 
     async function refreshGoogleSession() {
+      const epoch = ++sessionEpoch;
       try {
         const response = await fetch("/api/auth/session", {
           cache: "no-store",
@@ -1263,23 +1450,34 @@
           headers: { Accept: "application/json" }
         });
         const account = await response.json();
+        if (epoch !== sessionEpoch) return;
         if (response.ok && account.authenticated === true) {
+          accountState = "in";
           showGoogleAccount(account);
           await refreshBilling();
-        } else clearGoogleAccount();
+          if (epoch !== sessionEpoch) return;
+          paintAccountSurface();
+        } else {
+          clearGoogleAccount();
+          paintAccountSurface();
+        }
       } catch (_) {
-        clearGoogleAccount();
+        if (epoch !== sessionEpoch) return;
+        if (!billing) {
+          clearGoogleAccount();
+          paintAccountSurface();
+        }
       }
     }
 
     function authCopy(intent) {
       return intent === "register"
-        ? "Đăng ký chỉ bằng Google. Mỗi IP tạo tối đa 3 tài khoản. Key miễn phí 10 ngày, phiên giữ 1 ngày."
-        : "Đăng nhập bằng Google đã đăng ký, hoặc tài khoản quản trị. Phiên giữ 1 ngày.";
+        ? "Đăng ký bằng Google. Mỗi IP tạo tối đa 3 tài khoản. Key miễn phí 10 ngày."
+        : "Nhập tên đăng nhập và mật khẩu. Phiên giữ 1 ngày.";
     }
 
     function closeAuth() {
-      authBackdrop.classList.remove("show");
+      closeDialog(authDialog);
       authBusy = false;
     }
 
@@ -1319,9 +1517,12 @@
           authBusy = false;
           return;
         }
+        sessionEpoch += 1;
+        accountState = "in";
         showGoogleAccount(account);
         await refreshBilling();
         closeAuth();
+        paintAccountSurface();
         notify(authIntent === "register" ? "Đã đăng ký. Key miễn phí 10 ngày." : "Đã đăng nhập. Phiên giữ 1 ngày.");
       } catch (_) {
         authNote.textContent = "Không kết nối được máy chủ.";
@@ -1371,22 +1572,22 @@
 
     function openAuth(intent) {
       authIntent = intent === "register" ? "register" : "login";
-      authBackdrop.querySelectorAll(".auth-tab").forEach((tab) => {
-        const on = tab.dataset.intent === authIntent;
-        tab.classList.toggle("is-on", on);
-        tab.setAttribute("aria-selected", on ? "true" : "false");
+      authDialog.querySelectorAll('input[name="authIntent"]').forEach((input) => {
+        input.checked = input.value === authIntent;
       });
+      document.getElementById("authTitle").textContent = authIntent === "register" ? "Đăng ký" : "Đăng nhập";
       authLead.textContent = authCopy(authIntent);
-      authBackdrop.classList.toggle("is-register", authIntent === "register");
-      authBackdrop.classList.add("show");
+      authDialog.classList.toggle("is-register", authIntent === "register");
+      openDialog(authDialog);
       paintGoogleButton();
     }
 
     authOpen.addEventListener("click", () => openAuth("login"));
     document.getElementById("authClose").addEventListener("click", closeAuth);
-    authBackdrop.addEventListener("click", (event) => { if (event.target === authBackdrop) closeAuth(); });
-    authBackdrop.querySelectorAll(".auth-tab").forEach((tab) => {
-      tab.addEventListener("click", () => openAuth(tab.dataset.intent));
+    authDialog.addEventListener("click", (event) => { if (event.target === authDialog) closeAuth(); });
+    authDialog.addEventListener("cancel", (event) => { event.preventDefault(); closeAuth(); });
+    authDialog.querySelectorAll('input[name="authIntent"]').forEach((input) => {
+      input.addEventListener("change", () => { if (input.checked) openAuth(input.value); });
     });
     accountChip.addEventListener("click", async (event) => {
       if (!event.target.closest("[data-logout]")) return;
@@ -1398,6 +1599,7 @@
       notify("Đã đăng xuất.");
       initTelegramIdentity();
       if (["vi", "ho-so", "admin"].includes(currentId())) location.hash = "#home";
+      else paintAccountSurface();
     });
     document.getElementById("adminForm").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -1412,36 +1614,36 @@
         });
         const account = await response.json();
         if (!response.ok) {
-          authNote.textContent = account.thong_bao || "Sai tài khoản quản trị.";
+          authNote.textContent = account.thong_bao || "Sai tên đăng nhập hoặc mật khẩu.";
           return;
         }
+        sessionEpoch += 1;
+        accountState = "in";
         showGoogleAccount(account);
         await refreshBilling();
         closeAuth();
-        notify("Đã vào trang quản trị.");
-        location.hash = "#admin";
+        paintAccountSurface();
+        notify("Đã đăng nhập. Phiên giữ 1 ngày.");
       } catch (_) {
         authNote.textContent = "Không kết nối được máy chủ.";
       }
     });
     document.addEventListener("keydown", (event) => {
-      if (dialog.classList.contains("show")) {
-        if (event.key === "Escape") closeMac(!document.getElementById("macCancel") || document.getElementById("macCancel").hidden);
-        if (event.key === "Enter") closeMac(true);
-        return;
+      if (noticeDialog.open && event.key === "Enter") {
+        event.preventDefault();
+        noticeDialog.returnValue = "ok";
+        closeDialog(noticeDialog);
       }
-      if (event.key === "Escape" && authBackdrop.classList.contains("show")) closeAuth();
-      if (event.key === "Escape") closeQr();
     });
 
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
       localStorage.setItem("zhee-theme", theme);
-      paintOrMorph(themeBtn, theme === "dark" ? "sun" : "moon", "ico-btn");
+      if (themeSwitch) themeSwitch.checked = theme === "dark";
     }
     applyTheme(localStorage.getItem("zhee-theme") || "light");
-    themeBtn.addEventListener("click", () => {
-      applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    themeSwitch.addEventListener("change", () => {
+      applyTheme(themeSwitch.checked ? "dark" : "light");
     });
 
     const sidebar = document.querySelector(".sidebar");
@@ -1449,16 +1651,27 @@
     const navToggle = document.getElementById("navToggle");
     const navClose = document.getElementById("navClose");
     function isMobile() { return window.matchMedia("(max-width: 900px)").matches; }
+    let navReturnFocus = null;
+    function setPageInert(on) {
+      document.querySelectorAll(".main, .tabbar").forEach((node) => {
+        if (on) node.setAttribute("inert", "");
+        else node.removeAttribute("inert");
+      });
+    }
     function syncNavBtn() {
-      const collapsed = isMobile() ? !sidebar.classList.contains("open") : document.body.classList.contains("nav-collapsed");
-      paintOrMorph(navToggle, collapsed ? "menu" : "panel-left-close");
-      paintOrMorph(navClose, "x");
+      const open = isMobile() ? sidebar.classList.contains("open") : !document.body.classList.contains("nav-collapsed");
+      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      navToggle.setAttribute("aria-label", open ? "Đóng menu" : "Mở menu");
+      if (!navClose.querySelector("svg")) paintOrMorph(navClose, "x");
     }
     function openNav() {
       if (isMobile()) {
         sidebar.classList.add("open");
         backdrop.classList.add("show");
         document.body.style.overflow = "hidden";
+        setPageInert(true);
+        navReturnFocus = document.activeElement;
+        navClose.focus();
       } else {
         navEl.querySelectorAll(".drop-panel").forEach((p) => { p.style.height = "0px"; });
         document.body.classList.remove("nav-collapsed");
@@ -1477,6 +1690,9 @@
         sidebar.classList.remove("open");
         backdrop.classList.remove("show");
         document.body.style.overflow = "";
+        setPageInert(false);
+        if (navReturnFocus && typeof navReturnFocus.focus === "function") navReturnFocus.focus();
+        navReturnFocus = null;
       } else {
         navEl.querySelectorAll(".drop-panel").forEach((p) => {
           const inner = p.querySelector(".drop-panel-inner");
@@ -1504,6 +1720,7 @@
         sidebar.classList.remove("open");
         backdrop.classList.remove("show");
         document.body.style.overflow = "";
+        setPageInert(false);
       }
       syncNavBtn();
     });
@@ -1515,10 +1732,17 @@
       toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
     }
     let macResolver = null;
+    function finishMac(result) {
+      const key = document.getElementById("macSuppressWrap").hidden ? "" : (noticeDialog.dataset.suppress || "");
+      if (result && key && document.getElementById("macSuppress").checked) localStorage.setItem("zhee-suppress:" + key, "1");
+      const resolve = macResolver;
+      macResolver = null;
+      if (resolve) resolve(Boolean(result));
+    }
     function macAlert(options) {
       const opts = typeof options === "string" ? { text: options } : (options || {});
       const key = opts.suppressKey || "";
-      dialog.dataset.suppress = key;
+      noticeDialog.dataset.suppress = key;
       if (key && localStorage.getItem("zhee-suppress:" + key) === "1") return Promise.resolve(true);
       const title = document.getElementById("macTitle");
       const wrap = document.getElementById("macSuppressWrap");
@@ -1532,35 +1756,40 @@
       cancel.hidden = !opts.cancel;
       cancel.textContent = opts.cancel || "Hủy";
       ok.textContent = opts.ok || "OK";
-      dialog.classList.add("show");
+      openDialog(noticeDialog);
       ok.focus();
       return new Promise((resolve) => { macResolver = resolve; });
     }
-    function closeMac(result) {
-      const key = document.getElementById("macSuppressWrap").hidden ? "" : (dialog.dataset.suppress || "");
-      if (result && key && document.getElementById("macSuppress").checked) localStorage.setItem("zhee-suppress:" + key, "1");
-      dialog.classList.remove("show");
-      const resolve = macResolver;
-      macResolver = null;
-      if (resolve) resolve(result);
-    }
+    noticeDialog.addEventListener("close", () => finishMac(noticeDialog.returnValue === "ok"));
+    noticeDialog.addEventListener("click", (event) => {
+      if (event.target === noticeDialog) {
+        noticeDialog.returnValue = "cancel";
+        closeDialog(noticeDialog);
+      }
+    });
     function appAlert(msg) { return macAlert({ title: "Thông báo", text: msg, ok: "OK" }); }
-    document.getElementById("dialogOk").addEventListener("click", () => closeMac(true));
-    document.getElementById("macCancel").addEventListener("click", () => closeMac(false));
-    function closeQr() { qrBackdrop.classList.remove("show"); qrImage.src = ""; }
+    document.getElementById("dialogOk").addEventListener("click", () => {
+      noticeDialog.returnValue = "ok";
+      closeDialog(noticeDialog);
+    });
+    document.getElementById("macCancel").addEventListener("click", () => {
+      noticeDialog.returnValue = "cancel";
+      closeDialog(noticeDialog);
+    });
+    function closeQr() {
+      closeDialog(qrDialog);
+      qrImage.src = "";
+    }
     function showQr(url, title, text) {
       qrTitle.textContent = title || "QR hỗ trợ";
       qrText.textContent = text || "Quét mã để mở trang hỗ trợ của Hồ Đức Minh.";
       qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=640x640&margin=12&data=${encodeURIComponent(url)}`;
-      qrBackdrop.classList.add("show");
+      openDialog(qrDialog);
     }
     qrClose.addEventListener("click", closeQr);
-    qrBackdrop.addEventListener("click", (e) => { if (e.target === qrBackdrop) closeQr(); });
+    qrDialog.addEventListener("click", (event) => { if (event.target === qrDialog) closeQr(); });
+    qrDialog.addEventListener("cancel", (event) => { event.preventDefault(); closeQr(); });
     qrImage.addEventListener("click", closeQr);
-    document.addEventListener("keydown", (e) => {
-      if (dialog.classList.contains("show") || authBackdrop.classList.contains("show")) return;
-      if (e.key === "Escape") closeQr();
-    });
 
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => notify("Đã sao chép.")).catch(() => appAlert("Không sao chép được. Hãy copy thủ công."));
@@ -1598,7 +1827,7 @@
             <a class="home-link" href="#cong-cu" data-id="cong-cu" title="Công cụ">${ico("layout-grid")}<span class="nav-label">Công cụ</span></a>
             <a class="home-link" href="#vi" data-id="vi" title="Ví">${ico("wallet")}<span class="nav-label">Ví</span></a>
             <a class="home-link" href="#ho-so" data-id="ho-so" title="Hồ sơ">${ico("circle-user")}<span class="nav-label">Hồ sơ</span></a>
-            ${billing && billing.role === "admin" ? `<a class="home-link" href="#admin" data-id="admin" title="Quản trị">${ico("shield")}<span class="nav-label">Quản trị</span></a>` : ""}
+            ${billing && billing.role === "admin" ? `<a class="home-link" href="#admin" data-id="admin" title="Bảng điều khiển">${ico("shield")}<span class="nav-label">Bảng điều khiển</span></a>` : ""}
           </div></div>
         </details>` + groups.map((g) => `
         <details class="drop${open.has(g.label) || q || g.items.some((t) => t.id === here) ? " is-open" : ""}" data-group="${esc(g.label)}" open>
@@ -1712,7 +1941,7 @@
       panel.innerHTML = `
         <section class="home-hero">
           <div class="home-eyebrow">${ico("sparkles")} ZHEE API DIRECTORY</div>
-          <h2>${ico("globe-2", "ico-head")} Cổng API của Zhee Dev</h2>
+          <h2>${ico("globe-2", "ico-head")} ${scrambleHtml("Cổng API của Zhee Dev")}</h2>
           <p class="lead">Đăng ký bằng Google để nhận secret key riêng, miễn phí 10 ngày. Trang này chỉ hiện kết quả. Đường dẫn gọi API không được công bố.</p>
           <div class="stat-row">
             <div class="stat"><strong>${platformStats().calls}</strong><span>Lượt truy cập</span></div>
@@ -1897,8 +2126,10 @@
       if (!pre) return;
       const ac = new AbortController();
       liveAbort = ac;
-      if (status) status.textContent = "Đang chạy…";
-      pre.textContent = "Đang lấy kết quả…";
+      if (status) status.innerHTML = `<span class="spinner" aria-hidden="true"></span> Đang chạy…`;
+      const sample = pre.closest(".sample");
+      if (sample) sample.setAttribute("aria-busy", "true");
+      pre.textContent = "";
       if (media) media.innerHTML = "";
       const timer = setTimeout(() => ac.abort(), timeoutMs || 12000);
       const headers = { Accept: "application/json, audio/*, image/*, */*", "Content-Type": "application/json" };
@@ -1981,7 +2212,13 @@
           else pre.textContent = "Không chạy được: " + (e.message || e);
           if (status) status.textContent = "Lỗi";
         })
-        .finally(() => clearTimeout(timer));
+        .finally(() => {
+          clearTimeout(timer);
+          const sample = document.querySelector(".sample");
+          if (sample) sample.setAttribute("aria-busy", "false");
+          const status = document.getElementById("liveStatus");
+          if (status) status.querySelector(".spinner")?.remove();
+        });
     }
 
     function badgePresetMarkup() {
@@ -2016,10 +2253,14 @@
     }
 
     async function runCurrentTool() {
-      if (!billing || billing.role === "admin" || !billing.secret) {
+      if (billing && billing.role === "admin") {
+        loadLive(collectTryUrl(), 15000);
+        return;
+      }
+      if (!billing || !billing.secret) {
         const go = await macAlert({
-          title: "Cần tài khoản Google",
-          text: "Đăng ký hoặc đăng nhập bằng Google đã đăng ký. Mỗi tài khoản có một secret key, miễn phí 10 ngày.",
+          title: "Cần đăng nhập",
+          text: "Đăng nhập để chạy công cụ. Tài khoản Google có secret key miễn phí 10 ngày.",
           ok: "Đăng nhập",
           cancel: "Đóng"
         });
@@ -2051,7 +2292,7 @@
         }
         map.get(group.label).push(tool);
       });
-      panel.innerHTML = `<h2>${ico("layout-grid", "ico-head")} Công cụ</h2><p class="lead">Chọn công cụ để chạy. Kết quả hiện tại trang, đường dẫn không được đưa ra.</p>` + groups.map((label) => `
+      panel.innerHTML = `<h2>${ico("layout-grid", "ico-head")} ${scrambleHtml("Công cụ")}</h2><p class="lead">Chọn công cụ để chạy. Kết quả hiện tại trang, đường dẫn không được đưa ra.</p>` + groups.map((label) => `
         <div class="home-section-head"><div><h3>${esc(label)}</h3></div></div>
         <div class="home-grid">${map.get(label).map((tool) => `
           <a class="home-tile" style="--tool-accent:${accentFor(toolMark(tool), tool.chuyen_muc)}" href="#${tool.id}">
@@ -2061,17 +2302,41 @@
     }
 
     function renderProfile() {
+      if (accountState === "loading") {
+        panel.innerHTML = skeletonHtml("Đang tải hồ sơ");
+        panel.setAttribute("aria-busy", "true");
+        return;
+      }
+      if (!billing && googleSignedIn) {
+        if (panel.dataset.billingPull === "1") return;
+        panel.dataset.billingPull = "1";
+        panel.innerHTML = skeletonHtml("Đang tải secret key");
+        panel.setAttribute("aria-busy", "true");
+        refreshBilling().then((ok) => {
+          panel.dataset.billingPull = "";
+          if (currentId() !== "ho-so") return;
+          if (ok) paint();
+          else {
+            panel.innerHTML = `<div class="gate"><div class="gate-card"><h2>${scrambleHtml("Hồ sơ")}</h2><p class="lead">Phiên đăng nhập còn. Bấm tải lại để hiện secret key.</p><button class="act act-dark" type="button" id="reloadSecret">Tải lại</button></div></div>`;
+            panel.setAttribute("aria-busy", "false");
+            mountScrambles(panel);
+          }
+        });
+        return;
+      }
       if (!billing) {
-        panel.innerHTML = `<h2>${ico("circle-user", "ico-head")} Hồ sơ</h2><p class="lead">Đăng nhập bằng Google đã đăng ký để xem secret key và số dư.</p><button class="act act-dark" type="button" id="profileLogin">Đăng nhập</button>`;
+        panel.innerHTML = gateHtml("Hồ sơ", "Đăng nhập để xem secret key và số dư.", "profileLogin");
+        panel.setAttribute("aria-busy", "false");
         return;
       }
       if (billing.role === "admin") {
-        panel.innerHTML = `<h2>${ico("shield", "ico-head")} Quản trị</h2><p class="lead">${esc(billing.email || "hoducminh")}</p><a class="act act-dark" href="#admin">Mở bảng quản trị</a>`;
+        panel.innerHTML = `<div class="gate"><div class="gate-card"><h2>${ico("shield", "ico-head")} ${scrambleHtml("Đã đăng nhập")}</h2><p class="lead">${esc(billing.email || "")}</p><a class="act act-dark" href="#admin">Mở bảng điều khiển</a></div></div>`;
+        panel.setAttribute("aria-busy", "false");
         return;
       }
       const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleString("vi-VN") : "";
       panel.innerHTML = `
-        <h2>${ico("circle-user", "ico-head")} Hồ sơ</h2>
+        <h2>${ico("circle-user", "ico-head")} ${scrambleHtml("Hồ sơ")}</h2>
         <div class="profile-grid">
           <div class="card">
             <h3>${esc(billing.name || "Tài khoản")}</h3>
@@ -2084,19 +2349,25 @@
           <div class="card">
             <h3>Secret key</h3>
             <p class="muted" style="margin-top:0">Dùng trên web thì key tự gắn. Khi gọi từ bên ngoài, gửi header <b>x-zhee-key</b>.</p>
-            <p class="secret-value" id="secretValue">${esc(billing.secret || "")}</p>
-            <button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép key</button>
+            <p class="secret-value" id="secretValue">${esc(billing.secret || "Chưa có secret key. Bấm tải lại.")}</p>
+            <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép key</button><button class="act" type="button" id="reloadSecret">Tải lại</button></div>
           </div>
         </div>`;
     }
 
     function renderWallet() {
+      if (accountState === "loading") {
+        panel.innerHTML = skeletonHtml("Đang tải ví");
+        panel.setAttribute("aria-busy", "true");
+        return;
+      }
       if (!billing || billing.role === "admin") {
-        panel.innerHTML = `<h2>${ico("wallet", "ico-head")} Ví</h2><p class="lead">Đăng nhập tài khoản Google để tạo nội dung nạp tiền.</p><button class="act act-dark" type="button" id="walletLogin">Đăng nhập</button>`;
+        panel.innerHTML = gateHtml("Ví", "Đăng nhập tài khoản Google để tạo nội dung nạp tiền.", "walletLogin");
+        panel.setAttribute("aria-busy", "false");
         return;
       }
       panel.innerHTML = `
-        <h2>${ico("wallet", "ico-head")} Nạp tiền</h2>
+        <h2>${ico("wallet", "ico-head")} ${scrambleHtml("Nạp tiền")}</h2>
         <p class="lead">Số dư ${vnd(billing.balance)}. Chuyển khoản MB Bank, nội dung đúng mã thì quản trị cộng tiền.</p>
         <div class="wallet-grid">
           <div class="card">
@@ -2136,11 +2407,17 @@
     }
 
     async function renderAdmin() {
-      if (!billing || billing.role !== "admin") {
-        panel.innerHTML = `<h2>Quản trị</h2><p class="lead">Đăng nhập tài khoản quản trị để xem người dùng và số dư.</p>`;
+      if (accountState === "loading") {
+        panel.innerHTML = skeletonHtml("Đang tải");
+        panel.setAttribute("aria-busy", "true");
         return;
       }
-      panel.innerHTML = `<h2>${ico("shield", "ico-head")} Quản trị</h2><p class="lead">Người dùng, số dư và lệnh nạp.</p><div class="admin-stats" id="adminStats"></div><div class="card" style="margin-bottom:14px"><input id="adminQ" placeholder="Tìm email hoặc tên"></div><div id="adminUsers"></div><div class="home-section-head"><div><h3>Nạp tiền</h3></div></div><div id="adminTopups"></div>`;
+      if (!billing || billing.role !== "admin") {
+        panel.innerHTML = gateHtml("Bảng điều khiển", "Đăng nhập để xem người dùng và số dư.", "profileLogin");
+        panel.setAttribute("aria-busy", "false");
+        return;
+      }
+      panel.innerHTML = `<h2>${ico("shield", "ico-head")} ${scrambleHtml("Bảng điều khiển")}</h2><p class="lead">Người dùng, số dư và lệnh nạp.</p><div id="adminStats" aria-busy="true">${skeletonHtml("Đang tải số liệu")}</div><div class="card" style="margin-bottom:14px"><input id="adminQ" placeholder="Tìm email hoặc tên"></div><div id="adminUsers"></div><div class="home-section-head"><div><h3>Nạp tiền</h3></div></div><div id="adminTopups"></div>`;
       await reloadAdmin();
     }
 
@@ -2155,6 +2432,7 @@
       const topups = await topupsRes.json();
       const stats = document.getElementById("adminStats");
       if (!stats) return;
+      stats.setAttribute("aria-busy", "false");
       stats.innerHTML = [
         ["Người dùng", overview.users || 0],
         ["Key còn hạn", overview.active_keys || 0],
@@ -2175,7 +2453,7 @@
       if (!t) return renderHome();
       currentTool = t;
       panel.innerHTML = `
-        <h2 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${esc(t.ten)}</h2>
+        <h2 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${scrambleHtml(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
         ${/\/nasa/i.test(toolMark(t)) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
         <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
@@ -2188,9 +2466,9 @@
           </div>
         </div>
         <div id="tryMedia" class="try-media"></div>
-        <div class="sample">
+        <div class="sample" aria-busy="false">
           <div class="sample-head">
-            <span id="liveStatus">Đang chạy…</span>
+            <span class="run-status" id="liveStatus" role="status">Sẵn sàng</span>
             <button class="act" type="button" id="liveCopy" data-copy="">${ico("copy")} Sao chép JSON</button>
           </div>
           <pre id="liveJson">Đang gọi API…</pre>
@@ -2225,7 +2503,7 @@
       });
       revealActiveGroup();
       const t = CATALOG.find((x) => x.id === id);
-      const pageName = { home: "Giới thiệu", "cong-cu": "Công cụ", vi: "Ví", "ho-so": "Hồ sơ", admin: "Quản trị" }[id];
+      const pageName = { home: "Giới thiệu", "cong-cu": "Công cụ", vi: "Ví", "ho-so": "Hồ sơ", admin: "Bảng điều khiển" }[id];
       crumb.innerHTML = ico("search") + " " + (pageName || (t ? t.ten : "Zhee API"));
       document.title = (pageName || (t ? t.ten : "Zhee API")) + " | Zhee API";
       document.querySelectorAll(".tabbar a").forEach((link) => {
@@ -2243,6 +2521,9 @@
       else if (id === "ho-so") renderProfile();
       else if (id === "admin") renderAdmin();
       else renderTool(id);
+      if (panel.querySelector(".skeleton-wrap")) panel.setAttribute("aria-busy", "true");
+      else panel.setAttribute("aria-busy", "false");
+      mountScrambles(panel);
       paintIcons();
     }
 
@@ -2299,6 +2580,10 @@
       }
       if (e.target.closest("#profileLogin") || e.target.closest("#walletLogin")) {
         openAuth("login");
+        return;
+      }
+      if (e.target.closest("#reloadSecret")) {
+        refreshBilling().then((ok) => { if (ok) paint(); });
         return;
       }
       if (e.target.closest("#renewBtn")) {
@@ -2398,8 +2683,8 @@
       const qEl = document.getElementById("q");
       if (!CATALOG.length) {
         navEl.innerHTML = `<p class="muted" style="padding:12px 10px">Đang tải giao diện…</p>`;
-        panel.innerHTML = `<h2>${ico("loader", "ico-head")} Đang tải</h2><p class="lead">Đang lấy danh sách API.</p>`;
-        paintIcons();
+        panel.innerHTML = skeletonHtml("Đang tải danh sách công cụ");
+        panel.setAttribute("aria-busy", "true");
       }
       return fetch("/list?t=" + Date.now(), { cache: "no-store" })
         .then((r) => r.json())
@@ -2423,7 +2708,6 @@
     window.addEventListener("hashchange", () => {
       if (isMobile()) closeNav();
       if (CATALOG.length) paint();
-      loadUI();
     });
     navEl.addEventListener("click", (e) => {
       if (e.target.closest("a") && isMobile()) closeNav();

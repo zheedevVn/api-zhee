@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -767,6 +768,13 @@ const ROUTES_REGISTRY = [
 
 const ROUTE_SEAL = buildSealMap(ROUTES_REGISTRY);
 
+function isInternalBot(req) {
+  const header = String((req.headers && req.headers["x-zhee-internal"]) || "");
+  const token = String(process.env.TELEGRAM_BOT_TOKEN || "").trim();
+  if (!header || !token || header.length !== token.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(header), Buffer.from(token));
+}
+
 function installResponseSeal(res) {
   if (typeof res.json !== "function" || res.json.__zheeSealed) return;
   const original = res.json.bind(res);
@@ -821,6 +829,8 @@ module.exports = async (req, res) => {
     let pathname = rawPath.toLowerCase();
     let sealed = false;
     installResponseSeal(res);
+    const internalBot = isInternalBot(req);
+    if (internalBot) res.zheeNoSeal = true;
     const accept = String(req.headers.accept || "");
 
     if (pathname.startsWith("/g/")) {
@@ -927,7 +937,7 @@ module.exports = async (req, res) => {
 
     if (isVideoPath(pathname)) res.zheeNoSeal = true;
 
-    if (!sealed && !isVideoPath(pathname) && matchesRegistered(pathname, ROUTE_SEAL)) {
+    if (!sealed && !internalBot && !isVideoPath(pathname) && matchesRegistered(pathname, ROUTE_SEAL)) {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Endpoint không tồn tại." });
     }
@@ -935,7 +945,7 @@ module.exports = async (req, res) => {
     const matchedRoute = ROUTES_REGISTRY.find((route) => route.prefix.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     ));
-    if (matchedRoute && !isVideoPath(pathname)) {
+    if (matchedRoute && !internalBot && !isVideoPath(pathname)) {
       const access = await accountsHandler.accessForRequest(req);
       if (!access.ok) {
         res.zheeNoSeal = true;
