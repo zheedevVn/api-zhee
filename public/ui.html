@@ -267,6 +267,37 @@
     .telegram-user-meta { color: var(--muted); font-size: 10px; }
     .telegram-role { color: #0f766e; font-weight: 800; }
     html[data-theme="dark"] .telegram-role { color: #5eead4; }
+    .account-bar { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+    .auth-open { border-radius: 999px; padding: 7px 12px; white-space: nowrap; }
+    .auth-open[hidden], .account-chip[hidden] { display: none; }
+    .account-chip {
+      display: inline-flex; align-items: center; gap: 8px; max-width: min(280px, 52vw);
+      padding: 3px 3px 3px 3px; border: 1px solid var(--line); border-radius: 999px;
+      background: var(--card); color: var(--text); font-size: 12px; line-height: 1.2;
+    }
+    .account-chip img, .account-fallback { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #e11d48; }
+    .account-fallback { display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .account-copy { min-width: 0; display: grid; gap: 1px; }
+    .account-name, .account-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .account-name { font-weight: 800; }
+    .account-meta { color: var(--muted); font-size: 10px; }
+    .account-out {
+      border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 11px; font-weight: 800;
+      cursor: pointer; padding: 7px 10px; border-radius: 999px;
+    }
+    .account-out:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
+    .auth-box { position: relative; max-width: 420px; }
+    .auth-box h3 { margin: 0 36px 8px 0; font-size: 18px; }
+    .auth-tabs { display: flex; gap: 6px; margin: 0 0 12px; }
+    .auth-tab {
+      flex: 1; border: 1px solid var(--line); background: transparent; color: var(--text);
+      border-radius: 999px; padding: 8px 10px; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+    }
+    .auth-tab.is-on { background: var(--nav-active); color: var(--nav-active-fg); border-color: var(--nav-active); }
+    .auth-lead, .auth-note { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
+    .auth-note:empty { display: none; }
+    #googleButton { min-height: 44px; display: flex; justify-content: center; }
+    #authBackdrop { z-index: 70; }
     article { padding: 8px 28px 48px; max-width: 1080px; }
     article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
     .api-title { user-select: none; -webkit-user-select: none; cursor: default; }
@@ -693,7 +724,11 @@
     <div class="topbar">
       <button class="icon-btn nav-toggle" id="navToggle" type="button" title="Menu" aria-label="Mở menu"></button>
       <div class="crumb" id="crumb"></div>
-      <div class="telegram-user" id="telegramUser" hidden></div>
+      <div class="account-bar">
+        <div class="telegram-user" id="telegramUser" hidden></div>
+        <div class="account-chip" id="accountChip" hidden></div>
+        <button class="act auth-open" id="authOpen" type="button">Đăng nhập</button>
+      </div>
     </div>
     <article id="panel"></article>
     <footer class="site-footer">
@@ -705,6 +740,19 @@
     <div class="dialog-box">
       <p id="dialogMsg"></p>
       <button class="act act-dark" type="button" id="dialogOk">OK</button>
+    </div>
+  </div>
+  <div class="dialog-backdrop" id="authBackdrop" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="dialog-box auth-box">
+      <button class="qr-close" id="authClose" type="button" aria-label="Đóng">×</button>
+      <h3 id="authTitle">Tài khoản Google</h3>
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-on" type="button" data-intent="login" role="tab" aria-selected="true">Đăng nhập</button>
+        <button class="auth-tab" type="button" data-intent="register" role="tab" aria-selected="false">Đăng ký</button>
+      </div>
+      <p class="auth-lead" id="authLead">Dùng tài khoản Google đã đăng ký. Phiên được giữ 1 ngày.</p>
+      <div id="googleButton"></div>
+      <p class="auth-note" id="authNote"></p>
     </div>
   </div>
   <div class="qr-backdrop" id="qrBackdrop" role="dialog" aria-modal="true" aria-label="Mã QR hỗ trợ">
@@ -1048,10 +1096,19 @@
     let toastTimer;
     let CATALOG = [];
     const telegramUser = document.getElementById("telegramUser");
+    const accountChip = document.getElementById("accountChip");
+    const authOpen = document.getElementById("authOpen");
+    const authBackdrop = document.getElementById("authBackdrop");
+    const authLead = document.getElementById("authLead");
+    const authNote = document.getElementById("authNote");
+    const googleButton = document.getElementById("googleButton");
+    let googleSignedIn = false;
+    let authIntent = "login";
+    let authBusy = false;
 
     async function initTelegramIdentity() {
       const webApp = window.Telegram && window.Telegram.WebApp;
-      if (!webApp || !webApp.initData) return;
+      if (!webApp || !webApp.initData || googleSignedIn) return;
       webApp.ready();
       webApp.expand();
       try {
@@ -1062,7 +1119,7 @@
           cache: "no-store"
         });
         const account = await response.json();
-        if (!response.ok || account.authenticated !== true) return;
+        if (googleSignedIn || !response.ok || account.authenticated !== true) return;
         const initials = String(account.name || "T")
           .split(/\s+/)
           .map((part) => part[0])
@@ -1079,6 +1136,173 @@
         telegramUser.hidden = true;
       }
     }
+
+    function accountInitials(name) {
+      return String(name || "G").split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "G";
+    }
+
+    function showGoogleAccount(account) {
+      googleSignedIn = true;
+      telegramUser.hidden = true;
+      authOpen.hidden = true;
+      const initials = accountInitials(account.name);
+      const picture = /^https:\/\//i.test(account.picture || "") ? account.picture : "";
+      const avatar = picture
+        ? `<img src="${esc(picture)}" alt="" aria-hidden="true">`
+        : `<span class="account-fallback" aria-hidden="true">${esc(initials)}</span>`;
+      accountChip.innerHTML = `${avatar}<span class="account-copy"><span class="account-name">${esc(account.name || account.email || "Google")}</span><span class="account-meta">${esc(account.email || "")}</span></span><button class="account-out" type="button" data-logout>Thoát</button>`;
+      accountChip.hidden = false;
+    }
+
+    function clearGoogleAccount() {
+      googleSignedIn = false;
+      accountChip.hidden = true;
+      accountChip.innerHTML = "";
+      authOpen.hidden = false;
+    }
+
+    async function refreshGoogleSession() {
+      try {
+        const response = await fetch("/api/auth/session", {
+          cache: "no-store",
+          credentials: "same-origin",
+          headers: { Accept: "application/json" }
+        });
+        const account = await response.json();
+        if (response.ok && account.authenticated === true) showGoogleAccount(account);
+        else clearGoogleAccount();
+      } catch (_) {
+        clearGoogleAccount();
+      }
+    }
+
+    function authCopy(intent) {
+      return intent === "register"
+        ? "Tạo tài khoản bằng Google. Lần sau dùng Đăng nhập. Phiên được giữ 1 ngày."
+        : "Dùng tài khoản Google đã đăng ký. Phiên được giữ 1 ngày.";
+    }
+
+    function closeAuth() {
+      authBackdrop.classList.remove("show");
+      authBusy = false;
+    }
+
+    function ensureGoogleScript() {
+      if (window.google && window.google.accounts && window.google.accounts.id) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-gsi="1"]');
+        if (existing) {
+          existing.addEventListener("load", () => resolve(), { once: true });
+          existing.addEventListener("error", () => reject(new Error("Không tải được Google.")), { once: true });
+          return;
+        }
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.dataset.gsi = "1";
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Không tải được Google."));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function onGoogleCredential(response) {
+      if (authBusy) return;
+      authBusy = true;
+      authNote.textContent = "Đang xác thực…";
+      try {
+        const result = await fetch("/api/auth/google", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ credential: response && response.credential, intent: authIntent })
+        });
+        const account = await result.json();
+        if (!result.ok || account.authenticated !== true) {
+          authNote.textContent = account.thong_bao || "Không đăng nhập được.";
+          authBusy = false;
+          return;
+        }
+        showGoogleAccount(account);
+        closeAuth();
+        notify(authIntent === "register" ? "Đã đăng ký. Phiên giữ 1 ngày." : "Đã đăng nhập. Phiên giữ 1 ngày.");
+      } catch (_) {
+        authNote.textContent = "Không kết nối được máy chủ.";
+        authBusy = false;
+      }
+    }
+
+    async function paintGoogleButton() {
+      googleButton.innerHTML = "";
+      authNote.textContent = "";
+      let config;
+      try {
+        const response = await fetch("/api/auth/config", { cache: "no-store", credentials: "same-origin", headers: { Accept: "application/json" } });
+        config = await response.json();
+      } catch (_) {
+        authNote.textContent = "Không tải được cấu hình đăng nhập.";
+        return;
+      }
+      if (!config || !config.enabled || !config.client_id) {
+        authNote.textContent = "Chưa cấu hình GOOGLE_CLIENT_ID. Tạo OAuth Web client, thêm origin https://api-zhee.vercel.app, rồi đặt biến này trên Vercel.";
+        return;
+      }
+      try {
+        await ensureGoogleScript();
+      } catch (_) {
+        authNote.textContent = "Không tải được nút Google.";
+        return;
+      }
+      const width = Math.max(240, Math.min(360, Math.floor(googleButton.getBoundingClientRect().width) || 320));
+      google.accounts.id.initialize({
+        client_id: config.client_id,
+        callback: onGoogleCredential,
+        ux_mode: "popup",
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+      google.accounts.id.renderButton(googleButton, {
+        type: "standard",
+        theme: document.documentElement.getAttribute("data-theme") === "dark" ? "filled_black" : "outline",
+        size: "large",
+        text: authIntent === "register" ? "signup_with" : "signin_with",
+        shape: "pill",
+        width: width,
+        logo_alignment: "left"
+      });
+    }
+
+    function openAuth(intent) {
+      authIntent = intent === "register" ? "register" : "login";
+      authBackdrop.querySelectorAll(".auth-tab").forEach((tab) => {
+        const on = tab.dataset.intent === authIntent;
+        tab.classList.toggle("is-on", on);
+        tab.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      authLead.textContent = authCopy(authIntent);
+      authBackdrop.classList.add("show");
+      paintGoogleButton();
+    }
+
+    authOpen.addEventListener("click", () => openAuth("login"));
+    document.getElementById("authClose").addEventListener("click", closeAuth);
+    authBackdrop.addEventListener("click", (event) => { if (event.target === authBackdrop) closeAuth(); });
+    authBackdrop.querySelectorAll(".auth-tab").forEach((tab) => {
+      tab.addEventListener("click", () => openAuth(tab.dataset.intent));
+    });
+    accountChip.addEventListener("click", async (event) => {
+      if (!event.target.closest("[data-logout]")) return;
+      accountChip.querySelector("[data-logout]").disabled = true;
+      try {
+        await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+      } catch (_) {}
+      clearGoogleAccount();
+      notify("Đã đăng xuất.");
+      initTelegramIdentity();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && authBackdrop.classList.contains("show")) closeAuth();
+    });
 
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
@@ -1804,6 +2028,7 @@
     updateUptime();
     setInterval(updateUptime, 1000);
     initTelegramIdentity();
+    refreshGoogleSession();
     loadUI();
   </script>
 </body>

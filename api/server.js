@@ -52,6 +52,7 @@ function serveRobotsTxt(res) {
     "Allow: /",
     "Disallow: /api/telegram/webhook",
     "Disallow: /api/telegram/auth",
+    "Disallow: /api/auth/",
     `Sitemap: ${SEO_ORIGIN}/sitemap.xml`,
     ""
   ].join("\n");
@@ -117,6 +118,7 @@ const nasaHandler = require("../lib/nasa");
 const ipCheckHandler = require("../lib/ipcheck");
 const telegramBotHandler = require("../lib/telegramBot");
 const telegramAuthHandler = require("../lib/telegramAuth");
+const googleAuthHandler = require("../lib/googleAuth");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
@@ -819,6 +821,16 @@ module.exports = async (req, res) => {
 
     if (pathname === "/api/telegram/auth" || pathname === "/telegram/auth") {
       return await telegramAuthHandler(req, res);
+    }
+
+    if (
+      pathname === "/api/auth/config" ||
+      pathname === "/api/auth/session" ||
+      pathname === "/api/auth/logout" ||
+      pathname === "/api/auth/google"
+    ) {
+      res.zheeNoSeal = true;
+      return await googleAuthHandler(req, res);
     }
 
     if (wantsDocsHtml(req, pathname)) {
