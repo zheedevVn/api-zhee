@@ -332,7 +332,11 @@
     .auth-tab.is-on { background: var(--nav-active); color: var(--nav-active-fg); border-color: var(--nav-active); }
     .auth-lead, .auth-note { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
     .auth-note:empty { display: none; }
-    #googleButton { min-height: 44px; display: flex; justify-content: center; }
+    #googleButton {
+      width: 100%; min-height: 40px; display: flex; justify-content: center;
+      overflow: hidden; border-radius: 999px; background: #fff;
+    }
+    html[data-theme="dark"] #googleButton { background: #131314; }
     #googleButton:empty { display: none; min-height: 0; }
     .admin-login { display: grid; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
     .admin-login p { margin: 0; color: var(--muted); font-size: 12px; }
@@ -935,7 +939,7 @@
     @media (max-width: 640px) {
       .sk-grid { grid-template-columns: 1fr; }
       .gate { min-height: calc(100dvh - 150px); align-items: start; }
-      .gate-card, dialog.modal { width: calc(100vw - 20px); }
+      .gate-card, dialog.modal { width: min(440px, calc(100vw - 20px)); }
       .auth-card h3 { font-size: 20px; }
     }
     @media (min-width: 901px) {
@@ -1112,7 +1116,7 @@
         <button class="act act-dark" id="authSubmit" type="submit">Đăng nhập</button>
       </form>
       <div class="auth-or" id="authOr"><span>hoặc</span></div>
-      <div id="googleButton"></div>
+      <div id="googleButton" class="google-slot"></div>
       <p class="auth-note" id="authNote"></p>
     </div>
   </dialog>
@@ -1801,7 +1805,10 @@
         setAuthNote("Không tải được nút Google.", "alert");
         return;
       }
-      const width = Math.max(240, Math.min(360, Math.floor(googleButton.getBoundingClientRect().width) || 320));
+      const card = googleButton.closest(".modal-card");
+      const cardStyle = getComputedStyle(card);
+      const inner = Math.floor(card.clientWidth - parseFloat(cardStyle.paddingLeft) - parseFloat(cardStyle.paddingRight));
+      const width = Math.max(240, Math.min(400, inner || 320));
       google.accounts.id.initialize({
         client_id: config.client_id,
         callback: onGoogleCredential,
