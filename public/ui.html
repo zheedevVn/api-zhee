@@ -226,8 +226,9 @@
     @media (prefers-reduced-motion: reduce) {
       svg.zhee-glyph, img.ico-brand-img[data-fx] { animation: none !important; }
     }
-    .drop-panel { overflow: hidden; height: 0; transition: height .28s cubic-bezier(.22, 1, .36, 1); }
-    .drop.is-open .drop-panel { height: auto; }
+    .drop-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s cubic-bezier(.22, 1, .36, 1); }
+    .drop-panel-inner { min-height: 0; overflow: hidden; }
+    .drop.is-open .drop-panel { grid-template-rows: 1fr; }
     .drop a {
       display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);
       font-size: 13.5px; font-weight: 600; padding: 7px 10px 7px 14px; border-radius: 10px; margin: 1px 0;
@@ -314,10 +315,28 @@
     .profile-grid, .wallet-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
     .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
     .kv span { color: var(--muted); }
-    .secret-value { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px; word-break: break-all; }
+    .secret-card h3, .key-slot { display: flex; align-items: center; gap: 8px; }
+    .secret-box, .key-slot { min-width: 0; max-width: 100%; }
+    .key-slot { margin: 0 0 12px; }
+    .key-slot .field { flex: 1; min-width: 0; }
+    .secret-box {
+      margin-top: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
+      background: var(--bg); overflow: hidden; max-width: 100%;
+    }
+    .secret-value {
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 14px; font-weight: 800;
+      letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+    }
+    .field, .pay-box input, .card input[type="text"], .card input:not([type]), .card input[inputmode="numeric"] {
+      width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 12px;
+      padding: 11px 12px; background: var(--bg); color: var(--text); font: inherit; font-size: 14px; font-weight: 650;
+      outline: none;
+    }
+    .field:focus, .pay-box input:focus, .card input:focus { border-color: #60a5fa; }
+    .field[readonly] { color: var(--muted); }
     .pay-box { display: grid; gap: 8px; }
     .pay-box img { width: min(220px, 100%); border-radius: 12px; background: #fff; }
-    .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 8px 0 18px; }
     .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
     table.admin { width: 100%; border-collapse: collapse; font-size: 13px; }
     table.admin th, table.admin td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -354,7 +373,7 @@
     }
     #authBackdrop { z-index: 70; }
     article { padding: 8px 28px 48px; max-width: 1080px; }
-    article h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+    article h2 { font-size: 26px; font-weight: 800; margin-bottom: 18px; display: flex; align-items: flex-start; flex-wrap: wrap; gap: 10px; min-width: 0; max-width: 100%; }
     .api-title { user-select: none; -webkit-user-select: none; cursor: default; }
     .lead { color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 22px; }
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; min-width: 0; }
@@ -364,7 +383,9 @@
     }
     .card.tool-card { border-top: 3px solid var(--tool-accent); }
     .card.tool-card h3 { color: var(--tool-accent); }
-    .card h3 { font-size: 16px; margin-bottom: 12px; }
+    .card h3 { font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .lead svg.lucide, .muted svg.lucide { display: inline-block; vertical-align: -3px; width: 16px; height: 16px; margin-right: 6px; }
+    .admin-stats > .skeleton-wrap { grid-column: 1 / -1; }
     .label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
     .endpoint { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--link); word-break: break-all; overflow-wrap: anywhere; line-height: 1.55; max-width: 100%; min-width: 0; }
     .tool-icon { display: inline-grid; place-items: center; width: 34px; height: 34px; color: var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 13%, transparent); border: 1px solid color-mix(in srgb, var(--tool-accent) 30%, var(--line)); border-radius: 10px; }
@@ -662,8 +683,7 @@
     .home-link.active { position: relative; }
     .home-link.active .nav-label { margin-left: 2px; }
     .home-drop { margin-top: 4px; }
-    .home-drop .drop-panel { height: 0; }
-    .home-drop.is-open > .drop-panel { display: block; height: auto !important; visibility: visible; opacity: 1; }
+    .home-drop.is-open > .drop-panel { display: grid; grid-template-rows: 1fr; visibility: visible; opacity: 1; }
     .home-drop:not(.is-open) > .drop-panel { display: none; }
     .home-actions { position: relative; z-index: 1; }
     .home-section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 28px 0 12px; }
@@ -809,8 +829,8 @@
     .gate-card h2 { margin-top: 0; }
     .gate-card .lead { margin-bottom: 0; }
     .gate-card .act { width: 100%; justify-content: center; margin-top: 16px; min-height: 44px; }
-    .scramble-line { display: inline-block; min-width: 0; }
-    .scramble { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: pre; }
+    .scramble-line { display: block; flex: 1 1 12rem; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+    .scramble { font: inherit; letter-spacing: inherit; white-space: normal; overflow-wrap: anywhere; }
     .skeleton-wrap { position: relative; }
     .sk { border-radius: 12px; background: linear-gradient(90deg, color-mix(in srgb, var(--line) 80%, transparent), color-mix(in srgb, var(--card) 55%, var(--text) 8%), color-mix(in srgb, var(--line) 80%, transparent)); background-size: 200% 100%; animation: sk 1.1s ease infinite; }
     .sk-title { height: 28px; width: min(280px, 72%); margin-bottom: 12px; }
@@ -1017,6 +1037,18 @@
       ngl: "message-circle"
     };
 
+    function pascalIcon(name) {
+      return String(name || "").split("-").filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("");
+    }
+    function svgNodes(nodes) {
+      return (nodes || []).map((node) => {
+        const tag = node[0];
+        const attrs = node[1] || {};
+        const kids = node[2];
+        const att = Object.entries(attrs).map(([key, value]) => `${key}="${String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;")}"`).join(" ");
+        return `<${tag} ${att}>${kids ? svgNodes(kids) : ""}</${tag}>`;
+      }).join("");
+    }
     function ico(name, cls) {
       const brand = BRAND_SLUGS[name];
       const assetUrl = BRAND_ASSET_URLS[name];
@@ -1026,7 +1058,15 @@
         return `<img class="ico-brand-img ${cls || ""}" src="${src}" alt="" aria-hidden="true" width="18" height="18" loading="eager">`;
       }
       const lucideName = LUCIDE_FALLBACK[name] || name || "circle-help";
-      return `<i data-lucide="${lucideName}" class="${cls || ""}"></i>`;
+      const icons = window.lucide && window.lucide.icons;
+      const node = icons && icons[pascalIcon(lucideName)];
+      if (!node) return `<i data-lucide="${lucideName}" class="${cls || ""}"></i>`;
+      return `<svg class="lucide lucide-${lucideName} ${cls || ""}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svgNodes(node)}</svg>`;
+    }
+    function maskSecret(secret) {
+      const value = String(secret || "");
+      if (!value) return "";
+      return "••••••••" + value.slice(-4);
     }
     // Giữ nguyên nét Lucide. Hover chỉ xoay hoặc nhích đúng icon đó, rồi trả về hình gốc.
     const SELF_POSES = {
@@ -1673,15 +1713,8 @@
         navReturnFocus = document.activeElement;
         navClose.focus();
       } else {
-        navEl.querySelectorAll(".drop-panel").forEach((p) => { p.style.height = "0px"; });
         document.body.classList.remove("nav-collapsed");
         localStorage.setItem("zhee-nav", "open");
-        void sidebar.offsetWidth;
-        navEl.querySelectorAll("details.drop.is-open .drop-panel").forEach((p) => {
-          const inner = p.querySelector(".drop-panel-inner");
-          p.style.height = (inner ? inner.scrollHeight : 0) + "px";
-          p.addEventListener("transitionend", () => { p.style.height = "auto"; }, { once: true });
-        });
       }
       syncNavBtn();
     }
@@ -1694,15 +1727,8 @@
         if (navReturnFocus && typeof navReturnFocus.focus === "function") navReturnFocus.focus();
         navReturnFocus = null;
       } else {
-        navEl.querySelectorAll(".drop-panel").forEach((p) => {
-          const inner = p.querySelector(".drop-panel-inner");
-          const open = p.closest(".drop")?.classList.contains("is-open");
-          p.style.height = open ? ((inner ? inner.scrollHeight : p.scrollHeight) + "px") : "0px";
-        });
-        void sidebar.offsetWidth;
         document.body.classList.add("nav-collapsed");
         localStorage.setItem("zhee-nav", "collapsed");
-        navEl.querySelectorAll(".drop-panel").forEach((p) => { p.style.height = "0px"; });
       }
       syncNavBtn();
     }
@@ -1846,43 +1872,12 @@
       const sum = e.target.closest("summary");
       if (!sum || !navEl.contains(sum)) return;
       const details = sum.parentElement;
-      if (!details.classList.contains("drop")) return;
+      if (!details || !details.classList.contains("drop")) return;
       e.preventDefault();
-      if (!isMobile() && document.body.classList.contains("nav-collapsed")) {
-        const group = details.dataset.group;
-        openNav();
-        if (group) {
-          details.classList.add("is-open");
-          const panelOpen = details.querySelector(".drop-panel");
-          const innerOpen = panelOpen && panelOpen.querySelector(".drop-panel-inner");
-          if (panelOpen) {
-            panelOpen.style.height = "0px";
-            requestAnimationFrame(() => {
-              panelOpen.style.height = (innerOpen ? innerOpen.scrollHeight : 0) + "px";
-            });
-          }
-          rememberOpen();
-        } else {
-          location.hash = "#home";
-        }
-        return;
-      }
+      if (!isMobile() && document.body.classList.contains("nav-collapsed")) openNav();
       const panelEl = details.querySelector(".drop-panel");
-      if (!panelEl) return;
-      const inner = panelEl.querySelector(".drop-panel-inner");
-      const opening = !details.classList.contains("is-open");
-      if (opening) {
-        details.classList.add("is-open");
-        panelEl.style.height = "0px";
-        requestAnimationFrame(() => {
-          panelEl.style.height = (inner ? inner.scrollHeight : panelEl.scrollHeight) + "px";
-        });
-        panelEl.addEventListener("transitionend", () => { panelEl.style.height = "auto"; }, { once: true });
-      } else {
-        panelEl.style.height = (inner ? inner.scrollHeight : panelEl.scrollHeight) + "px";
-        requestAnimationFrame(() => { panelEl.style.height = "0px"; });
-        panelEl.addEventListener("transitionend", () => { details.classList.remove("is-open"); panelEl.style.height = ""; }, { once: true });
-      }
+      if (panelEl) panelEl.style.height = "";
+      details.classList.toggle("is-open");
       rememberOpen();
     });
 
@@ -2133,7 +2128,7 @@
       if (media) media.innerHTML = "";
       const timer = setTimeout(() => ac.abort(), timeoutMs || 12000);
       const headers = { Accept: "application/json, audio/*, image/*, */*", "Content-Type": "application/json" };
-      if (billing && billing.secret) headers["x-zhee-key"] = billing.secret;
+      if (billing && billing.secret && billing.role !== "admin") headers["x-zhee-key"] = billing.secret;
       fetch("/api/run", {
         method: "POST",
         signal: ac.signal,
@@ -2292,7 +2287,7 @@
         }
         map.get(group.label).push(tool);
       });
-      panel.innerHTML = `<h2>${ico("layout-grid", "ico-head")} ${scrambleHtml("Công cụ")}</h2><p class="lead">Chọn công cụ để chạy. Kết quả hiện tại trang, đường dẫn không được đưa ra.</p>` + groups.map((label) => `
+      panel.innerHTML = `<h2>${ico("layout-grid", "ico-head")} ${scrambleHtml("Công cụ")}</h2>` + groups.map((label) => `
         <div class="home-section-head"><div><h3>${esc(label)}</h3></div></div>
         <div class="home-grid">${map.get(label).map((tool) => `
           <a class="home-tile" style="--tool-accent:${accentFor(toolMark(tool), tool.chuyen_muc)}" href="#${tool.id}">
@@ -2329,28 +2324,23 @@
         panel.setAttribute("aria-busy", "false");
         return;
       }
-      if (billing.role === "admin") {
-        panel.innerHTML = `<div class="gate"><div class="gate-card"><h2>${ico("shield", "ico-head")} ${scrambleHtml("Đã đăng nhập")}</h2><p class="lead">${esc(billing.email || "")}</p><a class="act act-dark" href="#admin">Mở bảng điều khiển</a></div></div>`;
-        panel.setAttribute("aria-busy", "false");
-        return;
-      }
       const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleString("vi-VN") : "";
+      const adminLink = billing.role === "admin" ? `<a class="act" href="#admin">${ico("shield")} Bảng điều khiển</a>` : "";
       panel.innerHTML = `
         <h2>${ico("circle-user", "ico-head")} ${scrambleHtml("Hồ sơ")}</h2>
         <div class="profile-grid">
           <div class="card">
-            <h3>${esc(billing.name || "Tài khoản")}</h3>
+            <h3>${ico("circle-user")} ${esc(billing.name || "Tài khoản")}</h3>
             <div class="kv"><span>Email</span><b>${esc(billing.email || "")}</b></div>
             <div class="kv"><span>Số dư</span><b class="money">${vnd(billing.balance)}</b></div>
             <div class="kv"><span>Key đến</span><b>${esc(when)}</b></div>
             <div class="kv"><span>Trạng thái</span><b>${billing.key_active ? "Còn hạn" : "Hết 10 ngày"}</b></div>
-            <div class="row-btns"><a class="act act-dark" href="#vi">Nạp tiền</a><button class="act" type="button" id="renewBtn">Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button></div>
+            <div class="row-btns"><a class="act act-dark" href="#vi">${ico("wallet")} Nạp tiền</a><button class="act" type="button" id="renewBtn">${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button>${adminLink}</div>
           </div>
-          <div class="card">
-            <h3>Secret key</h3>
-            <p class="muted" style="margin-top:0">Dùng trên web thì key tự gắn. Khi gọi từ bên ngoài, gửi header <b>x-zhee-key</b>.</p>
-            <p class="secret-value" id="secretValue">${esc(billing.secret || "Chưa có secret key. Bấm tải lại.")}</p>
-            <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép key</button><button class="act" type="button" id="reloadSecret">Tải lại</button></div>
+          <div class="card secret-card">
+            <h3>${ico("key-round")} Secret key</h3>
+            <div class="secret-box"><p class="secret-value" id="secretValue">${esc(maskSecret(billing.secret))}</p></div>
+            <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép</button></div>
           </div>
         </div>`;
     }
@@ -2361,25 +2351,25 @@
         panel.setAttribute("aria-busy", "true");
         return;
       }
-      if (!billing || billing.role === "admin") {
-        panel.innerHTML = gateHtml("Ví", "Đăng nhập tài khoản Google để tạo nội dung nạp tiền.", "walletLogin");
+      if (!billing) {
+        panel.innerHTML = gateHtml("Ví", "Đăng nhập để tạo nội dung nạp tiền.", "walletLogin");
         panel.setAttribute("aria-busy", "false");
         return;
       }
       panel.innerHTML = `
         <h2>${ico("wallet", "ico-head")} ${scrambleHtml("Nạp tiền")}</h2>
-        <p class="lead">Số dư ${vnd(billing.balance)}. Chuyển khoản MB Bank, nội dung đúng mã thì quản trị cộng tiền.</p>
+        <p class="lead">${ico("landmark")} ${vnd(billing.balance)} · MB Bank · nội dung đúng mã</p>
         <div class="wallet-grid">
           <div class="card">
-            <h3>Tạo lệnh nạp</h3>
+            <h3>${ico("plus")} Tạo lệnh nạp</h3>
             <div class="pay-box">
-              <input id="topupAmount" inputmode="numeric" placeholder="Số tiền, tối thiểu 10.000" value="10000">
+              <input id="topupAmount" class="field" inputmode="numeric" placeholder="Số tiền, tối thiểu 10.000" value="10000">
               <button class="act act-dark" type="button" id="topupCreate">Lấy nội dung chuyển khoản</button>
               <div id="topupTicket"></div>
             </div>
           </div>
           <div class="card">
-            <h3>Tài khoản nhận</h3>
+            <h3>${ico("landmark")} Tài khoản nhận</h3>
             <div class="kv"><span>Ngân hàng</span><b>MB BANK</b></div>
             <div class="kv"><span>Số tài khoản</span><b>0899256226</b></div>
             <div class="kv"><span>Chủ tài khoản</span><b>HO DUC MINH</b></div>
@@ -2417,7 +2407,7 @@
         panel.setAttribute("aria-busy", "false");
         return;
       }
-      panel.innerHTML = `<h2>${ico("shield", "ico-head")} ${scrambleHtml("Bảng điều khiển")}</h2><p class="lead">Người dùng, số dư và lệnh nạp.</p><div id="adminStats" aria-busy="true">${skeletonHtml("Đang tải số liệu")}</div><div class="card" style="margin-bottom:14px"><input id="adminQ" placeholder="Tìm email hoặc tên"></div><div id="adminUsers"></div><div class="home-section-head"><div><h3>Nạp tiền</h3></div></div><div id="adminTopups"></div>`;
+      panel.innerHTML = `<h2>${ico("shield", "ico-head")} ${scrambleHtml("Bảng điều khiển")}</h2><p class="lead">Người dùng, số dư và lệnh nạp.</p><div id="adminStats" class="admin-stats" aria-busy="true">${skeletonHtml("Đang tải số liệu")}</div><div class="card" style="margin-bottom:14px"><input id="adminQ" class="field" placeholder="Tìm email hoặc tên"></div><div id="adminUsers"></div><div class="home-section-head"><div><h3>${ico("wallet")} Nạp tiền</h3></div></div><div id="adminTopups"></div>`;
       await reloadAdmin();
     }
 
@@ -2455,10 +2445,10 @@
       panel.innerHTML = `
         <h2 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${scrambleHtml(t.ten)}</h2>
         <p class="lead">${esc(t.mo_ta)}</p>
-        ${/\/nasa/i.test(toolMark(t)) ? '<p class="muted" style="margin:-10px 0 16px">Nhập một dòng: <strong>action=neo&amp;start_date=YYYY-MM-DD&amp;end_date=YYYY-MM-DD</strong>. Hỗ trợ apod, neo, epic, donki; Mars Rover API đã bị NASA lưu trữ.</p>' : ''}
+        ${/\/nasa/i.test(toolMark(t)) ? `<p class="muted" style="margin:-10px 0 16px">${ico("satellite")} apod, neo, epic, donki. Điền action và ngày.</p>` : ''}
         <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
-          <h3>Chạy trên giao diện</h3>
-          <p class="muted" style="margin-top:0">Secret key của tài khoản được gắn tự động. Trang chỉ hiện kết quả.</p>
+          <h3>${ico("play")} Chạy</h3>
+          ${billing && billing.secret ? `<label class="key-slot">${ico("key-round")}<input class="field" value="${esc(maskSecret(billing.secret))}" readonly tabindex="-1" aria-label="Secret key đã gắn" autocomplete="off"></label>` : ""}
           <div id="tryFields"></div>
           ${/\/badge(?:$|\/)/i.test(toolMark(t)) ? badgePresetMarkup() : ''}
           <div class="row-btns">
@@ -2484,15 +2474,9 @@
       const active = navEl.querySelector("a.active");
       const details = active && active.closest(".drop");
       if (!details || details.classList.contains("is-open")) return;
-      if (document.body.classList.contains("nav-collapsed") && !isMobile()) {
-        details.classList.add("is-open");
-        rememberOpen();
-        return;
-      }
       details.classList.add("is-open");
       const panelEl = details.querySelector(".drop-panel");
-      const inner = panelEl && panelEl.querySelector(".drop-panel-inner");
-      if (panelEl) panelEl.style.height = (inner ? inner.scrollHeight : 0) + "px";
+      if (panelEl) panelEl.style.height = "";
       rememberOpen();
     }
     function paint() {

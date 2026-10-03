@@ -775,6 +775,23 @@ function isInternalBot(req) {
   return crypto.timingSafeEqual(Buffer.from(header), Buffer.from(token));
 }
 
+function isAdminBot(req) {
+  if (!isInternalBot(req)) return false;
+  const adminId = String((req.headers && req.headers["x-zhee-admin"]) || "").trim();
+  if (!adminId) return false;
+  const admins = String(process.env.TELEGRAM_ADMIN_IDS || "").split(",").map((id) => id.trim()).filter(Boolean);
+  return admins.includes(adminId);
+}
+
+function serveGoogleVerification(res) {
+  const file = path.join(__dirname, "..", "public", "google1d1d8cc07ec81095.html");
+  const body = fs.readFileSync(file);
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=3600");
+  res.statusCode = 200;
+  res.end(body);
+}
+
 function installResponseSeal(res) {
   if (typeof res.json !== "function" || res.json.__zheeSealed) return;
   const original = res.json.bind(res);
@@ -845,6 +862,10 @@ module.exports = async (req, res) => {
       req.zheePublicUrl = rawPath + search;
       pathname = canonical.toLowerCase();
       sealed = true;
+    }
+
+    if (pathname === "/google1d1d8cc07ec81095.html") {
+      return serveGoogleVerification(res);
     }
 
     if (pathname === "/robots.txt") {
@@ -945,7 +966,7 @@ module.exports = async (req, res) => {
     const matchedRoute = ROUTES_REGISTRY.find((route) => route.prefix.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     ));
-    if (matchedRoute && !internalBot && !isVideoPath(pathname)) {
+    if (matchedRoute && !isAdminBot(req)) {
       const access = await accountsHandler.accessForRequest(req);
       if (!access.ok) {
         res.zheeNoSeal = true;
@@ -963,13 +984,14 @@ module.exports = async (req, res) => {
       }
     }
 
-    if (typeof homeHandler === "function") {
+    if (pathname === "/" && typeof homeHandler === "function") {
       return await homeHandler(req, res);
     }
 
-    return res.status(200).json({
-      trang_thai: "thanh_cong",
-      thong_bao: "Zhee API Gateway is running!"
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.status(404).json({
+      trang_thai: "that_bai",
+      thong_bao: "Endpoint không tồn tại."
     });
   } catch (error) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
