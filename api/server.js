@@ -809,8 +809,8 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/mxh/tiktok", "/mxh/tiktok", "/tiktok", "/douyin", "/api/douyin"],
     ten: "TikTok / Douyin Profile & Downloader",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Lấy profile TikTok theo username hoặc link trang (tên, avatar, follower) hoặc bóc tách link tải video TikTok/Douyin không watermark qua TikWM và Cobalt.",
-    vi_du_params: "?=https://www.tiktok.com/@user/video/123456789",
+    mo_ta: "Tra cứu profile TikTok, tải video/ảnh không logo qua TikWM/Cobalt, hoặc check account tầng sâu bằng Session ID (email, phone, connects, bảo mật).",
+    vi_du_params: "?user=tiktok",
     handler: tiktokHandler
   },
   {
@@ -1017,10 +1017,23 @@ function serveGoogleVerification(res) {
   res.end(body);
 }
 
-function installResponseSeal(res) {
+function installResponseSeal(res, req) {
   if (typeof res.json !== "function" || res.json.__zheeSealed) return;
   const original = res.json.bind(res);
-  const wrapped = (body) => original(res.zheeNoSeal ? body : sealBody(body, ROUTE_SEAL));
+  const host = (req && req.headers && (req.headers["x-forwarded-host"] || req.headers.host)) || "api-zhee.vercel.app";
+  const wrapped = (body) => {
+    let out = res.zheeNoSeal ? body : sealBody(body, ROUTE_SEAL);
+    if (out && typeof out === "object") {
+      try {
+        let jsonStr = JSON.stringify(out);
+        if (jsonStr.includes("{domain}")) {
+          jsonStr = jsonStr.replace(/\{domain\}/g, host);
+          out = JSON.parse(jsonStr);
+        }
+      } catch (_) {}
+    }
+    return original(out);
+  };
   wrapped.__zheeSealed = true;
   res.json = wrapped;
 }
@@ -1142,7 +1155,7 @@ module.exports = async (req, res) => {
     const search = queryIndex >= 0 ? url.slice(queryIndex) : "";
     let pathname = rawPath.toLowerCase();
     let sealed = false;
-    installResponseSeal(res);
+    installResponseSeal(res, req);
     // Callers still use the short paths. Keep those paths in JSON instead of
     // rewriting them into the long /g/ token.
     res.zheeNoSeal = true;
