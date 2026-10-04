@@ -61,6 +61,10 @@ const SEO_PAGES = {
   "/lien-he": {
     title: "Liên hệ Hồ Đức Minh | Zhee API",
     description: "Liên hệ Hồ Đức Minh qua Facebook, Zalo, TikTok, Discord và Telegram để được hỗ trợ Zhee API."
+  },
+  "/admin": {
+    title: "Bảng điều khiển | Zhee API",
+    description: "Bảng điều khiển quản trị Zhee API."
   }
 };
 

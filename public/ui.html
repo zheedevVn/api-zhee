@@ -1632,8 +1632,8 @@
     }
 
     function paintAccountSurface() {
-      const raw = (location.hash || "#home").replace(/^#\/?/, "") || "home";
-      if (raw === "ho-so" || raw === "vi" || raw === "admin") paint();
+      const id = currentId();
+      if (id === "ho-so" || id === "vi" || id === "admin" || id === "home" || id === "dang-nhap") paint();
       const qEl = document.getElementById("q");
       if (CATALOG.length) renderNav(qEl ? qEl.value : "");
     }
@@ -1648,10 +1648,11 @@
         if (!response.ok) return false;
         billing = await response.json();
         accountState = "in";
+        googleSignedIn = true;
         const badge = document.getElementById("tabBadge");
         if (badge) badge.hidden = !(billing && billing.role !== "admin" && billing.key_active === false);
-        if (billing && billing.role === "admin") showGoogleAccount(billing);
-        else if (googleSignedIn && billing) showGoogleAccount({ ...billing, role: "user" });
+        showGoogleAccount(billing);
+        paintAccountSurface();
         return true;
       } catch (_) {
         return false;
@@ -1661,18 +1662,26 @@
     async function refreshGoogleSession() {
       const epoch = ++sessionEpoch;
       try {
-        const response = await fetch("/api/auth/session", {
-          cache: "no-store",
-          credentials: "same-origin",
-          headers: { Accept: "application/json" }
-        });
-        const account = await response.json();
+        const [sessionRes, billingOk] = await Promise.all([
+          fetch("/api/auth/session", {
+            cache: "no-store",
+            credentials: "same-origin",
+            headers: { Accept: "application/json" }
+          }).then(async (r) => {
+            const data = await r.json().catch(() => null);
+            return { ok: r.ok, data };
+          }).catch(() => null),
+          refreshBilling()
+        ]);
         if (epoch !== sessionEpoch) return;
-        if (response.ok && account.authenticated === true) {
+        if (sessionRes && sessionRes.ok && sessionRes.data && sessionRes.data.authenticated === true) {
           accountState = "in";
-          showGoogleAccount(account);
-          await refreshBilling();
-          if (epoch !== sessionEpoch) return;
+          googleSignedIn = true;
+          showGoogleAccount(sessionRes.data);
+          paintAccountSurface();
+        } else if (billingOk || billing) {
+          accountState = "in";
+          googleSignedIn = true;
           paintAccountSurface();
         } else {
           clearGoogleAccount();
@@ -1830,7 +1839,13 @@
       input.addEventListener("change", () => { if (input.checked) openAuth(input.value); });
     });
     accountChip.addEventListener("click", async (event) => {
-      if (!event.target.closest("[data-logout]")) return;
+      if (!event.target.closest("[data-logout]")) {
+        if (currentId() !== "ho-so") {
+          history.pushState(null, "", "/ho-so");
+          paint();
+        }
+        return;
+      }
       accountChip.querySelector("[data-logout]").disabled = true;
       try {
         await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
@@ -1838,8 +1853,10 @@
       clearGoogleAccount();
       notify("Đã đăng xuất.");
       initTelegramIdentity();
-      if (["vi", "ho-so", "admin"].includes(currentId())) location.href = "/";
-      else paintAccountSurface();
+      if (["vi", "ho-so", "admin"].includes(currentId())) {
+        history.pushState(null, "", "/");
+        paint();
+      } else paintAccountSurface();
     });
     document.getElementById("adminForm").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -1864,6 +1881,7 @@
         }
         sessionEpoch += 1;
         accountState = "in";
+        googleSignedIn = true;
         showGoogleAccount(account);
         await refreshBilling();
         closeAuth();
@@ -2100,6 +2118,7 @@
       "/dang-nhap": "dang-nhap",
       "/ho-so": "ho-so",
       "/vi": "vi",
+      "/admin": "admin",
       "/lien-he": "lien-he"
     };
     function currentId() {
@@ -2604,26 +2623,16 @@
     }
 
     function renderProfile() {
-      if (accountState === "loading") {
+      if (accountState === "loading" || (!billing && (googleSignedIn || accountState === "in"))) {
         panel.innerHTML = skeletonHtml("Đang tải hồ sơ");
         panel.setAttribute("aria-busy", "true");
-        return;
-      }
-      if (!billing && googleSignedIn) {
-        if (panel.dataset.billingPull === "1") return;
-        panel.dataset.billingPull = "1";
-        panel.innerHTML = skeletonHtml("Đang tải secret key");
-        panel.setAttribute("aria-busy", "true");
-        refreshBilling().then((ok) => {
-          panel.dataset.billingPull = "";
-          if (currentId() !== "ho-so") return;
-          if (ok) paint();
-          else {
-            panel.innerHTML = `<div class="gate"><div class="gate-card"><h1>${scrambleHtml("Hồ sơ")}</h1><p class="lead">Phiên đăng nhập còn. Bấm tải lại để hiện secret key.</p><button class="act act-dark" type="button" id="reloadSecret">Tải lại</button></div></div>`;
-            panel.setAttribute("aria-busy", "false");
-            mountScrambles(panel);
-          }
-        });
+        if (!billing && (googleSignedIn || accountState === "in") && panel.dataset.billingPull !== "1") {
+          panel.dataset.billingPull = "1";
+          refreshBilling().then((ok) => {
+            panel.dataset.billingPull = "";
+            if (currentId() === "ho-so") paint();
+          });
+        }
         return;
       }
       if (!billing) {
@@ -2643,7 +2652,7 @@
             <div class="kv"><span>Số dư</span><b class="money">${vnd(billing.balance)}</b></div>
             <div class="kv"><span>Key đến</span><b>${esc(when)}</b></div>
             <div class="kv"><span>Trạng thái</span><b>${billing.key_active ? "Còn hạn" : "Hết 10 ngày"}</b></div>
-            <div class="row-btns"><a class="act act-dark" href="#vi">${ico("wallet")} Nạp tiền</a><button class="act" type="button" id="renewBtn">${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button>${adminLink}</div>
+            <div class="row-btns"><a class="act act-dark" href="/vi">${ico("wallet")} Nạp tiền</a><button class="act" type="button" id="renewBtn">${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button>${adminLink}</div>
           </div>
           <div class="card secret-card">
             <h3>${ico("key-round")} Secret key <button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></h3>
@@ -2657,9 +2666,16 @@
     }
 
     function renderWallet() {
-      if (accountState === "loading") {
+      if (accountState === "loading" || (!billing && (googleSignedIn || accountState === "in"))) {
         panel.innerHTML = skeletonHtml("Đang tải ví");
         panel.setAttribute("aria-busy", "true");
+        if (!billing && (googleSignedIn || accountState === "in") && panel.dataset.billingPull !== "1") {
+          panel.dataset.billingPull = "1";
+          refreshBilling().then((ok) => {
+            panel.dataset.billingPull = "";
+            if (currentId() === "vi") paint();
+          });
+        }
         return;
       }
       if (!billing) {
@@ -2709,9 +2725,16 @@
     }
 
     async function renderAdmin() {
-      if (accountState === "loading") {
-        panel.innerHTML = skeletonHtml("Đang tải");
+      if (accountState === "loading" || (!billing && (googleSignedIn || accountState === "in"))) {
+        panel.innerHTML = skeletonHtml("Đang tải bảng điều khiển");
         panel.setAttribute("aria-busy", "true");
+        if (!billing && (googleSignedIn || accountState === "in") && panel.dataset.billingPull !== "1") {
+          panel.dataset.billingPull = "1";
+          refreshBilling().then((ok) => {
+            panel.dataset.billingPull = "";
+            if (currentId() === "admin") paint();
+          });
+        }
         return;
       }
       if (!billing || billing.role !== "admin") {
@@ -2892,6 +2915,10 @@
         return;
       }
       if (e.target.closest("#profileLogin") || e.target.closest("#walletLogin")) {
+        if (billing || googleSignedIn || accountState === "in") {
+          refreshBilling().then(() => paint());
+          return;
+        }
         openAuth("login");
         return;
       }
@@ -3064,6 +3091,29 @@
           paint();
         });
     }
+
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a || !a.href || a.target === "_blank" || a.hasAttribute("download") || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      try {
+        const url = new URL(a.href, location.origin);
+        if (url.origin !== location.origin) return;
+        const path = url.pathname.replace(/\/+$/, "") || "/";
+        if (PATH_PAGE[path] || PAGE_IDS.includes(path.slice(1))) {
+          e.preventDefault();
+          if (location.pathname !== url.pathname || location.search !== url.search || location.hash !== url.hash) {
+            history.pushState(null, "", a.href);
+          }
+          if (isMobile()) closeNav();
+          paint();
+        }
+      } catch (_) {}
+    });
+
+    window.addEventListener("popstate", () => {
+      if (isMobile()) closeNav();
+      paint();
+    });
 
     window.addEventListener("hashchange", () => {
       if (isMobile()) closeNav();
