@@ -809,7 +809,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/mxh/tiktok", "/mxh/tiktok", "/tiktok", "/douyin", "/api/douyin"],
     ten: "TikTok / Douyin Profile & Downloader",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Lấy profile TikTok theo username (tên, avatar, follower) hoặc bóc tách link tải video TikTok/Douyin không watermark qua TikWM và Cobalt.",
+    mo_ta: "Lấy profile TikTok theo username hoặc link trang (tên, avatar, follower) hoặc bóc tách link tải video TikTok/Douyin không watermark qua TikWM và Cobalt.",
     vi_du_params: "?=https://www.tiktok.com/@user/video/123456789",
     handler: tiktokHandler
   },

@@ -3,7 +3,7 @@
   "functions": {
     "api/server.js": {
       "includeFiles": "{lib/**,public/**}",
-      "regions": ["hkg1"]
+      "regions": ["sin1"]
     }
   },
   "rewrites": [
