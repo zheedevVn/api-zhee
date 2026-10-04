@@ -855,7 +855,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/mxh/discord", "/mxh/discord", "/discord"],
     ten: "Discord Lookup & Checker",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Tra cứu thông tin tài khoản qua Token, User ID hoặc server link mời.",
+    mo_ta: "Kiểm tra tài khoản bằng token (ngày tạo, Nitro và hạn gói, huy hiệu, boost, thanh toán, máy chủ) hoặc tra cứu User ID và link mời.",
     vi_du_params: "?=156114103282368512",
     handler: discordHandler
   },
