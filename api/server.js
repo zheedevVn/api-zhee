@@ -1047,6 +1047,38 @@ function routeSlug(pathname) {
   return String(pathname || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
 }
 
+function applySecurityHeaders(res) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+}
+
+const RATE_LIMIT_BUCKET = new Map();
+const RATE_WINDOW_MS = 60 * 1000;
+
+function checkRateLimit(ip, maxRequests = 200) {
+  const now = Date.now();
+  let record = RATE_LIMIT_BUCKET.get(ip);
+  if (!record || now - record.start > RATE_WINDOW_MS) {
+    record = { start: now, count: 1 };
+    RATE_LIMIT_BUCKET.set(ip, record);
+    if (RATE_LIMIT_BUCKET.size > 3000) {
+      for (const [k, v] of RATE_LIMIT_BUCKET.entries()) {
+        if (now - v.start > RATE_WINDOW_MS) RATE_LIMIT_BUCKET.delete(k);
+      }
+    }
+    return { ok: true };
+  }
+  record.count += 1;
+  if (record.count > maxRequests) {
+    return { ok: false, retryAfter: Math.max(1, Math.ceil((record.start + RATE_WINDOW_MS - now) / 1000)) };
+  }
+  return { ok: true };
+}
+
 function readJsonBody(req) {
   if (!req.body) return {};
   if (typeof req.body === "string") {
@@ -1075,6 +1107,34 @@ async function runTool(req, res) {
 }
 
 module.exports = async (req, res) => {
+  const startTime = Date.now();
+  applySecurityHeaders(res);
+
+  if (res && typeof res.writeHead === "function") {
+    const origWriteHead = res.writeHead;
+    res.writeHead = function(...args) {
+      if (!res.headersSent) {
+        const elapsed = Date.now() - startTime;
+        res.setHeader("X-Response-Time", `${elapsed}ms`);
+        res.setHeader("Server-Timing", `total;dur=${elapsed}`);
+      }
+      return origWriteHead.apply(this, args);
+    };
+  }
+
+  const clientIp = accountsHandler.clientIp(req);
+  const isAuthRoute = Boolean(req.url && /\/api\/auth\//i.test(req.url));
+  const rate = checkRateLimit(clientIp, isAuthRoute ? 40 : 250);
+  if (!rate.ok) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Retry-After", String(rate.retryAfter));
+    return res.status(429).json({
+      trang_thai: "that_bai",
+      ma_loi: "RATE_LIMITED",
+      thong_bao: `Hệ thống bảo vệ: quá nhiều yêu cầu. Vui lòng thử lại sau ${rate.retryAfter} giây.`
+    });
+  }
+
   try {
     const url = req.url || "/";
     const queryIndex = url.indexOf("?");
