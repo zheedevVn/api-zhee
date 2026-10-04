@@ -64,6 +64,18 @@ const SEO_PAGES = {
   }
 };
 
+const SEO_ORIGIN = "https://api-zhee.vercel.app";
+const SEO_NAV = [
+  ["/", "Giới thiệu", "Cổng REST API miễn phí của Hồ Đức Minh: mail tạm, tài xỉu, AI, VietQR và hơn 70 công cụ."],
+  ["/cong-cu", "Công cụ", "Danh sách API cho lập trình viên: AI, IP, NASA, QR, dịch và captcha."],
+  ["/tai-xiu", "Tài xỉu", "B52 Club, 789Club, Sunwin, Hitclub và SUKA88."],
+  ["/mail", "Mail", "Mail tạm, hộp thư IMAP và mã OTP."],
+  ["/dang-nhap", "Đăng nhập", "Đăng nhập bằng tên hoặc Google để nhận secret key."],
+  ["/ho-so", "Hồ sơ", "Xem số dư, hạn secret key và token đăng nhập."],
+  ["/vi", "Nạp tiền", "Nạp MB Bank và gia hạn key 10.000đ cho 10 ngày."],
+  ["/lien-he", "Liên hệ", "Facebook, Zalo, TikTok, Discord và Telegram."]
+];
+
 function docsPageFor(pathname) {
   if (pathname === "/docs" || pathname === "/ui" || pathname === "/index.html" || pathname === "/gioi-thieu") return SEO_PAGES["/"];
   return SEO_PAGES[pathname] || null;
@@ -88,6 +100,141 @@ function wantsDocsHtml(req, pathname) {
   return true;
 }
 
+function seoHeading(pathname, page) {
+  if (canonicalPathFor(pathname) === "/") return "Zhee API của Hồ Đức Minh";
+  return String(page.title || "Zhee API").split("|")[0].trim();
+}
+
+function seoNavHtml() {
+  return SEO_NAV.map(([path, name]) => `<a href="${escapeHtml(path)}">${escapeHtml(name)}</a>`).join("\n");
+}
+
+function seoArticleHtml(pathname) {
+  const page = docsPageFor(pathname) || SEO_PAGES["/"];
+  const canonical = canonicalPathFor(pathname);
+  const links = SEO_NAV.filter(([path]) => path !== canonical).map(([path, name, text]) => (
+    `<li><a href="${escapeHtml(path)}"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(text)}</span></a></li>`
+  )).join("");
+  return `<section class="home-hero">
+        <p class="home-eyebrow">Zhee API Directory</p>
+        <h1>${escapeHtml(seoHeading(pathname, page))}</h1>
+        <p class="lead">${escapeHtml(page.description)}</p>
+        <nav class="jump-row" aria-label="Mục chính">${seoNavHtml()}</nav>
+      </section>
+      <section aria-label="Các phần của Zhee API">
+        <h2>Các phần chính</h2>
+        <ul class="seo-links">${links}</ul>
+      </section>`;
+}
+
+function seoJsonLd(pathname) {
+  const page = docsPageFor(pathname) || SEO_PAGES["/"];
+  const canonical = canonicalPathFor(pathname);
+  const pageUrl = `${SEO_ORIGIN}${canonical === "/" ? "/" : canonical}`;
+  const crumbs = canonical === "/"
+    ? [{ name: "Zhee API", url: `${SEO_ORIGIN}/` }]
+    : [
+      { name: "Zhee API", url: `${SEO_ORIGIN}/` },
+      { name: seoHeading(pathname, page), url: pageUrl }
+    ];
+  const graph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${SEO_ORIGIN}/#organization`,
+        name: "Zhee API",
+        url: `${SEO_ORIGIN}/`,
+        description: SEO_PAGES["/"].description,
+        logo: {
+          "@type": "ImageObject",
+          url: `${SEO_ORIGIN}/favicon.png`,
+          width: 512,
+          height: 512
+        },
+        image: `${SEO_ORIGIN}/favicon.png`,
+        founder: { "@id": `${SEO_ORIGIN}/#person` },
+        sameAs: [
+          "https://github.com/zheedevVn",
+          "https://t.me/zheevipv1",
+          "https://www.tiktok.com/@nv1qda"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": `${SEO_ORIGIN}/#person`,
+        name: "Hồ Đức Minh",
+        alternateName: "Zhee Dev",
+        url: `${SEO_ORIGIN}/`,
+        worksFor: { "@id": `${SEO_ORIGIN}/#organization` }
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${SEO_ORIGIN}/#website`,
+        url: `${SEO_ORIGIN}/`,
+        name: "Zhee API",
+        alternateName: ["Zhee Dev API", "Cổng REST API của Hồ Đức Minh"],
+        description: SEO_PAGES["/"].description,
+        inLanguage: "vi-VN",
+        image: `${SEO_ORIGIN}/favicon.png`,
+        publisher: { "@id": `${SEO_ORIGIN}/#organization` }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${SEO_ORIGIN}/#application`,
+        name: "Zhee API",
+        url: `${SEO_ORIGIN}/`,
+        applicationCategory: "DeveloperApplication",
+        operatingSystem: "Web",
+        description: SEO_PAGES["/"].description,
+        image: `${SEO_ORIGIN}/favicon.png`,
+        author: { "@id": `${SEO_ORIGIN}/#person` },
+        provider: { "@id": `${SEO_ORIGIN}/#organization` },
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "VND",
+          description: "Dùng thử 10 ngày. Gia hạn 10.000đ cho 10 ngày."
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: page.title,
+        description: page.description,
+        inLanguage: "vi-VN",
+        isPartOf: { "@id": `${SEO_ORIGIN}/#website` },
+        about: { "@id": `${SEO_ORIGIN}/#application` },
+        primaryImageOfPage: `${SEO_ORIGIN}/favicon.png`
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${pageUrl}#breadcrumb`,
+        itemListElement: crumbs.map((crumb, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: crumb.name,
+          item: crumb.url
+        }))
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${SEO_ORIGIN}/#sections`,
+        name: "Các phần chính của Zhee API",
+        itemListElement: SEO_NAV.map(([path, name, text], index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name,
+          description: text,
+          url: `${SEO_ORIGIN}${path === "/" ? "/" : path}`
+        }))
+      }
+    ]
+  };
+  return JSON.stringify(graph).replace(/</g, "\\u003c");
+}
+
 function applyDocsSeo(html, pathname) {
   const page = docsPageFor(pathname) || SEO_PAGES["/"];
   const title = escapeHtml(page.title);
@@ -101,7 +248,9 @@ function applyDocsSeo(html, pathname) {
     .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${description}">`)
     .replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${canonical}">`)
     .replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${title}">`)
-    .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${description}">`);
+    .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${description}">`)
+    .replace(/<article id="panel" aria-busy="true">[\s\S]*?<\/article>/, `<article id="panel" aria-busy="true">${seoArticleHtml(pathname)}</article>`)
+    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">${seoJsonLd(pathname)}</script>`);
 }
 
 function serveDocsHtml(res, pathname) {
@@ -112,8 +261,6 @@ function serveDocsHtml(res, pathname) {
   res.statusCode = 200;
   res.end(html);
 }
-
-const SEO_ORIGIN = "https://api-zhee.vercel.app";
 
 function escapeXml(value) {
   return String(value ?? "").replace(/[&<>\"']/g, (char) => ({
