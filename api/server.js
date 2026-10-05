@@ -297,12 +297,29 @@ const HTML_JS_PATCHES = [
   ],
   [
     'if (q.da_hoan_thanh || q.da_nhan_thuong) continue;',
-    'if (q.da_hoan_thanh || q.da_nhan_thuong) { window.__dqcSkipped = (window.__dqcSkipped || 0) + 1; continue; }'
+    'if (q.da_hoan_thanh || q.da_nhan_thuong || q.da_het_han) { window.__dqcSkipped = (window.__dqcSkipped || 0) + 1; continue; }'
   ],
   [
     'dqcBatchRunning = false;\n        renderHtml();\n      }\n\n      function bindRegionButtons()',
-    'dqcBatchRunning = false;\n        renderHtml();\n        if (window.__dqcSkipped > 0) { try { macAlert({ title: "Ch\u1ea1y h\u00e0ng lo\u1ea1t xong", text: "\u0110\u00e3 b\u1ecf qua " + window.__dqcSkipped + " nhi\u1ec7m v\u1ee5 v\u00ec \u0111\u00e3 ho\u00e0n th\u00e0nh ho\u1eb7c \u0111\u00e3 nh\u1eadn th\u01b0\u1edfng t\u1eeb tr\u01b0\u1edbc.", ok: "\u0110\u00e3 hi\u1ec3u" }); } catch (_) {} window.__dqcSkipped = 0; }\n      }\n\n      function bindRegionButtons()'
+    'dqcBatchRunning = false;\n        renderHtml();\n        if (window.__dqcSkipped > 0) { try { macAlert({ title: "Ch\u1ea1y h\u00e0ng lo\u1ea1t xong", text: "\u0110\u00e3 b\u1ecf qua " + window.__dqcSkipped + " nhi\u1ec7m v\u1ee5 (\u0111\u00e3 xong / \u0111\u00e3 nh\u1eadn th\u01b0\u1edfng / \u0111\u00e3 h\u1ebft h\u1ea1n).", ok: "\u0110\u00e3 hi\u1ec3u" }); } catch (_) {} window.__dqcSkipped = 0; }\n      }\n\n      function bindRegionButtons()'
   ],
+  // FIX: quest hết hạn — hiện badge "Hết hạn", chặn nút chạy
+  [
+    'da_hoan_thanh: isDone,\n          da_nhan_thuong: isClaimed,',
+    'da_hoan_thanh: isDone,\n          da_nhan_thuong: isClaimed,\n          da_het_han: Boolean(q.da_het_han),'
+  ],
+  [
+    'if (!q || q.da_hoan_thanh || q.isRunning) return;',
+    'if (!q || q.da_hoan_thanh || q.da_het_han || q.isRunning) return;'
+  ],
+  [
+    '` : (q.isActivity ? `',
+    '` : (q.da_het_han ? `<span class="dqc-done-pill" style="opacity:.55">${ico("clock")} Hết hạn</span>` : (q.isActivity ? `'
+  ],
+  [
+    'Chạy ngay</button>\n                `))}\n              </div>',
+    'Chạy ngay</button>\n                `)))}\n              </div>'
+  ]
   // FIX: surface backend heartbeat failure reason on the quest card instead of silent 99%
   [
     'if (data.ket_qua?.tien_do_phan_tram != null) {\n              q.percent = Number(data.ket_qua.tien_do_phan_tram);\n              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;\n            }',
