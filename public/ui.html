@@ -464,24 +464,235 @@
     }
     .btn-create-topup:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(2, 132, 199, 0.45); }
 
-    /* Recipient Bank Card */
-    .bank-details-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    /* Recipient Bank Card & High-Contrast Typography */
+    .bank-details-box { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
     .bank-row {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px;
-      padding: 10px 14px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 12px 16px; background: var(--bg); border-radius: 14px; border: 1px solid var(--line);
+      transition: all .16s ease;
+    }
+    .bank-row:hover {
+      border-color: color-mix(in srgb, #0284c7 35%, var(--line));
+      background: color-mix(in srgb, #0284c7 3%, var(--bg));
     }
     .bank-row.bank-row-hl {
       background: color-mix(in srgb, #0284c7 9%, var(--bg)); border: 1.5px solid #0284c7;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
     }
-    .bank-row-left { display: flex; flex-direction: column; gap: 2px; }
-    .bank-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-    .bank-val { font-size: 14px; font-weight: 750; color: var(--text); }
+    .bank-row-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .bank-label { font-size: 11px; font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .bank-val { font-size: 14px; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bank-acc-num {
-      font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 900;
-      color: #0284c7; letter-spacing: .04em;
+      font-family: "JetBrains Mono", monospace; font-size: 18px; font-weight: 900;
+      color: #0284c7; letter-spacing: .05em;
     }
     .money-hl { color: #10b981; font-weight: 850; font-size: 14.5px; }
-    .icon-btn { font-size: 12px !important; padding: 6px 10px !important; border-radius: 8px !important; }
+
+    /* Ultra-sleek Copy Button System (No wrapping, instant inline checkmark feedback) */
+    .copy-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      padding: 7px 14px !important;
+      border-radius: 10px !important;
+      font-size: 12.5px !important;
+      font-weight: 750 !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+      width: auto !important;
+      min-width: max-content !important;
+      border: 1px solid var(--line) !important;
+      background: color-mix(in srgb, var(--card) 85%, var(--line)) !important;
+      color: var(--text) !important;
+      cursor: pointer !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      text-decoration: none !important;
+      transition: transform .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease !important;
+    }
+    .copy-btn svg, .copy-btn .ico {
+      width: 14px !important;
+      height: 14px !important;
+      flex-shrink: 0 !important;
+    }
+    .copy-btn:hover {
+      background: color-mix(in srgb, #0284c7 14%, var(--card)) !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.18) !important;
+    }
+    .copy-btn:active {
+      transform: scale(0.97) !important;
+    }
+    .copy-btn.copy-btn-primary {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      box-shadow: 0 3px 12px rgba(2, 132, 199, 0.35) !important;
+    }
+    .copy-btn.copy-btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+      box-shadow: 0 5px 16px rgba(2, 132, 199, 0.5) !important;
+      transform: translateY(-1px) !important;
+      color: #ffffff !important;
+    }
+    .copy-btn.copy-btn-purple {
+      background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      box-shadow: 0 3px 12px rgba(124, 58, 237, 0.35) !important;
+    }
+    .copy-btn.copy-btn-purple:hover {
+      background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%) !important;
+      box-shadow: 0 5px 16px rgba(124, 58, 237, 0.5) !important;
+      transform: translateY(-1px) !important;
+      color: #ffffff !important;
+    }
+    .copy-btn.is-copied,
+    .act.is-copied,
+    .contact-copy-icon.is-copied {
+      background: #10b981 !important;
+      border-color: #059669 !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+    }
+
+    /* Luxury Developer VIP Passport Card */
+    .profile-wrap { display: flex; flex-direction: column; gap: 18px; }
+    .profile-header-block { margin-bottom: 4px; }
+    .profile-badge-pill {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800;
+      letter-spacing: .06em; text-transform: uppercase; color: #c084fc;
+      background: color-mix(in srgb, #a855f7 12%, transparent); border: 1px solid color-mix(in srgb, #a855f7 26%, transparent);
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 10px;
+    }
+    .developer-hero-card {
+      position: relative; overflow: hidden; isolation: isolate; border-radius: 20px;
+      padding: 24px 26px; color: #fff;
+      background: linear-gradient(135deg, #090d1a 0%, #171630 45%, #0d1124 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 22px 45px -15px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+    }
+    .developer-hero-glow {
+      position: absolute; inset: -40px; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 18% 85%, rgba(56, 189, 248, 0.22) 0%, transparent 45%);
+    }
+    .developer-hero-top {
+      position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .card-security-label {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em; color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase; margin-left: 2px;
+    }
+    .dev-brand-tag {
+      font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.16);
+      display: inline-flex; align-items: center; gap: 5px; color: #fff;
+    }
+    .dev-brand-admin {
+      font-size: 10px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #fff; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+    }
+    .dev-card-identity {
+      position: relative; z-index: 1; display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 22px;
+    }
+    .dev-card-main-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .dev-card-avatar {
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.1);
+      display: grid; place-items: center; font-size: 20px; font-weight: 850; color: #fff;
+      overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .dev-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .dev-card-text-col { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .dev-card-subtitle {
+      font-size: 10px; font-weight: 750; color: rgba(255, 255, 255, 0.55);
+      letter-spacing: .08em; text-transform: uppercase;
+    }
+    .dev-card-name {
+      font-size: clamp(20px, 3.2vw, 26px); font-weight: 900; letter-spacing: -.02em;
+      line-height: 1.2; color: #fff; text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    }
+    .dev-card-email {
+      font-size: 12.5px; font-weight: 650; color: rgba(255, 255, 255, 0.72);
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 1px;
+    }
+    .dev-card-balance-box {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px); border-radius: 14px; padding: 10px 18px;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+    }
+    .dev-card-bal-label {
+      font-size: 10px; font-weight: 750; color: rgba(255, 255, 255, 0.6);
+      letter-spacing: .07em; text-transform: uppercase;
+    }
+    .dev-card-bal-val {
+      font-size: 24px; font-weight: 900; letter-spacing: -.02em;
+      color: #38bdf8; font-variant-numeric: tabular-nums;
+    }
+    .developer-hero-footer {
+      position: relative; z-index: 1; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 14px; padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .developer-expiry-status {
+      display: flex; align-items: center; gap: 8px; font-size: 13px;
+      font-weight: 700; color: rgba(255, 255, 255, 0.85);
+    }
+    .developer-hero-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn-dev-card-action {
+      background: rgba(255, 255, 255, 0.12) !important; color: #fff !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important; border-radius: 12px;
+      padding: 8px 14px; font-size: 13px; font-weight: 750;
+      backdrop-filter: blur(8px); transition: all .15s ease; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-dev-card-action:hover {
+      background: rgba(255, 255, 255, 0.2) !important; transform: translateY(-1px);
+    }
+    .btn-dev-card-renew {
+      background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%) !important;
+      border-color: rgba(255, 255, 255, 0.28) !important;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    }
+    .btn-dev-card-renew:hover {
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
+    }
+    .credential-card { display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+    .cred-title { display: flex; align-items: center; gap: 8px; }
+    .cred-title h3 { margin: 0 !important; font-size: 15.5px; }
+    .badge-cred-header {
+      font-size: 10.5px; font-weight: 750; padding: 3px 8px; border-radius: 999px;
+      background: color-mix(in srgb, #a855f7 14%, transparent); color: #a855f7;
+      border: 1px solid color-mix(in srgb, #a855f7 28%, transparent);
+    }
+    .badge-cred-token {
+      font-size: 10.5px; font-weight: 750; padding: 3px 8px; border-radius: 999px;
+      background: color-mix(in srgb, #0ea5e9 14%, transparent); color: #0ea5e9;
+      border: 1px solid color-mix(in srgb, #0ea5e9 28%, transparent);
+    }
+    .cred-box {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 11px 14px; background: var(--bg); border-radius: 12px;
+      border: 1px solid var(--line); margin: 6px 0 8px;
+    }
+    .cred-box .secret-value {
+      flex: 1; min-width: 0; font-family: "JetBrains Mono", monospace; font-size: 13.5px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .cred-box .secret-value.is-open {
+      white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; word-break: break-all;
+    }
+    .btn-toggle-eye { flex-shrink: 0; }
+    .cred-action-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
     /* 4-Step Workflow Guide */
     .steps-guide {
@@ -2337,8 +2548,54 @@
     qrDialog.addEventListener("cancel", (event) => { event.preventDefault(); closeQr(); });
     qrImage.addEventListener("click", closeQr);
 
-    function copyText(text) {
-      navigator.clipboard.writeText(text).then(() => notify("Đã sao chép.")).catch(() => appAlert("Không sao chép được. Hãy copy thủ công."));
+    function copyText(text, btn) {
+      if (!text) return;
+      const onCopied = () => {
+        notify("Đã sao chép: " + (text.length > 28 ? text.slice(0, 25) + "…" : text));
+        if (btn) {
+          const origHtml = btn.dataset.origHtml || btn.innerHTML;
+          if (!btn.dataset.origHtml) btn.dataset.origHtml = origHtml;
+          btn.classList.add("is-copied");
+          const isIconOnly = btn.classList.contains("icon-only") || btn.classList.contains("contact-copy-icon") || !btn.textContent.trim();
+          btn.innerHTML = isIconOnly ? ico("check") : `${ico("check")} Đã chép!`;
+          paintIcons();
+          clearTimeout(btn._copiedTimer);
+          btn._copiedTimer = setTimeout(() => {
+            btn.innerHTML = btn.dataset.origHtml || origHtml;
+            btn.classList.remove("is-copied");
+            delete btn.dataset.origHtml;
+            paintIcons();
+          }, 1800);
+        }
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onCopied).catch(() => {
+          fallbackCopyText(text, onCopied);
+        });
+      } else {
+        fallbackCopyText(text, onCopied);
+      }
+    }
+
+    function fallbackCopyText(text, callback) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-9999px";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const success = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (success && typeof callback === "function") callback();
+        else notify("Đã sao chép: " + (text.length > 28 ? text.slice(0, 25) + "…" : text));
+      } catch (_) {
+        appAlert("Không sao chép được. Hãy copy thủ công.");
+      }
     }
 
     const PAGE_IDS = ["home", "cong-cu", "vi", "ho-so", "admin", "tai-xiu", "mail", "dang-nhap", "lien-he"];
@@ -2876,27 +3133,126 @@
         panel.setAttribute("aria-busy", "false");
         return;
       }
-      const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleString("vi-VN") : "";
-      const adminLink = billing.role === "admin" ? `<a class="act" href="#admin">${ico("shield")} Bảng điều khiển</a>` : "";
+      const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleString("vi-VN") : "Hết hạn";
+      const adminLink = billing.role === "admin" ? `<a class="act btn-dev-card-action" href="#admin">${ico("shield")} Bảng điều khiển</a>` : "";
+      const picture = billing && /^https:\/\//i.test(billing.picture || "") ? billing.picture : "";
+      const initials = accountInitials(billing.name || billing.email || "ZD");
+      const avatarHtml = picture
+        ? `<img src="${esc(picture)}" alt="Avatar">`
+        : `<span>${esc(initials)}</span>`;
+
       panel.innerHTML = `
-        <h1>${ico("circle-user", "ico-head")} ${scrambleHtml("Hồ sơ")}</h1>
-        ${keySoonHtml(billing)}
-        <div class="profile-grid">
-          <div class="card">
-            <h3>${ico("circle-user")} ${esc(billing.name || "Tài khoản")}</h3>
-            <div class="kv"><span>Email</span><b>${esc(billing.email || "")}</b></div>
-            <div class="kv"><span>Số dư</span><b class="money">${vnd(billing.balance)}</b></div>
-            <div class="kv"><span>Key đến</span><b>${esc(when)}</b></div>
-            <div class="kv"><span>Trạng thái</span><b>${billing.key_active ? "Còn hạn" : "Hết 10 ngày"}</b></div>
-            <div class="row-btns"><a class="act act-dark" href="/vi">${ico("wallet")} Nạp tiền</a><button class="act" type="button" id="renewBtn">${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}</button>${adminLink}</div>
+        <div class="profile-wrap">
+          <div class="profile-header-block">
+            <div class="profile-badge-pill">${ico("sparkles")} THẺ ĐỊNH DANH NHÀ PHÁT TRIỂN · ZHEE PASSPORT</div>
+            <h1>${ico("circle-user", "ico-head")} ${scrambleHtml("Hồ Sơ & Thẻ VIP")}</h1>
+            ${keySoonHtml(billing)}
           </div>
-          <div class="card secret-card">
-            <h3>${ico("key-round")} Secret key <button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></h3>
-            <div class="secret-box"><p class="secret-value${secretShown ? " is-open" : ""}" id="secretValue" data-secret-view>${esc(secretShown ? billing.secret : maskSecret(billing.secret))}</p></div>
-            <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.secret || "")}">${ico("copy")} Sao chép</button></div>
-            <h3>${ico("key")} Token <button class="act icon-only" type="button" id="toggleToken" aria-label="Hiện hoặc ẩn token">${ico(tokenShown ? "eye-off" : "eye")}</button></h3>
-            <div class="secret-box"><p class="secret-value${tokenShown ? " is-open" : ""}" data-token-view>${esc(tokenShown ? billing.token : maskSecret(billing.token))}</p></div>
-            <div class="row-btns"><button class="act" type="button" data-copy="${esc(billing.token || "")}">${ico("copy")} Sao chép token</button><button class="act" type="button" data-copy="${esc(location.origin + "/api/auth/verify?token=" + (billing.token || ""))}">${ico("shield-check")} Link xác thực</button></div>
+
+          <!-- Luxury Developer VIP Digital Card -->
+          <div class="developer-hero-card">
+            <div class="developer-hero-glow"></div>
+            <div class="developer-hero-top">
+              <div class="wallet-chip-emv">
+                <div class="emv-chip"></div>
+                <span class="nfc-icon" title="NFC Contactless">${ico("wifi")}</span>
+                <span class="card-security-label">DEV PASSPORT</span>
+              </div>
+              <div class="wallet-brand-tags">
+                <span class="dev-brand-tag">${ico("terminal")} ZHEE DEV</span>
+                ${billing.role === "admin"
+                  ? `<span class="dev-brand-admin">${ico("shield-check")} MASTER ADMIN</span>`
+                  : `<span class="wallet-brand-vip">${ico("crown")} VIP DEVELOPER</span>`}
+              </div>
+            </div>
+
+            <!-- Mid Section: Identity & Balance Cluster -->
+            <div class="dev-card-identity">
+              <div class="dev-card-main-info">
+                <div class="dev-card-avatar">${avatarHtml}</div>
+                <div class="dev-card-text-col">
+                  <span class="dev-card-subtitle">NHÀ PHÁT TRIỂN / TÀI KHOẢN</span>
+                  <div class="dev-card-name">${esc(billing.name || billing.email || "ZHEE DEVELOPER")}</div>
+                  <div class="dev-card-email">${ico("mail")} ${esc(billing.email || "")}</div>
+                </div>
+              </div>
+              <div class="dev-card-balance-box">
+                <span class="dev-card-bal-label">SỐ DƯ KHẢ DỤNG</span>
+                <div class="dev-card-bal-val">${vnd(billing.balance)}</div>
+              </div>
+            </div>
+
+            <!-- Footer: Expiry Status & Quick Actions -->
+            <div class="developer-hero-footer">
+              <div class="developer-expiry-status">
+                <span class="dot-indicator ${billing.key_active ? "is-active" : "is-expired"}"></span>
+                <span class="expiry-text">${billing.key_active ? "Key Đang Hoạt Động · Hạn Dùng: " + esc(when) : "Key Đã Hết 10 Ngày Dùng Thử"}</span>
+              </div>
+              <div class="developer-hero-actions">
+                <a class="act btn-dev-card-action" href="/vi">${ico("wallet")} Nạp tiền vào ví</a>
+                <button class="act btn-dev-card-action btn-dev-card-renew" type="button" id="renewBtn">
+                  ${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}
+                </button>
+                ${adminLink}
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: High-Tech Security Credentials Section -->
+          <div class="profile-grid">
+            <!-- Secret Key Card -->
+            <div class="card credential-card">
+              <div class="card-title-row">
+                <div class="cred-title">
+                  <h3>${ico("key-round")} Khóa API Bí Mật (Secret Key)</h3>
+                </div>
+                <span class="badge-cred-header">Header: x-zhee-key</span>
+              </div>
+              <p class="muted-lead">Khóa bí mật duy nhất để gọi hơn 70+ REST API từ server, bot Telegram hoặc ứng dụng của bạn.</p>
+
+              <div class="cred-box">
+                <p class="secret-value${secretShown ? " is-open" : ""}" id="secretValue" data-secret-view>${esc(secretShown ? billing.secret : maskSecret(billing.secret))}</p>
+                <button class="act icon-only btn-toggle-eye" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key" title="Hiện hoặc ẩn key">
+                  ${ico(secretShown ? "eye-off" : "eye")}
+                </button>
+              </div>
+
+              <div class="cred-action-row">
+                <button class="copy-btn copy-btn-primary" type="button" data-copy="${esc(billing.secret || "")}" title="Sao chép Secret Key">
+                  ${ico("copy")} Sao chép Secret Key
+                </button>
+                <button class="copy-btn" type="button" data-copy="curl -H &quot;x-zhee-key: ${esc(billing.secret || "")}&quot; https://api-zhee.vercel.app/api/tai-xiu" title="Sao chép cURL mẫu">
+                  ${ico("terminal")} Sao chép cURL mẫu
+                </button>
+              </div>
+            </div>
+
+            <!-- Access Token Card -->
+            <div class="card credential-card">
+              <div class="card-title-row">
+                <div class="cred-title">
+                  <h3>${ico("shield-check")} Access Token (Phiên làm việc)</h3>
+                </div>
+                <span class="badge-cred-token">Bearer Session</span>
+              </div>
+              <p class="muted-lead">Token đăng nhập và liên kết tài khoản. Dùng để đăng nhập trực tiếp hoặc qua link bảo mật.</p>
+
+              <div class="cred-box">
+                <p class="secret-value${tokenShown ? " is-open" : ""}" data-token-view>${esc(tokenShown ? billing.token : maskSecret(billing.token))}</p>
+                <button class="act icon-only btn-toggle-eye" type="button" id="toggleToken" aria-label="Hiện hoặc ẩn token" title="Hiện hoặc ẩn token">
+                  ${ico(tokenShown ? "eye-off" : "eye")}
+                </button>
+              </div>
+
+              <div class="cred-action-row">
+                <button class="copy-btn" type="button" data-copy="${esc(billing.token || "")}" title="Sao chép Token">
+                  ${ico("copy")} Sao chép Token
+                </button>
+                <button class="copy-btn copy-btn-primary" type="button" data-copy="${esc(location.origin + "/api/auth/verify?token=" + (billing.token || ""))}" title="Sao chép link xác thực">
+                  ${ico("link-2")} Link xác thực nhanh
+                </button>
+              </div>
+            </div>
           </div>
         </div>`;
     }
@@ -3009,20 +3365,20 @@
               <div class="bank-details-box">
                 <div class="bank-row">
                   <div class="bank-row-left">
-                    <span class="bank-label">Ngân hàng</span>
+                    <span class="bank-label">Ngân hàng thụ hưởng</span>
                     <b class="bank-val">MB BANK (Quân Đội)</b>
                   </div>
-                  <button class="act mini icon-btn" type="button" data-copy="MBBANK" title="Sao chép tên ngân hàng">
+                  <button class="copy-btn" type="button" data-copy="MBBANK" title="Sao chép tên ngân hàng">
                     ${ico("copy")} Sao chép
                   </button>
                 </div>
 
                 <div class="bank-row bank-row-hl">
                   <div class="bank-row-left">
-                    <span class="bank-label">Số tài khoản</span>
+                    <span class="bank-label">Số tài khoản nhận</span>
                     <b class="bank-val bank-acc-num">0899256226</b>
                   </div>
-                  <button class="act mini act-dark icon-btn" type="button" data-copy="0899256226" title="Sao chép số tài khoản">
+                  <button class="copy-btn copy-btn-primary" type="button" data-copy="0899256226" title="Sao chép số tài khoản MB Bank">
                     ${ico("copy")} Sao chép STK
                   </button>
                 </div>
@@ -3032,7 +3388,7 @@
                     <span class="bank-label">Chủ tài khoản</span>
                     <b class="bank-val">HO DUC MINH</b>
                   </div>
-                  <button class="act mini icon-btn" type="button" data-copy="HO DUC MINH" title="Sao chép tên">
+                  <button class="copy-btn" type="button" data-copy="HO DUC MINH" title="Sao chép chủ tài khoản">
                     ${ico("copy")} Sao chép
                   </button>
                 </div>
@@ -3042,7 +3398,7 @@
                     <span class="bank-label">Chi phí gia hạn</span>
                     <b class="bank-val money-hl">${vnd(billing.renew_price || 10000)} / 10 ngày</b>
                   </div>
-                  <button class="act mini" type="button" id="renewBtn">
+                  <button class="copy-btn copy-btn-purple" type="button" id="renewBtn">
                     ${ico("calendar-plus")} Gia hạn ngay
                   </button>
                 </div>
@@ -3300,7 +3656,7 @@
         return;
       }
       const btn = e.target.closest("[data-copy]");
-      if (btn) copyText(btn.getAttribute("data-copy"));
+      if (btn) copyText(btn.getAttribute("data-copy"), btn);
     });
     panel.addEventListener("input", (e) => {
       if (e.target.closest(".try-card")) updateTryUrl();
@@ -3488,7 +3844,7 @@
                 <span class="ticket-label">Số tiền cần chuyển</span>
                 <div class="ticket-row-right">
                   <b class="money-hl">${vnd(data.so_tien)}</b>
-                  <button class="act mini icon-btn" type="button" data-copy="${data.so_tien}" title="Sao chép số tiền">${ico("copy")} Copy</button>
+                  <button class="copy-btn" type="button" data-copy="${data.so_tien}" title="Sao chép số tiền">${ico("copy")} Sao chép</button>
                 </div>
               </div>
               <div class="ticket-row hl-row">
@@ -3496,7 +3852,7 @@
                   <span class="ticket-label">Nội dung chuyển khoản (bắt buộc)</span>
                   <b class="ticket-code-val">${esc(data.noi_dung)}</b>
                 </div>
-                <button class="act mini act-dark icon-btn" type="button" data-copy="${esc(data.noi_dung)}" title="Sao chép nội dung">${ico("copy")} Sao chép</button>
+                <button class="copy-btn copy-btn-primary" type="button" data-copy="${esc(data.noi_dung)}" title="Sao chép nội dung">${ico("copy")} Sao chép nội dung</button>
               </div>
             </div>
             <p class="ticket-note">${ico("info")} Quét mã QR bằng App Ngân hàng hoặc chuyển khoản đúng <b>nội dung</b> để hệ thống tự động cộng tiền trong 30s.</p>
