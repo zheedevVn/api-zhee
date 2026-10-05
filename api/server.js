@@ -324,6 +324,11 @@ const HTML_JS_PATCHES = [
   [
     'if (data.ket_qua?.tien_do_phan_tram != null) {\n              q.percent = Number(data.ket_qua.tien_do_phan_tram);\n              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;\n            }',
     'if (data.ket_qua?.tien_do_phan_tram != null) {\n              q.percent = Number(data.ket_qua.tien_do_phan_tram);\n              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;\n              if (data.ket_qua.ly_do_chua_xong && !data.ket_qua.da_hoan_thanh) { q.trang_thai = String(data.ket_qua.ly_do_chua_xong).slice(0, 90); }\n            }'
+  ],
+  // FIX: task label hien thi dung thoi gian that thay vi cung "Xem video (30s)"
+  [
+    'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu;',
+    'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu; else { var __tn={WATCH_VIDEO:"Xem video",WATCH_VIDEO_ON_MOBILE:"Xem video",PLAY_ON_DESKTOP:"Chơi game",PLAY_ON_PLAYSTATION:"Chơi game",PLAY_ON_XBOX:"Chơi game",STREAM_ON_DESKTOP:"Stream",PLAY_ACTIVITY:"Chơi activity"}; var __tl=__tn[t0.ma]||"Nhiệm vụ"; taskLabel = targetSec>=60 ? __tl+" ("+(Math.round(targetSec/6)/10)+" phút)" : __tl+" ("+targetSec+"s)"; }'
   ]
 ];
 function applyHtmlHotfixes(html) {
