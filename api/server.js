@@ -280,6 +280,7 @@ html, body { overflow-x: clip; }
   .card-security-label { font-size: 9px; letter-spacing: .08em; }
   .dev-brand-tag, .dev-brand-admin, .wallet-brand-vip { font-size: 9.5px !important; }
   img, video { max-width: 100%; height: auto; }
+  article { padding: 8px 16px 40px; }
 }`;
 function injectMobileFix(html) {
   if (typeof html !== "string" || html.indexOf("</head>") === -1) return html;
