@@ -16,7 +16,7 @@ function serveFavicon(res) {
 }
 
 function servePageHtml(res, filePath) {
-  const html = injectMobileFix(fs.readFileSync(filePath, "utf8"));
+  const html = applyHtmlHotfixes(fs.readFileSync(filePath, "utf8"));
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -258,7 +258,7 @@ function applyDocsSeo(html, pathname) {
 }
 
 function serveDocsHtml(res, pathname) {
-  const html = injectMobileFix(applyDocsSeo(fs.readFileSync(DOCS_HTML_PATH, "utf8"), pathname || "/"));
+  const html = applyHtmlHotfixes(applyDocsSeo(fs.readFileSync(DOCS_HTML_PATH, "utf8"), pathname || "/"));
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -282,9 +282,43 @@ html, body { overflow-x: clip; }
   img, video { max-width: 100%; height: auto; }
   article { padding: 8px 16px 40px; }
 }`;
-function injectMobileFix(html) {
-  if (typeof html !== "string" || html.indexOf("</head>") === -1) return html;
-  return html.replace("</head>", "<style data-zhee-mobile-fix>" + MOBILE_FIX_CSS + "</style></head>");
+/* HTML hotfixes applied at serve time (ZheeDev).
+   ui.html is too large to push via API, so surgical JS patches live here. */
+const HTML_JS_PATCHES = [
+  // FIX: region toggle stuck on US — backend echoes region at thong_tin_tai_khoan.khu_vuc_quet
+  [
+    'let currentRegion = parsedOrState.region || parsedOrState.khu_vuc_quet || "US";',
+    'let currentRegion = parsedOrState.region || parsedOrState.khu_vuc_quet || acc.khu_vuc_quet || "US";'
+  ],
+  // FIX: count quests auto-skipped in batch mode so the user knows why
+  [
+    'async function runAllQuests() {\n        if (dqcBatchRunning) return;\n        dqcBatchRunning = true;',
+    'async function runAllQuests() {\n        if (dqcBatchRunning) return;\n        window.__dqcSkipped = 0;\n        dqcBatchRunning = true;'
+  ],
+  [
+    'if (q.da_hoan_thanh || q.da_nhan_thuong) continue;',
+    'if (q.da_hoan_thanh || q.da_nhan_thuong) { window.__dqcSkipped = (window.__dqcSkipped || 0) + 1; continue; }'
+  ],
+  [
+    'dqcBatchRunning = false;\n        renderHtml();\n      }\n\n      function bindRegionButtons()',
+    'dqcBatchRunning = false;\n        renderHtml();\n        if (window.__dqcSkipped > 0) { try { macAlert({ title: "Ch\u1ea1y h\u00e0ng lo\u1ea1t xong", text: "\u0110\u00e3 b\u1ecf qua " + window.__dqcSkipped + " nhi\u1ec7m v\u1ee5 v\u00ec \u0111\u00e3 ho\u00e0n th\u00e0nh ho\u1eb7c \u0111\u00e3 nh\u1eadn th\u01b0\u1edfng t\u1eeb tr\u01b0\u1edbc.", ok: "\u0110\u00e3 hi\u1ec3u" }); } catch (_) {} window.__dqcSkipped = 0; }\n      }\n\n      function bindRegionButtons()'
+  ],
+  // FIX: surface backend heartbeat failure reason on the quest card instead of silent 99%
+  [
+    'if (data.ket_qua?.tien_do_phan_tram != null) {\n              q.percent = Number(data.ket_qua.tien_do_phan_tram);\n              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;\n            }',
+    'if (data.ket_qua?.tien_do_phan_tram != null) {\n              q.percent = Number(data.ket_qua.tien_do_phan_tram);\n              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;\n              if (data.ket_qua.ly_do_chua_xong && !data.ket_qua.da_hoan_thanh) { q.trang_thai = String(data.ket_qua.ly_do_chua_xong).slice(0, 90); }\n            }'
+  ]
+];
+function applyHtmlHotfixes(html) {
+  if (typeof html !== "string") return html;
+  let out = html;
+  if (out.indexOf("</head>") !== -1) {
+    out = out.replace("</head>", "<style data-zhee-mobile-fix>" + MOBILE_FIX_CSS + "</style></head>");
+  }
+  for (const [find, replace] of HTML_JS_PATCHES) {
+    if (out.indexOf(find) !== -1) out = out.split(find).join(replace);
+  }
+  return out;
 }
 
 function escapeXml(value) {
