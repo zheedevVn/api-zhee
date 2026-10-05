@@ -3446,11 +3446,12 @@
           const runCode = q.ma_chay_nhiem_vu || `RUN_QUEST:${questId}:${token}`;
           const headers = { "Content-Type": "application/json", "Accept": "application/json" };
           if (billing && billing.secret && billing.role !== "admin") headers["x-zhee-key"] = billing.secret;
+          const toolId = (currentTool && currentTool.id) || "api-mxh-discord";
           const res = await fetch("/api/run", {
             method: "POST",
             headers,
             body: JSON.stringify({
-              ma: "discord",
+              ma: toolId,
               query: `quest=${encodeURIComponent(runCode)}&region=${currentRegion}`
             })
           });
@@ -3525,9 +3526,22 @@
           rBtn.addEventListener("click", () => {
             const reg = rBtn.getAttribute("data-dqc-region") || "US";
             currentRegion = reg;
-            if (!token) return;
+            if (!token) {
+              const rowVal = panel.querySelector("[data-try-val]")?.value;
+              if (rowVal) token = rowVal.trim();
+            }
+            if (!token) {
+              macAlert({
+                title: "Chưa có token Discord",
+                text: "Vui lòng nhập Token Discord vào ô bên trên rồi bấm quét lại.",
+                ok: "Đã hiểu"
+              });
+              return;
+            }
             const rowInput = panel.querySelector("[data-try-val]");
             if (rowInput) rowInput.value = token;
+            const selKey = panel.querySelector("[data-try-key]");
+            if (selKey) selKey.value = "token";
             loadLive(`token=${encodeURIComponent(token)}&region=${reg}`, 65000);
           });
         });

@@ -1111,15 +1111,29 @@ async function runTool(req, res) {
     return res.status(access.status).json({ trang_thai: "that_bai", thong_bao: access.thong_bao });
   }
   const body = readJsonBody(req);
-  const ma = String(body.ma || "").trim();
+  const ma = String(body.ma || "").trim().toLowerCase();
   const query = String(body.query || "").replace(/^\?/, "").replace(/[\r\n]/g, "").slice(0, 4000);
-  const route = ROUTES_REGISTRY.find((item) => routeSlug(item.prefix[0]) === ma);
+  const route = ROUTES_REGISTRY.find((item) => {
+    const s0 = routeSlug(item.prefix[0]).toLowerCase();
+    if (s0 === ma) return true;
+    return item.prefix.some((p) => {
+      const sp = routeSlug(p).toLowerCase();
+      const rawP = p.replace(/^\//, "").toLowerCase();
+      return sp === ma || rawP === ma || p.toLowerCase() === "/" + ma;
+    });
+  });
   if (!route) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.status(404).json({ trang_thai: "that_bai", thong_bao: "Không thấy công cụ." });
   }
   accountsHandler.noteToolHit(route.prefix[0]).catch(() => {});
   req.url = route.prefix[0] + (query ? `?${query}` : "");
+  try {
+    const u = new URL(req.url, "https://localhost");
+    req.query = Object.fromEntries(u.searchParams.entries());
+  } catch (_) {
+    req.query = {};
+  }
   return route.handler(req, res);
 }
 
