@@ -332,8 +332,244 @@
     }
     .field:focus, .pay-box input:focus, .card input:focus { border-color: #60a5fa; }
     .field[readonly] { color: var(--muted); }
-    .pay-box { display: grid; gap: 8px; }
-    .pay-box img { width: min(220px, 100%); border-radius: 12px; background: #fff; }
+    /* Modern Fintech Wallet & Deposit Styling */
+    .wallet-wrap { display: flex; flex-direction: column; gap: 18px; }
+    .wallet-header-block { margin-bottom: 4px; }
+    .wallet-badge-pill {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800;
+      letter-spacing: .06em; text-transform: uppercase; color: #38bdf8;
+      background: color-mix(in srgb, #38bdf8 12%, transparent); border: 1px solid color-mix(in srgb, #38bdf8 26%, transparent);
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 10px;
+    }
+    .wallet-hero-card {
+      position: relative; overflow: hidden; isolation: isolate; border-radius: 20px;
+      padding: 24px 26px; color: #fff;
+      background: linear-gradient(135deg, #0b1329 0%, #171d3d 50%, #090e1f 100%);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
+    .wallet-hero-glow {
+      position: absolute; inset: -40px; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 20% 85%, rgba(139, 92, 246, 0.18) 0%, transparent 45%);
+    }
+    .wallet-hero-top {
+      position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .wallet-chip-emv { display: flex; align-items: center; gap: 12px; }
+    .emv-chip {
+      width: 38px; height: 28px; border-radius: 6px;
+      background: linear-gradient(135deg, #facc15 0%, #ca8a04 55%, #fef08a 100%);
+      border: 1px solid #a16207; box-shadow: inset 0 1px 2px rgba(255,255,255,.6), 0 2px 5px rgba(0,0,0,.3);
+      position: relative; overflow: hidden;
+    }
+    .emv-chip::after {
+      content: ""; position: absolute; inset: 4px; border: 1px solid rgba(113, 63, 18, 0.45); border-radius: 3px;
+    }
+    .nfc-icon { color: rgba(255, 255, 255, 0.55); display: flex; align-items: center; }
+    .nfc-icon svg { width: 18px; height: 18px; transform: rotate(90deg); }
+    .wallet-brand-tags { display: flex; align-items: center; gap: 8px; }
+    .wallet-brand-tag {
+      font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.16);
+      display: inline-flex; align-items: center; gap: 5px; color: #fff;
+    }
+    .wallet-brand-vip {
+      font-size: 10px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #fff;
+    }
+    .wallet-balance-wrap { position: relative; z-index: 1; margin-bottom: 20px; }
+    .wallet-balance-label {
+      font-size: 11.5px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65); margin-bottom: 5px; display: flex; align-items: center; gap: 6px;
+    }
+    .wallet-balance-val {
+      font-size: clamp(30px, 4.5vw, 42px); font-weight: 900; letter-spacing: -.03em; line-height: 1.15;
+      background: linear-gradient(to right, #ffffff 40%, #bae6fd 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-variant-numeric: tabular-nums;
+    }
+    .wallet-hero-footer {
+      position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end;
+      flex-wrap: wrap; gap: 14px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .wallet-user-info { display: flex; flex-direction: column; gap: 2px; }
+    .wallet-user-title { font-size: 10px; font-weight: 700; color: rgba(255, 255, 255, 0.5); letter-spacing: .08em; text-transform: uppercase; }
+    .wallet-user-name { font-size: 15px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
+    .wallet-expiry-status {
+      margin-top: 2px; font-size: 12.5px; color: rgba(255, 255, 255, 0.75); display: flex; align-items: center; gap: 6px;
+    }
+    .dot-indicator { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot-indicator.is-active { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .dot-indicator.is-expired { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+    .btn-renew-hero {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+      color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); font-weight: 750; border-radius: 12px;
+      padding: 9px 16px; transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .btn-renew-hero:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55); }
+
+    /* Action Cards */
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .card-title-row h3 { margin-bottom: 0 !important; font-size: 16px; }
+    .badge-auto {
+      font-size: 11px; font-weight: 750; padding: 3px 8px; border-radius: 999px;
+      background: color-mix(in srgb, #0ea5e9 14%, transparent); color: #0ea5e9;
+      border: 1px solid color-mix(in srgb, #0ea5e9 28%, transparent); display: inline-flex; align-items: center; gap: 4px;
+    }
+    .badge-bank {
+      font-size: 11px; font-weight: 750; padding: 3px 8px; border-radius: 999px;
+      background: color-mix(in srgb, #10b981 14%, transparent); color: #10b981;
+      border: 1px solid color-mix(in srgb, #10b981 28%, transparent);
+    }
+    .muted-lead { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0 0 14px; }
+    .pay-box { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .input-label { font-size: 11.5px; font-weight: 750; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: -4px; }
+    .amount-input-wrap {
+      position: relative; display: flex; align-items: center; width: 100%;
+      background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px;
+      padding: 2px 14px; box-sizing: border-box; transition: border-color .15s ease;
+    }
+    .amount-input-wrap:focus-within { border-color: #0284c7; }
+    .amount-prefix { color: var(--muted); display: flex; align-items: center; margin-right: 8px; }
+    .amount-prefix svg { width: 18px; height: 18px; }
+    .amount-field {
+      border: none !important; background: transparent !important; padding: 11px 0 !important;
+      font-size: 19px !important; font-weight: 850 !important; color: var(--text) !important;
+      flex: 1; outline: none; font-variant-numeric: tabular-nums;
+    }
+    .amount-currency { font-size: 13px; font-weight: 800; color: var(--muted); pointer-events: none; margin-left: 8px; }
+    .preset-amount-label { font-size: 11.5px; font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
+    .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 6px; }
+    .preset-chip {
+      background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+      padding: 8px 4px; text-align: center; font-size: 13px; font-weight: 750;
+      color: var(--text); cursor: pointer; transition: all .15s ease; font-variant-numeric: tabular-nums;
+    }
+    .preset-chip:hover { border-color: #0284c7; background: color-mix(in srgb, #0284c7 10%, var(--bg)); }
+    .preset-chip.is-active {
+      border-color: #0284c7; background: color-mix(in srgb, #0284c7 16%, var(--bg));
+      color: #0284c7; box-shadow: 0 0 0 1px #0284c7 inset; font-weight: 800;
+    }
+    .btn-create-topup {
+      width: 100%; justify-content: center; padding: 12px 18px !important;
+      font-size: 14.5px !important; border-radius: 12px !important; font-weight: 750 !important;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      color: #fff !important; border: 0 !important;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35); transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .btn-create-topup:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(2, 132, 199, 0.45); }
+
+    /* Recipient Bank Card */
+    .bank-details-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .bank-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 14px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line);
+    }
+    .bank-row.bank-row-hl {
+      background: color-mix(in srgb, #0284c7 9%, var(--bg)); border: 1.5px solid #0284c7;
+    }
+    .bank-row-left { display: flex; flex-direction: column; gap: 2px; }
+    .bank-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .bank-val { font-size: 14px; font-weight: 750; color: var(--text); }
+    .bank-acc-num {
+      font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 900;
+      color: #0284c7; letter-spacing: .04em;
+    }
+    .money-hl { color: #10b981; font-weight: 850; font-size: 14.5px; }
+    .icon-btn { font-size: 12px !important; padding: 6px 10px !important; border-radius: 8px !important; }
+
+    /* 4-Step Workflow Guide */
+    .steps-guide {
+      background: color-mix(in srgb, var(--bg) 75%, transparent);
+      border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-top: 10px;
+    }
+    .guide-title { font-size: 12px; font-weight: 750; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .guide-steps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .guide-step-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .step-num {
+      width: 20px; height: 20px; border-radius: 50%; background: #0284c7; color: #fff;
+      font-size: 11px; font-weight: 800; display: grid; place-items: center; flex: 0 0 20px;
+    }
+    .step-text { color: var(--muted); line-height: 1.35; font-size: 11.5px; font-weight: 650; }
+
+    /* Payment Receipt Ticket */
+    .ticket-card {
+      margin-top: 14px; padding: 18px; border-radius: 16px;
+      background: var(--bg); border: 1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      animation: ticketAppear .3s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes ticketAppear {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+    .ticket-header {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--line);
+    }
+    .ticket-brand { font-size: 12px; font-weight: 800; color: #0284c7; letter-spacing: .04em; display: flex; align-items: center; gap: 6px; }
+    .ticket-badge {
+      font-size: 11px; font-weight: 750; padding: 3px 8px; border-radius: 999px;
+      background: color-mix(in srgb, #10b981 16%, transparent); color: #10b981;
+      border: 1px solid color-mix(in srgb, #10b981 30%, transparent); display: inline-flex; align-items: center; gap: 4px;
+    }
+    .ticket-qr-wrap {
+      background: #ffffff; padding: 12px; border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); margin: 4px 0 14px; display: inline-block;
+    }
+    .ticket-qr-img { display: block; width: min(220px, 66vw); height: min(220px, 66vw); object-fit: contain; }
+    .ticket-detail { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .ticket-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 12px; background: color-mix(in srgb, var(--card) 92%, var(--line));
+      border-radius: 10px; border: 1px solid var(--line); font-size: 13.5px;
+    }
+    .ticket-row.hl-row {
+      background: color-mix(in srgb, #0284c7 9%, var(--bg)); border: 1.5px dashed #0284c7;
+      padding: 10px 14px;
+    }
+    .ticket-row-right { display: flex; align-items: center; gap: 8px; }
+    .ticket-label-col { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; }
+    .ticket-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .ticket-code-val {
+      font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 900;
+      color: #0284c7; letter-spacing: .06em;
+    }
+    .ticket-note { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; text-align: center; }
+
+    /* History Table */
+    .wallet-history-card { margin-top: 6px; }
+    .wallet-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .wallet-section-head h3 { margin-bottom: 0 !important; font-size: 16px; }
+    .muted-badge {
+      font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+      background: var(--bg); border: 1px solid var(--line); color: var(--muted);
+    }
+    .wallet-table td { font-size: 13px; }
+    .order-code {
+      font-family: "JetBrains Mono", monospace; font-size: 12.5px; font-weight: 800;
+      color: #0284c7; background: color-mix(in srgb, #0284c7 10%, transparent);
+      padding: 2px 6px; border-radius: 6px; margin-right: 4px;
+    }
+    .order-time { color: var(--muted); font-size: 12px; }
+    .tag-status {
+      font-size: 11.5px; font-weight: 750; padding: 3px 8px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .tag-success { background: rgba(16, 185, 129, 0.14); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-pending { background: rgba(245, 158, 11, 0.14); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-danger { background: rgba(239, 68, 68, 0.14); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 34px 16px; color: var(--muted); gap: 10px; font-size: 13px; text-align: center;
+    }
+    .empty-state svg { width: 32px; height: 32px; opacity: .6; }
     .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 8px 0 18px; }
     .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
     table.admin { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -2683,29 +2919,163 @@
         panel.setAttribute("aria-busy", "false");
         return;
       }
+      const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleDateString("vi-VN") : "Hết hạn";
       panel.innerHTML = `
-        <h1>${ico("wallet", "ico-head")} ${scrambleHtml("Nạp tiền")}</h1>
-        ${keySoonHtml(billing)}
-        <p class="lead">${ico("landmark")} ${vnd(billing.balance)} · MB Bank · nội dung đúng mã</p>
-        <div class="wallet-grid">
-          <div class="card">
-            <h3>${ico("plus")} Tạo lệnh nạp</h3>
-            <div class="pay-box">
-              <input id="topupAmount" class="field" inputmode="numeric" placeholder="Số tiền, tối thiểu 10.000" value="10000">
-              <button class="act act-dark" type="button" id="topupCreate">Lấy nội dung chuyển khoản</button>
-              <div id="topupTicket"></div>
+        <div class="wallet-wrap">
+          <div class="wallet-header-block">
+            <div class="wallet-badge-pill">${ico("sparkles")} CỔNG THANH TOÁN TỰ ĐỘNG NAPAS 247</div>
+            <h1>${ico("wallet", "ico-head")} ${scrambleHtml("Ví & Nạp Tiền")}</h1>
+            ${keySoonHtml(billing)}
+          </div>
+
+          <!-- Luxury Fintech Digital Card -->
+          <div class="wallet-hero-card">
+            <div class="wallet-hero-glow"></div>
+            <div class="wallet-hero-top">
+              <div class="wallet-chip-emv">
+                <div class="emv-chip"></div>
+                <span class="nfc-icon" title="NFC">${ico("wifi")}</span>
+              </div>
+              <div class="wallet-brand-tags">
+                <span class="wallet-brand-tag">${ico("landmark")} MB BANK</span>
+                <span class="wallet-brand-vip">VIP MEMBER</span>
+              </div>
+            </div>
+            <div class="wallet-balance-wrap">
+              <span class="wallet-balance-label">${ico("landmark")} SỐ DƯ TÀI KHOẢN KHẢ DỤNG</span>
+              <div class="wallet-balance-val">${vnd(billing.balance)}</div>
+            </div>
+            <div class="wallet-hero-footer">
+              <div class="wallet-user-info">
+                <span class="wallet-user-title">CHỦ TÀI KHOẢN</span>
+                <span class="wallet-user-name">${esc(billing.name || billing.email || "HỒ ĐỨC MINH")}</span>
+                <div class="wallet-expiry-status">
+                  <span class="dot-indicator ${billing.key_active ? "is-active" : "is-expired"}"></span>
+                  <span>${billing.key_active ? "Key Còn Hạn Đến " + esc(when) : "Key Đã Hết 10 Ngày"}</span>
+                </div>
+              </div>
+              <div class="wallet-hero-actions">
+                <button class="act btn-renew-hero" type="button" id="heroRenewBtn">
+                  ${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}
+                </button>
+              </div>
             </div>
           </div>
-          <div class="card">
-            <h3>${ico("landmark")} Tài khoản nhận</h3>
-            <div class="kv"><span>Ngân hàng</span><b>MB BANK</b></div>
-            <div class="kv"><span>Số tài khoản</span><b>0899256226</b></div>
-            <div class="kv"><span>Chủ tài khoản</span><b>HO DUC MINH</b></div>
-            <p class="muted">10.000đ gia hạn 10 ngày. Bấm gia hạn sau khi số dư đã được cộng.</p>
-            <button class="act" type="button" id="renewBtn">Gia hạn 10 ngày</button>
+
+          <!-- Main 2-Column Grid -->
+          <div class="wallet-grid">
+            <!-- Left Column: Tạo Lệnh Nạp Tự Động -->
+            <div class="card wallet-action-card">
+              <div class="card-title-row">
+                <h3>${ico("plus-circle")} Tạo lệnh nạp tiền</h3>
+                <span class="badge-auto">${ico("zap")} Tự động 30s</span>
+              </div>
+              <p class="muted-lead">Nhập số tiền hoặc chọn mức nạp bên dưới để tạo mã VietQR chuyển khoản nhanh.</p>
+
+              <div class="pay-box">
+                <label class="input-label" for="topupAmount">Số tiền cần nạp (VND)</label>
+                <div class="amount-input-wrap">
+                  <span class="amount-prefix">${ico("landmark")}</span>
+                  <input id="topupAmount" class="amount-field" inputmode="numeric" placeholder="10.000" value="10000">
+                  <span class="amount-currency">VNĐ</span>
+                </div>
+
+                <div class="preset-amount-label">Mức nạp nhanh phổ biến:</div>
+                <div class="preset-grid">
+                  <button class="preset-chip is-active" type="button" data-topup-preset="10000">10.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="20000">20.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="50000">50.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="100000">100.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="200000">200.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="500000">500.000đ</button>
+                </div>
+
+                <button class="act act-dark btn-create-topup" type="button" id="topupCreate">
+                  ${ico("qr-code")} Lấy mã QR & Nội dung chuyển khoản
+                </button>
+                
+                <div id="topupTicket"></div>
+              </div>
+            </div>
+
+            <!-- Right Column: Thông Tin Tài Khoản Nhận -->
+            <div class="card wallet-info-card">
+              <div class="card-title-row">
+                <h3>${ico("landmark")} Tài khoản MB Bank nhận</h3>
+                <span class="badge-bank">Quân Đội (MB)</span>
+              </div>
+              <p class="muted-lead">Chuyển khoản liên ngân hàng 24/7 qua Napas tới số tài khoản chính chủ bên dưới.</p>
+
+              <div class="bank-details-box">
+                <div class="bank-row">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Ngân hàng</span>
+                    <b class="bank-val">MB BANK (Quân Đội)</b>
+                  </div>
+                  <button class="act mini icon-btn" type="button" data-copy="MBBANK" title="Sao chép tên ngân hàng">
+                    ${ico("copy")} Sao chép
+                  </button>
+                </div>
+
+                <div class="bank-row bank-row-hl">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Số tài khoản</span>
+                    <b class="bank-val bank-acc-num">0899256226</b>
+                  </div>
+                  <button class="act mini act-dark icon-btn" type="button" data-copy="0899256226" title="Sao chép số tài khoản">
+                    ${ico("copy")} Sao chép STK
+                  </button>
+                </div>
+
+                <div class="bank-row">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Chủ tài khoản</span>
+                    <b class="bank-val">HO DUC MINH</b>
+                  </div>
+                  <button class="act mini icon-btn" type="button" data-copy="HO DUC MINH" title="Sao chép tên">
+                    ${ico("copy")} Sao chép
+                  </button>
+                </div>
+
+                <div class="bank-row">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Chi phí gia hạn</span>
+                    <b class="bank-val money-hl">${vnd(billing.renew_price || 10000)} / 10 ngày</b>
+                  </div>
+                  <button class="act mini" type="button" id="renewBtn">
+                    ${ico("calendar-plus")} Gia hạn ngay
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4-step workflow guide -->
+              <div class="steps-guide">
+                <div class="guide-title">${ico("info")} Quy trình nạp & gia hạn tự động:</div>
+                <div class="guide-steps-grid">
+                  <div class="guide-step-item">
+                    <span class="step-num">1</span>
+                    <span class="step-text">Tạo mã nạp bên trái</span>
+                  </div>
+                  <div class="guide-step-item">
+                    <span class="step-num">2</span>
+                    <span class="step-text">Quét mã VietQR trên App</span>
+                  </div>
+                  <div class="guide-step-item">
+                    <span class="step-num">3</span>
+                    <span class="step-text">Hệ thống cộng tiền 30s</span>
+                  </div>
+                  <div class="guide-step-item">
+                    <span class="step-num">4</span>
+                    <span class="step-text">Bấm "Gia hạn 10 ngày"</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div id="topupHistory"></div>`;
+
+          <!-- Bottom Section: Lịch Sử Giao Dịch -->
+          <div id="topupHistory"></div>
+        </div>`;
       loadTopupHistory();
     }
 
@@ -2717,10 +3087,56 @@
         const data = await response.json();
         const rows = data.danh_sach || [];
         if (!rows.length) {
-          host.innerHTML = "";
+          host.innerHTML = `
+            <div class="card wallet-history-card">
+              <div class="wallet-section-head">
+                <h3>${ico("history")} Lịch sử nạp tiền</h3>
+              </div>
+              <div class="empty-state">
+                ${ico("receipt")}
+                <span>Chưa có lệnh nạp nào. Hãy tạo mã nạp ở trên để bắt đầu giao dịch.</span>
+              </div>
+            </div>`;
+          paintIcons();
           return;
         }
-        host.innerHTML = `<div class="home-section-head"><div><h2>Lệnh nạp</h2></div></div><div class="table-wrap"><table class="admin"><thead><tr><th>Mã</th><th>Số tiền</th><th>Trạng thái</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.code)}</td><td>${vnd(row.amount)}</td><td>${esc(row.status)}</td></tr>`).join("")}</tbody></table></div>`;
+        host.innerHTML = `
+          <div class="card wallet-history-card">
+            <div class="wallet-section-head">
+              <h3>${ico("history")} Lịch sử nạp tiền</h3>
+              <span class="muted-badge">${rows.length} giao dịch</span>
+            </div>
+            <div class="table-wrap">
+              <table class="admin wallet-table">
+                <thead>
+                  <tr>
+                    <th>Mã nạp</th>
+                    <th>Số tiền</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows.map((row) => {
+                    const st = String(row.status || "").toLowerCase();
+                    const statusHtml = st === "xong"
+                      ? `<span class="tag-status tag-success">${ico("check-circle-2")} Thành công</span>`
+                      : st === "huy"
+                      ? `<span class="tag-status tag-danger">${ico("circle-x")} Đã hủy</span>`
+                      : `<span class="tag-status tag-pending">${ico("clock-3")} Chờ thanh toán</span>`;
+                    const timeStr = row.created_at ? new Date(row.created_at).toLocaleString("vi-VN") : "Gần đây";
+                    return `<tr>
+                      <td><code class="order-code">${esc(row.code)}</code> <button class="act mini icon-only" type="button" data-copy="${esc(row.code)}" title="Copy mã">${ico("copy")}</button></td>
+                      <td class="money">${vnd(row.amount)}</td>
+                      <td class="order-time">${esc(timeStr)}</td>
+                      <td>${statusHtml}</td>
+                    </tr>`;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+        paintIcons();
       } catch (_) {}
     }
 
@@ -2936,8 +3352,18 @@
         paintSecretViews();
         return;
       }
-      if (e.target.closest("#renewBtn")) {
+      if (e.target.closest("#renewBtn") || e.target.closest("#heroRenewBtn")) {
         renewKey();
+        return;
+      }
+      const presetChip = e.target.closest("[data-topup-preset]");
+      if (presetChip) {
+        const val = presetChip.getAttribute("data-topup-preset");
+        const inp = document.getElementById("topupAmount");
+        if (inp) {
+          inp.value = val;
+          document.querySelectorAll("[data-topup-preset]").forEach((btn) => btn.classList.toggle("is-active", btn === presetChip));
+        }
         return;
       }
       if (e.target.closest("#topupCreate")) {
@@ -2984,6 +3410,12 @@
     });
     panel.addEventListener("input", (event) => {
       if (event.target.id === "adminQ") reloadAdmin();
+      if (event.target.id === "topupAmount") {
+        const val = event.target.value.replace(/[^\d]/g, "");
+        document.querySelectorAll("[data-topup-preset]").forEach((btn) => {
+          btn.classList.toggle("is-active", btn.getAttribute("data-topup-preset") === val);
+        });
+      }
     });
     function paintSecretViews() {
       const secret = (billing && billing.secret) || "";
@@ -3019,21 +3451,67 @@
     }
     async function createTopup() {
       const amount = Number(String((document.getElementById("topupAmount") || {}).value || "").replace(/[^\d]/g, ""));
-      const response = await fetch("/api/account/topup", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ amount })
-      });
-      const data = await response.json();
-      const host = document.getElementById("topupTicket");
-      if (!response.ok || !host) {
-        await macAlert({ title: "Chưa tạo được lệnh nạp", text: data.thong_bao || "Thử lại.", ok: "OK" });
+      if (!amount || amount < 10000) {
+        await macAlert({ title: "Số tiền không hợp lệ", text: "Số tiền nạp tối thiểu là 10.000đ.", ok: "OK" });
         return;
       }
-      host.innerHTML = `<div class="kv"><span>Số tiền</span><b>${vnd(data.so_tien)}</b></div><div class="kv"><span>Nội dung</span><b class="secret-value">${esc(data.noi_dung)}</b></div><button class="act" type="button" data-copy="${esc(data.noi_dung)}">${ico("copy")} Sao chép nội dung</button><img src="${esc(data.qr)}" alt="QR chuyển khoản">`;
-      paintIcons();
-      loadTopupHistory();
+      const btn = document.getElementById("topupCreate");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `${ico("loader", "spin")} Đang tạo mã VietQR…`;
+        paintIcons();
+      }
+      try {
+        const response = await fetch("/api/account/topup", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ amount })
+        });
+        const data = await response.json();
+        const host = document.getElementById("topupTicket");
+        if (!response.ok || !host) {
+          await macAlert({ title: "Chưa tạo được lệnh nạp", text: data.thong_bao || "Thử lại.", ok: "OK" });
+          return;
+        }
+        host.innerHTML = `
+          <div class="ticket-card">
+            <div class="ticket-header">
+              <div class="ticket-brand">${ico("landmark")} MB BANK NAPAS 247</div>
+              <span class="ticket-badge">${ico("zap")} Tự động duyệt 24/7</span>
+            </div>
+            <div class="ticket-qr-wrap">
+              <img src="${esc(data.qr)}" alt="VietQR chuyển khoản MB Bank" class="ticket-qr-img">
+            </div>
+            <div class="ticket-detail">
+              <div class="ticket-row">
+                <span class="ticket-label">Số tiền cần chuyển</span>
+                <div class="ticket-row-right">
+                  <b class="money-hl">${vnd(data.so_tien)}</b>
+                  <button class="act mini icon-btn" type="button" data-copy="${data.so_tien}" title="Sao chép số tiền">${ico("copy")} Copy</button>
+                </div>
+              </div>
+              <div class="ticket-row hl-row">
+                <div class="ticket-label-col">
+                  <span class="ticket-label">Nội dung chuyển khoản (bắt buộc)</span>
+                  <b class="ticket-code-val">${esc(data.noi_dung)}</b>
+                </div>
+                <button class="act mini act-dark icon-btn" type="button" data-copy="${esc(data.noi_dung)}" title="Sao chép nội dung">${ico("copy")} Sao chép</button>
+              </div>
+            </div>
+            <p class="ticket-note">${ico("info")} Quét mã QR bằng App Ngân hàng hoặc chuyển khoản đúng <b>nội dung</b> để hệ thống tự động cộng tiền trong 30s.</p>
+          </div>`;
+        paintIcons();
+        loadTopupHistory();
+      } catch (err) {
+        await macAlert({ title: "Lỗi kết nối", text: "Không thể kết nối đến máy chủ. Hãy thử lại.", ok: "OK" });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `${ico("qr-code")} Lấy mã QR & Nội dung chuyển khoản`;
+          paintIcons();
+        }
+      }
     }
     async function adminPost(url, body) {
       const response = await fetch(url, {
