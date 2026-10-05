@@ -16,7 +16,7 @@ function serveFavicon(res) {
 }
 
 function servePageHtml(res, filePath) {
-  const html = fs.readFileSync(filePath, "utf8");
+  const html = injectMobileFix(fs.readFileSync(filePath, "utf8"));
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -258,12 +258,32 @@ function applyDocsSeo(html, pathname) {
 }
 
 function serveDocsHtml(res, pathname) {
-  const html = applyDocsSeo(fs.readFileSync(DOCS_HTML_PATH, "utf8"), pathname || "/");
+  const html = injectMobileFix(applyDocsSeo(fs.readFileSync(DOCS_HTML_PATH, "utf8"), pathname || "/"));
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.statusCode = 200;
   res.end(html);
+}
+
+/* Mobile hotfix: CSS injected into every served HTML page (ZheeDev).
+   Fixes horizontal overflow / broken text on phones without touching ui.html. */
+const MOBILE_FIX_CSS = `
+html, body { overflow-x: clip; }
+@media (max-width: 640px) {
+  .developer-hero-top, .wallet-hero-top {
+    flex-wrap: wrap; gap: 10px; row-gap: 12px; margin-bottom: 16px;
+  }
+  .developer-hero-card, .wallet-hero-card { padding: 20px 18px; }
+  .wallet-chip-emv { min-width: 0; flex-wrap: wrap; row-gap: 8px; }
+  .wallet-brand-tags { flex-wrap: wrap; row-gap: 8px; min-width: 0; }
+  .card-security-label { font-size: 9px; letter-spacing: .08em; }
+  .dev-brand-tag, .dev-brand-admin, .wallet-brand-vip { font-size: 9.5px !important; }
+  img, video { max-width: 100%; height: auto; }
+}`;
+function injectMobileFix(html) {
+  if (typeof html !== "string" || html.indexOf("</head>") === -1) return html;
+  return html.replace("</head>", "<style data-zhee-mobile-fix>" + MOBILE_FIX_CSS + "</style></head>");
 }
 
 function escapeXml(value) {
