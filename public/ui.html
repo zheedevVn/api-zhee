@@ -926,6 +926,110 @@
     .avatar-preview img { width: clamp(112px, 22vw, 196px); height: clamp(112px, 22vw, 196px); max-width: none; max-height: none; border: 0; border-radius: 50%; filter: drop-shadow(0 10px 18px rgba(15, 23, 42, .18)); }
     .media-caption { margin-top: 12px; text-align: center; color: var(--muted); font-size: 12px; }
     .media-stack { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .dqc-container, .dqc-list-card {
+      background: rgba(18, 24, 38, 0.9);
+      border: 1px solid rgba(88, 101, 242, 0.35);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 30px -10px rgba(88, 101, 242, 0.25);
+      backdrop-filter: blur(12px);
+      color: #fff;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .dqc-container.dqc-success {
+      border-color: rgba(34, 197, 94, 0.45);
+      box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.3);
+      background: rgba(15, 28, 24, 0.92);
+    }
+    .dqc-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .dqc-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+      border-radius: 999px; font-size: 11px; font-weight: 850; letter-spacing: .05em;
+      background: rgba(88, 101, 242, 0.2); color: #818cf8; border: 1px solid rgba(88, 101, 242, 0.35);
+    }
+    .dqc-success .dqc-badge {
+      background: rgba(34, 197, 94, 0.18); color: #4ade80; border-color: rgba(34, 197, 94, 0.4);
+    }
+    .dqc-orbs {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+      border-radius: 999px; font-size: 11.5px; font-weight: 850;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.25));
+      color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .dqc-title {
+      font-size: 16px; font-weight: 800; margin-bottom: 14px; color: #f8fafc;
+    }
+    .dqc-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px; margin-bottom: 14px;
+    }
+    .dqc-item {
+      background: rgba(255, 255, 255, 0.04); padding: 8px 12px; border-radius: 8px;
+      font-size: 12.5px; border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .dqc-item span { color: #94a3b8; margin-right: 4px; }
+    .dqc-item strong { color: #e2e8f0; }
+    .dqc-alert {
+      display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;
+      border-radius: 10px; background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.3); color: #86efac; font-size: 12.5px; line-height: 1.5;
+    }
+    .dqc-alert svg { flex-shrink: 0; width: 18px; height: 18px; color: #22c55e; margin-top: 2px; }
+    .dqc-list-body {
+      display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;
+    }
+    .dqc-item-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08); flex-wrap: wrap;
+    }
+    .dqc-item-row.is-done { opacity: 0.65; }
+    .dqc-row-left { display: flex; flex-direction: column; gap: 4px; }
+    .dqc-row-name { font-size: 13.5px; font-weight: 700; color: #f1f5f9; }
+    .dqc-row-sub { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #94a3b8; }
+    .dqc-tag-orb {
+      display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px;
+      border-radius: 999px; background: rgba(245, 158, 11, 0.15); color: #fbbf24;
+      font-weight: 800; font-size: 10.5px;
+    }
+    .dqc-tag-status {
+      padding: 2px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 750;
+    }
+    .status-pending { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .status-done { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+    .dqc-row-actions { display: flex; align-items: center; gap: 6px; }
+    .dqc-btn-copy, .dqc-btn-run {
+      display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px;
+      border-radius: 8px; font-size: 11.5px; font-weight: 750; cursor: pointer;
+      border: none; transition: all 0.2s;
+    }
+    .dqc-btn-copy {
+      background: rgba(255, 255, 255, 0.08); color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .dqc-btn-copy:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+    .dqc-btn-run {
+      background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%);
+      color: #fff; box-shadow: 0 2px 8px rgba(88, 101, 242, 0.4);
+    }
+    .dqc-btn-run:hover {
+      background: linear-gradient(135deg, #6b77f8 0%, #5865f2 100%);
+      box-shadow: 0 4px 12px rgba(88, 101, 242, 0.6); transform: translateY(-1px);
+    }
+    .dqc-done-pill {
+      display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+      border-radius: 999px; background: rgba(34, 197, 94, 0.15); color: #4ade80;
+      font-size: 11px; font-weight: 750;
+    }
+    .dqc-tip {
+      display: flex; align-items: center; gap: 6px; font-size: 11.5px;
+      color: #94a3b8; margin-top: 8px; line-height: 1.4;
+    }
     @media (max-width: 900px) {
       .try-row { grid-template-columns: 1fr; }
     }
@@ -2856,7 +2960,9 @@
         ["action", "rover", "sol", "earth_date", "start_date", "end_date", "date", "count", "feedtype"].forEach(add);
       } else if (/tiktok/i.test(p)) {
         ["", "url", "username", "sessionid", "action"].forEach(add);
-      } else if (/instagram|github|roblox|twitter|facebook|zalo|telegram|discord|ngl|youtube|soundcloud/i.test(p)) {
+      } else if (/discord/i.test(p)) {
+        ["", "token", "quest", "id", "invite"].forEach(add);
+      } else if (/instagram|github|roblox|twitter|facebook|zalo|telegram|ngl|youtube|soundcloud/i.test(p)) {
         ["", "username", "url"].forEach(add);
       } else {
         add("");
@@ -2892,6 +2998,10 @@
     function keyLabel(k) {
       if (k === "") return "link / từ khóa";
       if (k === "sessionid") return "sessionid (cookie)";
+      if (k === "token") return "token Discord";
+      if (k === "quest") return "mã chạy quest (RUN_QUEST:...)";
+      if (k === "id") return "user ID Discord";
+      if (k === "invite") return "link / mã mời";
       return k;
     }
     function makeTryRow(key, value, keys) {
@@ -2987,7 +3097,8 @@
       if (sample) sample.setAttribute("aria-busy", "true");
       pre.textContent = "";
       if (media) media.innerHTML = "";
-      const timer = setTimeout(() => ac.abort(), timeoutMs || 12000);
+      const isQuest = /RUN_QUEST|run_quest|quest/i.test(url || "");
+      const timer = setTimeout(() => ac.abort(), timeoutMs || (isQuest ? 65000 : 15000));
       const headers = { Accept: "application/json, audio/*, image/*, */*", "Content-Type": "application/json" };
       if (billing && billing.secret && billing.role !== "admin") headers["x-zhee-key"] = billing.secret;
       fetch("/api/run", {
@@ -3068,6 +3179,82 @@
             markSelfGlyphs(status);
           }
           if (copyBtn) copyBtn.setAttribute("data-copy", body);
+
+          if (parsed && parsed.loai === "discord_run_quest" && media) {
+            const kq = parsed.ket_qua || parsed.chi_tiet || {};
+            const isDone = Boolean(kq.da_hoan_thanh);
+            media.innerHTML = `
+              <div class="dqc-container ${isDone ? 'dqc-success' : 'dqc-running'}">
+                <div class="dqc-head">
+                  <span class="dqc-badge">${ico(isDone ? "circle-check" : "loader-2")} ${isDone ? "ĐÃ HOÀN THÀNH (DONE)" : "ĐANG TIẾN HÀNH"}</span>
+                  ${kq.orbs_du_kien ? `<span class="dqc-orbs">${ico("sparkles")} +${kq.orbs_du_kien} Orbs</span>` : ""}
+                </div>
+                <div class="dqc-title">${esc(kq.ten_nhiem_vu || "Nhiệm vụ Discord")}</div>
+                <div class="dqc-grid">
+                  <div class="dqc-item"><span>Game:</span> <strong>${esc(kq.game || "Discord")}</strong></div>
+                  <div class="dqc-item"><span>Loại:</span> <strong>${esc(kq.loai_nhiem_vu || "Xem video quảng cáo")}</strong></div>
+                  <div class="dqc-item"><span>Tiến độ:</span> <strong>${esc(kq.tien_do_hien_tai || "100%")}</strong></div>
+                  <div class="dqc-item"><span>Thời lượng:</span> <strong>${esc(kq.thoi_gian_yeu_cau || "30s")}</strong></div>
+                </div>
+                <div class="dqc-alert">
+                  ${ico("shield-check")} <div><strong>HƯỚNG DẪN NHẬN THƯỞNG:</strong> Nhiệm vụ đã hoàn tất (DONE). Bạn hãy mở ứng dụng <strong>Discord</strong> và tự tay bấm <strong>"Nhận phần thưởng" (Claim Reward)</strong> để nhận Orbs an toàn tuyệt đối!</div>
+                </div>
+              </div>
+            `;
+            markSelfGlyphs(media);
+          } else if (parsed && parsed.loai === "discord_token_account" && media) {
+            const quests = parsed.thong_tin_tai_khoan?.nhiem_vu?.hien_co || [];
+            const orbs = parsed.thong_tin_tai_khoan?.orbs?.so_du;
+            if (quests.length > 0) {
+              const qHtml = quests.map((q) => {
+                const qCode = q.ma_chay_nhiem_vu || "";
+                const isFinished = q.da_hoan_thanh || q.da_nhan_thuong;
+                return `
+                  <div class="dqc-item-row ${isFinished ? 'is-done' : ''}">
+                    <div class="dqc-row-left">
+                      <div class="dqc-row-name">${esc(q.ten || "Nhiệm vụ")}</div>
+                      <div class="dqc-row-sub">
+                        <span>${esc(q.game || "Game")}</span>
+                        ${q.orbs ? `<span class="dqc-tag-orb">${ico("sparkles")} +${q.orbs} Orbs</span>` : ""}
+                        <span class="dqc-tag-status ${isFinished ? 'status-done' : 'status-pending'}">${esc(q.trang_thai)}</span>
+                      </div>
+                    </div>
+                    <div class="dqc-row-actions">
+                      ${qCode && !isFinished ? `
+                        <button type="button" class="dqc-btn-copy" data-copy="${esc(qCode)}" title="Copy mã chạy quest để dán lại">${ico("copy")} Copy mã</button>
+                        <button type="button" class="dqc-btn-run" data-run-quest="${esc(qCode)}" title="Bấm để tự chạy ngay">${ico("play")} Chạy ngay</button>
+                      ` : (isFinished ? `<span class="dqc-done-pill">${ico("check")} Đã xong</span>` : "")}
+                    </div>
+                  </div>
+                `;
+              }).join("");
+
+              media.innerHTML = `
+                <div class="dqc-list-card">
+                  <div class="dqc-head">
+                    <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ ORBS DISCORD (${quests.length})</span>
+                    ${orbs != null ? `<span class="dqc-orbs">${ico("coins")} Số dư: ${orbs} Orbs</span>` : ""}
+                  </div>
+                  <div class="dqc-list-body">${qHtml}</div>
+                  <div class="dqc-tip">${ico("info")} Bạn có thể bấm <strong>Copy mã</strong> hoặc <strong>Chạy ngay</strong> để code tự chạy xem video (báo DONE). Sau đó bạn mở Discord tự tay bấm nhận thưởng!</div>
+                </div>
+              `;
+              markSelfGlyphs(media);
+
+              media.querySelectorAll("[data-run-quest]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                  const code = btn.getAttribute("data-run-quest");
+                  if (!code) return;
+                  const rowInput = panel.querySelector("[data-try-val]");
+                  if (rowInput) rowInput.value = code;
+                  const selKey = panel.querySelector("[data-try-key]");
+                  if (selKey) selKey.value = "";
+                  btn.innerHTML = `<span class="spinner" aria-hidden="true"></span> Đang chạy…`;
+                  loadLive("=" + encodeURIComponent(code), 65000);
+                });
+              });
+            }
+          }
         })
         .catch((e) => {
           if (liveAbort !== ac) return;
