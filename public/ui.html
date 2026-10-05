@@ -465,11 +465,11 @@
     .btn-create-topup:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(2, 132, 199, 0.45); }
 
     /* Recipient Bank Card & High-Contrast Typography */
-    .bank-details-box { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+    .bank-details-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
     .bank-row {
       display: flex; justify-content: space-between; align-items: center; gap: 12px;
-      padding: 12px 16px; background: var(--bg); border-radius: 14px; border: 1px solid var(--line);
-      transition: all .16s ease;
+      min-height: 56px; padding: 9px 14px; background: var(--bg); border-radius: 13px; border: 1px solid var(--line);
+      box-sizing: border-box; transition: all .16s ease;
     }
     .bank-row:hover {
       border-color: color-mix(in srgb, #0284c7 35%, var(--line));
@@ -480,83 +480,82 @@
       box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
     }
     .bank-row-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-    .bank-label { font-size: 11px; font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-    .bank-val { font-size: 14px; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bank-label { font-size: 10.5px; font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .bank-val { font-size: 13.5px; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bank-acc-num {
-      font-family: "JetBrains Mono", monospace; font-size: 18px; font-weight: 900;
+      font-family: "JetBrains Mono", monospace; font-size: 17.5px; font-weight: 900;
       color: #0284c7; letter-spacing: .05em;
     }
-    .money-hl { color: #10b981; font-weight: 850; font-size: 14.5px; }
+    .money-hl { color: #10b981; font-weight: 850; font-size: 14px; }
 
-    /* Ultra-sleek Copy Button System (No wrapping, instant inline checkmark feedback) */
-    .copy-btn {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 6px !important;
-      padding: 7px 14px !important;
-      border-radius: 10px !important;
-      font-size: 12.5px !important;
-      font-weight: 750 !important;
-      line-height: 1.2 !important;
-      white-space: nowrap !important;
-      flex-shrink: 0 !important;
-      width: auto !important;
-      min-width: max-content !important;
+    /* Precision Square Icon Copy Button (Zero misalignment, pure icon) */
+    .icon-copy-btn {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      max-width: 38px !important;
+      flex: 0 0 38px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: inline-grid !important;
+      place-items: center !important;
+      border-radius: 11px !important;
       border: 1px solid var(--line) !important;
       background: color-mix(in srgb, var(--card) 85%, var(--line)) !important;
       color: var(--text) !important;
       cursor: pointer !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-      text-decoration: none !important;
-      transition: transform .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+      transition: all .16s cubic-bezier(.16, 1, .3, 1) !important;
     }
-    .copy-btn svg, .copy-btn .ico {
-      width: 14px !important;
-      height: 14px !important;
-      flex-shrink: 0 !important;
+    .icon-copy-btn svg, .icon-copy-btn .ico {
+      width: 17px !important;
+      height: 17px !important;
+      margin: 0 !important;
+      display: block !important;
+      pointer-events: none !important;
     }
-    .copy-btn:hover {
-      background: color-mix(in srgb, #0284c7 14%, var(--card)) !important;
+    .icon-copy-btn:hover {
+      background: color-mix(in srgb, #0284c7 15%, var(--card)) !important;
       border-color: #0284c7 !important;
       color: #0284c7 !important;
-      transform: translateY(-1px) !important;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.18) !important;
+      transform: translateY(-1px) scale(1.04) !important;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22) !important;
     }
-    .copy-btn:active {
-      transform: scale(0.97) !important;
+    .icon-copy-btn:active {
+      transform: scale(0.94) !important;
     }
-    .copy-btn.copy-btn-primary {
+    .icon-copy-btn.icon-copy-btn-hl {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
       color: #ffffff !important;
-      border: 1px solid rgba(255, 255, 255, 0.22) !important;
-      box-shadow: 0 3px 12px rgba(2, 132, 199, 0.35) !important;
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.35) !important;
     }
-    .copy-btn.copy-btn-primary:hover {
+    .icon-copy-btn.icon-copy-btn-hl:hover {
       background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
-      box-shadow: 0 5px 16px rgba(2, 132, 199, 0.5) !important;
-      transform: translateY(-1px) !important;
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.5) !important;
+      transform: translateY(-1px) scale(1.04) !important;
       color: #ffffff !important;
     }
-    .copy-btn.copy-btn-purple {
+    .icon-copy-btn.icon-renew-btn {
       background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
       color: #ffffff !important;
-      border: 1px solid rgba(255, 255, 255, 0.22) !important;
-      box-shadow: 0 3px 12px rgba(124, 58, 237, 0.35) !important;
+      box-shadow: 0 3px 10px rgba(124, 58, 237, 0.35) !important;
     }
-    .copy-btn.copy-btn-purple:hover {
+    .icon-copy-btn.icon-renew-btn:hover {
       background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%) !important;
-      box-shadow: 0 5px 16px rgba(124, 58, 237, 0.5) !important;
-      transform: translateY(-1px) !important;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5) !important;
+      transform: translateY(-1px) scale(1.04) !important;
       color: #ffffff !important;
     }
+    .icon-copy-btn.is-copied,
     .copy-btn.is-copied,
     .act.is-copied,
     .contact-copy-icon.is-copied {
       background: #10b981 !important;
       border-color: #059669 !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45) !important;
     }
 
     /* Luxury Developer VIP Passport Card */
@@ -681,18 +680,18 @@
     }
     .cred-box {
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      padding: 11px 14px; background: var(--bg); border-radius: 12px;
-      border: 1px solid var(--line); margin: 6px 0 8px;
+      padding: 8px 12px; background: var(--bg); border-radius: 13px;
+      border: 1px solid var(--line); margin: 6px 0 2px; min-height: 54px;
+      box-sizing: border-box;
     }
     .cred-box .secret-value {
       flex: 1; min-width: 0; font-family: "JetBrains Mono", monospace; font-size: 13.5px;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0;
     }
     .cred-box .secret-value.is-open {
       white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; word-break: break-all;
     }
-    .btn-toggle-eye { flex-shrink: 0; }
-    .cred-action-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .cred-icon-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
     /* 4-Step Workflow Guide */
     .steps-guide {
@@ -2556,7 +2555,7 @@
           const origHtml = btn.dataset.origHtml || btn.innerHTML;
           if (!btn.dataset.origHtml) btn.dataset.origHtml = origHtml;
           btn.classList.add("is-copied");
-          const isIconOnly = btn.classList.contains("icon-only") || btn.classList.contains("contact-copy-icon") || !btn.textContent.trim();
+          const isIconOnly = btn.classList.contains("icon-only") || btn.classList.contains("icon-copy-btn") || btn.classList.contains("contact-copy-icon") || !btn.textContent.trim();
           btn.innerHTML = isIconOnly ? ico("check") : `${ico("check")} Đã chép!`;
           paintIcons();
           clearTimeout(btn._copiedTimer);
@@ -3212,18 +3211,17 @@
 
               <div class="cred-box">
                 <p class="secret-value${secretShown ? " is-open" : ""}" id="secretValue" data-secret-view>${esc(secretShown ? billing.secret : maskSecret(billing.secret))}</p>
-                <button class="act icon-only btn-toggle-eye" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key" title="Hiện hoặc ẩn key">
-                  ${ico(secretShown ? "eye-off" : "eye")}
-                </button>
-              </div>
-
-              <div class="cred-action-row">
-                <button class="copy-btn copy-btn-primary" type="button" data-copy="${esc(billing.secret || "")}" title="Sao chép Secret Key">
-                  ${ico("copy")} Sao chép Secret Key
-                </button>
-                <button class="copy-btn" type="button" data-copy="curl -H &quot;x-zhee-key: ${esc(billing.secret || "")}&quot; https://api-zhee.vercel.app/api/tai-xiu" title="Sao chép cURL mẫu">
-                  ${ico("terminal")} Sao chép cURL mẫu
-                </button>
+                <div class="cred-icon-actions">
+                  <button class="icon-copy-btn" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key" title="Hiện hoặc ẩn key">
+                    ${ico(secretShown ? "eye-off" : "eye")}
+                  </button>
+                  <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="${esc(billing.secret || "")}" title="Sao chép Secret Key" aria-label="Sao chép Secret Key">
+                    ${ico("copy")}
+                  </button>
+                  <button class="icon-copy-btn" type="button" data-copy="curl -H &quot;x-zhee-key: ${esc(billing.secret || "")}&quot; https://api-zhee.vercel.app/api/tai-xiu" title="Sao chép cURL mẫu" aria-label="Sao chép cURL mẫu">
+                    ${ico("terminal")}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -3239,18 +3237,17 @@
 
               <div class="cred-box">
                 <p class="secret-value${tokenShown ? " is-open" : ""}" data-token-view>${esc(tokenShown ? billing.token : maskSecret(billing.token))}</p>
-                <button class="act icon-only btn-toggle-eye" type="button" id="toggleToken" aria-label="Hiện hoặc ẩn token" title="Hiện hoặc ẩn token">
-                  ${ico(tokenShown ? "eye-off" : "eye")}
-                </button>
-              </div>
-
-              <div class="cred-action-row">
-                <button class="copy-btn" type="button" data-copy="${esc(billing.token || "")}" title="Sao chép Token">
-                  ${ico("copy")} Sao chép Token
-                </button>
-                <button class="copy-btn copy-btn-primary" type="button" data-copy="${esc(location.origin + "/api/auth/verify?token=" + (billing.token || ""))}" title="Sao chép link xác thực">
-                  ${ico("link-2")} Link xác thực nhanh
-                </button>
+                <div class="cred-icon-actions">
+                  <button class="icon-copy-btn" type="button" id="toggleToken" aria-label="Hiện hoặc ẩn token" title="Hiện hoặc ẩn token">
+                    ${ico(tokenShown ? "eye-off" : "eye")}
+                  </button>
+                  <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="${esc(billing.token || "")}" title="Sao chép Token" aria-label="Sao chép Token">
+                    ${ico("copy")}
+                  </button>
+                  <button class="icon-copy-btn" type="button" data-copy="${esc(location.origin + "/api/auth/verify?token=" + (billing.token || ""))}" title="Sao chép link xác thực" aria-label="Sao chép link xác thực">
+                    ${ico("link-2")}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -3368,8 +3365,8 @@
                     <span class="bank-label">Ngân hàng thụ hưởng</span>
                     <b class="bank-val">MB BANK (Quân Đội)</b>
                   </div>
-                  <button class="copy-btn" type="button" data-copy="MBBANK" title="Sao chép tên ngân hàng">
-                    ${ico("copy")} Sao chép
+                  <button class="icon-copy-btn" type="button" data-copy="MBBANK" title="Sao chép tên ngân hàng" aria-label="Sao chép tên ngân hàng">
+                    ${ico("copy")}
                   </button>
                 </div>
 
@@ -3378,8 +3375,8 @@
                     <span class="bank-label">Số tài khoản nhận</span>
                     <b class="bank-val bank-acc-num">0899256226</b>
                   </div>
-                  <button class="copy-btn copy-btn-primary" type="button" data-copy="0899256226" title="Sao chép số tài khoản MB Bank">
-                    ${ico("copy")} Sao chép STK
+                  <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="0899256226" title="Sao chép số tài khoản MB Bank" aria-label="Sao chép số tài khoản MB Bank">
+                    ${ico("copy")}
                   </button>
                 </div>
 
@@ -3388,8 +3385,8 @@
                     <span class="bank-label">Chủ tài khoản</span>
                     <b class="bank-val">HO DUC MINH</b>
                   </div>
-                  <button class="copy-btn" type="button" data-copy="HO DUC MINH" title="Sao chép chủ tài khoản">
-                    ${ico("copy")} Sao chép
+                  <button class="icon-copy-btn" type="button" data-copy="HO DUC MINH" title="Sao chép chủ tài khoản" aria-label="Sao chép chủ tài khoản">
+                    ${ico("copy")}
                   </button>
                 </div>
 
@@ -3398,8 +3395,8 @@
                     <span class="bank-label">Chi phí gia hạn</span>
                     <b class="bank-val money-hl">${vnd(billing.renew_price || 10000)} / 10 ngày</b>
                   </div>
-                  <button class="copy-btn copy-btn-purple" type="button" id="renewBtn">
-                    ${ico("calendar-plus")} Gia hạn ngay
+                  <button class="icon-copy-btn icon-renew-btn" type="button" id="renewBtn" title="Gia hạn ngay 10 ngày" aria-label="Gia hạn ngay 10 ngày">
+                    ${ico("calendar-plus")}
                   </button>
                 </div>
               </div>
@@ -3844,7 +3841,7 @@
                 <span class="ticket-label">Số tiền cần chuyển</span>
                 <div class="ticket-row-right">
                   <b class="money-hl">${vnd(data.so_tien)}</b>
-                  <button class="copy-btn" type="button" data-copy="${data.so_tien}" title="Sao chép số tiền">${ico("copy")} Sao chép</button>
+                  <button class="icon-copy-btn" type="button" data-copy="${data.so_tien}" title="Sao chép số tiền" aria-label="Sao chép số tiền">${ico("copy")}</button>
                 </div>
               </div>
               <div class="ticket-row hl-row">
@@ -3852,7 +3849,7 @@
                   <span class="ticket-label">Nội dung chuyển khoản (bắt buộc)</span>
                   <b class="ticket-code-val">${esc(data.noi_dung)}</b>
                 </div>
-                <button class="copy-btn copy-btn-primary" type="button" data-copy="${esc(data.noi_dung)}" title="Sao chép nội dung">${ico("copy")} Sao chép nội dung</button>
+                <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="${esc(data.noi_dung)}" title="Sao chép cú pháp chuyển khoản" aria-label="Sao chép cú pháp">${ico("copy")}</button>
               </div>
             </div>
             <p class="ticket-note">${ico("info")} Quét mã QR bằng App Ngân hàng hoặc chuyển khoản đúng <b>nội dung</b> để hệ thống tự động cộng tiền trong 30s.</p>
