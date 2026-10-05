@@ -319,7 +319,7 @@ const HTML_JS_PATCHES = [
   [
     'Chạy ngay</button>\n                `))}\n              </div>',
     'Chạy ngay</button>\n                `)))}\n              </div>'
-  ]
+  ],
   // FIX: surface backend heartbeat failure reason on the quest card instead of silent 99%
   [
     'if (data.ket_qua?.tien_do_phan_tram != null) {\n              q.percent = Number(data.ket_qua.tien_do_phan_tram);\n              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;\n            }',
