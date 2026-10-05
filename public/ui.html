@@ -1026,6 +1026,107 @@
       border-radius: 999px; background: rgba(34, 197, 94, 0.15); color: #4ade80;
       font-size: 11px; font-weight: 750;
     }
+    .dqc-batch-header-actions {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .dqc-btn-batch {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      border-radius: 9px; font-size: 12px; font-weight: 850; cursor: pointer;
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      color: #fff; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+      transition: all 0.2s ease;
+    }
+    .dqc-btn-batch:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    }
+    .dqc-btn-batch:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .dqc-btn-batch.is-running {
+      background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+      border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+    }
+    .dqc-btn-stop {
+      display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px;
+      border-radius: 9px; font-size: 11.5px; font-weight: 750; cursor: pointer;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.15); color: #f87171;
+      transition: all 0.2s ease;
+    }
+    .dqc-btn-stop:hover { background: rgba(239, 68, 68, 0.28); color: #fff; }
+    .dqc-region-group {
+      display: inline-flex; align-items: center; background: rgba(0, 0, 0, 0.35);
+      border-radius: 9px; padding: 2px; border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .dqc-region-btn {
+      padding: 4px 9px; border-radius: 7px; font-size: 11px; font-weight: 750;
+      border: none; background: transparent; color: #94a3b8; cursor: pointer;
+      transition: all 0.18s; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .dqc-region-btn.active {
+      background: rgba(255, 255, 255, 0.15); color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .dqc-progress-box {
+      margin-top: 8px; width: 100%; display: flex; flex-direction: column; gap: 5px;
+    }
+    .dqc-progress-info {
+      display: flex; justify-content: space-between; align-items: center; font-size: 11.5px;
+    }
+    .dqc-progress-timer {
+      display: inline-flex; align-items: center; gap: 4px; color: #60a5fa; font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+    .dqc-progress-track {
+      width: 100%; height: 7px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08); overflow: hidden; position: relative;
+    }
+    .dqc-progress-fill {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #a855f7);
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.6);
+    }
+    .dqc-progress-fill.is-done {
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+      width: 100% !important;
+    }
+    .dqc-item-row.is-active-running {
+      border-color: rgba(96, 165, 250, 0.6);
+      background: rgba(30, 41, 59, 0.9);
+      box-shadow: 0 0 16px rgba(96, 165, 250, 0.2);
+    }
+    .dqc-item-row.is-complete {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: rgba(15, 28, 24, 0.85);
+    }
+    .dqc-batch-panel {
+      background: linear-gradient(135deg, rgba(88, 101, 242, 0.15), rgba(139, 92, 246, 0.12));
+      border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .dqc-batch-title {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; font-weight: 800; color: #e2e8f0;
+    }
+    .dqc-batch-title span { display: inline-flex; align-items: center; gap: 6px; }
+    .dqc-batch-subtitle {
+      font-size: 12px; color: #94a3b8; line-height: 1.4;
+    }
+    .dqc-restore-badge {
+      display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px;
+      border-radius: 6px; background: rgba(59, 130, 246, 0.15); color: #60a5fa;
+      font-size: 11px; font-weight: 750;
+    }
+    .dqc-claim-guide {
+      margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+      background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #cbd5e1; font-size: 12px; line-height: 1.6;
+    }
+    .dqc-claim-guide strong { color: #86efac; }
     .dqc-tip {
       display: flex; align-items: center; gap: 6px; font-size: 11.5px;
       color: #94a3b8; margin-top: 8px; line-height: 1.4;
@@ -3078,11 +3179,363 @@
     function updateTryUrl() {
       return collectTryUrl();
     }
-    function autoloadUrl(t) {
-      const example = t.vi_du || (ORIGIN + t.path + (t.params || ""));
-      const heavy = /\{[^}]+\}/.test(example) || /[?&](email|mk|password|token|secret|key)=/i.test(example);
-      return heavy ? (ORIGIN + t.path) : example;
+    const DQC_STORE_KEY = "zhee_discord_quests_session_v1";
+
+    function saveDqcState(state) {
+      try {
+        localStorage.setItem(DQC_STORE_KEY, JSON.stringify({
+          ...state,
+          savedAt: Date.now()
+        }));
+      } catch (_) {}
     }
+
+    function loadDqcState() {
+      try {
+        const raw = localStorage.getItem(DQC_STORE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (Date.now() - (obj.savedAt || 0) > 48 * 3600 * 1000) {
+          localStorage.removeItem(DQC_STORE_KEY);
+          return null;
+        }
+        return obj;
+      } catch (_) { return null; }
+    }
+
+    function clearDqcState() {
+      try { localStorage.removeItem(DQC_STORE_KEY); } catch (_) {}
+    }
+
+    let dqcActiveTimers = {};
+    let dqcBatchRunning = false;
+
+    function renderDiscordQuestsManager(container, parsedOrState, fallbackToken) {
+      if (!container) return;
+      const isSavedState = Boolean(parsedOrState && parsedOrState.isSavedState);
+      const acc = parsedOrState.thong_tin_tai_khoan || parsedOrState.account || {};
+      const questsRaw = parsedOrState.thong_tin_tai_khoan?.nhiem_vu?.hien_co || parsedOrState.quests || [];
+      const orbs = acc.orbs?.so_du ?? parsedOrState.orbs ?? null;
+      let token = (fallbackToken || parsedOrState.token || "").trim();
+      let currentRegion = parsedOrState.region || parsedOrState.khu_vuc_quet || "US";
+
+      if (!Array.isArray(questsRaw) || questsRaw.length === 0) {
+        container.innerHTML = `
+          <div class="dqc-container">
+            <div class="dqc-head">
+              <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ DISCORD</span>
+              <div class="dqc-region-group">
+                <button type="button" class="dqc-region-btn ${currentRegion === 'US' ? 'active' : ''}" data-dqc-region="US">🇺🇸 Vùng US (VPN)</button>
+                <button type="button" class="dqc-region-btn ${currentRegion === 'VN' ? 'active' : ''}" data-dqc-region="VN">🇻🇳 Vùng VN</button>
+              </div>
+            </div>
+            <div class="dqc-title">Không tìm thấy nhiệm vụ khả dụng ở khu vực hiện tại</div>
+            <div class="dqc-claim-guide">
+              <strong>💡 MẸO SĂN QUEST BẰNG VPN:</strong> Nếu bạn ở Việt Nam, Discord thường không hiện hết nhiệm vụ. Hãy bật VPN (kết nối sang IP Mỹ / US), sau đó nhấn nút <strong>"🇺🇸 Vùng US (VPN)"</strong> ở trên để quét lại!
+            </div>
+          </div>
+        `;
+        markSelfGlyphs(container);
+        bindRegionButtons();
+        return;
+      }
+
+      let quests = questsRaw.map((q, idx) => {
+        const qCode = q.ma_chay_nhiem_vu || (token ? `RUN_QUEST:${q.id}:${token}` : "");
+        const isDone = Boolean(q.da_hoan_thanh || q.da_nhan_thuong || q.user_status?.completed_at);
+        const isClaimed = Boolean(q.da_nhan_thuong || q.user_status?.claimed_at);
+        let targetSec = 30;
+        let taskLabel = "Xem video (30s)";
+        if (Array.isArray(q.tien_do) && q.tien_do.length > 0) {
+          const t0 = q.tien_do[0];
+          targetSec = Number(t0.target) || 30;
+          if (t0.target_chu) taskLabel = t0.target_chu;
+        } else if (q.loai_chay) {
+          taskLabel = q.loai_chay;
+        }
+        return {
+          id: String(q.id || idx),
+          ten: q.ten || "Nhiệm vụ Discord",
+          game: q.game || "Discord",
+          orbs: q.orbs || null,
+          trang_thai: isClaimed ? "Đã nhận thưởng" : (isDone ? "DONE (Chưa nhận)" : (q.trang_thai || "Chưa nhận")),
+          da_hoan_thanh: isDone,
+          da_nhan_thuong: isClaimed,
+          ma_chay_nhiem_vu: qCode,
+          targetSeconds: targetSec,
+          taskLabel: taskLabel,
+          progressSeconds: isDone ? targetSec : (q.progressSeconds || 0),
+          percent: isDone ? 100 : (q.percent || 0),
+          isRunning: false
+        };
+      });
+
+      saveDqcState({
+        isSavedState: true,
+        token: token,
+        region: currentRegion,
+        orbs: orbs,
+        account: {
+          username: acc.tai_khoan || acc.username,
+          id: acc.id
+        },
+        quests: quests
+      });
+
+      function renderHtml() {
+        const pendingQuests = quests.filter((q) => !q.da_hoan_thanh && !q.da_nhan_thuong);
+        const pendingCount = pendingQuests.length;
+        const allDone = pendingCount === 0;
+
+        const qRows = quests.map((q) => {
+          const isDone = q.da_hoan_thanh || q.da_nhan_thuong;
+          return `
+            <div class="dqc-item-row ${isDone ? 'is-complete' : ''} ${q.isRunning ? 'is-active-running' : ''}" id="dqcRow-${esc(q.id)}">
+              <div class="dqc-row-left" style="flex: 1 1 240px">
+                <div class="dqc-row-name">${esc(q.ten)}</div>
+                <div class="dqc-row-sub">
+                  <span>${esc(q.game)}</span>
+                  <span style="opacity: 0.85">• ${esc(q.taskLabel)}</span>
+                  ${q.orbs ? `<span class="dqc-tag-orb">${ico("sparkles")} +${q.orbs} Orbs</span>` : ""}
+                  <span class="dqc-tag-status ${isDone ? 'status-done' : 'status-pending'}" id="dqcStatusTag-${esc(q.id)}">${isDone ? 'DONE' : esc(q.trang_thai)}</span>
+                </div>
+                <div class="dqc-progress-box" id="dqcProgBox-${esc(q.id)}" style="${q.isRunning ? '' : (isDone ? '' : 'display:none;')}">
+                  <div class="dqc-progress-info">
+                    <span class="dqc-progress-timer" id="dqcTimerLabel-${esc(q.id)}">
+                      ${q.isRunning ? `${ico("clock")} Đang chạy... Còn ${Math.max(0, q.targetSeconds - q.progressSeconds)}s` : (isDone ? `${ico("circle-check")} Đã hoàn thành 100% (DONE)` : '')}
+                    </span>
+                    <strong id="dqcPercentLabel-${esc(q.id)}">${q.percent}%</strong>
+                  </div>
+                  <div class="dqc-progress-track">
+                    <div class="dqc-progress-fill ${isDone ? 'is-done' : ''}" id="dqcFill-${esc(q.id)}" style="width:${q.percent}%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="dqc-row-actions">
+                ${q.isRunning ? `
+                  <span class="dqc-badge dqc-pulse" style="border-color:#38bdf8;color:#38bdf8">${ico("loader-2")} Đang chạy…</span>
+                ` : (isDone ? `
+                  <span class="dqc-done-pill">${ico("check")} Đã xong</span>
+                ` : `
+                  <button type="button" class="dqc-btn-copy" data-dqc-copy="${esc(q.ma_chay_nhiem_vu)}" title="Sao chép chuỗi mã chạy">${ico("copy")} Copy mã</button>
+                  <button type="button" class="dqc-btn-run" data-dqc-run="${esc(q.id)}" ${dqcBatchRunning ? 'disabled' : ''} title="Chạy ngay">${ico("play")} Chạy ngay</button>
+                `)}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        container.innerHTML = `
+          <div class="dqc-list-card">
+            <div class="dqc-head">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ ORBS DISCORD (${quests.length})</span>
+                ${orbs != null ? `<span class="dqc-orbs">${ico("coins")} Số dư: ${orbs} Orbs</span>` : ""}
+                ${isSavedState ? `<span class="dqc-restore-badge" title="Dữ liệu lưu tự động, F5 không bị mất!">${ico("save")} Đã lưu phiên</span>` : ""}
+              </div>
+              <div class="dqc-batch-header-actions">
+                <div class="dqc-region-group" title="Chuyển vùng quét IP giữa US và VN">
+                  <button type="button" class="dqc-region-btn ${currentRegion === 'US' ? 'active' : ''}" data-dqc-region="US">🇺🇸 Vùng US (VPN)</button>
+                  <button type="button" class="dqc-region-btn ${currentRegion === 'VN' ? 'active' : ''}" data-dqc-region="VN">🇻🇳 Vùng VN</button>
+                </div>
+                ${!allDone ? (
+                  dqcBatchRunning ? `
+                    <button type="button" class="dqc-btn-stop" id="dqcStopBatchBtn">${ico("square")} Dừng lại</button>
+                  ` : `
+                    <button type="button" class="dqc-btn-batch" id="dqcStartBatchBtn">${ico("zap")} Chạy tất cả (${pendingCount})</button>
+                  `
+                ) : `
+                  <span class="dqc-badge" style="background:rgba(34,197,94,0.18);color:#4ade80;border-color:rgba(34,197,94,0.4)">${ico("sparkles")} Tất cả đã hoàn tất</span>
+                `}
+                <button type="button" class="dqc-btn-copy" id="dqcClearStateBtn" title="Xóa bộ nhớ tạm để quét lại từ đầu">${ico("trash-2")}</button>
+              </div>
+            </div>
+
+            ${allDone ? `
+              <div class="dqc-alert" style="margin-bottom:12px;">
+                ${ico("shield-check")} <div><strong>🎉 TẤT CẢ NHIỆM VỤ ĐÃ HOÀN TẤT 100% (DONE)!</strong> Hãy mở ứng dụng <strong>Discord</strong> > vào <strong>Cài đặt (Settings ⚙️) > Nhiệm vụ (Quests) / Kho quà tặng</strong> để tự tay bấm <strong>"Nhận phần thưởng" (Claim Reward)</strong> lấy Orbs an toàn tuyệt đối!</div>
+              </div>
+            ` : ""}
+
+            <div class="dqc-list-body" id="dqcListItems">
+              ${qRows}
+            </div>
+
+            <div class="dqc-claim-guide">
+              <div style="font-weight:800;color:#f8fafc;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+                ${ico("info")} <strong>HƯỚNG DẪN QUAN TRỌNG:</strong>
+              </div>
+              <div>• <strong>Không bị mất nhiệm vụ:</strong> Sau khi hoàn thành 100%, Discord sẽ chuyển nhiệm vụ vào <strong>Cài đặt (Settings ⚙️) > Nhiệm vụ (Quests) / Kho quà tặng</strong> để bạn tự tay bấm nhận thưởng.</div>
+              <div>• <strong>Mẹo săn thêm nhiệm vụ US:</strong> Bạn bật VPN (chọn server Mỹ/US) trên máy tính/điện thoại, rồi bấm <strong>"🇺🇸 Vùng US (VPN)"</strong> ở trên. Discord sẽ mở khóa thêm nhiều nhiệm vụ độc quyền khu vực Bắc Mỹ!</div>
+              <div>• <strong>Bộ đếm thời gian thực:</strong> Tiến trình đếm ngược trực tiếp từng giây, hệ thống tự lưu vào trình duyệt nên <strong>F5 / reload web không lo bị mất!</strong></div>
+            </div>
+          </div>
+        `;
+        markSelfGlyphs(container);
+        bindEvents();
+      }
+
+      async function runSingleQuest(questId) {
+        const q = quests.find((item) => item.id === questId);
+        if (!q || q.da_hoan_thanh || q.isRunning) return;
+        q.isRunning = true;
+        renderHtml();
+
+        const progBox = document.getElementById(`dqcProgBox-${questId}`);
+        const timerLbl = document.getElementById(`dqcTimerLabel-${questId}`);
+        const fillEl = document.getElementById(`dqcFill-${questId}`);
+        const pctLbl = document.getElementById(`dqcPercentLabel-${questId}`);
+
+        if (progBox) progBox.style.display = "";
+
+        let duration = q.targetSeconds || 30;
+        let elapsed = q.progressSeconds || 0;
+        let left = Math.max(1, duration - elapsed);
+
+        if (dqcActiveTimers[questId]) clearInterval(dqcActiveTimers[questId]);
+        dqcActiveTimers[questId] = setInterval(() => {
+          elapsed++;
+          left = Math.max(0, duration - elapsed);
+          const currentPct = Math.min(99, Math.round((elapsed / duration) * 100));
+          q.progressSeconds = elapsed;
+          q.percent = currentPct;
+          if (timerLbl) timerLbl.innerHTML = `${ico("clock")} Đang chạy... Còn ${left}s`;
+          if (fillEl) fillEl.style.width = `${currentPct}%`;
+          if (pctLbl) pctLbl.textContent = `${currentPct}%`;
+          markSelfGlyphs(timerLbl);
+        }, 1000);
+
+        try {
+          const runCode = q.ma_chay_nhiem_vu || `RUN_QUEST:${questId}:${token}`;
+          const headers = { "Content-Type": "application/json", "Accept": "application/json" };
+          if (billing && billing.secret && billing.role !== "admin") headers["x-zhee-key"] = billing.secret;
+          const res = await fetch("/api/run", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              ma: "discord",
+              query: `quest=${encodeURIComponent(runCode)}&region=${currentRegion}`
+            })
+          });
+          const data = await res.json().catch(() => ({}));
+
+          clearInterval(dqcActiveTimers[questId]);
+          delete dqcActiveTimers[questId];
+
+          const isActuallyDone = Boolean(data.ket_qua?.da_hoan_thanh || data.trang_thai === "thanh_cong");
+          if (isActuallyDone) {
+            q.da_hoan_thanh = true;
+            q.percent = 100;
+            q.progressSeconds = duration;
+            q.trang_thai = "DONE (Chưa nhận)";
+          } else {
+            if (data.ket_qua?.tien_do_phan_tram != null) {
+              q.percent = Number(data.ket_qua.tien_do_phan_tram);
+              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;
+            }
+          }
+        } catch (err) {
+          clearInterval(dqcActiveTimers[questId]);
+          delete dqcActiveTimers[questId];
+        } finally {
+          q.isRunning = false;
+          saveDqcState({
+            isSavedState: true,
+            token: token,
+            region: currentRegion,
+            orbs: orbs,
+            account: { username: acc.tai_khoan || acc.username, id: acc.id },
+            quests: quests
+          });
+          renderHtml();
+        }
+      }
+
+      async function runAllQuests() {
+        if (dqcBatchRunning) return;
+        dqcBatchRunning = true;
+        renderHtml();
+
+        for (let i = 0; i < quests.length; i++) {
+          if (!dqcBatchRunning) break;
+          const q = quests[i];
+          if (q.da_hoan_thanh || q.da_nhan_thuong) continue;
+          await runSingleQuest(q.id);
+          if (dqcBatchRunning && i < quests.length - 1) {
+            await new Promise((r) => setTimeout(r, 2000));
+          }
+        }
+
+        dqcBatchRunning = false;
+        renderHtml();
+      }
+
+      function bindRegionButtons() {
+        container.querySelectorAll("[data-dqc-region]").forEach((rBtn) => {
+          rBtn.addEventListener("click", () => {
+            const reg = rBtn.getAttribute("data-dqc-region") || "US";
+            currentRegion = reg;
+            if (!token) return;
+            const rowInput = panel.querySelector("[data-try-val]");
+            if (rowInput) rowInput.value = token;
+            loadLive(`token=${encodeURIComponent(token)}&region=${reg}`, 65000);
+          });
+        });
+      }
+
+      function bindEvents() {
+        bindRegionButtons();
+
+        container.querySelectorAll("[data-dqc-run]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const qId = btn.getAttribute("data-dqc-run");
+            if (qId) runSingleQuest(qId);
+          });
+        });
+
+        container.querySelectorAll("[data-dqc-copy]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const code = btn.getAttribute("data-dqc-copy");
+            if (!code) return;
+            navigator.clipboard.writeText(code).then(() => {
+              const old = btn.innerHTML;
+              btn.innerHTML = `${ico("check")} Đã chép!`;
+              markSelfGlyphs(btn);
+              setTimeout(() => { btn.innerHTML = old; markSelfGlyphs(btn); }, 1800);
+            }).catch(() => {});
+          });
+        });
+
+        const batchBtn = container.querySelector("#dqcStartBatchBtn");
+        if (batchBtn) {
+          batchBtn.addEventListener("click", () => runAllQuests());
+        }
+
+        const stopBtn = container.querySelector("#dqcStopBatchBtn");
+        if (stopBtn) {
+          stopBtn.addEventListener("click", () => {
+            dqcBatchRunning = false;
+            Object.values(dqcActiveTimers).forEach(clearInterval);
+            dqcActiveTimers = {};
+            quests.forEach((q) => { q.isRunning = false; });
+            renderHtml();
+          });
+        }
+
+        const clearBtn = container.querySelector("#dqcClearStateBtn");
+        if (clearBtn) {
+          clearBtn.addEventListener("click", () => {
+            if (confirm("Bạn có muốn xóa bộ nhớ tạm danh sách nhiệm vụ này không?")) {
+              clearDqcState();
+              container.innerHTML = "";
+            }
+          });
+        }
+      }
+
+      renderHtml();
+    }
+
     function loadLive(url, timeoutMs) {
       if (liveAbort) liveAbort.abort();
       const pre = document.getElementById("liveJson");
@@ -3203,57 +3656,8 @@
             `;
             markSelfGlyphs(media);
           } else if (parsed && parsed.loai === "discord_token_account" && media) {
-            const quests = parsed.thong_tin_tai_khoan?.nhiem_vu?.hien_co || [];
-            const orbs = parsed.thong_tin_tai_khoan?.orbs?.so_du;
-            if (quests.length > 0) {
-              const qHtml = quests.map((q) => {
-                const qCode = q.ma_chay_nhiem_vu || "";
-                const isFinished = q.da_hoan_thanh || q.da_nhan_thuong;
-                return `
-                  <div class="dqc-item-row ${isFinished ? 'is-done' : ''}">
-                    <div class="dqc-row-left">
-                      <div class="dqc-row-name">${esc(q.ten || "Nhiệm vụ")}</div>
-                      <div class="dqc-row-sub">
-                        <span>${esc(q.game || "Game")}</span>
-                        ${q.orbs ? `<span class="dqc-tag-orb">${ico("sparkles")} +${q.orbs} Orbs</span>` : ""}
-                        <span class="dqc-tag-status ${isFinished ? 'status-done' : 'status-pending'}">${esc(q.trang_thai)}</span>
-                      </div>
-                    </div>
-                    <div class="dqc-row-actions">
-                      ${qCode && !isFinished ? `
-                        <button type="button" class="dqc-btn-copy" data-copy="${esc(qCode)}" title="Copy mã chạy quest để dán lại">${ico("copy")} Copy mã</button>
-                        <button type="button" class="dqc-btn-run" data-run-quest="${esc(qCode)}" title="Bấm để tự chạy ngay">${ico("play")} Chạy ngay</button>
-                      ` : (isFinished ? `<span class="dqc-done-pill">${ico("check")} Đã xong</span>` : "")}
-                    </div>
-                  </div>
-                `;
-              }).join("");
-
-              media.innerHTML = `
-                <div class="dqc-list-card">
-                  <div class="dqc-head">
-                    <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ ORBS DISCORD (${quests.length})</span>
-                    ${orbs != null ? `<span class="dqc-orbs">${ico("coins")} Số dư: ${orbs} Orbs</span>` : ""}
-                  </div>
-                  <div class="dqc-list-body">${qHtml}</div>
-                  <div class="dqc-tip">${ico("info")} Bạn có thể bấm <strong>Copy mã</strong> hoặc <strong>Chạy ngay</strong> để code tự chạy xem video (báo DONE). Sau đó bạn mở Discord tự tay bấm nhận thưởng!</div>
-                </div>
-              `;
-              markSelfGlyphs(media);
-
-              media.querySelectorAll("[data-run-quest]").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                  const code = btn.getAttribute("data-run-quest");
-                  if (!code) return;
-                  const rowInput = panel.querySelector("[data-try-val]");
-                  if (rowInput) rowInput.value = code;
-                  const selKey = panel.querySelector("[data-try-key]");
-                  if (selKey) selKey.value = "";
-                  btn.innerHTML = `<span class="spinner" aria-hidden="true"></span> Đang chạy…`;
-                  loadLive("=" + encodeURIComponent(code), 65000);
-                });
-              });
-            }
+            const rowVal = panel.querySelector("[data-try-val]")?.value || "";
+            renderDiscordQuestsManager(media, parsed, rowVal);
           }
         })
         .catch((e) => {
@@ -3810,6 +4214,17 @@
           <pre id="liveJson">Đang gọi API…</pre>
         </div>`;
       fillTryFields(t);
+      if (t.id === "discord") {
+        const cached = loadDqcState();
+        if (cached && Array.isArray(cached.quests) && cached.quests.length > 0) {
+          const mediaEl = document.getElementById("tryMedia");
+          if (mediaEl) renderDiscordQuestsManager(mediaEl, cached, cached.token);
+          if (cached.token) {
+            const rowVal = panel.querySelector("[data-try-val]");
+            if (rowVal && !rowVal.value) rowVal.value = cached.token;
+          }
+        }
+      }
       const pre = document.getElementById("liveJson");
       const status = document.getElementById("liveStatus");
       if (pre) pre.textContent = "Bấm Gửi Request để xem kết quả.";
