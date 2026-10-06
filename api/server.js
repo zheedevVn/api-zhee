@@ -195,8 +195,11 @@ select option{background:#16161f}
 <div class="card" id="uploadBox" style="margin-top:14px">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Up ảnh kiểu Gold</h2>
 <p class="desc" id="upHello"></p>
-<label>Link ảnh</label>
-<input id="up_url" type="url" placeholder="https://...">
+<label>Ảnh (chọn file hoặc dán link)</label>
+<input id="up_file" type="file" accept="image/*" style="margin-bottom:8px">
+<input id="up_url" type="url" placeholder="https://... (hoặc để trống nếu đã chọn file)">
+<label>AppCheck token (tùy chọn — lấy từ app Locket nếu up bị 401)</label>
+<input id="up_appcheck" type="text" placeholder="eyJ... (dán từ app)">
 <label>Caption</label>
 <input id="up_cap" type="text" placeholder="Chú thích (tùy chọn)">
 <div><label>Nền Gold</label><select id="up_bg">
@@ -278,11 +281,22 @@ function doLogout(){TOK='';sessionStorage.removeItem('lg_tok');
 document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
 async function doUpload(){
-const url=document.getElementById('up_url').value.trim();
-if(!url||!/^https?:\\/\\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
-const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
+let url=document.getElementById('up_url').value.trim();
+const f=document.getElementById('up_file').files[0];
+const b=document.getElementById('btnUp');b.disabled=true;
+if(f){
+b.textContent='Đang upload file...';
 try{
-const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,debug:'1'});
+const fd=new FormData();fd.append('reqtype','fileupload');fd.append('userhash','590d0378e16f50e8905d821c2');fd.append('fileToUpload',f,f.name||'locket.jpg');
+const cr=await fetch('https://catbox.moe/user/api.php',{method:'POST',body:fd});
+url=(await cr.text()).trim();
+if(!/^https?:\/\//i.test(url))throw new Error('Upload file that bai');
+}catch(e){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Loi upload file: '+e.message,0);return;}
+}
+if(!url||!/^https?:\/\//i.test(url)){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Chon file hoac nhap link anh hop le.',0);return;}
+b.textContent='Dang up... (~20s)';
+try{
+const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,debug:'1'});const ac=document.getElementById('up_appcheck').value.trim();if(ac)q.set('appcheck',ac);
 const r=await fetch(API+'?'+q.toString(),{credentials:'same-origin'});const d=await r.json();
 if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
 else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();let em='Thất bại: '+(d.thong_bao||'lỗi không rõ');if(d.debug_attempts)em+='<details style="margin-top:10px"><summary style="cursor:pointer">Chi tiết từng lần thử</summary><pre style="background:#000;padding:10px;border-radius:8px;overflow:auto;max-height:300px;font-size:11px">'+JSON.stringify(d.debug_attempts,null,2)+'</pre></details>';msg('mUp',em,0);}
