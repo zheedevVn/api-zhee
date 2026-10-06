@@ -22,168 +22,285 @@ function serveFavicon(res) {
   res.end(body);
 }
 
+const LOCKET_GOLD_MOBILECONFIG = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>DNSSettings</key>
+			<dict>
+				<key>DNSProtocol</key>
+				<string>HTTPS</string>
+				<key>ServerURL</key>
+				<string>https://api.p12.vn/dns-query</string>
+				<key>SupplementalMatchDomains</key>
+				<array>
+					<string>api.revenuecat.com</string>
+					<string>app.revenuecat.com</string>
+					<string>in.appcenter.ms</string>
+					<string>app-measurement.com</string>
+					<string>firebaselogging-pa.googleapis.com</string>
+					<string>mixpanel.com</string>
+					<string>api.mixpanel.com</string>
+				</array>
+			</dict>
+			<key>OnDemandRules</key>
+			<array>
+				<dict>
+					<key>Action</key>
+					<string>Connect</string>
+					<key>InterfaceTypeMatch</key>
+					<string>WiFi</string>
+				</dict>
+				<dict>
+					<key>Action</key>
+					<string>Connect</string>
+					<key>InterfaceTypeMatch</key>
+					<string>Cellular</string>
+				</dict>
+			</array>
+			<key>PayloadDescription</key>
+			<string>Configures device to use Locket Gold Keep DNS</string>
+			<key>PayloadDisplayName</key>
+			<string>LOCKETGOLD BY ZHEE DEV</string>
+			<key>PayloadIdentifier</key>
+			<string>com.zhee.dns.locketgold</string>
+			<key>PayloadType</key>
+			<string>com.apple.dnsSettings.managed</string>
+			<key>PayloadUUID</key>
+			<string>F2779064-9035-4A73-B225-512D00F46B84</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>Cấu hình DNS giữ Locket Gold VIP - LOCKETGOLD BY ZHEE DEV</string>
+	<key>PayloadDisplayName</key>
+	<string>LOCKETGOLD BY ZHEE DEV</string>
+	<key>PayloadIdentifier</key>
+	<string>com.zhee.profile.locketgold</string>
+	<key>PayloadOrganization</key>
+	<string>Hồ Đức Minh (Zhee Dev)</string>
+	<key>PayloadRemovalDisallowed</key>
+	<false/>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>A1149893-B29D-4113-B280-9ADEC21CC037</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
+`;
 const LOCKET_GOLD_HTML = `<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Locket Gold Upload | Zhee API</title>
+<title>Locket Gold | Zhee API</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:#0a0a12;color:#e8e8f0;display:flex;align-items:center;justify-content:center;padding:20px}
-.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(255,215,0,.08),transparent 50%),radial-gradient(circle at 80% 80%,rgba(167,139,250,.1),transparent 50%);pointer-events:none}
-.card{width:100%;max-width:480px;background:rgba(16,16,28,.92);border:1px solid rgba(255,215,0,.25);border-radius:20px;padding:32px 28px;box-shadow:0 0 50px rgba(255,215,0,.12);position:relative;z-index:1}
-h1{font-size:24px;text-align:center;margin-bottom:6px;background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 3s linear infinite;font-weight:800}
-@keyframes flow{from{background-position:0% 0}to{background-position:200% 0}}
-.sub{text-align:center;color:#888;font-size:13px;margin-bottom:24px}
-label{display:block;font-size:13px;color:#aaa;margin:14px 0 6px}
-input,select{width:100%;padding:12px 14px;background:#1a1a2e;border:1px solid #333;border-radius:10px;color:#fff;font-size:15px;outline:none}
-input:focus,select:focus{border-color:#FFD700}
-button{width:100%;padding:13px;margin-top:20px;background:linear-gradient(90deg,#FFD700,#FFA500);border:none;border-radius:10px;color:#000;font-weight:700;font-size:16px;cursor:pointer}
-button:disabled{opacity:.5;cursor:wait}
-button.ghost{background:transparent;border:1px solid #444;color:#aaa;margin-top:10px}
-#uploadSection{display:none}
-.result{margin-top:18px;padding:14px;border-radius:10px;font-size:14px;display:none;word-break:break-all}
-.result.ok{display:block;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#86efac}
-.result.err{display:block;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
-.result img{max-width:100%;border-radius:8px;margin-top:10px}
-.userinfo{text-align:center;font-size:13px;color:#FFD700;margin-bottom:16px}
-.hint{font-size:12px;color:#666;margin-top:14px;text-align:center;line-height:1.6}
-.row2{display:flex;gap:10px}
-.row2>div{flex:1}
+:root{--gold:#FFD700;--gold2:#FFA500;--bg:#08080f;--card:rgba(18,18,30,.85);--border:rgba(255,215,0,.22);--txt:#f0f0f5;--mut:#8a8a9a}
+body{min-height:100vh;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);padding:24px 16px 60px}
+.orbs{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.orbs span{position:absolute;border-radius:50%;filter:blur(90px);opacity:.25;animation:float 12s ease-in-out infinite alternate}
+.orbs span:nth-child(1){width:340px;height:340px;background:#FFD700;top:-80px;left:-80px}
+.orbs span:nth-child(2){width:280px;height:280px;background:#7c3aed;bottom:-60px;right:-60px;animation-delay:-6s}
+@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,30px) scale(1.12)}}
+.wrap{max-width:520px;margin:0 auto;position:relative;z-index:1}
+.hero{text-align:center;margin:28px 0 22px}
+.crown{width:64px;height:64px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,165,0,.08));border:1px solid var(--border);box-shadow:0 0 32px rgba(255,215,0,.25);animation:glow 3s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 18px rgba(255,215,0,.18)}to{box-shadow:0 0 38px rgba(255,215,0,.4)}}
+.crown svg{width:34px;height:34px}
+h1{font-size:30px;font-weight:800;letter-spacing:.5px;background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700,#FFD700);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 4s linear infinite}
+@keyframes flow{from{background-position:0% 0}to{background-position:300% 0}}
+.hero p{color:var(--mut);font-size:13px;margin-top:8px;line-height:1.6}
+.tabs{display:flex;gap:8px;margin:20px 0 16px;background:rgba(255,255,255,.03);padding:6px;border-radius:14px;border:1px solid rgba(255,255,255,.06)}
+.tab{flex:1;padding:11px 6px;border:none;background:transparent;color:var(--mut);font-size:13.5px;font-weight:600;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:.25s}
+.tab svg{width:16px;height:16px}
+.tab.active{background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;box-shadow:0 4px 16px rgba(255,215,0,.35)}
+.panel{display:none;animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 22px;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.card h2{font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+.card h2 svg{width:19px;height:19px;color:var(--gold)}
+.card .desc{font-size:12.5px;color:var(--mut);margin-bottom:16px;line-height:1.6}
+label{display:block;font-size:12.5px;color:var(--mut);margin:13px 0 6px;font-weight:500}
+input,select{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:11px;color:#fff;font-size:15px;outline:none;transition:.2s}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,215,0,.12)}
+select option{background:#16161f}
+.btn{width:100%;padding:13px;margin-top:18px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:12px;color:#000;font-weight:800;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:.2s;box-shadow:0 4px 20px rgba(255,215,0,.3)}
+.btn svg{width:18px;height:18px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(255,215,0,.45)}
+.btn:disabled{opacity:.55;cursor:wait;transform:none}
+.btn.ghost{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--txt);box-shadow:none;margin-top:10px}
+.btn.ghost:hover{border-color:var(--gold)}
+.row2{display:flex;gap:10px}.row2>div{flex:1}
+.msg{margin-top:14px;padding:13px 15px;border-radius:11px;font-size:13.5px;display:none;line-height:1.6;word-break:break-word}
+.msg.ok{display:block;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35);color:#86efac}
+.msg.err{display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);color:#fca5a5}
+.msg img{max-width:100%;border-radius:10px;margin-top:10px}
+.uinfo{display:flex;gap:14px;align-items:center;margin:6px 0 4px}
+.uinfo img{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 16px rgba(255,215,0,.3)}
+.uinfo .nm{font-weight:700;font-size:16px}
+.uinfo .ud{font-size:12px;color:var(--mut);font-family:monospace}
+.goldtag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#000;background:linear-gradient(135deg,#FFD700,#FFA500);padding:3px 10px;border-radius:20px;margin-top:6px}
+.goldtag svg{width:12px;height:12px}
+.jsonbox{font-size:11.5px;color:#a0a0b0;background:rgba(0,0,0,.35);padding:12px;border-radius:10px;margin-top:12px;max-height:220px;overflow:auto}
+.jsonbox pre{white-space:pre-wrap;font-family:monospace}
+.tokrow{display:flex;gap:8px;margin-top:12px}
+.tokrow input{font-size:11px;font-family:monospace}
+.tokrow button{width:auto;padding:10px 18px;margin:0;font-size:13px;white-space:nowrap}
+.steps{margin:6px 0 0;padding:0;list-style:none}
+.steps li{display:flex;gap:12px;margin:14px 0;font-size:13.5px;color:#c9c9d6;line-height:1.65}
+.steps .n{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.dlbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;margin-top:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:13px;color:#000;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 4px 20px rgba(255,215,0,.3)}
+.dlbtn svg{width:20px;height:20px}
+.note{font-size:12px;color:var(--mut);margin-top:14px;text-align:center;line-height:1.7}
+#uploadBox{display:none}
+.sig{margin-top:26px;text-align:center;font-size:11.5px;color:#555}
+.sig b{color:var(--gold)}
 </style>
 </head>
 <body>
-<div class="bg"></div>
-<div class="card">
-<h1>⭐ LOCKET GOLD UPLOAD</h1>
-<p class="sub">Up ảnh kiểu Gold: xoay + đổi nền + caption<br>by Hồ Đức Minh (Zhee Dev)</p>
+<div class="orbs"><span></span><span></span></div>
+<div class="wrap">
+<div class="hero">
+<div class="crown"><svg viewBox="0 0 24 24" fill="none"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z" fill="#FFD700"/><path d="M4 19h16v2H4z" fill="#FFA500"/></svg></div>
+<h1>Locket Gold</h1>
+<p>Up ảnh kiểu Gold · Check tài khoản · Giữ Gold vĩnh viễn<br>by <b style="color:#FFD700">Hồ Đức Minh (Zhee Dev)</b></p>
+</div>
 
-<div id="loginSection">
-<label>Tài khoản Locket (email hoặc SĐT)</label>
-<input id="li_user" type="text" placeholder="email@example.com hoặc 09xxxxxxx" autocomplete="username">
+<div class="tabs">
+<button class="tab active" data-t="up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Up ảnh</button>
+<button class="tab" data-t="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check</button>
+<button class="tab" data-t="keep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/></svg>Giữ Gold</button>
+</div>
+
+<!-- TAB UP -->
+<div class="panel active" id="p-up">
+<div class="card" id="loginCard">
+<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>Đăng nhập Locket</h2>
+<p class="desc">Đăng nhập để lấy token, sau đó up ảnh kiểu Gold.</p>
+<label>Tài khoản (email hoặc SĐT)</label>
+<input id="li_user" type="text" placeholder="email@example.com / 09xxxxxxx" autocomplete="username">
 <label>Mật khẩu</label>
 <input id="li_pass" type="password" placeholder="••••••••" autocomplete="current-password">
-<button id="btnLogin" onclick="doLogin()">Đăng nhập Locket</button>
-<p class="hint">Mật khẩu chỉ gửi 1 lần để lấy token, không lưu trữ.<br>Token lưu tạm trong trình duyệt, tắt tab là mất.</p>
+<button class="btn" id="btnLogin" onclick="doLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 011 1v16a1 1 0 01-1 1h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập</button>
+<p class="note">Mật khẩu chỉ gửi 1 lần để lấy token, không lưu trữ.<br>Token lưu tạm trong tab, tắt tab là mất.</p>
+</div>
+<div class="card" id="uploadBox" style="margin-top:14px">
+<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Up ảnh kiểu Gold</h2>
+<p class="desc" id="upHello"></p>
+<label>Link ảnh</label>
+<input id="up_url" type="url" placeholder="https://...">
+<label>Caption</label>
+<input id="up_cap" type="text" placeholder="Chú thích (tùy chọn)">
+<div class="row2"><div><label>Nền</label><select id="up_bg">
+<option value="">Không đổi</option><option value="gold">Vàng Gold</option><option value="sunset">Hoàng hôn</option><option value="ocean">Đại dương</option><option value="purple">Tím</option><option value="pink">Hồng</option><option value="black">Đen</option>
+</select></div><div><label>Xoay</label><select id="up_rot">
+<option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option>
+</select></div></div>
+<button class="btn" id="btnUp" onclick="doUpload()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Up lên Locket</button>
+<button class="btn ghost" onclick="doLogout()">Đăng xuất</button>
+</div>
+<div class="msg" id="mUp"></div>
 </div>
 
-<div id="uploadSection">
-<div class="userinfo" id="userInfo"></div>
-<label>Link ảnh (https://...)</label>
-<input id="up_url" type="url" placeholder="https://example.com/anh.jpg">
-<label>Caption (tùy chọn)</label>
-<input id="up_caption" type="text" placeholder="Chú thích...">
-<div class="row2">
-<div><label>Nền Gold</label>
-<select id="up_bg">
-<option value="">Không đổi nền</option>
-<option value="gold">🥇 Vàng Gold</option>
-<option value="sunset">🌅 Hoàng hôn</option>
-<option value="ocean">🌊 Đại dương</option>
-<option value="purple">💜 Tím</option>
-<option value="pink">💗 Hồng</option>
-<option value="black">⬛ Đen</option>
-</select></div>
-<div><label>Xoay (độ)</label>
-<select id="up_rotate">
-<option value="0">0°</option><option value="90">90°</option>
-<option value="180">180°</option><option value="270">270°</option>
-</select></div>
+<!-- TAB CHECK -->
+<div class="panel" id="p-check">
+<div class="card">
+<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check tài khoản</h2>
+<p class="desc">Nhập username để xem avatar, thông tin và trạng thái Gold.</p>
+<label>Username Locket</label>
+<input id="ck_u" type="text" placeholder="vd: hoducminh.2k9">
+<button class="btn" id="btnCk" onclick="doCheck()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check ngay</button>
+<div id="ckOut" style="margin-top:6px"></div>
 </div>
-<button id="btnUpload" onclick="doUpload()">🚀 Up ảnh lên Locket</button>
-<button class="ghost" onclick="doLogout()">Đăng xuất</button>
+<div class="msg" id="mCk"></div>
 </div>
 
-<div id="checkSection" style="margin-top:24px;padding-top:20px;border-top:1px solid #222">
-<label style="color:#FFD700">🔍 Check username Locket</label>
-<input id="ck_user" type="text" placeholder="Nhập username...">
-<button class="ghost" style="border-color:#FFD700;color:#FFD700" onclick="doCheck()">Check</button>
-<div id="checkResult" style="margin-top:12px"></div>
+<!-- TAB KEEP -->
+<div class="panel" id="p-keep">
+<div class="card">
+<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/></svg>Giữ Locket Gold</h2>
+<p class="desc">Cài profile DNS để đóng băng trạng thái Gold — không bị thu hồi khi tắt VPN.</p>
+<ol class="steps">
+<li><span class="n">1</span><span>Tải file cấu hình bên dưới <b>(chỉ iPhone/iPad)</b>.</span></li>
+<li><span class="n">2</span><span>Mở <b>Cài đặt → Đã tải profile</b> → Cài đặt → nhập mật khẩu máy.</span></li>
+<li><span class="n">3</span><span>Vào <b>Cài đặt → Cài đặt chung → VPN &amp; Quản lý thiết bị → DNS</b> → chọn <b>LOCKETGOLD BY ZHEE DEV</b>.</span></li>
+<li><span class="n">4</span><span>Mở Locket — Gold được giữ nguyên, tắt Shadowrocket vẫn không mất.</span></li>
+</ol>
+<a class="dlbtn" href="/locket-gold.mobileconfig" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>Tải profile giữ Gold (iOS)</a>
+<p class="note">Profile chặn xác thực RevenueCat để giữ trạng thái Gold.<br>Gỡ trong Cài đặt → VPN &amp; Quản lý thiết bị khi không cần.</p>
+</div>
 </div>
 
-<div class="result" id="result"></div>
+<div class="sig">Protected by <b>ZheeDevTool</b> · Hồ Đức Minh</div>
 </div>
 
 <script>
-let ID_TOKEN = sessionStorage.getItem('locket_gold_token') || '';
-const API = '/api/tools/locket';
-function show(msg, ok){ const r=document.getElementById('result'); r.className='result '+(ok?'ok':'err'); r.innerHTML=msg; }
-function isPhone(v){ return /^[0-9+]{9,15}$/.test(v.replace(/[\s.]/g,'')); }
-
+const API='/api/tools/locket';
+let TOK=sessionStorage.getItem('lg_tok')||'';
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');document.getElementById('p-'+b.dataset.t).classList.add('active');});
+function msg(id,t,ok){const e=document.getElementById(id);e.className='msg '+(ok?'ok':'err');e.innerHTML=t;}
+function isPhone(v){return /^[0-9+]{9,15}$/.test(v.replace(/[\s.]/g,''));}
 async function doLogin(){
-  const u=document.getElementById('li_user').value.trim();
-  const p=document.getElementById('li_pass').value;
-  if(!u||!p){ show('Nhập đầy đủ tài khoản và mật khẩu.', false); return; }
-  const btn=document.getElementById('btnLogin'); btn.disabled=true; btn.textContent='Đang đăng nhập...';
-  try{
-    const body = isPhone(u) ? {action:'me',phone:u,password:p} : {action:'me',email:u,password:p};
-    const res = await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const d = await res.json();
-    document.getElementById('li_pass').value='';
-    const token = d.id_token || d.token || (d.du_lieu&&d.du_lieu.id_token);
-    if(d.trang_thai==='thanh_cong' && token){
-      ID_TOKEN=token; sessionStorage.setItem('locket_gold_token',token);
-      const name=(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
-      document.getElementById('userInfo').textContent='✓ '+name;
-      document.getElementById('loginSection').style.display='none';
-      document.getElementById('uploadSection').style.display='block';
-      show('Đăng nhập thành công! Giờ bạn có thể up ảnh.', true);
-    } else show('Đăng nhập thất bại: '+(d.thong_bao||d.message||'sai tài khoản/mật khẩu'), false);
-  }catch(e){ show('Lỗi kết nối: '+e.message, false); }
-  btn.disabled=false; btn.textContent='Đăng nhập Locket';
-}
-
+const u=document.getElementById('li_user').value.trim(),p=document.getElementById('li_pass').value;
+if(!u||!p){msg('mUp','Nhập đầy đủ tài khoản và mật khẩu.',0);return;}
+const b=document.getElementById('btnLogin');b.disabled=true;b.textContent='Đang đăng nhập...';
+try{
+const bd=isPhone(u)?{action:'me',phone:u,password:p}:{action:'me',email:u,password:p};
+const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(bd)});
+const d=await r.json();document.getElementById('li_pass').value='';
+const tk=d.id_token||d.token||(d.du_lieu&&d.du_lieu.id_token);
+if(d.trang_thai==='thanh_cong'&&tk){TOK=tk;sessionStorage.setItem('lg_tok',tk);showUp(d,u);}
+else msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||'sai tài khoản/mật khẩu'),0);
+}catch(e){msg('mUp','Lỗi kết nối: '+e.message,0);}
+b.disabled=false;b.innerHTML='Đăng nhập';}
+function showUp(d,u){
+const nm=(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
+document.getElementById('upHello').innerHTML='Xin chào <b style="color:#FFD700">'+nm+'</b> — chọn ảnh và up thôi.';
+document.getElementById('loginCard').style.display='none';
+document.getElementById('uploadBox').style.display='block';
+msg('mUp','Đăng nhập thành công!',1);}
+function doLogout(){TOK='';sessionStorage.removeItem('lg_tok');
+document.getElementById('uploadBox').style.display='none';
+document.getElementById('loginCard').style.display='block';}
 async function doUpload(){
-  const url=document.getElementById('up_url').value.trim();
-  if(!url||!/^https?:\/\//i.test(url)){ show('Nhập link ảnh hợp lệ (https://...)', false); return; }
-  const btn=document.getElementById('btnUpload'); btn.disabled=true; btn.textContent='Đang up... (chờ ~20s)';
-  try{
-    const params=new URLSearchParams({action:'upload',token:ID_TOKEN,image_url:url,
-      caption:document.getElementById('up_caption').value.trim(),
-      background:document.getElementById('up_bg').value,
-      rotate:document.getElementById('up_rotate').value});
-    const res=await fetch(API+'?'+params.toString());
-    const d=await res.json();
-    if(d.trang_thai==='thanh_cong'){
-      show('✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+(d.du_lieu&&d.du_lieu.anh_da_upload||url)+'" alt="uploaded">', true);
-    } else {
-      if(/token|het han|401/i.test(d.thong_bao||'')) doLogout(true);
-      show('Thất bại: '+(d.thong_bao||JSON.stringify(d).slice(0,200)), false);
-    }
-  }catch(e){ show('Lỗi: '+e.message, false); }
-  btn.disabled=false; btn.textContent='🚀 Up ảnh lên Locket';
-}
-function doLogout(silent){
-  ID_TOKEN=''; sessionStorage.removeItem('locket_gold_token');
-  document.getElementById('uploadSection').style.display='none';
-  document.getElementById('loginSection').style.display='block';
-  if(!silent) show('Đã đăng xuất.', true);
-}
+const url=document.getElementById('up_url').value.trim();
+if(!url||!/^https?:\/\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
+const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
+try{
+const q=new URLSearchParams({action:'upload',token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,rotate:document.getElementById('up_rot').value});
+const r=await fetch(API+'?'+q.toString());const d=await r.json();
+if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
+else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();msg('mUp','Thất bại: '+(d.thong_bao||'lỗi không rõ'),0);}
+}catch(e){msg('mUp','Lỗi: '+e.message,0);}
+b.disabled=false;b.textContent='Up lên Locket';}
 async function doCheck(){
-  const u=document.getElementById('ck_user').value.trim().replace(/^@/,'');
-  if(!u){ show('Nhập username cần check.', false); return; }
-  const cr=document.getElementById('checkResult'); cr.innerHTML='<p style="color:#888;font-size:13px">Đang check...</p>';
-  try{
-    const res=await fetch(API+'?='+encodeURIComponent(u));
-    const d=await res.json();
-    const info=d.du_lieu||d;
-    const avatar=info.anh_dai_dien||info.avatar||'';
-    const uname=info.username||u;
-    const uid=info.uid||'';
-    const gold=info.gold||'';
-    let html='<div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">';
-    if(avatar) html+='<img src="'+avatar+'" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #FFD700">';
-    html+='<div><div style="font-weight:700;color:#fff">'+uname+'</div><div style="font-size:12px;color:#888">'+uid+'</div>';
-    if(gold) html+='<div style="font-size:12px;color:#FFD700">⭐ Gold: '+gold+'</div>';
-    html+='</div></div>';
-    html+='<div style="font-size:12px;color:#aaa;max-height:200px;overflow:auto;background:#111;padding:10px;border-radius:8px"><pre style="white-space:pre-wrap">'+JSON.stringify(d,null,2).slice(0,2000)+'</pre></div>';
-    if(ID_TOKEN) html+='<div style="margin-top:10px"><label style="color:#FFD700;font-size:12px">🔑 ID Token của bạn:</label><div style="display:flex;gap:8px"><input id="tokenShow" type="text" readonly value="'+ID_TOKEN+'" style="font-size:11px"><button onclick="copyToken()" style="width:auto;padding:8px 16px;margin:0;font-size:13px">Copy</button></div></div>';
-    cr.innerHTML=html;
-  }catch(e){ cr.innerHTML='<p style="color:#fca5a5">Lỗi: '+e.message+'</p>'; }
-}
-function copyToken(){ const i=document.getElementById('tokenShow'); i.select(); document.execCommand('copy'); show('Đã copy token!', true); }
-if(ID_TOKEN){ document.getElementById('loginSection').style.display='none'; document.getElementById('uploadSection').style.display='block'; document.getElementById('userInfo').textContent='✓ Phiên đăng nhập còn hiệu lực'; }
+const u=document.getElementById('ck_u').value.trim().replace(/^@/,'');
+if(!u){msg('mCk','Nhập username.',0);return;}
+const b=document.getElementById('btnCk');b.disabled=true;b.textContent='Đang check...';
+const out=document.getElementById('ckOut');out.innerHTML='';
+try{
+const r=await fetch(API+'?='+encodeURIComponent(u));const d=await r.json();
+const i=d.du_lieu||d,av=i.anh_dai_dien||i.avatar||'',nm=i.username||u,uid=i.uid||'',gold=i.gold||'';
+let h='<div class="uinfo">'+(av?'<img src="'+av+'">':'')+'<div><div class="nm">'+nm+'</div><div class="ud">'+uid+'</div>'+(gold?'<span class="goldtag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z"/></svg>'+gold+'</span>':'')+'</div></div>';
+h+='<div class="jsonbox"><pre>'+JSON.stringify(d,null,2).slice(0,1800)+'</pre></div>';
+if(TOK)h+='<div class="tokrow"><input id="tkS" readonly value="'+TOK+'"><button class="btn" onclick="cpTok()">Copy token</button></div>';
+h+='<a class="dlbtn" style="margin-top:14px" href="/locket-gold.mobileconfig" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>Tải profile giữ Gold (iOS)</a>';
+out.innerHTML=h;msg('mCk','',1);document.getElementById('mCk').style.display='none';
+}catch(e){msg('mCk','Lỗi: '+e.message,0);}
+b.disabled=false;b.textContent='Check ngay';}
+function cpTok(){const i=document.getElementById('tkS');i.select();document.execCommand('copy');}
+if(TOK){document.getElementById('loginCard').style.display='none';document.getElementById('uploadBox').style.display='block';document.getElementById('upHello').innerHTML='Phiên đăng nhập còn hiệu lực.';}
 </script>
 </body>
 </html>
@@ -1509,6 +1626,14 @@ module.exports = async (req, res) => {
       return await runTool(req, res);
     }
 
+    if (pathname === "/locket-gold.mobileconfig") {
+      res.setHeader("Content-Type", "application/x-apple-aspen-config; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="locketgold-zhee.mobileconfig"');
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.statusCode = 200;
+      res.end(LOCKET_GOLD_MOBILECONFIG);
+      return;
+    }
     if (pathname === "/locket-gold") {
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res.setHeader("Cache-Control", "no-cache, must-revalidate");
