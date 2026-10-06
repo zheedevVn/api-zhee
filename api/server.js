@@ -1,4 +1,13 @@
 /**
+ * ============================================================================
+ * ZHEE API — Copyright (c) 2026 Ho Duc Minh (Zhee Dev). All rights reserved.
+ * Ban quyen thuoc ve Ho Duc Minh. Bao luu moi quyen.
+ * Ma nguon thuoc he cong cu ZheeDevTool. Moi hanh vi sao chep, phan phoi
+ * lai khi chua co van ban cho phep cua tac gia deu bi nghiem cam.
+ * ZheeDevTool-Signed-2026
+ * ============================================================================
+ */
+/**
  * ZheeDevTool — (c) 2026 Ho Duc Minh (Zhee Dev). All rights reserved.
  * Phan mem doc quyen — Cam sao chep / phan phoi lai khi chua duoc cap phep.
  * Xem giay phep day du tai file LICENSE.
