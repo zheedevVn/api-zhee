@@ -95,6 +95,13 @@ button.ghost{background:transparent;border:1px solid #444;color:#aaa;margin-top:
 <button class="ghost" onclick="doLogout()">Đăng xuất</button>
 </div>
 
+<div id="checkSection" style="margin-top:24px;padding-top:20px;border-top:1px solid #222">
+<label style="color:#FFD700">🔍 Check username Locket</label>
+<input id="ck_user" type="text" placeholder="Nhập username...">
+<button class="ghost" style="border-color:#FFD700;color:#FFD700" onclick="doCheck()">Check</button>
+<div id="checkResult" style="margin-top:12px"></div>
+</div>
+
 <div class="result" id="result"></div>
 </div>
 
@@ -153,6 +160,29 @@ function doLogout(silent){
   document.getElementById('loginSection').style.display='block';
   if(!silent) show('Đã đăng xuất.', true);
 }
+async function doCheck(){
+  const u=document.getElementById('ck_user').value.trim().replace(/^@/,'');
+  if(!u){ show('Nhập username cần check.', false); return; }
+  const cr=document.getElementById('checkResult'); cr.innerHTML='<p style="color:#888;font-size:13px">Đang check...</p>';
+  try{
+    const res=await fetch(API+'?='+encodeURIComponent(u));
+    const d=await res.json();
+    const info=d.du_lieu||d;
+    const avatar=info.anh_dai_dien||info.avatar||'';
+    const uname=info.username||u;
+    const uid=info.uid||'';
+    const gold=info.gold||'';
+    let html='<div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">';
+    if(avatar) html+='<img src="'+avatar+'" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #FFD700">';
+    html+='<div><div style="font-weight:700;color:#fff">'+uname+'</div><div style="font-size:12px;color:#888">'+uid+'</div>';
+    if(gold) html+='<div style="font-size:12px;color:#FFD700">⭐ Gold: '+gold+'</div>';
+    html+='</div></div>';
+    html+='<div style="font-size:12px;color:#aaa;max-height:200px;overflow:auto;background:#111;padding:10px;border-radius:8px"><pre style="white-space:pre-wrap">'+JSON.stringify(d,null,2).slice(0,2000)+'</pre></div>';
+    if(ID_TOKEN) html+='<div style="margin-top:10px"><label style="color:#FFD700;font-size:12px">🔑 ID Token của bạn:</label><div style="display:flex;gap:8px"><input id="tokenShow" type="text" readonly value="'+ID_TOKEN+'" style="font-size:11px"><button onclick="copyToken()" style="width:auto;padding:8px 16px;margin:0;font-size:13px">Copy</button></div></div>';
+    cr.innerHTML=html;
+  }catch(e){ cr.innerHTML='<p style="color:#fca5a5">Lỗi: '+e.message+'</p>'; }
+}
+function copyToken(){ const i=document.getElementById('tokenShow'); i.select(); document.execCommand('copy'); show('Đã copy token!', true); }
 if(ID_TOKEN){ document.getElementById('loginSection').style.display='none'; document.getElementById('uploadSection').style.display='block'; document.getElementById('userInfo').textContent='✓ Phiên đăng nhập còn hiệu lực'; }
 </script>
 </body>
@@ -478,6 +508,11 @@ const HTML_JS_PATCHES = [
     'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu;',
     'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu; else { var __tn={WATCH_VIDEO:"Xem video",WATCH_VIDEO_ON_MOBILE:"Xem video",PLAY_ON_DESKTOP:"Chơi game",PLAY_ON_PLAYSTATION:"Chơi game",PLAY_ON_XBOX:"Chơi game",STREAM_ON_DESKTOP:"Stream",PLAY_ACTIVITY:"Chơi activity"}; var __tl=__tn[t0.ma]||"Nhiệm vụ"; taskLabel = targetSec>=60 ? __tl+" ("+(Math.round(targetSec/6)/10)+" phút)" : __tl+" ("+targetSec+"s)"; }'
   ]
+  // Locket Gold: them banner link sang /locket-gold trong tool Locket
+  [
+    '</body>',
+    `<script>(function(){function addGoldBanner(){if(document.getElementById('zhee-gold-banner'))return;var h=location.hash||'';if(h.indexOf('locket')<0)return;var main=document.querySelector('main');if(!main)return;var b=document.createElement('div');b.id='zhee-gold-banner';b.innerHTML='<div style="margin:12px 0;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.12),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-weight:800;color:#FFD700;font-size:15px">⭐ LOCKET GOLD UPLOAD</div><div style="font-size:12px;color:#aaa">Đăng nhập Locket, up ảnh kiểu Gold: xoay + đổi nền + caption</div></div><a href="/locket-gold" target="_blank" style="padding:10px 20px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;border-radius:8px;text-decoration:none;font-size:14px">Mở ngay →</a></div>';var ref=main.firstChild;main.insertBefore(b,ref);}window.addEventListener('hashchange',function(){setTimeout(addGoldBanner,500)});setTimeout(addGoldBanner,1500);setTimeout(addGoldBanner,4000);})();<\/script></body>`
+  ],
 ];
 function applyHtmlHotfixes(html) {
   if (typeof html !== "string") return html;
