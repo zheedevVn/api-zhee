@@ -261,7 +261,7 @@ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json
 const d=await r.json();document.getElementById('li_pass').value='';
 const tk=d.id_token||d.token||(d.du_lieu&&d.du_lieu.id_token);
 if(d.trang_thai==='thanh_cong'&&tk){TOK=tk;sessionStorage.setItem('lg_tok',tk);showUp(d,u);}
-else msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||'sai tài khoản/mật khẩu'),0);
+else msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||d.ma_loi||'kiểm tra lại tài khoản/mật khẩu'),0);
 }catch(e){msg('mUp','Lỗi kết nối: '+e.message,0);}
 b.disabled=false;b.innerHTML='Đăng nhập';}
 function showUp(d,u){
@@ -291,12 +291,19 @@ const b=document.getElementById('btnCk');b.disabled=true;b.textContent='Đang ch
 const out=document.getElementById('ckOut');out.innerHTML='';
 try{
 const r=await fetch(API+'?='+encodeURIComponent(u));const d=await r.json();
-const i=d.du_lieu||d,av=i.anh_dai_dien||i.avatar||'',nm=i.username||u,uid=i.uid||'',gold=i.gold||'';
-let h='<div class="uinfo">'+(av?'<img src="'+av+'">':'')+'<div><div class="nm">'+nm+'</div><div class="ud">'+uid+'</div>'+(gold?'<span class="goldtag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z"/></svg>'+gold+'</span>':'')+'</div></div>';
-h+='<div class="jsonbox"><pre>'+JSON.stringify(d,null,2).slice(0,1800)+'</pre></div>';
+if(d.trang_thai==='that_bai'){msg('mCk',d.thong_bao||'Không tìm thấy.',0);b.disabled=false;b.textContent='Check ngay';return;}
+const i=d.du_lieu||d,av=i.anh_dai_dien||i.avatar||'',nm=i.username||u,uid=i.uid||'',gold=i.gold||'khong',tt=i.tinh_trang||'',ma=i.ma_moi||'';
+let h='<div class="uinfo">'+(av?'<img src="'+av+'">':'')+'<div><div class="nm">'+nm+'</div><div class="ud">'+uid+'</div>';
+h+=gold.toLowerCase().includes('c')?'<span class="goldtag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z"/></svg>Locket Gold</span>':'<span style="font-size:11.5px;color:#888">Tài khoản thường</span>';
+h+='</div></div>';
+h+='<div style="margin-top:12px;display:grid;gap:8px">';
+if(tt)h+='<div style="font-size:13px"><span style="color:#888">Trạng thái:</span> <b style="color:#fff">'+tt+'</b></div>';
+if(ma)h+='<div style="font-size:13px"><span style="color:#888">Mã mời:</span> <code style="color:#FFD700">'+ma+'</code></div>';
+if(i.link_profile)h+='<div style="font-size:13px"><a href="'+i.link_profile+'" target="_blank" style="color:#FFD700">Mở profile Locket →</a></div>';
+h+='</div>';
 if(TOK)h+='<div class="tokrow"><input id="tkS" readonly value="'+TOK+'"><button class="btn" onclick="cpTok()">Copy token</button></div>';
 h+='<a class="dlbtn" style="margin-top:14px" href="/locket-gold.mobileconfig" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>Tải profile giữ Gold (iOS)</a>';
-out.innerHTML=h;msg('mCk','',1);document.getElementById('mCk').style.display='none';
+out.innerHTML=h;document.getElementById('mCk').style.display='none';
 }catch(e){msg('mCk','Lỗi: '+e.message,0);}
 b.disabled=false;b.textContent='Check ngay';}
 function cpTok(){const i=document.getElementById('tkS');i.select();document.execCommand('copy');}
