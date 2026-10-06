@@ -290,10 +290,10 @@ try{
 const fd=new FormData();fd.append('reqtype','fileupload');fd.append('userhash','590d0378e16f50e8905d821c2');fd.append('fileToUpload',f,f.name||'locket.jpg');
 const cr=await fetch('https://catbox.moe/user/api.php',{method:'POST',body:fd});
 url=(await cr.text()).trim();
-if(!/^https?:\/\//i.test(url))throw new Error('Upload file that bai');
+if(!/^https?:\\/\\//i.test(url))throw new Error('Upload file that bai');
 }catch(e){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Loi upload file: '+e.message,0);return;}
 }
-if(!url||!/^https?:\/\//i.test(url)){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Chon file hoac nhap link anh hop le.',0);return;}
+if(!url||!/^https?:\\/\\//i.test(url)){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Chon file hoac nhap link anh hop le.',0);return;}
 b.textContent='Dang up... (~20s)';
 try{
 const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,debug:'1'});const ac=document.getElementById('up_appcheck').value.trim();if(ac)q.set('appcheck',ac);
