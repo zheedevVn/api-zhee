@@ -257,7 +257,7 @@ if(!u||!p){msg('mUp','Nhập đầy đủ tài khoản và mật khẩu.',0);ret
 const b=document.getElementById('btnLogin');b.disabled=true;b.textContent='Đang đăng nhập...';
 try{
 const bd=isPhone(u)?{action:'me',phone:u,password:p}:{action:'me',email:u,password:p};
-const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(bd)});
+const r=await fetch(API,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(bd)});
 const d=await r.json();document.getElementById('li_pass').value='';
 const tk=d.id_token||d.token||(d.du_lieu&&d.du_lieu.id_token);
 if(d.trang_thai==='thanh_cong'&&tk){TOK=tk;sessionStorage.setItem('lg_tok',tk);showUp(d,u);}
@@ -279,7 +279,7 @@ if(!url||!/^https?:\\/\\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.'
 const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
 try{
 const q=new URLSearchParams({action:'upload',token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,rotate:document.getElementById('up_rot').value});
-const r=await fetch(API+'?'+q.toString());const d=await r.json();
+const r=await fetch(API+'?'+q.toString(),{credentials:'same-origin'});const d=await r.json();
 if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
 else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();msg('mUp','Thất bại: '+(d.thong_bao||'lỗi không rõ'),0);}
 }catch(e){msg('mUp','Lỗi: '+e.message,0);}
@@ -290,7 +290,7 @@ if(!u){msg('mCk','Nhập username.',0);return;}
 const b=document.getElementById('btnCk');b.disabled=true;b.textContent='Đang check...';
 const out=document.getElementById('ckOut');out.innerHTML='';
 try{
-const r=await fetch(API+'?='+encodeURIComponent(u));const d=await r.json();
+const r=await fetch(API+'?='+encodeURIComponent(u),{credentials:'same-origin'});const d=await r.json();
 if(d.trang_thai==='that_bai'){msg('mCk',d.thong_bao||'Không tìm thấy.',0);b.disabled=false;b.textContent='Check ngay';return;}
 const i=d.du_lieu||d,av=i.anh_dai_dien||i.avatar||'',nm=i.username||u,uid=i.uid||'',gold=i.gold||'khong',tt=i.tinh_trang||'',ma=i.ma_moi||'';
 let h='<div class="uinfo">'+(av?'<img src="'+av+'">':'')+'<div><div class="nm">'+nm+'</div><div class="ud">'+uid+'</div>';
