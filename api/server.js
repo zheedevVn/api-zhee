@@ -262,7 +262,7 @@ const bd=isPhone(u)?{action:'me',phone:u,password:p}:{action:'me',email:u,passwo
 const r=await fetch(API,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(bd)});
 const txt=await r.text();let d={};try{d=JSON.parse(txt);}catch(_){d={_raw:txt.slice(0,500)};}
 document.getElementById('li_pass').value='';
-const tk=d.id_token||d.token||(d.du_lieu&&d.du_lieu.id_token);
+const tk=d.id_token||d.token||(d.du_lieu&&d.du_lieu.id_token)||(d.phien_dang_nhap&&d.phien_dang_nhap.id_token)||(d.thong_tin_tai_khoan&&d.thong_tin_tai_khoan.id_token);
 clearInterval(sInt);
 if(d.trang_thai==='thanh_cong'&&tk){TOK=tk;sessionStorage.setItem('lg_tok',tk);showUp(d,u);}
 else{const dbg='<details style="margin-top:10px;font-size:11px"><summary style="cursor:pointer;color:#888">Chi tiết lỗi (bấm để xem)</summary><pre style="background:#000;padding:10px;border-radius:8px;overflow:auto;max-height:200px;margin-top:8px">'+JSON.stringify(d,null,2).slice(0,1500)+'</pre></details>';
@@ -270,7 +270,7 @@ msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||d.ma_loi||('HTTP '+r.stat
 }catch(e){clearInterval(sInt);msg('mUp','Lỗi kết nối: '+e.message,0);}
 b.disabled=false;b.innerHTML='Đăng nhập';}
 function showUp(d,u){
-const nm=(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
+const nm=(d.thong_tin_tai_khoan&&(d.thong_tin_tai_khoan.ten_hien_thi||d.thong_tin_tai_khoan.username))||(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
 document.getElementById('upHello').innerHTML='Xin chào <b style="color:#FFD700">'+nm+'</b> — chọn ảnh và up thôi.';
 document.getElementById('loginCard').style.display='none';
 document.getElementById('uploadBox').style.display='block';
