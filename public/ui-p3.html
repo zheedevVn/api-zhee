@@ -1724,6 +1724,7 @@ function translateNode(node){
     var tag = node.tagName;
     if(SKIP[tag]) return;
     if(tag==="SPAN" && node.classList.contains("scramble")) return;
+    if(node.id === "langToggle" || (node.closest && node.closest("#langToggle"))) return;
     var attrs = ["placeholder","aria-label","title"];
     for(var ai=0; ai<attrs.length; ai++){
       var attr = attrs[ai], v = node.getAttribute(attr);
@@ -1744,7 +1745,12 @@ function applyI18n(){
 }
 function paintToggle(){
   var b = document.getElementById("langToggle");
-  if(b) b.innerHTML = lang()==="vi" ? "&#x1F1FA;&#x1F1F8; EN" : "&#x1F1FB;&#x1F1F3; VI";
+  if(!b) return;
+  b.textContent = "";
+  var flag = document.createElement("span"); flag.textContent = lang()==="vi" ? "\uD83C\uDDFA\uD83C\uDDF8" : "\uD83C\uDDFB\uD83C\uDDF3";
+  var label = document.createElement("span"); label.textContent = lang()==="vi" ? " EN" : " VI";
+  label.style.marginLeft = "4px";
+  b.appendChild(flag); b.appendChild(label);
 }
 function addToggle(){
   if(document.getElementById("langToggle")){ paintToggle(); return; }
@@ -1762,6 +1768,7 @@ var _obs = null, _tmr = null;
 function watch(){
   if(_obs || !window.MutationObserver) return;
   _obs = new MutationObserver(function(){
+    paintToggle();
     if(lang()!=="en") return;
     clearTimeout(_tmr);
     _tmr = setTimeout(function(){ handleScramble(document); translateNode(document.body); }, 250);
