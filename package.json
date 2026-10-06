@@ -29,5 +29,8 @@
     "user-agents": "^2.1.178",
     "youtubei.js": "^18.0.0",
     "ytsr": "^3.8.4"
-  }
+  },
+  "author": "Hồ Đức Minh (Zhee Dev)",
+  "license": "UNLICENSED",
+  "copyright": "Copyright (c) 2026 Hồ Đức Minh. All rights reserved."
 }
