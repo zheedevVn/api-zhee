@@ -271,10 +271,11 @@ msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||d.ma_loi||('HTTP '+r.stat
 b.disabled=false;b.innerHTML='Đăng nhập';}
 function showUp(d,u){
 const nm=(d.thong_tin_tai_khoan&&(d.thong_tin_tai_khoan.ten_hien_thi||d.thong_tin_tai_khoan.username))||(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
-document.getElementById('upHello').innerHTML='Xin chào <b style="color:#FFD700">'+nm+'</b> — chọn ảnh và up thôi.';
+document.getElementById('upHello').innerHTML='Xin chào <b style="color:#FFD700">'+nm+'</b> — chọn ảnh và up thôi.<div class="tokrow" style="margin-top:10px"><input id="tkUp" readonly value="'+TOK+'" title="ID Token"><button class="btn" onclick="cpTokUp()">Copy token</button></div>';
 document.getElementById('loginCard').style.display='none';
 document.getElementById('uploadBox').style.display='block';
 msg('mUp','Đăng nhập thành công!',1);}
+function cpTokUp(){const i=document.getElementById('tkUp');i.select();document.execCommand('copy');}
 function doLogout(){TOK='';sessionStorage.removeItem('lg_tok');
 document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
@@ -283,7 +284,7 @@ const url=document.getElementById('up_url').value.trim();
 if(!url||!/^https?:\\/\\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
 const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
 try{
-const q=new URLSearchParams({action:'upload',token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,rotate:document.getElementById('up_rot').value});
+const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,rotate:document.getElementById('up_rot').value});
 const r=await fetch(API+'?'+q.toString(),{credentials:'same-origin'});const d=await r.json();
 if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
 else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();msg('mUp','Thất bại: '+(d.thong_bao||'lỗi không rõ'),0);}
