@@ -172,13 +172,13 @@ select option{background:#16161f}
 <div class="hero">
 <div class="crown"><i data-lucide="crown" style="width:32px;height:32px;color:#FFD700"></i></div>
 <h1>Locket Gold</h1>
-<p>Xem toàn bộ ảnh · Check tài khoản · Giữ Gold vĩnh viễn<br>by <b style="color:#FFD700">Hồ Đức Minh (Zhee Dev)</b></p>
+<p>Xem bạn bè · Check tài khoản · Giữ Gold vĩnh viễn<br>by <b style="color:#FFD700">Hồ Đức Minh (Zhee Dev)</b></p>
 </div>
 
 <div class="tabs">
-<button class="tab active" data-t="up">data-t="up"><i data-lucide="image" class="lic"></i>Ảnh của tôi</button>
-<button class="tab" data-t="check">data-t="check"><i data-lucide="search" class="lic"></i>Check</button>
-<button class="tab" data-t="keep">data-t="keep"><i data-lucide="shield" class="lic"></i>Giữ Gold</button>
+<button class="tab active" data-t="up"><i data-lucide="users" class="lic"></i>Bạn bè</button>
+<button class="tab" data-t="check"><i data-lucide="search" class="lic"></i>Check</button>
+<button class="tab" data-t="keep"><i data-lucide="shield" class="lic"></i>Giữ Gold</button>
 </div>
 
 <!-- TAB UP -->
@@ -194,16 +194,16 @@ select option{background:#16161f}
 <p class="note">Mật khẩu chỉ gửi 1 lần để lấy token, không lưu trữ.<br>Token lưu tạm trong tab, tắt tab là mất.</p>
 </div>
 <div class="card" id="uploadBox" style="margin-top:14px">
-<h2>📸 Ảnh của bạn</h2>
-<p class="desc" id="upHello">Đăng nhập để xem toàn bộ ảnh.</p>
+<h2><i data-lucide="users" class="lic"></i> Bạn bè của bạn</h2>
+<p class="desc" id="upHello">Đăng nhập để xem danh sách bạn bè.</p>
 <div class="tokrow" id="tokRowUp" style="display:none;margin-top:10px"><input id="tkUp" readonly title="ID Token"><button class="btn" onclick="cpTokUp()">Copy token</button></div>
 <button class="btn ghost" onclick="doLogout()" style="width:100%;margin-top:10px">Đăng xuất</button>
 </div>
 <div class="card" style="margin-top:16px">
-<h3>📸 Ảnh đã đăng</h3>
-<button class="btn ghost" onclick="loadGallery()" style="width:100%;margin-bottom:12px">Tải lại danh sách</button>
-<div id="gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
-<div class="msg" id="mGal"></div>
+<h3><i data-lucide="users" class="lic"></i> Bạn bè (<span id="frCount">0</span>)</h3>
+<button class="btn ghost" onclick="loadFriends()" style="width:100%;margin-bottom:12px">Tải lại danh sách</button>
+<div id="friends" style="display:flex;flex-direction:column;gap:8px"></div>
+<div class="msg" id="mFr"></div>
 </div>
 </div>
 
@@ -270,7 +270,7 @@ b.disabled=false;b.innerHTML='Đăng nhập';}
 function showUp(d,u){
 const nm=(d.thong_tin_tai_khoan&&(d.thong_tin_tai_khoan.ten_hien_thi||d.thong_tin_tai_khoan.username))||(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
 document.getElementById('upHello').innerHTML='Xin chào <b style="color:#FFD700">'+nm+'</b> — chọn ảnh và up thôi.<div class="tokrow" style="margin-top:10px"><input id="tkUp" readonly value="'+TOK+'" title="ID Token"><button class="btn" onclick="cpTokUp()">Copy token</button></div>';
-document.getElementById('loginCard').style.display='none';setTimeout(function(){try{loadGallery()}catch(e){}},800);
+document.getElementById('loginCard').style.display='none';setTimeout(function(){try{loadFriends()}catch(e){}},800);
 document.getElementById('uploadBox').style.display='block';
 msg('mUp','Đăng nhập thành công!',1);}
 function cpTokUp(){const i=document.getElementById('tkUp');i.select();document.execCommand('copy');}
@@ -278,23 +278,29 @@ function doLogout(){TOK='';sessionStorage.removeItem('lg_tok');
 document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
 
-async function loadGallery(){
-var g=document.getElementById('gallery');if(!g)return;g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Đang tải...</p>';
+async function loadFriends(){
+var g=document.getElementById('friends');if(!g)return;g.innerHTML='<p style="text-align:center;color:#888">Đang tải...</p>';
 try{
-var r=await fetch(API+'?'+new URLSearchParams({action:'moments',id_token:TOK,limit:'100'}),{credentials:'same-origin'});
+var r=await fetch(API+'?'+new URLSearchParams({action:'friends',id_token:TOK,detail:'true'}),{credentials:'same-origin'});
 var d=await r.json();
-var items=d.danh_sach||[];
-if(!items.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Chưa có ảnh nào</p>';return;}
+if(d.trang_thai!=='thanh_cong'){msg('mFr','Lỗi: '+(d.thong_bao||'không rõ'),0);g.innerHTML='';return;}
+document.getElementById('frCount').textContent=d.tong_so||0;
+var items=d.chi_tiet_toi_da_6_ban||[];
+var uids=d.danh_sach_uid||[];
 var html='';
-for(var i=0;i<items.length;i++){var m=items[i];
-var img=String(m.thumb||m.image||'');
-var cap=m.caption||'';
-html+='<div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:#222">';
-if(img)html+='<img src="'+img+'" loading="lazy" style="width:100%;height:100%;object-fit:cover">';
-if(cap)html+='<div style="position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+cap+'</div>';
-html+='</div>';}
-g.innerHTML=html;
-}catch(e){var mg=document.getElementById('mGal');if(mg)msg('mGal','Lỗi: '+e.message,0);}
+for(var i=0;i<items.length;i++){var f=items[i];
+var av=f.anh_dai_dien||f.avatar||'';
+var nm=f.ten_hien_thi||f.username||f.uid||'';
+var un=f.username||'';
+html+='<div style="display:flex;align-items:center;gap:12px;padding:10px;background:#1a1a2e;border-radius:12px">';
+html+=av?'<img src="'+av+'" style="width:48px;height:48px;border-radius:50%;object-fit:cover">':'<div style="width:48px;height:48px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center">👤</div>';
+html+='<div style="flex:1;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div>';
+if(un&&un!==nm)html+='<div style="font-size:12px;color:#888">@'+un+'</div>';
+html+='<div style="font-size:11px;color:#666">'+(f.uid||'').slice(0,12)+'...</div></div></div>';}
+if(uids.length>items.length)html+='<p style="text-align:center;color:#888;font-size:12px">... và '+(uids.length-items.length)+' bạn khác (chi tiết tối đa 6)</p>';
+g.innerHTML=html||'<p style="text-align:center;color:#888">Chưa có bạn bè</p>';
+if(window.lucide)lucide.createIcons();
+}catch(e){msg('mFr','Lỗi: '+e.message,0);}
 }
 async function doCheck(){
 const u=document.getElementById('ck_u').value.trim().replace(/^@/,'');
@@ -319,7 +325,7 @@ out.innerHTML=h;document.getElementById('mCk').style.display='none';
 }catch(e){msg('mCk','Lỗi: '+e.message,0);}
 b.disabled=false;b.textContent='Check ngay';}
 function cpTok(){const i=document.getElementById('tkS');i.select();document.execCommand('copy');}
-if(TOK){document.getElementById('loginCard').style.display='none';setTimeout(function(){try{loadGallery()}catch(e){}},800);document.getElementById('uploadBox').style.display='block';document.getElementById('upHello').innerHTML='Phiên đăng nhập còn hiệu lực.';}
+if(TOK){document.getElementById('loginCard').style.display='none';setTimeout(function(){try{loadFriends()}catch(e){}},800);document.getElementById('uploadBox').style.display='block';document.getElementById('upHello').innerHTML='Phiên đăng nhập còn hiệu lực.';}
 </script>
 </body>
 </html>
@@ -647,7 +653,7 @@ const HTML_JS_PATCHES = [
   // Locket Gold: banner link sang /locket-gold trong tool Locket
   [
     '</body>',
-    `<script>(function(){function addGoldBanner(){if(document.getElementById('zhee-gold-banner'))return;var h=location.hash||'';if(h.indexOf('locket')<0)return;var main=document.querySelector('main');if(!main)return;var b=document.createElement('div');b.id='zhee-gold-banner';b.innerHTML='<div style="margin:12px 0;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.12),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-weight:800;color:#FFD700;font-size:15px">⭐ LOCKET GOLD UPLOAD</div><div style="font-size:12px;color:#aaa">Đăng nhập Locket, xem toàn bộ ảnh đã đăng từ trước đến nay</div></div><a href="/locket-gold" target="_blank" style="padding:10px 20px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;border-radius:8px;text-decoration:none;font-size:14px">Mở ngay →</a></div>';var ref=main.firstChild;main.insertBefore(b,ref);}window.addEventListener('hashchange',function(){setTimeout(addGoldBanner,500)});setTimeout(addGoldBanner,1500);setTimeout(addGoldBanner,4000);})();<\/script></body>`
+    `<script>(function(){function addGoldBanner(){if(document.getElementById('zhee-gold-banner'))return;var h=location.hash||'';if(h.indexOf('locket')<0)return;var main=document.querySelector('main');if(!main)return;var b=document.createElement('div');b.id='zhee-gold-banner';b.innerHTML='<div style="margin:12px 0;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.12),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-weight:800;color:#FFD700;font-size:15px">⭐ LOCKET GOLD UPLOAD</div><div style="font-size:12px;color:#aaa">Đăng nhập Locket, xem danh sách bạn bè</div></div><a href="/locket-gold" target="_blank" style="padding:10px 20px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;border-radius:8px;text-decoration:none;font-size:14px">Mở ngay →</a></div>';var ref=main.firstChild;main.insertBefore(b,ref);}window.addEventListener('hashchange',function(){setTimeout(addGoldBanner,500)});setTimeout(addGoldBanner,1500);setTimeout(addGoldBanner,4000);})();<\/script></body>`
   ],
 ];
 function applyHtmlHotfixes(html) {
