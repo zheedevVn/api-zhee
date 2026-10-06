@@ -1,0 +1,1666 @@
+
+          <div class="step"><b>3. Gia hạn</b><span>Sau 10 ngày, nạp MB Bank rồi gia hạn 10.000đ cho 10 ngày tiếp.</span></div>
+        </div>
+        <div class="home-section-head"><div><h2>Mạng xã hội & nền tảng</h2><p>Mở công cụ để xem kết quả. Đường dẫn không hiện trên trang.</p></div></div>
+        <section class="card social-panel"><div class="home-social-grid">${socialTiles}</div></section>
+        <div class="home-section-head"><div><h2>${ico("flame")} Công cụ nổi bật</h2></div></div>
+        <div class="home-grid">${tiles}</div>`;
+    }
+
+    let liveAbort;
+    let currentTool = null;
+    function decodeParam(s) {
+      try { return decodeURIComponent(String(s || "").replace(/\+/g, " ")); } catch (_) { return String(s || ""); }
+    }
+    function keysFromTextList(list) {
+      const keys = [];
+      const seen = new Set();
+      const add = (k) => { if (!seen.has(k)) { seen.add(k); keys.push(k); } };
+      (list || []).forEach((s) => {
+        const str = String(s || "");
+        if (/\?=/.test(str)) add("");
+        str.replace(/[?&]([a-zA-Z0-9_]+)=/g, (_, k) => add(k));
+      });
+      return keys;
+    }
+    function paramKeysFor(t, extra) {
+      const keys = [];
+      const seen = new Set();
+      const add = (k) => { if (k === undefined || seen.has(k)) return; seen.add(k); keys.push(k); };
+      extra && extra.forEach(add);
+      exampleFields(t).forEach((f) => add(f.key));
+      const p = toolMark(t);
+      if (/spotify/i.test(p)) ["", "q", "artist", "url"].forEach(add);
+      else if (/pinterest/i.test(p)) ["", "username", "url", "pin", "q", "site", "page", "action"].forEach(add);
+      else if (/trans/i.test(p)) ["", "text", "to", "from", "giong", "action", "format"].forEach(add);
+      else if (/taomail/i.test(p)) ["kieu", "so", "ten", "mk", "action"].forEach(add);
+      else if (/mail\/check|checkmail/i.test(p)) ["email", "mk", "action", "uid"].forEach(add);
+      else if (/checkkeyai/i.test(p)) ["key"].forEach(add);
+      else if (/downloads/i.test(p)) ["url"].forEach(add);
+      else if (/\/nasa/i.test(p)) {
+        ["action", "rover", "sol", "earth_date", "start_date", "end_date", "date", "count", "feedtype"].forEach(add);
+      } else if (/tiktok/i.test(p)) {
+        ["", "url", "username", "sessionid", "action"].forEach(add);
+      } else if (/discord/i.test(p)) {
+        ["", "token", "quest", "id", "invite"].forEach(add);
+      } else if (/instagram|github|roblox|twitter|facebook|zalo|telegram|ngl|youtube|soundcloud/i.test(p)) {
+        ["", "username", "url"].forEach(add);
+      } else {
+        add("");
+        add("q");
+        add("url");
+      }
+      return keys;
+    }
+    function exampleFields(t) {
+      if (/\/nasa/i.test(toolMark(t))) {
+        return [{ key: "action", value: "action=apod" }];
+      }
+      let search = String(t.params || "");
+      if (!search && t.vi_du) {
+        const i = String(t.vi_du).indexOf("?");
+        if (i >= 0) search = String(t.vi_du).slice(i);
+      }
+      const q = search.replace(/^\?/, "");
+      const fields = [];
+      if (!q) {
+        fields.push({ key: "", value: "" });
+        return fields;
+      }
+      q.split("&").forEach((part) => {
+        if (!part) return;
+        const eq = part.indexOf("=");
+        if (eq === 0) fields.push({ key: "", value: decodeParam(part.slice(1)) });
+        else if (eq < 0) fields.push({ key: decodeParam(part), value: "" });
+        else fields.push({ key: decodeParam(part.slice(0, eq)), value: decodeParam(part.slice(eq + 1)) });
+      });
+      return fields;
+    }
+    function keyLabel(k) {
+      if (k === "") return "link / từ khóa";
+      if (k === "sessionid") return "sessionid (cookie)";
+      if (k === "token") return "token Discord";
+      if (k === "quest") return "mã chạy quest (RUN_QUEST:...)";
+      if (k === "id") return "user ID Discord";
+      if (k === "invite") return "link / mã mời";
+      return k;
+    }
+    function makeTryRow(key, value, keys) {
+      const row = document.createElement("div");
+      row.className = "try-row";
+      const sel = document.createElement("select");
+      sel.setAttribute("data-try-key", "1");
+      (keys || [key || ""]).forEach((k) => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = keyLabel(k);
+        if (k === key) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      if (key && ![...sel.options].some((o) => o.value === key)) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = keyLabel(key);
+        opt.selected = true;
+        sel.appendChild(opt);
+      }
+      const iv = document.createElement("input");
+      iv.setAttribute("data-try-val", "1");
+      const isTikTok = /tiktok/i.test(toolMark(currentTool));
+      iv.placeholder = /\/nasa/i.test(toolMark(currentTool))
+        ? "action=neo&start_date=YYYY-MM-DD&end_date=YYYY-MM-DD"
+        : (isTikTok ? "dán link video, username (@...) hoặc sessionid" : "dán link, username hoặc nội dung");
+      iv.value = value || "";
+      iv.spellcheck = false;
+      row.append(sel, iv);
+      return row;
+    }
+    function fillTryFields(t) {
+      const box = document.getElementById("tryFields");
+      if (!box) return;
+      box.innerHTML = "";
+      const keys = paramKeysFor(t);
+      t._tryKeys = keys;
+      const fields = exampleFields(t);
+      (fields.length ? fields : [{ key: keys[0] || "", value: "" }]).forEach((f) => {
+        box.appendChild(makeTryRow(f.key, f.value, keys));
+      });
+    }
+    function smartKey(val, keys, current) {
+      const list = keys || [];
+      if (/^https?:\/\//i.test(val)) {
+        if (list.includes("url")) return "url";
+        if (list.includes("")) return "";
+        if (list.includes("q")) return "q";
+      }
+      return current;
+    }
+    function collectTryUrl() {
+      if (!currentTool) return "";
+      const keys = currentTool._tryKeys || paramKeysFor(currentTool);
+      const rows = [...panel.querySelectorAll(".try-row")];
+      const parts = [];
+      rows.forEach((row) => {
+        const sel = row.querySelector("[data-try-key]");
+        const val = String((row.querySelector("[data-try-val]") || {}).value || "").trim();
+        if (!val) return;
+        // Keep an explicitly selected parameter name. Previously smartKey()
+        // re-selected `url` whenever the value looked like a URL, so changing
+        // the dropdown to `username` or the raw `link / từ khóa` option had
+        // no visible effect in the generated endpoint.
+        let key = sel ? sel.value : smartKey(val, keys, "");
+        if (/\/nasa/i.test(toolMark(currentTool)) && key === "action" && /^[?]?(?:action|type)=/i.test(val)) {
+          parts.push(val.replace(/^\?/, ""));
+        } else if (!key) parts.push("=" + encodeURIComponent(val));
+        else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
+      });
+      return parts.join("&");
+    }
+    function updateTryUrl() {
+      return collectTryUrl();
+    }
+    const DQC_STORE_KEY = "zhee_discord_quests_session_v1";
+
+    function saveDqcState(state) {
+      try {
+        localStorage.setItem(DQC_STORE_KEY, JSON.stringify({
+          ...state,
+          savedAt: Date.now()
+        }));
+      } catch (_) {}
+    }
+
+    function loadDqcState() {
+      try {
+        const raw = localStorage.getItem(DQC_STORE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (Date.now() - (obj.savedAt || 0) > 48 * 3600 * 1000) {
+          localStorage.removeItem(DQC_STORE_KEY);
+          return null;
+        }
+        return obj;
+      } catch (_) { return null; }
+    }
+
+    function clearDqcState() {
+      try { localStorage.removeItem(DQC_STORE_KEY); } catch (_) {}
+    }
+
+    let dqcActiveTimers = {};
+    let dqcBatchRunning = false;
+
+    function renderDiscordQuestsManager(container, parsedOrState, fallbackToken) {
+      if (!container) return;
+      const isSavedState = Boolean(parsedOrState && parsedOrState.isSavedState);
+      const acc = parsedOrState.thong_tin_tai_khoan || parsedOrState.account || {};
+      const questsRaw = parsedOrState.thong_tin_tai_khoan?.nhiem_vu?.hien_co || parsedOrState.quests || [];
+      const orbs = acc.orbs?.so_du ?? parsedOrState.orbs ?? null;
+      let token = (fallbackToken || parsedOrState.token || "").trim();
+      let currentRegion = parsedOrState.region || parsedOrState.khu_vuc_quet || "US";
+
+      if (!Array.isArray(questsRaw) || questsRaw.length === 0) {
+        container.innerHTML = `
+          <div class="dqc-container">
+            <div class="dqc-head">
+              <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ DISCORD</span>
+              <div class="dqc-region-group">
+                <button type="button" class="dqc-region-btn ${currentRegion === 'US' ? 'active' : ''}" data-dqc-region="US">🇺🇸 Vùng US (VPN)</button>
+                <button type="button" class="dqc-region-btn ${currentRegion === 'VN' ? 'active' : ''}" data-dqc-region="VN">🇻🇳 Vùng VN</button>
+              </div>
+            </div>
+            <div class="dqc-title">Không tìm thấy nhiệm vụ khả dụng ở khu vực hiện tại</div>
+            <div class="dqc-claim-guide">
+              <strong>💡 MẸO SĂN QUEST BẰNG VPN:</strong> Nếu bạn ở Việt Nam, Discord thường không hiện hết nhiệm vụ. Hãy bật VPN (kết nối sang IP Mỹ / US), sau đó nhấn nút <strong>"🇺🇸 Vùng US (VPN)"</strong> ở trên để quét lại!
+            </div>
+          </div>
+        `;
+        markSelfGlyphs(container);
+        bindRegionButtons();
+        return;
+      }
+
+      let quests = questsRaw.map((q, idx) => {
+        const qCode = q.ma_chay_nhiem_vu || (token ? `RUN_QUEST:${q.id}:${token}` : "");
+        const isDone = Boolean(q.da_hoan_thanh || q.da_nhan_thuong || q.user_status?.completed_at);
+        const isClaimed = Boolean(q.da_nhan_thuong || q.user_status?.claimed_at);
+        const isAct = Boolean(q.la_activity || /activity|thành tựu/i.test(q.loai_chay || "") || (Array.isArray(q.tien_do) && q.tien_do.some(t => /ACHIEVEMENT/i.test(t.ma || "") || /thành tựu/i.test(t.don_vi || ""))));
+
+        let targetSec = 30;
+        let taskLabel = "Xem video (30s)";
+        if (isAct) {
+          targetSec = 1;
+          taskLabel = "Activity trong Voice (1 thành tựu)";
+        } else if (Array.isArray(q.tien_do) && q.tien_do.length > 0) {
+          const t0 = q.tien_do[0];
+          targetSec = Number(t0.muc_tieu || t0.target) || 30;
+          if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu;
+        } else if (q.loai_chay) {
+          taskLabel = q.loai_chay;
+        }
+
+        return {
+          id: String(q.id || idx),
+          ten: q.ten || "Nhiệm vụ Discord",
+          game: q.game || "Discord",
+          orbs: q.orbs || null,
+          trang_thai: isClaimed ? "Đã nhận thưởng" : (isDone ? "DONE (Chưa nhận)" : (q.trang_thai || "Chưa nhận")),
+          da_hoan_thanh: isDone,
+          da_nhan_thuong: isClaimed,
+          ma_chay_nhiem_vu: qCode,
+          targetSeconds: targetSec,
+          taskLabel: taskLabel,
+          isActivity: isAct,
+          progressSeconds: isDone ? targetSec : (q.progressSeconds || 0),
+          percent: isDone ? 100 : (q.percent || 0),
+          isRunning: false
+        };
+      });
+
+      saveDqcState({
+        isSavedState: true,
+        token: token,
+        region: currentRegion,
+        orbs: orbs,
+        account: {
+          username: acc.tai_khoan || acc.username,
+          id: acc.id
+        },
+        quests: quests
+      });
+
+      function renderHtml() {
+        const pendingQuests = quests.filter((q) => !q.da_hoan_thanh && !q.da_nhan_thuong);
+        const pendingCount = pendingQuests.length;
+        const allDone = pendingCount === 0;
+
+        const qRows = quests.map((q) => {
+          const isDone = q.da_hoan_thanh || q.da_nhan_thuong;
+          return `
+            <div class="dqc-item-row ${isDone ? 'is-complete' : ''} ${q.isRunning ? 'is-active-running' : ''}" id="dqcRow-${esc(q.id)}">
+              <div class="dqc-row-left" style="flex: 1 1 240px">
+                <div class="dqc-row-name">${esc(q.ten)}</div>
+                <div class="dqc-row-sub">
+                  <span>${esc(q.game)}</span>
+                  <span style="opacity: 0.85">• ${esc(q.taskLabel)}</span>
+                  ${q.orbs ? `<span class="dqc-tag-orb">${ico("sparkles")} +${q.orbs} Orbs</span>` : ""}
+                  <span class="dqc-tag-status ${isDone ? 'status-done' : 'status-pending'}" id="dqcStatusTag-${esc(q.id)}">${isDone ? 'DONE' : esc(q.trang_thai)}</span>
+                </div>
+                <div class="dqc-progress-box" id="dqcProgBox-${esc(q.id)}" style="${q.isRunning ? '' : (isDone ? '' : 'display:none;')}">
+                  <div class="dqc-progress-info">
+                    <span class="dqc-progress-timer" id="dqcTimerLabel-${esc(q.id)}">
+                      ${q.isRunning ? `${ico(q.isActivity ? "rocket" : "clock")} ${q.isActivity ? 'Đang kích hoạt Activity...' : 'Đang chạy... Còn ' + Math.max(0, q.targetSeconds - q.progressSeconds) + 's'}` : (isDone ? `${ico("circle-check")} Đã hoàn thành 100% (DONE)` : '')}
+                    </span>
+                    <strong id="dqcPercentLabel-${esc(q.id)}">${q.percent}%</strong>
+                  </div>
+                  <div class="dqc-progress-track">
+                    <div class="dqc-progress-fill ${isDone ? 'is-done' : ''}" id="dqcFill-${esc(q.id)}" style="width:${q.percent}%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="dqc-row-actions">
+                ${q.isRunning ? `
+                  <span class="dqc-badge dqc-pulse" style="border-color:#38bdf8;color:#38bdf8">${ico("loader-2")} Đang xử lý…</span>
+                ` : (isDone ? `
+                  <span class="dqc-done-pill">${ico("check")} Đã xong</span>
+                ` : (q.isActivity ? `
+                  <button type="button" class="dqc-btn-copy" data-dqc-copy="${esc(q.ma_chay_nhiem_vu)}" title="Sao chép chuỗi mã chạy">${ico("copy")} Copy mã</button>
+                  <button type="button" class="dqc-btn-run dqc-btn-activity" data-dqc-run="${esc(q.id)}" ${dqcBatchRunning ? 'disabled' : ''} title="Kích hoạt quest & xem hướng dẫn">${ico("rocket")} Mở Activity</button>
+                ` : `
+                  <button type="button" class="dqc-btn-copy" data-dqc-copy="${esc(q.ma_chay_nhiem_vu)}" title="Sao chép chuỗi mã chạy">${ico("copy")} Copy mã</button>
+                  <button type="button" class="dqc-btn-run" data-dqc-run="${esc(q.id)}" ${dqcBatchRunning ? 'disabled' : ''} title="Chạy ngay">${ico("play")} Chạy ngay</button>
+                `))}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        container.innerHTML = `
+          <div class="dqc-list-card">
+            <div class="dqc-head">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ ORBS DISCORD (${quests.length})</span>
+                ${orbs != null ? `<span class="dqc-orbs">${ico("coins")} Số dư: ${orbs} Orbs</span>` : ""}
+                ${isSavedState ? `<span class="dqc-restore-badge" title="Dữ liệu lưu tự động, F5 không bị mất!">${ico("save")} Đã lưu phiên</span>` : ""}
+              </div>
+              <div class="dqc-batch-header-actions">
+                <div class="dqc-region-group" title="Chuyển vùng quét IP giữa US và VN">
+                  <button type="button" class="dqc-region-btn ${currentRegion === 'US' ? 'active' : ''}" data-dqc-region="US">🇺🇸 Vùng US (VPN)</button>
+                  <button type="button" class="dqc-region-btn ${currentRegion === 'VN' ? 'active' : ''}" data-dqc-region="VN">🇻🇳 Vùng VN</button>
+                </div>
+                ${!allDone ? (
+                  dqcBatchRunning ? `
+                    <button type="button" class="dqc-btn-stop" id="dqcStopBatchBtn">${ico("square")} Dừng lại</button>
+                  ` : `
+                    <button type="button" class="dqc-btn-batch" id="dqcStartBatchBtn">${ico("zap")} Chạy tất cả (${pendingCount})</button>
+                  `
+                ) : `
+                  <span class="dqc-badge" style="background:rgba(34,197,94,0.18);color:#4ade80;border-color:rgba(34,197,94,0.4)">${ico("sparkles")} Tất cả đã hoàn tất</span>
+                `}
+                <button type="button" class="dqc-btn-copy" id="dqcClearStateBtn" title="Xóa bộ nhớ tạm để quét lại từ đầu">${ico("trash-2")}</button>
+              </div>
+            </div>
+
+            ${allDone ? `
+              <div class="dqc-alert" style="margin-bottom:12px;">
+                ${ico("shield-check")} <div><strong>🎉 TẤT CẢ NHIỆM VỤ ĐÃ HOÀN TẤT 100% (DONE)!</strong> Hãy mở ứng dụng <strong>Discord</strong> > vào <strong>Cài đặt (Settings ⚙️) > Nhiệm vụ (Quests) / Kho quà tặng</strong> để tự tay bấm <strong>"Nhận phần thưởng" (Claim Reward)</strong> lấy Orbs an toàn tuyệt đối!</div>
+              </div>
+            ` : ""}
+
+            <div class="dqc-list-body" id="dqcListItems">
+              ${qRows}
+            </div>
+
+            <div class="dqc-claim-guide">
+              <div style="font-weight:800;color:#f8fafc;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+                ${ico("info")} <strong>HƯỚNG DẪN QUAN TRỌNG:</strong>
+              </div>
+              <div>• <strong>Không bị mất nhiệm vụ:</strong> Sau khi hoàn thành 100%, Discord sẽ chuyển nhiệm vụ vào <strong>Cài đặt (Settings ⚙️) > Nhiệm vụ (Quests) / Kho quà tặng</strong> để bạn tự tay bấm nhận thưởng.</div>
+              <div>• <strong>Nhiệm vụ Discord Activity:</strong> Với nhiệm vụ chơi mini-game trong Kênh thoại (như RuneScape / Dark Queen), hệ thống sẽ hỗ trợ nhận (enroll) nhiệm vụ và hướng dẫn bạn vào Kênh thoại bấm 🚀 Start an Activity để hoàn thành an toàn 100%.</div>
+              <div>• <strong>Mẹo săn thêm nhiệm vụ US:</strong> Bạn bật VPN (chọn server Mỹ/US) trên máy tính/điện thoại, rồi bấm <strong>"🇺🇸 Vùng US (VPN)"</strong> ở trên. Discord sẽ mở khóa thêm nhiều nhiệm vụ độc quyền khu vực Bắc Mỹ!</div>
+              <div>• <strong>Bộ đếm thời gian thực:</strong> Tiến trình đếm ngược trực tiếp từng giây, hệ thống tự lưu vào trình duyệt nên <strong>F5 / reload web không lo bị mất!</strong></div>
+            </div>
+          </div>
+        `;
+        markSelfGlyphs(container);
+        bindEvents();
+      }
+
+      async function runSingleQuest(questId) {
+        const q = quests.find((item) => item.id === questId);
+        if (!q || q.da_hoan_thanh || q.isRunning) return;
+        q.isRunning = true;
+        renderHtml();
+
+        const progBox = document.getElementById(`dqcProgBox-${questId}`);
+        const timerLbl = document.getElementById(`dqcTimerLabel-${questId}`);
+        const fillEl = document.getElementById(`dqcFill-${questId}`);
+        const pctLbl = document.getElementById(`dqcPercentLabel-${questId}`);
+
+        if (progBox) progBox.style.display = "";
+
+        let duration = q.targetSeconds || 30;
+        let elapsed = q.progressSeconds || 0;
+        let left = Math.max(1, duration - elapsed);
+
+        if (dqcActiveTimers[questId]) clearInterval(dqcActiveTimers[questId]);
+
+        if (q.isActivity) {
+          if (timerLbl) timerLbl.innerHTML = `${ico("rocket")} Đang nhận & kích hoạt nhiệm vụ...`;
+          markSelfGlyphs(timerLbl);
+        } else {
+          dqcActiveTimers[questId] = setInterval(() => {
+            elapsed++;
+            left = Math.max(0, duration - elapsed);
+            const currentPct = Math.min(99, Math.round((elapsed / duration) * 100));
+            q.progressSeconds = elapsed;
+            q.percent = currentPct;
+            if (timerLbl) timerLbl.innerHTML = `${ico("clock")} Đang chạy... Còn ${left}s`;
+            if (fillEl) fillEl.style.width = `${currentPct}%`;
+            if (pctLbl) pctLbl.textContent = `${currentPct}%`;
+            markSelfGlyphs(timerLbl);
+          }, 1000);
+        }
+
+        try {
+          const runCode = q.ma_chay_nhiem_vu || `RUN_QUEST:${questId}:${token}`;
+          const headers = { "Content-Type": "application/json", "Accept": "application/json" };
+          if (billing && billing.secret && billing.role !== "admin") headers["x-zhee-key"] = billing.secret;
+          const toolId = (currentTool && currentTool.id) || "api-mxh-discord";
+          const res = await fetch("/api/run", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              ma: toolId,
+              query: `quest=${encodeURIComponent(runCode)}&region=${currentRegion}`
+            })
+          });
+          const data = await res.json().catch(() => ({}));
+
+          if (dqcActiveTimers[questId]) {
+            clearInterval(dqcActiveTimers[questId]);
+            delete dqcActiveTimers[questId];
+          }
+
+          const isActuallyDone = Boolean(data.ket_qua?.da_hoan_thanh);
+          if (isActuallyDone) {
+            q.da_hoan_thanh = true;
+            q.percent = 100;
+            q.progressSeconds = duration;
+            q.trang_thai = "DONE (Chưa nhận)";
+          } else if (q.isActivity) {
+            q.percent = 0;
+            q.trang_thai = "Cần vào Voice chơi Activity";
+            macAlert({
+              title: "Nhiệm vụ: " + (q.ten || "Activity"),
+              text: data.thong_bao || "Hệ thống đã nhận nhiệm vụ! Vui lòng mở Discord > Vào Kênh thoại (Voice Channel) > Bấm biểu tượng Tên lửa 🚀 (Start an Activity) > Chọn game để hoàn thành thành tựu an toàn tuyệt đối!",
+              ok: "Đã hiểu",
+              icon: "rocket"
+            });
+          } else {
+            if (data.ket_qua?.tien_do_phan_tram != null) {
+              q.percent = Number(data.ket_qua.tien_do_phan_tram);
+              q.progressSeconds = Number(data.ket_qua.tien_do_giay) || elapsed;
+            }
+          }
+        } catch (err) {
+          if (dqcActiveTimers[questId]) {
+            clearInterval(dqcActiveTimers[questId]);
+            delete dqcActiveTimers[questId];
+          }
+        } finally {
+          q.isRunning = false;
+          saveDqcState({
+            isSavedState: true,
+            token: token,
+            region: currentRegion,
+            orbs: orbs,
+            account: { username: acc.tai_khoan || acc.username, id: acc.id },
+            quests: quests
+          });
+          renderHtml();
+        }
+      }
+
+      async function runAllQuests() {
+        if (dqcBatchRunning) return;
+        dqcBatchRunning = true;
+        renderHtml();
+
+        for (let i = 0; i < quests.length; i++) {
+          if (!dqcBatchRunning) break;
+          const q = quests[i];
+          if (q.da_hoan_thanh || q.da_nhan_thuong) continue;
+          await runSingleQuest(q.id);
+          if (dqcBatchRunning && i < quests.length - 1) {
+            await new Promise((r) => setTimeout(r, 2000));
+          }
+        }
+
+        dqcBatchRunning = false;
+        renderHtml();
+      }
+
+      function bindRegionButtons() {
+        container.querySelectorAll("[data-dqc-region]").forEach((rBtn) => {
+          rBtn.addEventListener("click", () => {
+            const reg = rBtn.getAttribute("data-dqc-region") || "US";
+            currentRegion = reg;
+            if (!token) {
+              const rowVal = panel.querySelector("[data-try-val]")?.value;
+              if (rowVal) token = rowVal.trim();
+            }
+            if (!token) {
+              macAlert({
+                title: "Chưa có token Discord",
+                text: "Vui lòng nhập Token Discord vào ô bên trên rồi bấm quét lại.",
+                ok: "Đã hiểu"
+              });
+              return;
+            }
+            const rowInput = panel.querySelector("[data-try-val]");
+            if (rowInput) rowInput.value = token;
+            const selKey = panel.querySelector("[data-try-key]");
+            if (selKey) selKey.value = "token";
+            loadLive(`token=${encodeURIComponent(token)}&region=${reg}`, 65000);
+          });
+        });
+      }
+
+      function bindEvents() {
+        bindRegionButtons();
+
+        container.querySelectorAll("[data-dqc-run]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const qId = btn.getAttribute("data-dqc-run");
+            if (qId) runSingleQuest(qId);
+          });
+        });
+
+        container.querySelectorAll("[data-dqc-copy]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const code = btn.getAttribute("data-dqc-copy");
+            if (!code) return;
+            navigator.clipboard.writeText(code).then(() => {
+              const old = btn.innerHTML;
+              btn.innerHTML = `${ico("check")} Đã chép!`;
+              markSelfGlyphs(btn);
+              setTimeout(() => { btn.innerHTML = old; markSelfGlyphs(btn); }, 1800);
+            }).catch(() => {});
+          });
+        });
+
+        const batchBtn = container.querySelector("#dqcStartBatchBtn");
+        if (batchBtn) {
+          batchBtn.addEventListener("click", () => runAllQuests());
+        }
+
+        const stopBtn = container.querySelector("#dqcStopBatchBtn");
+        if (stopBtn) {
+          stopBtn.addEventListener("click", () => {
+            dqcBatchRunning = false;
+            Object.values(dqcActiveTimers).forEach(clearInterval);
+            dqcActiveTimers = {};
+            quests.forEach((q) => { q.isRunning = false; });
+            renderHtml();
+          });
+        }
+
+        const clearBtn = container.querySelector("#dqcClearStateBtn");
+        if (clearBtn) {
+          clearBtn.addEventListener("click", () => {
+            if (confirm("Bạn có muốn xóa bộ nhớ tạm danh sách nhiệm vụ này không?")) {
+              clearDqcState();
+              container.innerHTML = "";
+            }
+          });
+        }
+      }
+
+      renderHtml();
+    }
+
+    function loadLive(url, timeoutMs) {
+      if (liveAbort) liveAbort.abort();
+      const pre = document.getElementById("liveJson");
+      const status = document.getElementById("liveStatus");
+      const copyBtn = document.getElementById("liveCopy");
+      const media = document.getElementById("tryMedia");
+      if (!pre) return;
+      const ac = new AbortController();
+      liveAbort = ac;
+      if (status) status.innerHTML = `<span class="spinner" aria-hidden="true"></span> Đang chạy…`;
+      const sample = pre.closest(".sample");
+      if (sample) sample.setAttribute("aria-busy", "true");
+      pre.textContent = "";
+      if (media) media.innerHTML = "";
+      const isQuest = /RUN_QUEST|run_quest|quest/i.test(url || "");
+      const timer = setTimeout(() => ac.abort(), timeoutMs || (isQuest ? 65000 : 15000));
+      const headers = { Accept: "application/json, audio/*, image/*, */*", "Content-Type": "application/json" };
+      if (billing && billing.secret && billing.role !== "admin") headers["x-zhee-key"] = billing.secret;
+      fetch("/api/run", {
+        method: "POST",
+        signal: ac.signal,
+        cache: "no-store",
+        credentials: "same-origin",
+        headers,
+        body: JSON.stringify({ ma: currentTool && currentTool.id, query: url || "" })
+      })
+        .then(async (r) => {
+          const type = String(r.headers.get("content-type") || "");
+          const buf = await r.arrayBuffer();
+          return { ok: r.ok, status: r.status, type, buf };
+        })
+        .then((out) => {
+          if (liveAbort !== ac) return;
+          const type = out.type.toLowerCase();
+          if (type.includes("audio") || type.includes("mpeg") && !type.includes("json")) {
+            const blob = new Blob([out.buf], { type: out.type || "audio/mpeg" });
+            const src = URL.createObjectURL(blob);
+            if (media) media.innerHTML = `<audio controls src="${src}"></audio>`;
+            pre.textContent = "HTTP " + out.status + " · " + (out.type || "audio") + " · " + out.buf.byteLength + " bytes";
+            if (status) status.textContent = "Audio";
+            if (copyBtn) copyBtn.setAttribute("data-copy", "Audio " + out.buf.byteLength + " bytes");
+            return;
+          }
+          if (type.includes("image")) {
+            const blob = new Blob([out.buf], { type: out.type || "image/png" });
+            const src = URL.createObjectURL(blob);
+            const isAvatar = /avatar/i.test(toolMark(currentTool));
+            if (media) {
+              media.innerHTML = isAvatar
+                ? `<div class="media-preview avatar-preview"><div class="media-stack"><img src="${src}" alt="Avatar chữ cái được tạo"><div class="media-caption">Avatar SVG · ${out.buf.byteLength} bytes</div></div></div>`
+                : `<div class="media-preview"><img src="${src}" alt="Kết quả API"></div>`;
+            }
+            pre.textContent = "HTTP " + out.status + " · " + (out.type || "image") + " · " + out.buf.byteLength + " bytes";
+            if (status) status.textContent = "Ảnh";
+            if (copyBtn) copyBtn.setAttribute("data-copy", "Ảnh " + out.buf.byteLength + " bytes");
+            return;
+          }
+          const text = new TextDecoder("utf-8").decode(out.buf);
+          let parsed = null;
+          let body = text;
+          try { parsed = JSON.parse(text); body = JSON.stringify(parsed, null, 2); } catch (_) {}
+          if (parsed && currentTool && Array.isArray(parsed.cu_phap)) {
+            const extra = keysFromTextList([].concat(parsed.cu_phap, parsed.vi_du || []));
+            currentTool._tryKeys = paramKeysFor(currentTool, extra);
+            panel.querySelectorAll("[data-try-key]").forEach((sel) => {
+              const cur = sel.value;
+              const keys = currentTool._tryKeys;
+              sel.innerHTML = "";
+              keys.forEach((k) => {
+                const opt = document.createElement("option");
+                opt.value = k;
+                opt.textContent = keyLabel(k);
+                if (k === cur) opt.selected = true;
+                sel.appendChild(opt);
+              });
+              if (cur && ![...sel.options].some((o) => o.value === cur)) {
+                const opt = document.createElement("option");
+                opt.value = cur;
+                opt.textContent = keyLabel(cur);
+                opt.selected = true;
+                sel.appendChild(opt);
+              }
+            });
+          }
+          pre.textContent = body;
+          if (parsed && parsed.trang_thai === "huong_dan") {
+            if (status) {
+              status.innerHTML = `${ico("circle-help")} Hướng dẫn — chọn đúng tham số hoặc dán link dùng được`;
+              markSelfGlyphs(status);
+            }
+          } else if (status) {
+            const okIco = out.ok ? "circle-check" : "circle-alert";
+            status.innerHTML = `${ico(okIco)} HTTP ${out.status}`;
+            markSelfGlyphs(status);
+          }
+          if (copyBtn) copyBtn.setAttribute("data-copy", body);
+
+          if (parsed && parsed.loai === "discord_run_quest" && media) {
+            const kq = parsed.ket_qua || parsed.chi_tiet || {};
+            const isDone = Boolean(kq.da_hoan_thanh);
+            const isActivity = Boolean(kq.la_activity || /thành tựu|activity/i.test(kq.loai_nhiem_vu || ""));
+            media.innerHTML = `
+              <div class="dqc-container ${isDone ? 'dqc-success' : 'dqc-running'}">
+                <div class="dqc-head">
+                  <span class="dqc-badge">${ico(isDone ? "circle-check" : (isActivity ? "rocket" : "loader-2"))} ${isDone ? "ĐÃ HOÀN THÀNH (DONE)" : (isActivity ? "CẦN VÀO VOICE CHƠI GAME" : "ĐANG TIẾN HÀNH")}</span>
+                  ${kq.orbs_du_kien ? `<span class="dqc-orbs">${ico("sparkles")} +${kq.orbs_du_kien} Orbs</span>` : ""}
+                </div>
+                <div class="dqc-title">${esc(kq.ten_nhiem_vu || "Nhiệm vụ Discord")}</div>
+                <div class="dqc-grid">
+                  <div class="dqc-item"><span>Game:</span> <strong>${esc(kq.game || "Discord")}</strong></div>
+                  <div class="dqc-item"><span>Loại:</span> <strong>${esc(kq.loai_nhiem_vu || "Xem video quảng cáo")}</strong></div>
+                  <div class="dqc-item"><span>Tiến độ:</span> <strong>${esc(kq.tien_do_hien_tai || (isDone ? "100%" : "0%"))}</strong></div>
+                  <div class="dqc-item"><span>${isActivity ? "Mục tiêu:" : "Thời lượng:"}</span> <strong>${esc(kq.thoi_gian_yeu_cau || "30s")}</strong></div>
+                </div>
+                <div class="dqc-alert ${isDone ? 'dqc-alert-success' : (isActivity ? 'dqc-alert-activity' : 'dqc-alert-warning')}">
+                  ${ico(isDone ? "shield-check" : (isActivity ? "rocket" : "info"))} 
+                  <div>
+                    ${isDone
+                      ? `<strong>HƯỚNG DẪN NHẬN THƯỞNG:</strong> Nhiệm vụ đã hoàn tất (DONE 100%). Bạn hãy mở ứng dụng <strong>Discord</strong> và tự tay bấm <strong>"Nhận phần thưởng" (Claim Reward)</strong> để nhận Orbs an toàn tuyệt đối!`
+                      : (isActivity
+                          ? `<strong>HƯỚNG DẪN HOÀN THÀNH ACTIVITY AN TOÀN:</strong> Nhiệm vụ này yêu cầu đạt thành tựu trong Discord Activity (mini-game). Bạn hãy mở ứng dụng <strong>Discord</strong> > Tham gia bất kỳ <strong>Kênh thoại (Voice Channel)</strong> nào > Bấm biểu tượng Tên lửa <strong>🚀 (Start an Activity / Bắt đầu hoạt động)</strong> > Chọn <strong>${esc(kq.ten_nhiem_vu || kq.game || "game")}</strong> để hoàn thành thành tựu chính chủ 100%!`
+                          : `<strong>TIẾN TRÌNH:</strong> ${esc(parsed.thong_bao || "Hệ thống đang tiến hành cập nhật tiến độ...")}`
+                        )
+                    }
+                  </div>
+                </div>
+              </div>
+            `;
+            markSelfGlyphs(media);
+          } else if (parsed && parsed.loai === "discord_token_account" && media) {
+            const rowVal = panel.querySelector("[data-try-val]")?.value || "";
+            renderDiscordQuestsManager(media, parsed, rowVal);
+          }
+        })
+        .catch((e) => {
+          if (liveAbort !== ac) return;
+          if (e.name === "AbortError") pre.textContent = "Hết thời gian chờ. Hãy chạy lại.";
+          else pre.textContent = "Không chạy được: " + (e.message || e);
+          if (status) {
+            status.innerHTML = `${ico("alert-triangle")} Lỗi`;
+            markSelfGlyphs(status);
+          }
+        })
+        .finally(() => {
+          clearTimeout(timer);
+          const sample = document.querySelector(".sample");
+          if (sample) sample.setAttribute("aria-busy", "false");
+          const status = document.getElementById("liveStatus");
+          if (status) status.querySelector(".spinner")?.remove();
+        });
+    }
+
+    function badgePresetMarkup() {
+      return `<div class="preset-actions" style="--tool-accent:#e11d48">
+        <span class="preset-label">Từ khóa và ví dụ có sẵn</span>
+        <button type="button" data-badge-preset data-label="Build" data-status="Passing" data-color="green">Build · Passing</button>
+        <button type="button" data-badge-preset data-label="Status" data-status="Online" data-color="blue">Status · Online</button>
+        <button type="button" data-badge-preset data-label="Version" data-status="v1.0.0" data-color="purple">Version · v1.0.0</button>
+        <button type="button" data-badge-preset data-label="License" data-status="MIT" data-color="orange">License · MIT</button>
+        <button type="button" data-badge-preset data-label="Downloads" data-status="1.2k" data-color="indigo">Downloads · 1.2k</button>
+        <button type="button" data-badge-preset data-label="API" data-status="Live" data-color="crimson">API · Live</button>
+      </div>`;
+    }
+
+    function applyBadgePreset(button) {
+      const values = {
+        label: button.dataset.label || "Build",
+        status: button.dataset.status || "Passing",
+        color: button.dataset.color || "green"
+      };
+      const rows = [...document.querySelectorAll("#tryFields .try-row")];
+      Object.entries(values).forEach(([key, value], index) => {
+        const row = rows[index];
+        if (!row) return;
+        const select = row.querySelector("[data-try-key]");
+        const input = row.querySelector("[data-try-val]");
+        if (select) select.value = key;
+        if (input) input.value = value;
+      });
+      updateTryUrl();
+      runCurrentTool();
+    }
+
+    async function runCurrentTool() {
+      if (billing && billing.role === "admin") {
+        loadLive(collectTryUrl(), 15000);
+        return;
+      }
+      if (!billing || !billing.secret) {
+        const go = await macAlert({
+          title: "Cần đăng nhập",
+          text: "Đăng nhập để chạy công cụ. Tài khoản Google có secret key miễn phí 10 ngày.",
+          ok: "Đăng nhập",
+          cancel: "Đóng"
+        });
+        if (go) openAuth(billing ? "login" : "register");
+        return;
+      }
+      if (!billing.key_active) {
+        const go = await macAlert({
+          title: "Key đã hết hạn",
+          text: "10 ngày miễn phí đã hết. Nạp tiền rồi gia hạn 10.000đ cho 10 ngày tiếp.",
+          ok: "Mở ví",
+          cancel: "Đóng",
+          suppressKey: "key-expired"
+        });
+        if (go) location.hash = "#vi";
+        return;
+      }
+      loadLive(collectTryUrl(), 15000);
+    }
+
+    function renderDirectory(onlyLabel, title, lead) {
+      const groups = [];
+      const map = new Map();
+      CATALOG.forEach((tool) => {
+        const group = groupOf(tool.chuyen_muc);
+        if (onlyLabel && group.label !== onlyLabel) return;
+        if (!map.has(group.label)) {
+          map.set(group.label, []);
+          groups.push(group.label);
+        }
+        map.get(group.label).push(tool);
+      });
+      const heading = title || "Công cụ";
+      panel.innerHTML = `<h1>${ico(onlyLabel === "Tài xỉu" ? "dices" : onlyLabel === "Mail" ? "mail" : "layout-grid", "ico-head")} ${scrambleHtml(heading)}</h1>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}` + (groups.length ? "" : `<p class="lead">Chưa có công cụ trong mục này.</p>`) + groups.map((label) => `
+        <div class="home-section-head"><div><h2>${esc(label)}</h2></div></div>
+        <div class="home-grid">${map.get(label).map((tool) => `
+          <a class="home-tile" style="--tool-accent:${accentFor(toolMark(tool), tool.chuyen_muc)}" href="#${tool.id}">
+            <div class="home-tile-top">${ico(iconFor(toolMark(tool), tool.chuyen_muc), "ico-head")}<strong>${esc(tool.ten)}</strong></div>
+            <span>${esc(tool.mo_ta)}</span>
+          </a>`).join("")}</div>`).join("");
+    }
+
+    function renderProfile() {
+      if (accountState === "loading" || (!billing && (googleSignedIn || accountState === "in"))) {
+        panel.innerHTML = skeletonHtml("Đang tải hồ sơ");
+        panel.setAttribute("aria-busy", "true");
+        if (!billing && (googleSignedIn || accountState === "in") && panel.dataset.billingPull !== "1") {
+          panel.dataset.billingPull = "1";
+          refreshBilling().then((ok) => {
+            panel.dataset.billingPull = "";
+            if (currentId() === "ho-so") paint();
+          });
+        }
+        return;
+      }
+      if (!billing) {
+        panel.innerHTML = gateHtml("Hồ sơ", "Đăng nhập để xem secret key và số dư.", "profileLogin");
+        panel.setAttribute("aria-busy", "false");
+        return;
+      }
+      const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleString("vi-VN") : "Hết hạn";
+      const adminLink = billing.role === "admin" ? `<a class="act btn-dev-card-action" href="#admin">${ico("shield")} Bảng điều khiển</a>` : "";
+      const picture = billing && /^https:\/\//i.test(billing.picture || "") ? billing.picture : "";
+      const initials = accountInitials(billing.name || billing.email || "ZD");
+      const avatarHtml = picture
+        ? `<img src="${esc(picture)}" alt="Avatar">`
+        : `<span>${esc(initials)}</span>`;
+
+      panel.innerHTML = `
+        <div class="profile-wrap">
+          <div class="profile-header-block">
+            <div class="profile-badge-pill">${ico("sparkles")} THẺ ĐỊNH DANH NHÀ PHÁT TRIỂN · ZHEE PASSPORT</div>
+            <h1>${ico("circle-user", "ico-head")} ${scrambleHtml("Hồ Sơ & Thẻ VIP")}</h1>
+            ${keySoonHtml(billing)}
+          </div>
+
+          <!-- Luxury Developer VIP Digital Card -->
+          <div class="developer-hero-card">
+            <div class="developer-hero-glow"></div>
+            <div class="developer-hero-top">
+              <div class="wallet-chip-emv">
+                <div class="emv-chip"></div>
+                <span class="nfc-icon" title="NFC Contactless">${ico("wifi")}</span>
+                <span class="card-security-label">DEV PASSPORT</span>
+              </div>
+              <div class="wallet-brand-tags">
+                <span class="dev-brand-tag">${ico("terminal")} ZHEE DEV</span>
+                ${billing.role === "admin"
+                  ? `<span class="dev-brand-admin">${ico("shield-check")} MASTER ADMIN</span>`
+                  : `<span class="wallet-brand-vip">${ico("crown")} VIP DEVELOPER</span>`}
+              </div>
+            </div>
+
+            <!-- Mid Section: Identity & Balance Cluster -->
+            <div class="dev-card-identity">
+              <div class="dev-card-main-info">
+                <div class="dev-card-avatar">${avatarHtml}</div>
+                <div class="dev-card-text-col">
+                  <span class="dev-card-subtitle">NHÀ PHÁT TRIỂN / TÀI KHOẢN</span>
+                  <div class="dev-card-name">${esc(billing.name || billing.email || "ZHEE DEVELOPER")}</div>
+                  <div class="dev-card-email">${ico("mail")} ${esc(billing.email || "")}</div>
+                </div>
+              </div>
+              <div class="dev-card-balance-box">
+                <span class="dev-card-bal-label">SỐ DƯ KHẢ DỤNG</span>
+                <div class="dev-card-bal-val">${vnd(billing.balance)}</div>
+              </div>
+            </div>
+
+            <!-- Footer: Expiry Status & Quick Actions -->
+            <div class="developer-hero-footer">
+              <div class="developer-expiry-status">
+                <span class="dot-indicator ${billing.key_active ? "is-active" : "is-expired"}"></span>
+                <span class="expiry-text">${billing.key_active ? "Key Đang Hoạt Động · Hạn Dùng: " + esc(when) : "Key Đã Hết 10 Ngày Dùng Thử"}</span>
+              </div>
+              <div class="developer-hero-actions">
+                <a class="act btn-dev-card-action" href="/vi">${ico("wallet")} Nạp tiền vào ví</a>
+                <button class="act btn-dev-card-action btn-dev-card-renew" type="button" id="renewBtn">
+                  ${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}
+                </button>
+                ${adminLink}
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: High-Tech Security Credentials Section -->
+          <div class="profile-grid">
+            <!-- Secret Key Card -->
+            <div class="card credential-card">
+              <div class="card-title-row">
+                <div class="cred-title">
+                  <h3>${ico("key-round")} Khóa API Bí Mật (Secret Key)</h3>
+                </div>
+                <span class="badge-cred-header">Header: x-zhee-key</span>
+              </div>
+              <p class="muted-lead">Khóa bí mật duy nhất để gọi hơn 70+ REST API từ server, bot Telegram hoặc ứng dụng của bạn.</p>
+
+              <div class="cred-box">
+                <p class="secret-value${secretShown ? " is-open" : ""}" id="secretValue" data-secret-view>${esc(secretShown ? billing.secret : maskSecret(billing.secret))}</p>
+                <div class="cred-icon-actions">
+                  <button class="icon-copy-btn" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key" title="Hiện hoặc ẩn key">
+                    ${ico(secretShown ? "eye-off" : "eye")}
+                  </button>
+                  <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="${esc(billing.secret || "")}" title="Sao chép Secret Key" aria-label="Sao chép Secret Key">
+                    ${ico("copy")}
+                  </button>
+                  <button class="icon-copy-btn" type="button" data-copy="curl -H &quot;x-zhee-key: ${esc(billing.secret || "")}&quot; https://api-zhee.vercel.app/api/tai-xiu" title="Sao chép cURL mẫu" aria-label="Sao chép cURL mẫu">
+                    ${ico("terminal")}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Access Token Card -->
+            <div class="card credential-card">
+              <div class="card-title-row">
+                <div class="cred-title">
+                  <h3>${ico("shield-check")} Access Token (Phiên làm việc)</h3>
+                </div>
+                <span class="badge-cred-token">Bearer Session</span>
+              </div>
+              <p class="muted-lead">Token đăng nhập và liên kết tài khoản. Dùng để đăng nhập trực tiếp hoặc qua link bảo mật.</p>
+
+              <div class="cred-box">
+                <p class="secret-value${tokenShown ? " is-open" : ""}" data-token-view>${esc(tokenShown ? billing.token : maskSecret(billing.token))}</p>
+                <div class="cred-icon-actions">
+                  <button class="icon-copy-btn" type="button" id="toggleToken" aria-label="Hiện hoặc ẩn token" title="Hiện hoặc ẩn token">
+                    ${ico(tokenShown ? "eye-off" : "eye")}
+                  </button>
+                  <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="${esc(billing.token || "")}" title="Sao chép Token" aria-label="Sao chép Token">
+                    ${ico("copy")}
+                  </button>
+                  <button class="icon-copy-btn" type="button" data-copy="${esc(location.origin + "/api/auth/verify?token=" + (billing.token || ""))}" title="Sao chép link xác thực" aria-label="Sao chép link xác thực">
+                    ${ico("link-2")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderWallet() {
+      if (accountState === "loading" || (!billing && (googleSignedIn || accountState === "in"))) {
+        panel.innerHTML = skeletonHtml("Đang tải ví");
+        panel.setAttribute("aria-busy", "true");
+        if (!billing && (googleSignedIn || accountState === "in") && panel.dataset.billingPull !== "1") {
+          panel.dataset.billingPull = "1";
+          refreshBilling().then((ok) => {
+            panel.dataset.billingPull = "";
+            if (currentId() === "vi") paint();
+          });
+        }
+        return;
+      }
+      if (!billing) {
+        panel.innerHTML = gateHtml("Ví", "Đăng nhập để tạo nội dung nạp tiền.", "walletLogin");
+        panel.setAttribute("aria-busy", "false");
+        return;
+      }
+      const when = billing.key_expires_at ? new Date(billing.key_expires_at).toLocaleDateString("vi-VN") : "Hết hạn";
+      panel.innerHTML = `
+        <div class="wallet-wrap">
+          <div class="wallet-header-block">
+            <div class="wallet-badge-pill">${ico("sparkles")} CỔNG THANH TOÁN TỰ ĐỘNG NAPAS 247</div>
+            <h1>${ico("wallet", "ico-head")} ${scrambleHtml("Ví & Nạp Tiền")}</h1>
+            ${keySoonHtml(billing)}
+          </div>
+
+          <!-- Luxury Fintech Digital Card -->
+          <div class="wallet-hero-card">
+            <div class="wallet-hero-glow"></div>
+            <div class="wallet-hero-top">
+              <div class="wallet-chip-emv">
+                <div class="emv-chip"></div>
+                <span class="nfc-icon" title="NFC">${ico("wifi")}</span>
+              </div>
+              <div class="wallet-brand-tags">
+                <span class="wallet-brand-tag">${ico("landmark")} MB BANK</span>
+                <span class="wallet-brand-vip">VIP MEMBER</span>
+              </div>
+            </div>
+            <div class="wallet-balance-wrap">
+              <span class="wallet-balance-label">${ico("landmark")} SỐ DƯ TÀI KHOẢN KHẢ DỤNG</span>
+              <div class="wallet-balance-val">${vnd(billing.balance)}</div>
+            </div>
+            <div class="wallet-hero-footer">
+              <div class="wallet-user-info">
+                <span class="wallet-user-title">CHỦ TÀI KHOẢN</span>
+                <span class="wallet-user-name">${esc(billing.name || billing.email || "HỒ ĐỨC MINH")}</span>
+                <div class="wallet-expiry-status">
+                  <span class="dot-indicator ${billing.key_active ? "is-active" : "is-expired"}"></span>
+                  <span>${billing.key_active ? "Key Còn Hạn Đến " + esc(when) : "Key Đã Hết 10 Ngày"}</span>
+                </div>
+              </div>
+              <div class="wallet-hero-actions">
+                <button class="act btn-renew-hero" type="button" id="heroRenewBtn">
+                  ${ico("calendar-plus")} Gia hạn 10 ngày · ${vnd(billing.renew_price || 10000)}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main 2-Column Grid -->
+          <div class="wallet-grid">
+            <!-- Left Column: Tạo Lệnh Nạp Tự Động -->
+            <div class="card wallet-action-card">
+              <div class="card-title-row">
+                <h3>${ico("plus-circle")} Tạo lệnh nạp tiền</h3>
+                <span class="badge-auto">${ico("zap")} Tự động 30s</span>
+              </div>
+              <p class="muted-lead">Nhập số tiền hoặc chọn mức nạp bên dưới để tạo mã VietQR chuyển khoản nhanh.</p>
+
+              <div class="pay-box">
+                <label class="input-label" for="topupAmount">Số tiền cần nạp (VND)</label>
+                <div class="amount-input-wrap">
+                  <span class="amount-prefix">${ico("landmark")}</span>
+                  <input id="topupAmount" class="amount-field" inputmode="numeric" placeholder="10.000" value="10000">
+                  <span class="amount-currency">VNĐ</span>
+                </div>
+
+                <div class="preset-amount-label">Mức nạp nhanh phổ biến:</div>
+                <div class="preset-grid">
+                  <button class="preset-chip is-active" type="button" data-topup-preset="10000">10.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="20000">20.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="50000">50.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="100000">100.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="200000">200.000đ</button>
+                  <button class="preset-chip" type="button" data-topup-preset="500000">500.000đ</button>
+                </div>
+
+                <button class="act act-dark btn-create-topup" type="button" id="topupCreate">
+                  ${ico("qr-code")} Lấy mã QR & Nội dung chuyển khoản
+                </button>
+                
+                <div id="topupTicket"></div>
+              </div>
+            </div>
+
+            <!-- Right Column: Thông Tin Tài Khoản Nhận -->
+            <div class="card wallet-info-card">
+              <div class="card-title-row">
+                <h3>${ico("landmark")} Tài khoản MB Bank nhận</h3>
+                <span class="badge-bank">Quân Đội (MB)</span>
+              </div>
+              <p class="muted-lead">Chuyển khoản liên ngân hàng 24/7 qua Napas tới số tài khoản chính chủ bên dưới.</p>
+
+              <div class="bank-details-box">
+                <div class="bank-row">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Ngân hàng thụ hưởng</span>
+                    <b class="bank-val">MB BANK (Quân Đội)</b>
+                  </div>
+                  <button class="icon-copy-btn" type="button" data-copy="MBBANK" title="Sao chép tên ngân hàng" aria-label="Sao chép tên ngân hàng">
+                    ${ico("copy")}
+                  </button>
+                </div>
+
+                <div class="bank-row bank-row-hl">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Số tài khoản nhận</span>
+                    <b class="bank-val bank-acc-num">0899256226</b>
+                  </div>
+                  <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="0899256226" title="Sao chép số tài khoản MB Bank" aria-label="Sao chép số tài khoản MB Bank">
+                    ${ico("copy")}
+                  </button>
+                </div>
+
+                <div class="bank-row">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Chủ tài khoản</span>
+                    <b class="bank-val">HO DUC MINH</b>
+                  </div>
+                  <button class="icon-copy-btn" type="button" data-copy="HO DUC MINH" title="Sao chép chủ tài khoản" aria-label="Sao chép chủ tài khoản">
+                    ${ico("copy")}
+                  </button>
+                </div>
+
+                <div class="bank-row">
+                  <div class="bank-row-left">
+                    <span class="bank-label">Chi phí gia hạn</span>
+                    <b class="bank-val money-hl">${vnd(billing.renew_price || 10000)} / 10 ngày</b>
+                  </div>
+                  <button class="icon-copy-btn icon-renew-btn" type="button" id="renewBtn" title="Gia hạn ngay 10 ngày" aria-label="Gia hạn ngay 10 ngày">
+                    ${ico("calendar-plus")}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4-step workflow guide -->
+              <div class="steps-guide">
+                <div class="guide-title">${ico("info")} Quy trình nạp & gia hạn tự động:</div>
+                <div class="guide-steps-grid">
+                  <div class="guide-step-item">
+                    <span class="step-num">1</span>
+                    <span class="step-text">Tạo mã nạp bên trái</span>
+                  </div>
+                  <div class="guide-step-item">
+                    <span class="step-num">2</span>
+                    <span class="step-text">Quét mã VietQR trên App</span>
+                  </div>
+                  <div class="guide-step-item">
+                    <span class="step-num">3</span>
+                    <span class="step-text">Hệ thống cộng tiền 30s</span>
+                  </div>
+                  <div class="guide-step-item">
+                    <span class="step-num">4</span>
+                    <span class="step-text">Bấm "Gia hạn 10 ngày"</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Section: Lịch Sử Giao Dịch -->
+          <div id="topupHistory"></div>
+        </div>`;
+      loadTopupHistory();
+    }
+
+    async function loadTopupHistory() {
+      const host = document.getElementById("topupHistory");
+      if (!host) return;
+      try {
+        const response = await fetch("/api/account/topups", { credentials: "same-origin", cache: "no-store" });
+        const data = await response.json();
+        const rows = data.danh_sach || [];
+        if (!rows.length) {
+          host.innerHTML = `
+            <div class="card wallet-history-card">
+              <div class="wallet-section-head">
+                <h3>${ico("history")} Lịch sử nạp tiền</h3>
+              </div>
+              <div class="empty-state">
+                ${ico("receipt")}
+                <span>Chưa có lệnh nạp nào. Hãy tạo mã nạp ở trên để bắt đầu giao dịch.</span>
+              </div>
+            </div>`;
+          paintIcons();
+          return;
+        }
+        host.innerHTML = `
+          <div class="card wallet-history-card">
+            <div class="wallet-section-head">
+              <h3>${ico("history")} Lịch sử nạp tiền</h3>
+              <span class="muted-badge">${rows.length} giao dịch</span>
+            </div>
+            <div class="table-wrap">
+              <table class="admin wallet-table">
+                <thead>
+                  <tr>
+                    <th>Mã nạp</th>
+                    <th>Số tiền</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows.map((row) => {
+                    const st = String(row.status || "").toLowerCase();
+                    const statusHtml = st === "xong"
+                      ? `<span class="tag-status tag-success">${ico("check-circle-2")} Thành công</span>`
+                      : st === "huy"
+                      ? `<span class="tag-status tag-danger">${ico("circle-x")} Đã hủy</span>`
+                      : `<span class="tag-status tag-pending">${ico("clock-3")} Chờ thanh toán</span>`;
+                    const timeStr = row.created_at ? new Date(row.created_at).toLocaleString("vi-VN") : "Gần đây";
+                    return `<tr>
+                      <td><code class="order-code">${esc(row.code)}</code> <button class="act mini icon-only" type="button" data-copy="${esc(row.code)}" title="Copy mã">${ico("copy")}</button></td>
+                      <td class="money">${vnd(row.amount)}</td>
+                      <td class="order-time">${esc(timeStr)}</td>
+                      <td>${statusHtml}</td>
+                    </tr>`;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+        paintIcons();
+      } catch (_) {}
+    }
+
+    async function renderAdmin() {
+      if (accountState === "loading" || (!billing && (googleSignedIn || accountState === "in"))) {
+        panel.innerHTML = skeletonHtml("Đang tải bảng điều khiển");
+        panel.setAttribute("aria-busy", "true");
+        if (!billing && (googleSignedIn || accountState === "in") && panel.dataset.billingPull !== "1") {
+          panel.dataset.billingPull = "1";
+          refreshBilling().then((ok) => {
+            panel.dataset.billingPull = "";
+            if (currentId() === "admin") paint();
+          });
+        }
+        return;
+      }
+      if (!billing || billing.role !== "admin") {
+        panel.innerHTML = gateHtml("Bảng điều khiển", "Đăng nhập để xem người dùng và số dư.", "profileLogin");
+        panel.setAttribute("aria-busy", "false");
+        return;
+      }
+      panel.innerHTML = `<h1>${ico("shield", "ico-head")} ${scrambleHtml("Bảng điều khiển")}</h1><p class="lead">Người dùng, số dư và lệnh nạp.</p><div id="adminStats" class="admin-stats" aria-busy="true">${skeletonHtml("Đang tải số liệu")}</div><div class="card" style="margin-bottom:14px"><input id="adminQ" class="field" placeholder="Tìm email hoặc tên"></div><div id="adminUsers"></div><div class="home-section-head"><div><h2>${ico("wallet")} Nạp tiền</h2></div></div><div id="adminTopups"></div>`;
+      await reloadAdmin();
+    }
+
+    async function reloadAdmin() {
+      const [overviewRes, usersRes, topupsRes] = await Promise.all([
+        fetch("/api/admin/overview", { credentials: "same-origin", cache: "no-store" }),
+        fetch("/api/admin/users?q=" + encodeURIComponent((document.getElementById("adminQ") || {}).value || ""), { credentials: "same-origin", cache: "no-store" }),
+        fetch("/api/admin/topups", { credentials: "same-origin", cache: "no-store" })
+      ]);
+      const overview = await overviewRes.json();
+      const users = await usersRes.json();
+      const topups = await topupsRes.json();
+      const stats = document.getElementById("adminStats");
+      if (!stats) return;
+      stats.setAttribute("aria-busy", "false");
+      stats.innerHTML = [
+        ["Người dùng", overview.users || 0],
+        ["Key còn hạn", overview.active_keys || 0],
+        ["Tổng số dư", vnd(overview.balance || 0)],
+        ["Nạp đang chờ", overview.pending || 0]
+      ].map(([label, value]) => `<div class="stat"><strong>${esc(value)}</strong><span>${label}</span></div>`).join("");
+      const userHost = document.getElementById("adminUsers");
+      const rows = users.danh_sach || [];
+      userHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Tên</th><th>Email</th><th>Số dư</th><th>Key</th><th></th></tr></thead><tbody>${rows.map((user, index) => `<tr data-sub-row="${index}"><td>${esc(user.name)}</td><td>${esc(user.email)}</td><td class="money">${vnd(user.balance)}</td><td>${user.key_active ? "Còn hạn" : "Hết hạn"}</td><td><button class="act mini" type="button" data-credit="${index}">+10k</button> <button class="act mini" type="button" data-extend="${index}">+10 ngày</button> <button class="act mini" type="button" data-lock="${index}">${user.status === "khoa" ? "Mở" : "Khóa"}</button>${user.sub === "admin" ? "" : ` <button class="act mini danger" type="button" data-delete="${index}">${ico("trash-2")} Xóa</button>`}</td></tr>`).join("")}</tbody></table></div>`;
+      panel._adminUsers = rows;
+      const topHost = document.getElementById("adminTopups");
+      const orders = topups.danh_sach || [];
+      topHost.innerHTML = `<div class="table-wrap"><table class="admin"><thead><tr><th>Mã</th><th>Email</th><th>Số tiền</th><th>Trạng thái</th><th></th></tr></thead><tbody>${orders.map((order) => `<tr><td>${esc(order.code)}</td><td>${esc(order.email)}</td><td>${vnd(order.amount)}</td><td>${esc(order.status)}</td><td>${order.status === "cho" ? `<button class="act mini" type="button" data-paid="${esc(order.code)}">Đã nhận</button> <button class="act mini" type="button" data-cancel-topup="${esc(order.code)}">Hủy</button> ` : ""}<button class="act mini danger" type="button" data-delete-topup="${esc(order.code)}">${ico("trash-2")} Xóa</button></td></tr>`).join("")}</tbody></table></div>`;
+    }
+
+    function renderTool(id) {
+      const t = CATALOG.find((x) => x.id === id);
+      if (!t) return renderHome();
+      currentTool = t;
+      panel.innerHTML = `
+        <h1 class="api-title" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}"><span class="tool-icon">${ico(iconFor(toolMark(t), t.chuyen_muc), "ico-head")}</span> ${scrambleHtml(t.ten)}</h1>
+        <p class="lead">${esc(t.mo_ta)}</p>
+        ${keySoonHtml(billing)}
+        ${/\/nasa/i.test(toolMark(t)) ? `<p class="muted" style="margin:-10px 0 16px">${ico("satellite")} apod, neo, epic, donki. Điền action và ngày.</p>` : ''}
+        <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
+          ${billing && billing.secret ? `<label class="key-slot">${ico("key-round")}<input class="field" data-secret-view value="${esc(secretShown ? billing.secret : maskSecret(billing.secret))}" readonly tabindex="-1" aria-label="Secret key đã gắn" autocomplete="off"><button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></label>` : ""}
+          <div id="tryFields"></div>
+          ${/\/badge(?:$|\/)/i.test(toolMark(t)) ? badgePresetMarkup() : ''}
+          <div class="row-btns">
+            <button class="act act-dark" type="button" id="tryRun">${ico("play")} Gửi Request</button>
+          </div>
+        </div>
+        <div id="tryMedia" class="try-media"></div>
+        <div class="sample" aria-busy="false">
+          <div class="sample-head">
+            <span class="run-status" id="liveStatus" role="status">Sẵn sàng</span>
+            <button class="act" type="button" id="liveCopy" data-copy="">${ico("copy")} Sao chép JSON</button>
+          </div>
+          <pre id="liveJson">Đang gọi API…</pre>
+        </div>`;
+      fillTryFields(t);
+      if (t.id === "discord") {
+        const cached = loadDqcState();
+        if (cached && Array.isArray(cached.quests) && cached.quests.length > 0) {
+          const mediaEl = document.getElementById("tryMedia");
+          if (mediaEl) renderDiscordQuestsManager(mediaEl, cached, cached.token);
+          if (cached.token) {
+            const rowVal = panel.querySelector("[data-try-val]");
+            if (rowVal && !rowVal.value) rowVal.value = cached.token;
+          }
+        }
+      }
+      const pre = document.getElementById("liveJson");
+      const status = document.getElementById("liveStatus");
+      if (pre) pre.textContent = "Bấm Gửi Request để xem kết quả.";
+      if (status) status.textContent = "Sẵn sàng";
+    }
+
+    function revealActiveGroup() {
+      const active = navEl.querySelector("a.active");
+      const details = active && active.closest(".drop");
+      if (!details || details.classList.contains("is-open")) return;
+      details.classList.add("is-open");
+      const panelEl = details.querySelector(".drop-panel");
+      if (panelEl) panelEl.style.height = "";
+      rememberOpen();
+    }
+    function paint() {
+      const id = currentId();
+      document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === id));
+      document.querySelectorAll(".nav .drop").forEach((d) => {
+        d.classList.toggle("has-active", !!d.querySelector(`a.active`));
+      });
+      revealActiveGroup();
+      const t = CATALOG.find((x) => x.id === id);
+      const pageName = { home: "Giới thiệu", "cong-cu": "Công cụ", vi: "Ví", "ho-so": "Hồ sơ", admin: "Bảng điều khiển", "tai-xiu": "Tài xỉu", mail: "Mail", "dang-nhap": "Đăng nhập", "lien-he": "Liên hệ" }[id];
+      const pageTitle = {
+        home: "Zhee API — Cổng REST API miễn phí của Hồ Đức Minh",
+        "cong-cu": "Công cụ API | Zhee API",
+        "tai-xiu": "Tài xỉu B52, Sunwin, Hitclub, SUKA88 | Zhee API",
+        mail: "Mail tạm, IMAP và OTP | Zhee API",
+        "dang-nhap": "Đăng nhập | Zhee API",
+        "ho-so": "Hồ sơ và secret key | Zhee API",
+        vi: "Nạp tiền và gia hạn | Zhee API",
+        "lien-he": "Liên hệ Hồ Đức Minh | Zhee API"
+      }[id];
+      crumb.innerHTML = ico("search") + " " + (pageName || (t ? t.ten : "Zhee API"));
+      document.title = pageTitle || ((pageName || (t ? t.ten : "Zhee API")) + " | Zhee API");
+      document.querySelectorAll(".tabbar a").forEach((link) => {
+        if (link.dataset.tab === id) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+      if (id === "home" || PAGE_IDS.includes(id)) {
+        if (liveAbort) liveAbort.abort();
+        liveAbort = null;
+        currentTool = null;
+      }
+      if (id === "home" || id === "lien-he") renderHome();
+      else if (id === "cong-cu") renderDirectory();
+      else if (id === "tai-xiu") renderDirectory("Tài xỉu", "Tài xỉu", "B52 Club, 789Club, Sunwin, Hitclub và SUKA88. Mở một sảnh để xem kết quả xúc xắc, bài tây, bầu cua hoặc baccarat.");
+      else if (id === "mail") renderDirectory("Mail", "Mail", "Tạo mail tạm, kiểm tra email rác và đọc hộp thư IMAP.");
+      else if (id === "dang-nhap") renderHome();
+      else if (id === "vi") renderWallet();
+      else if (id === "ho-so") renderProfile();
+      else if (id === "admin") renderAdmin();
+      else renderTool(id);
+      if (panel.querySelector(".skeleton-wrap")) panel.setAttribute("aria-busy", "true");
+      else panel.setAttribute("aria-busy", "false");
+      mountScrambles(panel);
+      paintIcons();
+      if (id === "dang-nhap" && !paint.authBoot) {
+        paint.authBoot = true;
+        openAuth("login");
+      }
+    }
+
+    document.getElementById("q").addEventListener("input", (e) => {
+      renderNav(e.target.value);
+      document.querySelectorAll(".nav a").forEach((a) => a.classList.toggle("active", a.dataset.id === currentId()));
+      document.querySelectorAll(".nav .drop").forEach((d) => d.classList.toggle("has-active", !!d.querySelector("a.active")));
+      paintIcons();
+    });
+    document.body.addEventListener("click", (e) => {
+      const qrCard = e.target.closest("[data-qr-url]");
+      if (qrCard) {
+        e.preventDefault();
+        showQr(qrCard.getAttribute("data-qr-url"), qrCard.getAttribute("data-qr-title"), qrCard.getAttribute("data-qr-text"));
+        return;
+      }
+      const telegramLink = e.target.closest("[data-telegram-link]");
+      const webApp = window.Telegram && window.Telegram.WebApp;
+      if (telegramLink && webApp && typeof webApp.openTelegramLink === "function") {
+        e.preventDefault();
+        webApp.openTelegramLink(telegramLink.href);
+        return;
+      }
+      const btn = e.target.closest("[data-copy]");
+      if (btn) copyText(btn.getAttribute("data-copy"), btn);
+    });
+    panel.addEventListener("input", (e) => {
+      if (e.target.closest(".try-card")) updateTryUrl();
+    });
+    panel.addEventListener("change", (e) => {
+      if (e.target.matches("[data-try-key]")) updateTryUrl();
+    });
+    panel.addEventListener("click", async (e) => {
+      const preset = e.target.closest("[data-badge-preset]");
+      if (preset) {
+        e.preventDefault();
+        applyBadgePreset(preset);
+        return;
+      }
+      if (e.target.closest("#tryAdd")) {
+        const box = document.getElementById("tryFields");
+        if (!box || !currentTool) return;
+        const keys = currentTool._tryKeys || paramKeysFor(currentTool);
+        const used = [...box.querySelectorAll("[data-try-key]")].map((s) => s.value);
+        const next = keys.find((k) => !used.includes(k)) || keys[0] || "";
+        box.appendChild(makeTryRow(next, "", keys));
+        updateTryUrl();
+        return;
+      }
+      if (e.target.closest("#tryRun")) {
+        e.preventDefault();
+        runCurrentTool();
+        return;
+      }
+      if (e.target.closest("#profileLogin") || e.target.closest("#walletLogin")) {
+        if (billing || googleSignedIn || accountState === "in") {
+          refreshBilling().then(() => paint());
+          return;
+        }
+        openAuth("login");
+        return;
+      }
+      if (e.target.closest("#reloadSecret")) {
+        refreshBilling().then((ok) => { if (ok) paint(); });
+        return;
+      }
+      if (e.target.closest("#toggleSecret")) {
+        secretShown = !secretShown;
+        paintSecretViews();
+        return;
+      }
+      if (e.target.closest("#toggleToken")) {
+        tokenShown = !tokenShown;
+        paintSecretViews();
+        return;
+      }
+      if (e.target.closest("#renewBtn") || e.target.closest("#heroRenewBtn")) {
+        renewKey();
+        return;
+      }
+      const presetChip = e.target.closest("[data-topup-preset]");
+      if (presetChip) {
+        const val = presetChip.getAttribute("data-topup-preset");
+        const inp = document.getElementById("topupAmount");
+        if (inp) {
+          inp.value = val;
+          document.querySelectorAll("[data-topup-preset]").forEach((btn) => btn.classList.toggle("is-active", btn === presetChip));
+        }
+        return;
+      }
+      if (e.target.closest("#topupCreate")) {
+        createTopup();
+        return;
+      }
+      const credit = e.target.closest("[data-credit]");
+      const extend = e.target.closest("[data-extend]");
+      const lock = e.target.closest("[data-lock]");
+      const removeUser = e.target.closest("[data-delete]");
+      const removeTopup = e.target.closest("[data-delete-topup]");
+      const paid = e.target.closest("[data-paid]");
+      const cancelTopup = e.target.closest("[data-cancel-topup]");
+      if (credit || extend || lock || removeUser) {
+        const index = Number((credit || extend || lock || removeUser).dataset.credit || (extend && extend.dataset.extend) || (lock && lock.dataset.lock) || (removeUser && removeUser.dataset.delete));
+        const user = (panel._adminUsers || [])[index];
+        if (!user) return;
+        if (removeUser) {
+          const who = user.email || user.name || "tài khoản này";
+          const ok = await macSheet({ title: "Xóa tài khoản?", text: `Chỉ xóa ${who}. Các tài khoản khác không đổi.`, ok: "Xóa", cancel: "Hủy" });
+          if (!ok) return;
+          adminPost("/api/admin/users", { sub: user.sub, action: "xoa" });
+          return;
+        }
+        const body = { sub: user.sub };
+        if (credit) body.balance_delta = 10000;
+        if (extend) body.extend_days = 10;
+        if (lock) body.status = user.status === "khoa" ? "hoat_dong" : "khoa";
+        adminPost("/api/admin/users", body);
+        return;
+      }
+      if (removeTopup) {
+        const ok = await macSheet({ title: "Xóa lệnh nạp?", text: `Chỉ xóa mã ${removeTopup.dataset.deleteTopup}.`, ok: "Xóa", cancel: "Hủy" });
+        if (!ok) return;
+        adminPost("/api/admin/topups", { code: removeTopup.dataset.deleteTopup, action: "xoa" });
+        return;
+      }
+      if (paid || cancelTopup) {
+        adminPost("/api/admin/topups", {
+          code: (paid || cancelTopup).dataset.paid || cancelTopup.dataset.cancelTopup,
+          action: paid ? "xong" : "huy"
+        });
+      }
+    });
+    panel.addEventListener("input", (event) => {
+      if (event.target.id === "adminQ") reloadAdmin();
+      if (event.target.id === "topupAmount") {
+        const val = event.target.value.replace(/[^\d]/g, "");
+        document.querySelectorAll("[data-topup-preset]").forEach((btn) => {
+          btn.classList.toggle("is-active", btn.getAttribute("data-topup-preset") === val);
+        });
+      }
+    });
+    function paintSecretViews() {
+      const secret = (billing && billing.secret) || "";
+      const token = (billing && billing.token) || "";
+      document.querySelectorAll("[data-secret-view]").forEach((node) => {
+        const shown = secretShown ? secret : maskSecret(secret);
+        if (node.tagName === "INPUT") node.value = shown;
+        else {
+          node.textContent = shown;
+          node.classList.toggle("is-open", secretShown);
+        }
+      });
+      document.querySelectorAll("[data-token-view]").forEach((node) => {
+        node.textContent = tokenShown ? token : maskSecret(token);
+        node.classList.toggle("is-open", tokenShown);
+      });
+      const secretBtn = document.getElementById("toggleSecret");
+      const tokenBtn = document.getElementById("toggleToken");
+      if (secretBtn) secretBtn.innerHTML = ico(secretShown ? "eye-off" : "eye");
+      if (tokenBtn) tokenBtn.innerHTML = ico(tokenShown ? "eye-off" : "eye");
+      paintIcons();
+    }
+    async function renewKey() {
+      const response = await fetch("/api/account/renew", { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+      const data = await response.json();
+      if (!response.ok) {
+        await macAlert({ title: "Chưa gia hạn được", text: data.thong_bao || "Số dư chưa đủ.", ok: "OK" });
+        return;
+      }
+      billing = data;
+      notify("Đã gia hạn 10 ngày.");
+      paint();
+    }
+    async function createTopup() {
+      const amount = Number(String((document.getElementById("topupAmount") || {}).value || "").replace(/[^\d]/g, ""));
+      if (!amount || amount < 10000) {
+        await macAlert({ title: "Số tiền không hợp lệ", text: "Số tiền nạp tối thiểu là 10.000đ.", ok: "OK" });
+        return;
+      }
+      const btn = document.getElementById("topupCreate");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `${ico("loader", "spin")} Đang tạo mã VietQR…`;
+        paintIcons();
+      }
+      try {
+        const response = await fetch("/api/account/topup", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ amount })
+        });
+        const data = await response.json();
+        const host = document.getElementById("topupTicket");
+        if (!response.ok || !host) {
+          await macAlert({ title: "Chưa tạo được lệnh nạp", text: data.thong_bao || "Thử lại.", ok: "OK" });
+          return;
+        }
+        host.innerHTML = `
+          <div class="ticket-card">
+            <div class="ticket-header">
+              <div class="ticket-brand">${ico("landmark")} MB BANK NAPAS 247</div>
+              <span class="ticket-badge">${ico("zap")} Tự động duyệt 24/7</span>
+            </div>
+            <div class="ticket-qr-wrap">
+              <img src="${esc(data.qr)}" alt="VietQR chuyển khoản MB Bank" class="ticket-qr-img">
+            </div>
+            <div class="ticket-detail">
+              <div class="ticket-row">
+                <span class="ticket-label">Số tiền cần chuyển</span>
+                <div class="ticket-row-right">
+                  <b class="money-hl">${vnd(data.so_tien)}</b>
+                  <button class="icon-copy-btn" type="button" data-copy="${data.so_tien}" title="Sao chép số tiền" aria-label="Sao chép số tiền">${ico("copy")}</button>
+                </div>
+              </div>
+              <div class="ticket-row hl-row">
+                <div class="ticket-label-col">
+                  <span class="ticket-label">Nội dung chuyển khoản (bắt buộc)</span>
+                  <b class="ticket-code-val">${esc(data.noi_dung)}</b>
+                </div>
+                <button class="icon-copy-btn icon-copy-btn-hl" type="button" data-copy="${esc(data.noi_dung)}" title="Sao chép cú pháp chuyển khoản" aria-label="Sao chép cú pháp">${ico("copy")}</button>
+              </div>
+            </div>
+            <p class="ticket-note">${ico("info")} Quét mã QR bằng App Ngân hàng hoặc chuyển khoản đúng <b>nội dung</b> để hệ thống tự động cộng tiền trong 30s.</p>
+          </div>`;
+        paintIcons();
+        loadTopupHistory();
+      } catch (err) {
+        await macAlert({ title: "Lỗi kết nối", text: "Không thể kết nối đến máy chủ. Hãy thử lại.", ok: "OK" });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `${ico("qr-code")} Lấy mã QR & Nội dung chuyển khoản`;
+          paintIcons();
+        }
+      }
+    }
+    async function adminPost(url, body) {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        await macAlert({ title: "Không cập nhật được", text: data.thong_bao || "Thử lại.", ok: "OK" });
+        return;
+      }
+      notify("Đã cập nhật.");
+      reloadAdmin();
+    }
+    function applyCatalog(data) {
+      const ds = (data && data.danh_sach) || {};
+      CATALOG = Object.values(ds)
+        .filter((x) => x && x.ma_giao_dien && !/\/video$/i.test(x.ma_giao_dien))
+        .map((x) => ({
+          id: slug(x.ma_giao_dien || x.ten_api),
+          ten: x.ten_api,
+          mo_ta: x.mo_ta,
+          path: x.ma_giao_dien,
+          kind: x.ma_giao_dien || "",
+          chuyen_muc: x.chuyen_muc,
+          vi_du: "",
+          params: x.tham_so || "",
+          luot: Number(x.luot || 0)
+        }));
+    }
+    function loadUI() {
+      const qEl = document.getElementById("q");
+      if (!CATALOG.length) {
+        navEl.innerHTML = `<p class="muted" style="padding:12px 10px">Đang tải giao diện…</p>`;
+        panel.innerHTML = skeletonHtml("Đang tải danh sách công cụ");
+        panel.setAttribute("aria-busy", "true");
+      }
+      return fetch("/list?t=" + Date.now(), { cache: "no-store" })
+        .then((r) => r.json())
+        .then((data) => {
+          applyCatalog(data);
+          renderNav(qEl ? qEl.value : "");
+          paint();
+        })
+        .catch(() => {
+          if (!CATALOG.length) {
+            panel.innerHTML = `<h1>Không tải được giao diện</h1><p class="lead">Tải lại trang để thử lại.</p>`;
+            navEl.innerHTML = "";
+            paintIcons();
+            return;
+          }
+          renderNav(qEl ? qEl.value : "");
+          paint();
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a || !a.href || a.target === "_blank" || a.hasAttribute("download") || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      try {
+        const url = new URL(a.href, location.origin);
+        if (url.origin !== location.origin) return;
+        const path = url.pathname.replace(/\/+$/, "") || "/";
+        if (PATH_PAGE[path] || PAGE_IDS.includes(path.slice(1))) {
+          e.preventDefault();
+          if (location.pathname !== url.pathname || location.search !== url.search || location.hash !== url.hash) {
+            history.pushState(null, "", a.href);
+          }
+          if (isMobile()) closeNav();
+          paint();
+        }
+      } catch (_) {}
+    });
+
+    window.addEventListener("popstate", () => {
+      if (isMobile()) closeNav();
+      paint();
+    });
+
+    window.addEventListener("hashchange", () => {
+      if (isMobile()) closeNav();
+      if (CATALOG.length) paint();
+    });
+    navEl.addEventListener("click", (e) => {
+      if (e.target.closest("a") && isMobile()) closeNav();
+    });
+
+    function updateUptime() {
+      const u = tinhUptime();
+      const el = document.getElementById("uptime");
+      let copy = el.querySelector(".uptime-copy");
+      if (!copy) {
+        el.innerHTML = ico("clock-3") + '<span class="uptime-copy"></span>';
+        paintIcons();
+        copy = el.querySelector(".uptime-copy");
+      }
+      if (copy) copy.innerHTML = "Từ " + esc(u.moc) + " · <strong>" + esc(u.chuoi) + "</strong>";
+    }
+    updateUptime();
+    setInterval(updateUptime, 1000);
+    initTelegramIdentity();
+    refreshGoogleSession();
+    loadUI();
+  </script>
+<script>(function(){var ID="gold-dl-btn";function isLocketPage(){return (location.hash||"").indexOf("api-tools-locket")>=0;}function findMain(){var hs=document.querySelectorAll("h1");for(var j=0;j<hs.length;j++){if((hs[j].textContent||"").indexOf("Locket Username Lookup")>=0){var p=hs[j].parentElement;while(p&&p!==document.body){if(p.querySelector("input")&&p.textContent.indexOf("Locket Username Lookup")>=0)return p;p=p.parentElement;}}}return null;}function mk(){var w=document.createElement("div");w.id=ID;w.style.cssText="margin:14px 0;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.13),rgba(255,165,0,.07));border:1px solid rgba(255,215,0,.45);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap";var l=document.createElement("div");l.style.cssText="display:flex;align-items:center;gap:10px";l.innerHTML="<span style=\"font-size:22px\">\U0001F6E1\uFE0F</span><div><div style=\"font-weight:800;color:#FFD700;font-size:14px\">Giu Locket Gold</div><div style=\"font-size:12px;color:#999\">Cau hinh DNS iOS</div></div>";var a=document.createElement("a");a.href="/locket-gold.mobileconfig";a.setAttribute("download","");a.style.cssText="padding:9px 18px;border-radius:8px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;text-decoration:none;font-size:13px;white-space:nowrap";a.textContent="\u2B07 Tai ngay";w.appendChild(l);w.appendChild(a);return w;}function insert(){if(document.getElementById(ID))return true;if(!isLocketPage())return false;var m=findMain();if(!m)return false;var h=m.querySelector("h1");if(h){h.parentElement.insertBefore(mk(),h.nextSibling);return true;}return false;}var tries=0;var timer=setInterval(function(){tries++;if(insert()||tries>30)clearInterval(timer);},1000);window.addEventListener("hashchange",function(){var e=document.getElementById(ID);if(e)e.remove();tries=0;timer=setInterval(function(){tries++;if(insert()||tries>20)clearInterval(timer);},500);});})();</script></body>
+</html>
