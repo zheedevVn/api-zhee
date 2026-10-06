@@ -1474,6 +1474,14 @@ module.exports = async (req, res) => {
       return await runTool(req, res);
     }
 
+    if (pathname === "/locket-gold") {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
+      res.statusCode = 200;
+      res.end(LOCKET_GOLD_HTML);
+      return;
+    }
+
     if (wantsDocsHtml(req, pathname)) {
       try {
         serveDocsHtml(res, pathname);
@@ -1484,13 +1492,6 @@ module.exports = async (req, res) => {
     // Explicitly serve the protected UI pages because vercel.json rewrites all requests here.
     if (pathname === "/video.html") {
       servePageHtml(res, VIDEO_HTML_PATH);
-      return;
-    }
-    if (pathname === "/locket-gold") {
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.setHeader("Cache-Control", "no-cache, must-revalidate");
-      res.statusCode = 200;
-      res.end(LOCKET_GOLD_HTML);
       return;
     }
     if (/\/api\/taixiu\//i.test(pathname) && /[?&](?:image|img)=/i.test(url) && accept.includes("text/html")) {
