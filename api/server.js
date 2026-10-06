@@ -728,7 +728,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
     ten: "Locket Username Lookup & Account Tools",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment, gửi/hủy 1 lời mời, tạo 1 tài khoản / 5 phút.",
+    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment, gửi/hủy 1 lời mời, tạo 1 tài khoản / 5 phút. Tải cấu hình DNS giữ Gold vĩnh viễn cho iOS: /locket-gold.mobileconfig",
     vi_du_params: "?=minh",
     handler: locketHandler
   },
