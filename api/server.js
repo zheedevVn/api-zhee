@@ -250,7 +250,7 @@ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
 document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
 b.classList.add('active');document.getElementById('p-'+b.dataset.t).classList.add('active');});
 function msg(id,t,ok){const e=document.getElementById(id);e.className='msg '+(ok?'ok':'err');e.innerHTML=t;}
-function isPhone(v){return /^[0-9+]{9,15}$/.test(v.replace(/[\s.]/g,''));}
+function isPhone(v){return /^[0-9+]{9,15}$/.test(v.replace(/[\\s.]/g,''));}
 async function doLogin(){
 const u=document.getElementById('li_user').value.trim(),p=document.getElementById('li_pass').value;
 if(!u||!p){msg('mUp','Nhập đầy đủ tài khoản và mật khẩu.',0);return;}
@@ -275,7 +275,7 @@ document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
 async function doUpload(){
 const url=document.getElementById('up_url').value.trim();
-if(!url||!/^https?:\/\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
+if(!url||!/^https?:\\/\\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
 const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
 try{
 const q=new URLSearchParams({action:'upload',token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,rotate:document.getElementById('up_rot').value});
