@@ -1,28 +1,34 @@
-<p align="center">
-  <img src="https://api-zhee.vercel.app/favicon.png" width="96" height="96" alt="Zhee API Logo">
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=ZHEE%20API&fontSize=72&fontColor=FFD700&animation=fadeIn&fontAlignY=38&desc=Cổng%20REST%20API%20Siêu%20Tốc%20%26%20Đa%20Năng&descAlignY=60&descSize=18" width="100%" alt="Zhee API Banner"/>
+
+<img src="https://api-zhee.vercel.app/favicon.png" width="110" height="110" alt="Zhee API Logo"/>
+
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=2800&pause=800&color=FFD700&center=true&vCenter=true&multiline=true&width=700&height=90&lines=T%C3%A0i+X%E1%BB%89u+MD5+%26+X%C3%A1c+su%E1%BA%A5t+game;TikTok+Session+%26+Downloader;Mail+t%E1%BA%A1m+%26+IMAP+OTP;AI+%2B+Tra+c%E1%BB%A9u+d%E1%BB%AF+li%E1%BB%87u+%2B+VietQR+MB+Bank" alt="Typing"/>
+
+<p>
+  <b>Cổng REST API hiệu năng cao của Hồ Đức Minh (Zhee Dev)</b>
 </p>
 
-<h1 align="center">Zhee API — Cổng REST API Siêu Tốc & Đa Năng</h1>
-
-<p align="center">
-  <b>Cổng REST API hiệu năng cao của Hồ Đức Minh (Zhee Dev)</b><br>
-  Tài xỉu MD5 & xác suất game, TikTok Session ID & Downloader, Mail tạm & IMAP OTP, Mạng xã hội, Tiện ích lập trình AI, Tra cứu dữ liệu và Thanh toán tự động VietQR MB Bank.
-</p>
-
-<p align="center">
-  <a href="https://api-zhee.vercel.app/"><img src="https://img.shields.io/badge/Website-api--zhee.vercel.app-0284c7?style=for-the-badge&logo=vercel&logoColor=white" alt="Website"></a>
-  <a href="https://api-zhee.vercel.app/list"><img src="https://img.shields.io/badge/Endpoints-71%2B%20APIs-10b981?style=for-the-badge" alt="Endpoints"></a>
+<p>
+  <a href="https://api-zhee.vercel.app/"><img src="https://img.shields.io/badge/WEBSITE-api--zhee.vercel.app-FFD700?style=for-the-badge&logo=vercel&logoColor=black" alt="Website"></a>
+  <a href="https://api-zhee.vercel.app/list"><img src="https://img.shields.io/badge/ENDPOINTS-71%2B_APIs-10b981?style=for-the-badge&logo=fastapi&logoColor=white" alt="Endpoints"></a>
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js"></a>
   <a href="https://t.me/zheevipv1"><img src="https://img.shields.io/badge/Telegram-@zheevipv1-26a5e4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram"></a>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Uptime-99.98%25-brightgreen?style=flat-square" alt="Uptime">
-  <img src="https://img.shields.io/badge/Latency-%3C50ms%20RAM-blue?style=flat-square" alt="Latency">
-  <img src="https://img.shields.io/badge/Security-HMAC--SHA256-blueviolet?style=flat-square" alt="Security">
-  <img src="https://img.shields.io/badge/Payment-VietQR%20MB%20Bank-orange?style=flat-square" alt="Payment">
-  <img src="https://img.shields.io/badge/Author-Hồ%20Đức%20Minh-111827?style=flat-square" alt="Author">
+<p>
+  <img src="https://img.shields.io/badge/Uptime-99.98%25-brightgreen?style=flat-square&logo=statuspal" alt="Uptime">
+  <img src="https://img.shields.io/badge/Latency-%3C50ms-blue?style=flat-square&logo=clockify" alt="Latency">
+  <img src="https://img.shields.io/badge/Security-HMAC--SHA256-blueviolet?style=flat-square&logo=auth0" alt="Security">
+  <img src="https://img.shields.io/badge/Payment-VietQR_MB_Bank-orange?style=flat-square&logo=contactlesspayment" alt="Payment">
+  <img src="https://img.shields.io/badge/Author-H%E1%BB%93_%C4%90%E1%BB%A9c_Minh-FFD700?style=flat-square&logo=github" alt="Author">
+  <img src="https://img.shields.io/badge/Copyright-©2026_ZheeDev-red?style=flat-square&logo=copyright" alt="Copyright">
 </p>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=6,11,20&height=4&section=header" width="100%" alt="divider"/>
+
+</div>
 
 ---
 
@@ -379,3 +385,7 @@ Cổng API sẽ khởi chạy tại: `http://localhost:3000`
 <p align="center">
   <sub>Phát triển và duy trì bởi <b>Hồ Đức Minh (Zhee Dev)</b>. Bản quyền © 2026. Mọi quyền được bảo lưu.</sub>
 </p>
+
+<div align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=120&section=footer&text=ZHEEDEV&fontSize=36&fontColor=FFD700&animation=fadeIn" width="100%" alt="footer"/>
+</div>
