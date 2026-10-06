@@ -1743,7 +1743,11 @@ function applyI18n(){
   document.documentElement.lang = lang();
   if(lang()==="en"){ handleScramble(document); translateNode(document.body); handleScramble(document); }
 }
+var _ptLock = false;
 function paintToggle(){
+  if(_ptLock) return;
+  _ptLock = true;
+  try {
   var b = document.getElementById("langToggle");
   if(!b) return;
   b.textContent = "";
@@ -1751,6 +1755,7 @@ function paintToggle(){
   var label = document.createElement("span"); label.textContent = lang()==="vi" ? " EN" : " VI";
   label.style.marginLeft = "4px";
   b.appendChild(flag); b.appendChild(label);
+  } finally { _ptLock = false; }
 }
 function addToggle(){
   if(document.getElementById("langToggle")){ paintToggle(); return; }
@@ -1767,8 +1772,15 @@ function addToggle(){
 var _obs = null, _tmr = null;
 function watch(){
   if(_obs || !window.MutationObserver) return;
+  var _painting = false;
   _obs = new MutationObserver(function(){
-    addToggle();
+    if(_painting) return;
+    // Chi tao lai nut khi bi xoa han (site re-render account-bar)
+    if(!document.getElementById("langToggle")){
+      _painting = true;
+      try { addToggle(); } catch(e){}
+      _painting = false;
+    }
     if(lang()!=="en") return;
     clearTimeout(_tmr);
     _tmr = setTimeout(function(){ handleScramble(document); translateNode(document.body); }, 250);
