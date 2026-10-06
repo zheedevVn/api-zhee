@@ -1768,7 +1768,7 @@ var _obs = null, _tmr = null;
 function watch(){
   if(_obs || !window.MutationObserver) return;
   _obs = new MutationObserver(function(){
-    paintToggle();
+    addToggle();
     if(lang()!=="en") return;
     clearTimeout(_tmr);
     _tmr = setTimeout(function(){ handleScramble(document); translateNode(document.body); }, 250);
