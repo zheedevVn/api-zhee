@@ -1226,6 +1226,7 @@ async function runTool(req, res) {
 
 module.exports = async (req, res) => {
   const startTime = Date.now();
+  if (!zheeProtect.guard(req, res)) return;
   applySecurityHeaders(res);
 
   if (res && typeof res.writeHead === "function") {
