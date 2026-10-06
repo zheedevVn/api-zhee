@@ -1750,6 +1750,9 @@ function paintToggle(){
   try {
   var b = document.getElementById("langToggle");
   if(!b) return;
+  var want = lang()==="vi" ? "EN" : "VI";
+  if(b.getAttribute("data-lang-painted") === want) return;
+  b.setAttribute("data-lang-painted", want);
   b.textContent = "";
   var flag = document.createElement("span"); flag.textContent = lang()==="vi" ? "\uD83C\uDDFA\uD83C\uDDF8" : "\uD83C\uDDFB\uD83C\uDDF3";
   var label = document.createElement("span"); label.textContent = lang()==="vi" ? " EN" : " VI";
