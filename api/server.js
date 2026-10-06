@@ -528,7 +528,8 @@ const giaitriHandler = require("../lib/giaitri");
 const animeHandler = require("../lib/anime");
 const nasaHandler = require("../lib/nasa");
 const ipCheckHandler = require("../lib/ipcheck");
-const telegramBotHandler = require("../lib/telegramBot");
+const telegramBotHandler = require("../lib/telegramBot")
+const licenseGuard = require("../lib/licenseGuard");;
 const telegramAuthHandler = require("../lib/telegramAuth");
 const googleAuthHandler = require("../lib/googleAuth");
 const accountsHandler = require("../lib/accounts");
@@ -1389,7 +1390,42 @@ module.exports = async (req, res) => {
       return serveSitemapXml(res);
     }
 
+    if (pathname === "/api/license/beacon") {
+      res.zheeNoSeal = true;
+      return await licenseGuard.beaconHandler(req, res);
+    }
+
+    if (pathname === "/api/license/check") {
+      res.zheeNoSeal = true;
+      return await licenseGuard.checkHandler(req, res);
+    }
+
     if (pathname === "/api/telegram/webhook") {
+      // Chan callback license (Duyet/Chan domain) truoc khi vao bot chinh
+      try {
+        const _body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+        const _cb = _body.callback_query;
+        if (_cb && String(_cb.data || "").startsWith("license:")) {
+          const _from = String(_cb.from?.id || _cb.message?.chat?.id || "");
+          const _handled = await licenseGuard.handleLicenseCallback(_cb.data, _from);
+          res.setHeader("Content-Type", "application/json; charset=utf-8");
+          // Xoa nut sau khi bam
+          try {
+            const _token = process.env.TELEGRAM_BOT_TOKEN;
+            if (_token && _cb.message?.message_id && _handled) {
+              await fetch(`https://api.telegram.org/bot${_token}/editMessageReplyMarkup`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chat_id: _cb.message.chat.id, message_id: _cb.message.message_id, reply_markup: { inline_keyboard: [] } }),
+              }).catch(() => {});
+              await fetch(`https://api.telegram.org/bot${_token}/answerCallbackQuery`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ callback_query_id: _cb.id, text: "Đã xử lý!" }),
+              }).catch(() => {});
+            }
+          } catch (_) {}
+          return res.status(200).json({ ok: true, handled: _handled });
+        }
+      } catch (_) {}
       return await telegramBotHandler(req, res);
     }
 
