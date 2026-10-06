@@ -22,6 +22,143 @@ function serveFavicon(res) {
   res.end(body);
 }
 
+const LOCKET_GOLD_HTML = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Locket Gold Upload | Zhee API</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:#0a0a12;color:#e8e8f0;display:flex;align-items:center;justify-content:center;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(255,215,0,.08),transparent 50%),radial-gradient(circle at 80% 80%,rgba(167,139,250,.1),transparent 50%);pointer-events:none}
+.card{width:100%;max-width:480px;background:rgba(16,16,28,.92);border:1px solid rgba(255,215,0,.25);border-radius:20px;padding:32px 28px;box-shadow:0 0 50px rgba(255,215,0,.12);position:relative;z-index:1}
+h1{font-size:24px;text-align:center;margin-bottom:6px;background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 3s linear infinite;font-weight:800}
+@keyframes flow{from{background-position:0% 0}to{background-position:200% 0}}
+.sub{text-align:center;color:#888;font-size:13px;margin-bottom:24px}
+label{display:block;font-size:13px;color:#aaa;margin:14px 0 6px}
+input,select{width:100%;padding:12px 14px;background:#1a1a2e;border:1px solid #333;border-radius:10px;color:#fff;font-size:15px;outline:none}
+input:focus,select:focus{border-color:#FFD700}
+button{width:100%;padding:13px;margin-top:20px;background:linear-gradient(90deg,#FFD700,#FFA500);border:none;border-radius:10px;color:#000;font-weight:700;font-size:16px;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+button.ghost{background:transparent;border:1px solid #444;color:#aaa;margin-top:10px}
+#uploadSection{display:none}
+.result{margin-top:18px;padding:14px;border-radius:10px;font-size:14px;display:none;word-break:break-all}
+.result.ok{display:block;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#86efac}
+.result.err{display:block;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+.result img{max-width:100%;border-radius:8px;margin-top:10px}
+.userinfo{text-align:center;font-size:13px;color:#FFD700;margin-bottom:16px}
+.hint{font-size:12px;color:#666;margin-top:14px;text-align:center;line-height:1.6}
+.row2{display:flex;gap:10px}
+.row2>div{flex:1}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="card">
+<h1>⭐ LOCKET GOLD UPLOAD</h1>
+<p class="sub">Up ảnh kiểu Gold: xoay + đổi nền + caption<br>by Hồ Đức Minh (Zhee Dev)</p>
+
+<div id="loginSection">
+<label>Tài khoản Locket (email hoặc SĐT)</label>
+<input id="li_user" type="text" placeholder="email@example.com hoặc 09xxxxxxx" autocomplete="username">
+<label>Mật khẩu</label>
+<input id="li_pass" type="password" placeholder="••••••••" autocomplete="current-password">
+<button id="btnLogin" onclick="doLogin()">Đăng nhập Locket</button>
+<p class="hint">Mật khẩu chỉ gửi 1 lần để lấy token, không lưu trữ.<br>Token lưu tạm trong trình duyệt, tắt tab là mất.</p>
+</div>
+
+<div id="uploadSection">
+<div class="userinfo" id="userInfo"></div>
+<label>Link ảnh (https://...)</label>
+<input id="up_url" type="url" placeholder="https://example.com/anh.jpg">
+<label>Caption (tùy chọn)</label>
+<input id="up_caption" type="text" placeholder="Chú thích...">
+<div class="row2">
+<div><label>Nền Gold</label>
+<select id="up_bg">
+<option value="">Không đổi nền</option>
+<option value="gold">🥇 Vàng Gold</option>
+<option value="sunset">🌅 Hoàng hôn</option>
+<option value="ocean">🌊 Đại dương</option>
+<option value="purple">💜 Tím</option>
+<option value="pink">💗 Hồng</option>
+<option value="black">⬛ Đen</option>
+</select></div>
+<div><label>Xoay (độ)</label>
+<select id="up_rotate">
+<option value="0">0°</option><option value="90">90°</option>
+<option value="180">180°</option><option value="270">270°</option>
+</select></div>
+</div>
+<button id="btnUpload" onclick="doUpload()">🚀 Up ảnh lên Locket</button>
+<button class="ghost" onclick="doLogout()">Đăng xuất</button>
+</div>
+
+<div class="result" id="result"></div>
+</div>
+
+<script>
+let ID_TOKEN = sessionStorage.getItem('locket_gold_token') || '';
+const API = '/api/tools/locket';
+function show(msg, ok){ const r=document.getElementById('result'); r.className='result '+(ok?'ok':'err'); r.innerHTML=msg; }
+function isPhone(v){ return /^[0-9+]{9,15}$/.test(v.replace(/[\s.]/g,'')); }
+
+async function doLogin(){
+  const u=document.getElementById('li_user').value.trim();
+  const p=document.getElementById('li_pass').value;
+  if(!u||!p){ show('Nhập đầy đủ tài khoản và mật khẩu.', false); return; }
+  const btn=document.getElementById('btnLogin'); btn.disabled=true; btn.textContent='Đang đăng nhập...';
+  try{
+    const body = isPhone(u) ? {action:'me',phone:u,password:p} : {action:'me',email:u,password:p};
+    const res = await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d = await res.json();
+    document.getElementById('li_pass').value='';
+    const token = d.id_token || d.token || (d.du_lieu&&d.du_lieu.id_token);
+    if(d.trang_thai==='thanh_cong' && token){
+      ID_TOKEN=token; sessionStorage.setItem('locket_gold_token',token);
+      const name=(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
+      document.getElementById('userInfo').textContent='✓ '+name;
+      document.getElementById('loginSection').style.display='none';
+      document.getElementById('uploadSection').style.display='block';
+      show('Đăng nhập thành công! Giờ bạn có thể up ảnh.', true);
+    } else show('Đăng nhập thất bại: '+(d.thong_bao||d.message||'sai tài khoản/mật khẩu'), false);
+  }catch(e){ show('Lỗi kết nối: '+e.message, false); }
+  btn.disabled=false; btn.textContent='Đăng nhập Locket';
+}
+
+async function doUpload(){
+  const url=document.getElementById('up_url').value.trim();
+  if(!url||!/^https?:\/\//i.test(url)){ show('Nhập link ảnh hợp lệ (https://...)', false); return; }
+  const btn=document.getElementById('btnUpload'); btn.disabled=true; btn.textContent='Đang up... (chờ ~20s)';
+  try{
+    const params=new URLSearchParams({action:'upload',token:ID_TOKEN,image_url:url,
+      caption:document.getElementById('up_caption').value.trim(),
+      background:document.getElementById('up_bg').value,
+      rotate:document.getElementById('up_rotate').value});
+    const res=await fetch(API+'?'+params.toString());
+    const d=await res.json();
+    if(d.trang_thai==='thanh_cong'){
+      show('✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+(d.du_lieu&&d.du_lieu.anh_da_upload||url)+'" alt="uploaded">', true);
+    } else {
+      if(/token|het han|401/i.test(d.thong_bao||'')) doLogout(true);
+      show('Thất bại: '+(d.thong_bao||JSON.stringify(d).slice(0,200)), false);
+    }
+  }catch(e){ show('Lỗi: '+e.message, false); }
+  btn.disabled=false; btn.textContent='🚀 Up ảnh lên Locket';
+}
+function doLogout(silent){
+  ID_TOKEN=''; sessionStorage.removeItem('locket_gold_token');
+  document.getElementById('uploadSection').style.display='none';
+  document.getElementById('loginSection').style.display='block';
+  if(!silent) show('Đã đăng xuất.', true);
+}
+if(ID_TOKEN){ document.getElementById('loginSection').style.display='none'; document.getElementById('uploadSection').style.display='block'; document.getElementById('userInfo').textContent='✓ Phiên đăng nhập còn hiệu lực'; }
+</script>
+</body>
+</html>
+`;
+// served via route below
 function servePageHtml(res, filePath) {
   const html = applyHtmlHotfixes(fs.readFileSync(filePath, "utf8"));
   res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -68,6 +205,10 @@ const SEO_PAGES = {
   "/lien-he": {
     title: "Liên hệ Hồ Đức Minh | Zhee API",
     description: "Liên hệ Hồ Đức Minh qua Facebook, Zalo, TikTok, Discord và Telegram để được hỗ trợ Zhee API."
+  },
+  "/locket-gold": {
+    title: "Locket Gold Upload | Zhee API",
+    description: "Up ảnh kiểu Locket Gold: xoay, đổi nền gradient, caption. Đăng nhập Locket ngay trên web."
   },
   "/admin": {
     title: "Bảng điều khiển | Zhee API",
@@ -1343,6 +1484,13 @@ module.exports = async (req, res) => {
     // Explicitly serve the protected UI pages because vercel.json rewrites all requests here.
     if (pathname === "/video.html") {
       servePageHtml(res, VIDEO_HTML_PATH);
+      return;
+    }
+    if (pathname === "/locket-gold") {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
+      res.statusCode = 200;
+      res.end(LOCKET_GOLD_HTML);
       return;
     }
     if (/\/api\/taixiu\//i.test(pathname) && /[?&](?:image|img)=/i.test(url) && accept.includes("text/html")) {
