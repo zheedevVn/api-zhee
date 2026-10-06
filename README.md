@@ -359,6 +359,23 @@ Cổng API sẽ khởi chạy tại: `http://localhost:3000`
 
 ---
 
+
+---
+
+## ⚖️ Bản quyền / Copyright
+
+> **© 2026 Hồ Đức Minh (Zhee Dev). Bảo lưu mọi quyền.**
+> **Copyright (c) 2026 Ho Duc Minh (Zhee Dev). All rights reserved.**
+
+- Toàn bộ mã nguồn, giao diện, tài liệu, logo và nội dung trong kho này là **tài sản trí tuệ độc quyền** của **Hồ Đức Minh**.
+- Mọi file mã nguồn đều được đóng dấu bản quyền và watermark `ZheeDevTool-Signed-2026`.
+- **Nghiêm cấm** sao chép, phân phối lại, dịch ngược hoặc sử dụng trái phép dưới mọi hình thức khi chưa có văn bản cho phép của tác giả.
+- Giấy phép chi tiết: xem file [LICENSE](./LICENSE).
+
+<p align="center">
+  <b>Zhee API</b> — Cổng REST API của <b>Hồ Đức Minh</b> © 2026
+</p>
+
 <p align="center">
   <sub>Phát triển và duy trì bởi <b>Hồ Đức Minh (Zhee Dev)</b>. Bản quyền © 2026. Mọi quyền được bảo lưu.</sub>
 </p>
