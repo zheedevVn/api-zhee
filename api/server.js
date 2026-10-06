@@ -283,7 +283,7 @@ var g=document.getElementById('friends');if(!g)return;g.innerHTML='<p style="tex
 try{
 var r=await fetch(API+'?'+new URLSearchParams({action:'friends',id_token:TOK,detail:'true'}),{credentials:'same-origin'});
 var d=await r.json();
-if(d.trang_thai!=='thanh_cong'){msg('mFr','Lỗi: '+(d.thong_bao||'không rõ'),0);g.innerHTML='';return;}
+if(d.trang_thai!=='thanh_cong'){var em='Lỗi: '+(d.thong_bao||'không rõ');if(d.debug)em+='<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px">Chi tiết</summary><pre style="font-size:11px;background:#000;padding:8px;border-radius:6px;overflow:auto">'+JSON.stringify(d.debug,null,2)+'</pre></details>';msg('mFr',em,0);g.innerHTML='';return;}
 document.getElementById('frCount').textContent=d.tong_so||0;
 var items=d.chi_tiet_toi_da_6_ban||[];
 var uids=d.danh_sach_uid||[];
