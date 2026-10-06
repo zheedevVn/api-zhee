@@ -204,6 +204,7 @@ select option{background:#16161f}
 <div id="gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
 <div class="msg" id="mGal"></div>
 </div>
+</div>
 
 <!-- TAB CHECK -->
 <div class="panel" id="p-check">
