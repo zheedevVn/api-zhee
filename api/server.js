@@ -164,32 +164,33 @@ select option{background:#16161f}
 .sig{margin-top:26px;text-align:center;font-size:11.5px;color:#555}
 .sig b{color:var(--gold)}
 </style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <div class="orbs"><span></span><span></span></div>
 <div class="wrap">
 <div class="hero">
-<div class="crown"><svg viewBox="0 0 24 24" fill="none"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z" fill="#FFD700"/><path d="M4 19h16v2H4z" fill="#FFA500"/></svg></div>
+<div class="crown"><i data-lucide="crown" style="width:32px;height:32px;color:#FFD700"></i></div>
 <h1>Locket Gold</h1>
 <p>Xem toàn bộ ảnh · Check tài khoản · Giữ Gold vĩnh viễn<br>by <b style="color:#FFD700">Hồ Đức Minh (Zhee Dev)</b></p>
 </div>
 
 <div class="tabs">
-<button class="tab active" data-t="up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Ảnh của tôi</button>
-<button class="tab" data-t="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check</button>
-<button class="tab" data-t="keep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/></svg>Giữ Gold</button>
+<button class="tab active" data-t="up">data-t="up"><i data-lucide="image" class="lic"></i>Ảnh của tôi</button>
+<button class="tab" data-t="check">data-t="check"><i data-lucide="search" class="lic"></i>Check</button>
+<button class="tab" data-t="keep">data-t="keep"><i data-lucide="shield" class="lic"></i>Giữ Gold</button>
 </div>
 
 <!-- TAB UP -->
 <div class="panel active" id="p-up">
 <div class="card" id="loginCard">
-<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>Đăng nhập Locket</h2>
+<h2><i data-lucide="user" class="lic"></i>Đăng nhập Locket</h2>
 <p class="desc">Đăng nhập để lấy token, sau đó up ảnh kiểu Gold.</p>
 <label>Tài khoản (email hoặc SĐT)</label>
 <input id="li_user" type="text" placeholder="email@example.com / 09xxxxxxx" autocomplete="username">
 <label>Mật khẩu</label>
 <input id="li_pass" type="password" placeholder="••••••••" autocomplete="current-password">
-<button class="btn" id="btnLogin" onclick="doLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 011 1v16a1 1 0 01-1 1h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập</button>
+<button class="btn" id="btnLogin" onclick="doLogin()"><i data-lucide="log-in" class="lic"></i>Đăng nhập</button>
 <p class="note">Mật khẩu chỉ gửi 1 lần để lấy token, không lưu trữ.<br>Token lưu tạm trong tab, tắt tab là mất.</p>
 </div>
 <div class="card" id="uploadBox" style="margin-top:14px">
@@ -209,11 +210,11 @@ select option{background:#16161f}
 <!-- TAB CHECK -->
 <div class="panel" id="p-check">
 <div class="card">
-<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check tài khoản</h2>
+<h2><i data-lucide="search" class="lic"></i>Check tài khoản</h2>
 <p class="desc">Nhập username để xem avatar, thông tin và trạng thái Gold.</p>
 <label>Username Locket</label>
 <input id="ck_u" type="text" placeholder="vd: hoducminh.2k9">
-<button class="btn" id="btnCk" onclick="doCheck()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check ngay</button>
+<button class="btn" id="btnCk" onclick="doCheck()"><i data-lucide="search" class="lic"></i>Check ngay</button>
 <div id="ckOut" style="margin-top:6px"></div>
 </div>
 <div class="msg" id="mCk"></div>
@@ -222,7 +223,7 @@ select option{background:#16161f}
 <!-- TAB KEEP -->
 <div class="panel" id="p-keep">
 <div class="card">
-<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/></svg>Giữ Locket Gold</h2>
+<h2><i data-lucide="shield" class="lic"></i>Giữ Locket Gold</h2>
 <p class="desc">Cài profile DNS để đóng băng trạng thái Gold — không bị thu hồi khi tắt VPN.</p>
 <ol class="steps">
 <li><span class="n">1</span><span>Tải file cấu hình bên dưới <b>(chỉ iPhone/iPad)</b>.</span></li>
@@ -230,7 +231,7 @@ select option{background:#16161f}
 <li><span class="n">3</span><span>Vào <b>Cài đặt → Cài đặt chung → VPN &amp; Quản lý thiết bị → DNS</b> → chọn <b>LOCKETGOLD BY ZHEE DEV</b>.</span></li>
 <li><span class="n">4</span><span>Mở Locket — Gold được giữ nguyên, tắt Shadowrocket vẫn không mất.</span></li>
 </ol>
-<a class="dlbtn" href="/locket-gold.mobileconfig" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>Tải profile giữ Gold (iOS)</a>
+<a class="dlbtn" href="/locket-gold.mobileconfig" download><i data-lucide="download" class="lic"></i>Tải profile giữ Gold (iOS)</a>
 <p class="note">Profile chặn xác thực RevenueCat để giữ trạng thái Gold.<br>Gỡ trong Cài đặt → VPN &amp; Quản lý thiết bị khi không cần.</p>
 </div>
 </div>
@@ -241,6 +242,7 @@ select option{background:#16161f}
 <script>
 const API='/api/tools/locket';
 let TOK=sessionStorage.getItem('lg_tok')||'';
+if(window.lucide)lucide.createIcons();
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
 document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
 document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
@@ -304,7 +306,7 @@ const r=await fetch(API+'?='+encodeURIComponent(u),{credentials:'same-origin'});
 if(d.trang_thai==='that_bai'){msg('mCk',d.thong_bao||'Không tìm thấy.',0);b.disabled=false;b.textContent='Check ngay';return;}
 const i=d.du_lieu||d,av=i.anh_dai_dien||i.avatar||'',nm=i.username||u,uid=i.uid||'',gold=i.gold||'khong',tt=i.tinh_trang||'',ma=i.ma_moi||'';
 let h='<div class="uinfo">'+(av?'<img src="'+av+'">':'')+'<div><div class="nm">'+nm+'</div><div class="ud">'+uid+'</div>';
-h+=gold.toLowerCase().includes('c')?'<span class="goldtag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z"/></svg>Locket Gold</span>':'<span style="font-size:11.5px;color:#888">Tài khoản thường</span>';
+h+=gold.toLowerCase().includes('c')?'<span class="goldtag"><i data-lucide="crown" class="lic"></i>Locket Gold</span>':'<span style="font-size:11.5px;color:#888">Tài khoản thường</span>';
 h+='</div></div>';
 h+='<div style="margin-top:12px;display:grid;gap:8px">';
 if(tt)h+='<div style="font-size:13px"><span style="color:#888">Trạng thái:</span> <b style="color:#fff">'+tt+'</b></div>';
@@ -312,7 +314,7 @@ if(ma)h+='<div style="font-size:13px"><span style="color:#888">Mã mời:</span>
 if(i.link_profile)h+='<div style="font-size:13px"><a href="'+i.link_profile+'" target="_blank" style="color:#FFD700">Mở profile Locket →</a></div>';
 h+='</div>';
 if(TOK)h+='<div class="tokrow"><input id="tkS" readonly value="'+TOK+'"><button class="btn" onclick="cpTok()">Copy token</button></div>';
-h+='<a class="dlbtn" style="margin-top:14px" href="/locket-gold.mobileconfig" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>Tải profile giữ Gold (iOS)</a>';
+h+='<a class="dlbtn" style="margin-top:14px" href="/locket-gold.mobileconfig" download><i data-lucide="download" class="lic"></i>Tải profile giữ Gold (iOS)</a>';
 out.innerHTML=h;document.getElementById('mCk').style.display='none';
 }catch(e){msg('mCk','Lỗi: '+e.message,0);}
 b.disabled=false;b.textContent='Check ngay';}
