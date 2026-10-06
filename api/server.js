@@ -195,9 +195,8 @@ select option{background:#16161f}
 <div class="card" id="uploadBox" style="margin-top:14px">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Up ảnh kiểu Gold</h2>
 <p class="desc" id="upHello"></p>
-<label>Ảnh (chọn file hoặc dán link)</label>
-<input id="up_file" type="file" accept="image/*" style="margin-bottom:8px">
-<input id="up_url" type="url" placeholder="https://... (hoặc để trống nếu đã chọn file)">
+<label>Link ảnh</label>
+<input id="up_url" type="url" placeholder="https://...">
 <label>AppCheck token (tùy chọn — lấy từ app Locket nếu up bị 401)</label>
 <input id="up_appcheck" type="text" placeholder="eyJ... (dán từ app)">
 <label>Caption</label>
@@ -209,6 +208,12 @@ select option{background:#16161f}
 <button class="btn ghost" onclick="doLogout()">Đăng xuất</button>
 </div>
 <div class="msg" id="mUp"></div>
+</div>
+<div class="card" style="margin-top:16px">
+<h3>📸 Ảnh đã đăng</h3>
+<button class="btn ghost" onclick="loadGallery()" style="width:100%;margin-bottom:12px">Tải lại danh sách</button>
+<div id="gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+<div class="msg" id="mGal"></div>
 </div>
 
 <!-- TAB CHECK -->
@@ -282,18 +287,8 @@ document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
 async function doUpload(){
 let url=document.getElementById('up_url').value.trim();
-const f=document.getElementById('up_file').files[0];
-const b=document.getElementById('btnUp');b.disabled=true;
-if(f){
-b.textContent='Đang upload file...';
-try{
-const fd=new FormData();fd.append('reqtype','fileupload');fd.append('userhash','590d0378e16f50e8905d821c2');fd.append('fileToUpload',f,f.name||'locket.jpg');
-const cr=await fetch('https://catbox.moe/user/api.php',{method:'POST',body:fd});
-url=(await cr.text()).trim();
-if(!/^https?:\\/\\//i.test(url))throw new Error('Upload file that bai');
-}catch(e){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Loi upload file: '+e.message,0);return;}
-}
-if(!url||!/^https?:\\/\\//i.test(url)){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Chon file hoac nhap link anh hop le.',0);return;}
+
+if(!url||!/^https?:\\/\\//i.test(url)){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
 b.textContent='Dang up... (~20s)';
 try{
 const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,debug:'1'});const ac=document.getElementById('up_appcheck').value.trim();if(ac)q.set('appcheck',ac);
@@ -302,6 +297,24 @@ if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!
 else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();let em='Thất bại: '+(d.thong_bao||'lỗi không rõ');if(d.debug_attempts)em+='<details style="margin-top:10px"><summary style="cursor:pointer">Chi tiết từng lần thử</summary><pre style="background:#000;padding:10px;border-radius:8px;overflow:auto;max-height:300px;font-size:11px">'+JSON.stringify(d.debug_attempts,null,2)+'</pre></details>';msg('mUp',em,0);}
 }catch(e){msg('mUp','Lỗi: '+e.message,0);}
 b.disabled=false;b.textContent='Up lên Locket';}
+async function loadGallery(){
+var g=document.getElementById('gallery');g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Đang tải...</p>';
+try{
+var r=await fetch(API+'?'+new URLSearchParams({action:'moments',id_token:TOK}),{credentials:'same-origin'});
+var d=await r.json();
+var items=(d.du_lieu&&d.du_lieu.moments)||[];
+if(!items.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Chưa có ảnh nào</p>';return;}
+var html='';
+for(var i=0;i<items.length;i++){var m=items[i];
+var img=String(m.thumb||m.image||'');
+var cap=m.caption||'';
+html+='<div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:#222">';
+if(img)html+='<img src="'+img+'" loading="lazy" style="width:100%;height:100%;object-fit:cover">';
+if(cap)html+='<div style="position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+cap+'</div>';
+html+='</div>';}
+g.innerHTML=html;
+}catch(e){msg('mGal','Lỗi: '+e.message,0);}
+}
 async function doCheck(){
 const u=document.getElementById('ck_u').value.trim().replace(/^@/,'');
 if(!u){msg('mCk','Nhập username.',0);return;}
