@@ -199,11 +199,9 @@ select option{background:#16161f}
 <input id="up_url" type="url" placeholder="https://...">
 <label>Caption</label>
 <input id="up_cap" type="text" placeholder="Chú thích (tùy chọn)">
-<div class="row2"><div><label>Nền</label><select id="up_bg">
-<option value="">Không đổi</option><option value="gold">Vàng Gold</option><option value="sunset">Hoàng hôn</option><option value="ocean">Đại dương</option><option value="purple">Tím</option><option value="pink">Hồng</option><option value="black">Đen</option>
-</select></div><div><label>Xoay</label><select id="up_rot">
-<option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option>
-</select></div></div>
+<div><label>Nền Gold</label><select id="up_bg">
+<option value="">Không đổi nền</option><option value="gold">Vàng Gold</option><option value="sunset">Hoàng hôn</option><option value="ocean">Đại dương</option><option value="purple">Tím</option><option value="pink">Hồng</option><option value="black">Đen</option>
+</select></div>
 <button class="btn" id="btnUp" onclick="doUpload()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Up lên Locket</button>
 <button class="btn ghost" onclick="doLogout()">Đăng xuất</button>
 </div>
@@ -284,7 +282,7 @@ const url=document.getElementById('up_url').value.trim();
 if(!url||!/^https?:\\/\\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
 const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
 try{
-const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,rotate:document.getElementById('up_rot').value});
+const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value});
 const r=await fetch(API+'?'+q.toString(),{credentials:'same-origin'});const d=await r.json();
 if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
 else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();msg('mUp','Thất bại: '+(d.thong_bao||'lỗi không rõ'),0);}
