@@ -1766,8 +1766,8 @@ function addToggle(){
   b.className = "act"; b.title = "English / Ti\u1EBFng Vi\u1EC7t";
   b.style.cssText = "font-weight:800;font-size:12px;min-width:56px;padding:8px 10px";
   b.onclick = function(){ window.ZHEE_SETLANG(lang()==="vi" ? "en" : "vi"); };
-  paintToggle();
   bar.insertBefore(b, bar.firstChild);
+  paintToggle();
 }
 var _obs = null, _tmr = null;
 function watch(){
