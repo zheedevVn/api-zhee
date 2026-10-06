@@ -171,11 +171,11 @@ select option{background:#16161f}
 <div class="hero">
 <div class="crown"><svg viewBox="0 0 24 24" fill="none"><path d="M3 7l4 4 5-6 5 6 4-4-1.5 10h-15L3 7z" fill="#FFD700"/><path d="M4 19h16v2H4z" fill="#FFA500"/></svg></div>
 <h1>Locket Gold</h1>
-<p>Up ảnh kiểu Gold · Check tài khoản · Giữ Gold vĩnh viễn<br>by <b style="color:#FFD700">Hồ Đức Minh (Zhee Dev)</b></p>
+<p>Xem toàn bộ ảnh · Check tài khoản · Giữ Gold vĩnh viễn<br>by <b style="color:#FFD700">Hồ Đức Minh (Zhee Dev)</b></p>
 </div>
 
 <div class="tabs">
-<button class="tab active" data-t="up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Up ảnh</button>
+<button class="tab active" data-t="up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Ảnh của tôi</button>
 <button class="tab" data-t="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Check</button>
 <button class="tab" data-t="keep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/></svg>Giữ Gold</button>
 </div>
@@ -193,21 +193,10 @@ select option{background:#16161f}
 <p class="note">Mật khẩu chỉ gửi 1 lần để lấy token, không lưu trữ.<br>Token lưu tạm trong tab, tắt tab là mất.</p>
 </div>
 <div class="card" id="uploadBox" style="margin-top:14px">
-<h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>Up ảnh kiểu Gold</h2>
-<p class="desc" id="upHello"></p>
-<label>Link ảnh</label>
-<input id="up_url" type="url" placeholder="https://...">
-<label>AppCheck token (tùy chọn — lấy từ app Locket nếu up bị 401)</label>
-<input id="up_appcheck" type="text" placeholder="eyJ... (dán từ app)">
-<label>Caption</label>
-<input id="up_cap" type="text" placeholder="Chú thích (tùy chọn)">
-<div><label>Nền Gold</label><select id="up_bg">
-<option value="">Không đổi nền</option><option value="gold">Vàng Gold</option><option value="sunset">Hoàng hôn</option><option value="ocean">Đại dương</option><option value="purple">Tím</option><option value="pink">Hồng</option><option value="black">Đen</option>
-</select></div>
-<button class="btn" id="btnUp" onclick="doUpload()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Up lên Locket</button>
-<button class="btn ghost" onclick="doLogout()">Đăng xuất</button>
-</div>
-<div class="msg" id="mUp"></div>
+<h2>📸 Ảnh của bạn</h2>
+<p class="desc" id="upHello">Đăng nhập để xem toàn bộ ảnh.</p>
+<div class="tokrow" id="tokRowUp" style="display:none;margin-top:10px"><input id="tkUp" readonly title="ID Token"><button class="btn" onclick="cpTokUp()">Copy token</button></div>
+<button class="btn ghost" onclick="doLogout()" style="width:100%;margin-top:10px">Đăng xuất</button>
 </div>
 <div class="card" style="margin-top:16px">
 <h3>📸 Ảnh đã đăng</h3>
@@ -285,36 +274,7 @@ function cpTokUp(){const i=document.getElementById('tkUp');i.select();document.e
 function doLogout(){TOK='';sessionStorage.removeItem('lg_tok');
 document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
-async function doUpload(){
-let url=document.getElementById('up_url').value.trim();
 
-if(!url||!/^https?:\\/\\//i.test(url)){b.disabled=false;b.textContent='Up len Locket';msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
-b.textContent='Dang up... (~20s)';
-try{
-const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,debug:'1'});const ac=document.getElementById('up_appcheck').value.trim();if(ac)q.set('appcheck',ac);
-const r=await fetch(API+'?'+q.toString(),{credentials:'same-origin'});const d=await r.json();
-if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
-else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();let em='Thất bại: '+(d.thong_bao||'lỗi không rõ');if(d.debug_attempts)em+='<details style="margin-top:10px"><summary style="cursor:pointer">Chi tiết từng lần thử</summary><pre style="background:#000;padding:10px;border-radius:8px;overflow:auto;max-height:300px;font-size:11px">'+JSON.stringify(d.debug_attempts,null,2)+'</pre></details>';msg('mUp',em,0);}
-}catch(e){msg('mUp','Lỗi: '+e.message,0);}
-b.disabled=false;b.textContent='Up lên Locket';}
-async function loadGallery(){
-var g=document.getElementById('gallery');g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Đang tải...</p>';
-try{
-var r=await fetch(API+'?'+new URLSearchParams({action:'moments',id_token:TOK}),{credentials:'same-origin'});
-var d=await r.json();
-var items=(d.du_lieu&&d.du_lieu.moments)||[];
-if(!items.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Chưa có ảnh nào</p>';return;}
-var html='';
-for(var i=0;i<items.length;i++){var m=items[i];
-var img=String(m.thumb||m.image||'');
-var cap=m.caption||'';
-html+='<div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:#222">';
-if(img)html+='<img src="'+img+'" loading="lazy" style="width:100%;height:100%;object-fit:cover">';
-if(cap)html+='<div style="position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+cap+'</div>';
-html+='</div>';}
-g.innerHTML=html;
-}catch(e){msg('mGal','Lỗi: '+e.message,0);}
-}
 async function doCheck(){
 const u=document.getElementById('ck_u').value.trim().replace(/^@/,'');
 if(!u){msg('mCk','Nhập username.',0);return;}
@@ -666,7 +626,7 @@ const HTML_JS_PATCHES = [
   // Locket Gold: banner link sang /locket-gold trong tool Locket
   [
     '</body>',
-    `<script>(function(){function addGoldBanner(){if(document.getElementById('zhee-gold-banner'))return;var h=location.hash||'';if(h.indexOf('locket')<0)return;var main=document.querySelector('main');if(!main)return;var b=document.createElement('div');b.id='zhee-gold-banner';b.innerHTML='<div style="margin:12px 0;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.12),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-weight:800;color:#FFD700;font-size:15px">⭐ LOCKET GOLD UPLOAD</div><div style="font-size:12px;color:#aaa">Đăng nhập Locket, up ảnh kiểu Gold: xoay + đổi nền + caption</div></div><a href="/locket-gold" target="_blank" style="padding:10px 20px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;border-radius:8px;text-decoration:none;font-size:14px">Mở ngay →</a></div>';var ref=main.firstChild;main.insertBefore(b,ref);}window.addEventListener('hashchange',function(){setTimeout(addGoldBanner,500)});setTimeout(addGoldBanner,1500);setTimeout(addGoldBanner,4000);})();<\/script></body>`
+    `<script>(function(){function addGoldBanner(){if(document.getElementById('zhee-gold-banner'))return;var h=location.hash||'';if(h.indexOf('locket')<0)return;var main=document.querySelector('main');if(!main)return;var b=document.createElement('div');b.id='zhee-gold-banner';b.innerHTML='<div style="margin:12px 0;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.12),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-weight:800;color:#FFD700;font-size:15px">⭐ LOCKET GOLD UPLOAD</div><div style="font-size:12px;color:#aaa">Đăng nhập Locket, xem toàn bộ ảnh đã đăng từ trước đến nay</div></div><a href="/locket-gold" target="_blank" style="padding:10px 20px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;border-radius:8px;text-decoration:none;font-size:14px">Mở ngay →</a></div>';var ref=main.firstChild;main.insertBefore(b,ref);}window.addEventListener('hashchange',function(){setTimeout(addGoldBanner,500)});setTimeout(addGoldBanner,1500);setTimeout(addGoldBanner,4000);})();<\/script></body>`
   ],
 ];
 function applyHtmlHotfixes(html) {
