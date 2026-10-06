@@ -1,6 +1,13 @@
+/**
+ * ZheeDevTool — (c) 2026 Ho Duc Minh (Zhee Dev). All rights reserved.
+ * Phan mem doc quyen — Cam sao chep / phan phoi lai khi chua duoc cap phep.
+ * Xem giay phep day du tai file LICENSE.
+ */
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const zheeProtect = require("../lib/zheeProtect.js");
+zheeProtect.verifyStartup();
 
 const DOCS_HTML_PATH = path.join(__dirname, "..", "public", "ui.html");
 const VIDEO_HTML_PATH = path.join(__dirname, "..", "public", "video.html");
@@ -335,7 +342,10 @@ function applyHtmlHotfixes(html) {
   if (typeof html !== "string") return html;
   let out = html;
   if (out.indexOf("</head>") !== -1) {
-    out = out.replace("</head>", "<style data-zhee-mobile-fix>" + MOBILE_FIX_CSS + "</style></head>");
+    out = out.replace("</head>", "<style data-zhee-mobile-fix>" + MOBILE_FIX_CSS + "</style>" + zheeProtect.consoleSignatureScript() + "</head>");
+  }
+  if (out.indexOf("<head>") !== -1) {
+    out = out.replace("<head>", "<head>" + zheeProtect.htmlComment());
   }
   for (const [find, replace] of HTML_JS_PATCHES) {
     if (out.indexOf(find) !== -1) out = out.split(find).join(replace);
