@@ -278,7 +278,7 @@ b.disabled=false;b.innerHTML='Đăng nhập';}
 function showUp(d,u){
 const nm=(d.thong_tin_tai_khoan&&(d.thong_tin_tai_khoan.ten_hien_thi||d.thong_tin_tai_khoan.username))||(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
 document.getElementById('upHello').innerHTML='Xin chào <b style="color:#FFD700">'+nm+'</b> — chọn ảnh và up thôi.<div class="tokrow" style="margin-top:10px"><input id="tkUp" readonly value="'+TOK+'" title="ID Token"><button class="btn" onclick="cpTokUp()">Copy token</button></div>';
-document.getElementById('loginCard').style.display='none';
+document.getElementById('loginCard').style.display='none';setTimeout(function(){try{loadGallery()}catch(e){}},800);
 document.getElementById('uploadBox').style.display='block';
 msg('mUp','Đăng nhập thành công!',1);}
 function cpTokUp(){const i=document.getElementById('tkUp');i.select();document.execCommand('copy');}
@@ -338,7 +338,7 @@ out.innerHTML=h;document.getElementById('mCk').style.display='none';
 }catch(e){msg('mCk','Lỗi: '+e.message,0);}
 b.disabled=false;b.textContent='Check ngay';}
 function cpTok(){const i=document.getElementById('tkS');i.select();document.execCommand('copy');}
-if(TOK){document.getElementById('loginCard').style.display='none';document.getElementById('uploadBox').style.display='block';document.getElementById('upHello').innerHTML='Phiên đăng nhập còn hiệu lực.';}
+if(TOK){document.getElementById('loginCard').style.display='none';setTimeout(function(){try{loadGallery()}catch(e){}},800);document.getElementById('uploadBox').style.display='block';document.getElementById('upHello').innerHTML='Phiên đăng nhập còn hiệu lực.';}
 </script>
 </body>
 </html>
