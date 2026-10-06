@@ -254,15 +254,20 @@ function isPhone(v){return /^[0-9+]{9,15}$/.test(v.replace(/[\\s.]/g,''));}
 async function doLogin(){
 const u=document.getElementById('li_user').value.trim(),p=document.getElementById('li_pass').value;
 if(!u||!p){msg('mUp','Nhập đầy đủ tài khoản và mật khẩu.',0);return;}
-const b=document.getElementById('btnLogin');b.disabled=true;b.textContent='Đang đăng nhập...';
+const b=document.getElementById('btnLogin');b.disabled=true;
+const steps=['Đang gửi request...','Đang xác thực với Locket...','Đang lấy token...'];let si=0;
+b.textContent=steps[0];const sInt=setInterval(()=>{si=(si+1)%steps.length;b.textContent=steps[si];},1200);
 try{
 const bd=isPhone(u)?{action:'me',phone:u,password:p}:{action:'me',email:u,password:p};
 const r=await fetch(API,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(bd)});
-const d=await r.json();document.getElementById('li_pass').value='';
+const txt=await r.text();let d={};try{d=JSON.parse(txt);}catch(_){d={_raw:txt.slice(0,500)};}
+document.getElementById('li_pass').value='';
 const tk=d.id_token||d.token||(d.du_lieu&&d.du_lieu.id_token);
+clearInterval(sInt);
 if(d.trang_thai==='thanh_cong'&&tk){TOK=tk;sessionStorage.setItem('lg_tok',tk);showUp(d,u);}
-else msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||d.ma_loi||'kiểm tra lại tài khoản/mật khẩu'),0);
-}catch(e){msg('mUp','Lỗi kết nối: '+e.message,0);}
+else{const dbg='<details style="margin-top:10px;font-size:11px"><summary style="cursor:pointer;color:#888">Chi tiết lỗi (bấm để xem)</summary><pre style="background:#000;padding:10px;border-radius:8px;overflow:auto;max-height:200px;margin-top:8px">'+JSON.stringify(d,null,2).slice(0,1500)+'</pre></details>';
+msg('mUp','Đăng nhập thất bại: '+(d.thong_bao||d.ma_loi||('HTTP '+r.status))+dbg,0);}
+}catch(e){clearInterval(sInt);msg('mUp','Lỗi kết nối: '+e.message,0);}
 b.disabled=false;b.innerHTML='Đăng nhập';}
 function showUp(d,u){
 const nm=(d.du_lieu&&(d.du_lieu.ten||d.du_lieu.username))||u;
