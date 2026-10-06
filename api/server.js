@@ -275,6 +275,24 @@ function doLogout(){TOK='';sessionStorage.removeItem('lg_tok');
 document.getElementById('uploadBox').style.display='none';
 document.getElementById('loginCard').style.display='block';}
 
+async function loadGallery(){
+var g=document.getElementById('gallery');if(!g)return;g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Đang tải...</p>';
+try{
+var r=await fetch(API+'?'+new URLSearchParams({action:'moments',id_token:TOK,limit:'100'}),{credentials:'same-origin'});
+var d=await r.json();
+var items=d.danh_sach||[];
+if(!items.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#888">Chưa có ảnh nào</p>';return;}
+var html='';
+for(var i=0;i<items.length;i++){var m=items[i];
+var img=String(m.thumb||m.image||'');
+var cap=m.caption||'';
+html+='<div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:#222">';
+if(img)html+='<img src="'+img+'" loading="lazy" style="width:100%;height:100%;object-fit:cover">';
+if(cap)html+='<div style="position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+cap+'</div>';
+html+='</div>';}
+g.innerHTML=html;
+}catch(e){var mg=document.getElementById('mGal');if(mg)msg('mGal','Lỗi: '+e.message,0);}
+}
 async function doCheck(){
 const u=document.getElementById('ck_u').value.trim().replace(/^@/,'');
 if(!u){msg('mCk','Nhập username.',0);return;}
