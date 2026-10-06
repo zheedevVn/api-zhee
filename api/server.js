@@ -285,7 +285,7 @@ var r=await fetch(API+'?'+new URLSearchParams({action:'friends',id_token:TOK,det
 var d=await r.json();
 if(d.trang_thai!=='thanh_cong'){var em='Lỗi: '+(d.thong_bao||'không rõ');if(d.debug)em+='<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px">Chi tiết</summary><pre style="font-size:11px;background:#000;padding:8px;border-radius:6px;overflow:auto">'+JSON.stringify(d.debug,null,2)+'</pre></details>';msg('mFr',em,0);g.innerHTML='';return;}
 document.getElementById('frCount').textContent=d.tong_so||0;
-var items=d.chi_tiet_toi_da_6_ban||[];
+var items=d.chi_tiet_toi_da_10_ban||[];
 var uids=d.danh_sach_uid||[];
 var html='';
 for(var i=0;i<items.length;i++){var f=items[i];
@@ -297,7 +297,7 @@ html+=av?'<img src="'+av+'" style="width:48px;height:48px;border-radius:50%;obje
 html+='<div style="flex:1;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div>';
 if(un&&un!==nm)html+='<div style="font-size:12px;color:#888">@'+un+'</div>';
 html+='<div style="font-size:11px;color:#666">'+(f.uid||'').slice(0,12)+'...</div></div></div>';}
-if(uids.length>items.length)html+='<p style="text-align:center;color:#888;font-size:12px">... và '+(uids.length-items.length)+' bạn khác (chi tiết tối đa 6)</p>';
+if(uids.length>items.length)html+='<p style="text-align:center;color:#888;font-size:12px">... và '+(uids.length-items.length)+' bạn khác (chi tiết tối đa 10)</p>';
 g.innerHTML=html||'<p style="text-align:center;color:#888">Chưa có bạn bè</p>';
 if(window.lucide)lucide.createIcons();
 }catch(e){msg('mFr','Lỗi: '+e.message,0);}
