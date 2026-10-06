@@ -416,7 +416,11 @@ const HTML_JS_PATCHES = [
     'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu;',
     'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu; else { var __tn={WATCH_VIDEO:"Xem video",WATCH_VIDEO_ON_MOBILE:"Xem video",PLAY_ON_DESKTOP:"Chơi game",PLAY_ON_PLAYSTATION:"Chơi game",PLAY_ON_XBOX:"Chơi game",STREAM_ON_DESKTOP:"Stream",PLAY_ACTIVITY:"Chơi activity"}; var __tl=__tn[t0.ma]||"Nhiệm vụ"; taskLabel = targetSec>=60 ? __tl+" ("+(Math.round(targetSec/6)/10)+" phút)" : __tl+" ("+targetSec+"s)"; }'
   ]
-];
+  ,
+  [
+    '</body>',
+    `<script>(function(){function addGoldBtn(){var els=document.querySelectorAll('*');for(var i=0;i<els.length;i++){var el=els[i];if(el.textContent&&el.textContent.indexOf('Locket Username Lookup')!==-1&&!document.getElementById('gold-dl-btn')){var p=el.parentElement;if(p){var a=document.createElement('a');a.id='gold-dl-btn';a.href='/locket-gold.mobileconfig';a.download='';a.textContent='⬇ Tải cấu hình giữ Gold (iOS)';a.style.cssText='display:inline-block;margin:10px 0;padding:10px 20px;border-radius:8px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;text-decoration:none';p.appendChild(a);break;}}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addGoldBtn);else addGoldBtn();setTimeout(addGoldBtn,2000);})();</script></body>`
+  ]];
 function applyHtmlHotfixes(html) {
   if (typeof html !== "string") return html;
   let out = html;
@@ -721,7 +725,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/tools/locket", "/tools/locket", "/locket", "/api/locket"],
     ten: "Locket Username Lookup & Account Tools",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment, gửi/hủy 1 lời mời, tạo 1 tài khoản / 5 phút. Tải cấu hình DNS giữ Gold vĩnh viễn cho iOS: /locket-gold.mobileconfig",
+    mo_ta: "Check username Locket công khai; đăng nhập token/email/SĐT để lấy thông tin tài khoản, bạn bè, moment, gửi/hủy 1 lời mời, tạo 1 tài khoản / 5 phút.",
     vi_du_params: "?=minh",
     handler: locketHandler
   },
