@@ -282,10 +282,10 @@ const url=document.getElementById('up_url').value.trim();
 if(!url||!/^https?:\\/\\//i.test(url)){msg('mUp','Nhập link ảnh hợp lệ.',0);return;}
 const b=document.getElementById('btnUp');b.disabled=true;b.textContent='Đang up... (~20s)';
 try{
-const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value});
+const q=new URLSearchParams({action:'upload',id_token:TOK,image_url:url,caption:document.getElementById('up_cap').value.trim(),background:document.getElementById('up_bg').value,debug:'1'});
 const r=await fetch(API+'?'+q.toString(),{credentials:'same-origin'});const d=await r.json();
 if(d.trang_thai==='thanh_cong'){msg('mUp','✓ '+(d.thong_bao||'Up thành công!')+'<br><img src="'+((d.du_lieu&&d.du_lieu.anh_da_upload)||url)+'">',1);}
-else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();msg('mUp','Thất bại: '+(d.thong_bao||'lỗi không rõ'),0);}
+else{if(/token|hết hạn|401/i.test(d.thong_bao||''))doLogout();let em='Thất bại: '+(d.thong_bao||'lỗi không rõ');if(d.debug_attempts)em+='<details style="margin-top:10px"><summary style="cursor:pointer">Chi tiết từng lần thử</summary><pre style="background:#000;padding:10px;border-radius:8px;overflow:auto;max-height:300px;font-size:11px">'+JSON.stringify(d.debug_attempts,null,2)+'</pre></details>';msg('mUp',em,0);}
 }catch(e){msg('mUp','Lỗi: '+e.message,0);}
 b.disabled=false;b.textContent='Up lên Locket';}
 async function doCheck(){
