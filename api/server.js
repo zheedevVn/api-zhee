@@ -415,15 +415,8 @@ const HTML_JS_PATCHES = [
   [
     'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu;',
     'if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu; else { var __tn={WATCH_VIDEO:"Xem video",WATCH_VIDEO_ON_MOBILE:"Xem video",PLAY_ON_DESKTOP:"Chơi game",PLAY_ON_PLAYSTATION:"Chơi game",PLAY_ON_XBOX:"Chơi game",STREAM_ON_DESKTOP:"Stream",PLAY_ACTIVITY:"Chơi activity"}; var __tl=__tn[t0.ma]||"Nhiệm vụ"; taskLabel = targetSec>=60 ? __tl+" ("+(Math.round(targetSec/6)/10)+" phút)" : __tl+" ("+targetSec+"s)"; }'
-  ],
-  // Locket Gold: banner link sang /locket-gold trong tool Locket
-  ,
-  ,
-  // Locket Gold mobileconfig download card
-  [
-    'id="api-tools-locket"',
-    `id="api-tools-locket"></div><div style="margin:12px 0;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,215,0,.12),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-weight:800;color:#FFD700;font-size:15px">🛡️ GIỮ LOCKET GOLD</div><div style="font-size:12px;color:#aaa">Tải cấu hình DNS giữ Gold vĩnh viễn cho iOS</div></div><a href="/locket-gold.mobileconfig" download style="padding:10px 20px;border-radius:8px;background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;font-weight:700;text-decoration:none">Tải cấu hình</a>`
-  ]];
+  ]
+];
 function applyHtmlHotfixes(html) {
   if (typeof html !== "string") return html;
   let out = html;
@@ -1428,8 +1421,6 @@ module.exports = async (req, res) => {
       return;
     }
     // /locket-gold removed
-
-
     if (wantsDocsHtml(req, pathname)) {
       try {
         serveDocsHtml(res, pathname);
