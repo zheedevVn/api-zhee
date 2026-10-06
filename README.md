@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=ZHEE%20API&fontSize=72&fontColor=FFD700&animation=fadeIn&fontAlignY=38&desc=Cổng%20REST%20API%20Siêu%20Tốc%20%26%20Đa%20Năng&descAlignY=60&descSize=18" width="100%" alt="Zhee API Banner"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=ZHEE%20API&fontSize=72&fontColor=FFD700&animation=fadeIn&fontAlignY=40" width="100%" alt="Zhee API Banner"/>
 
 <img src="https://api-zhee.vercel.app/favicon.png" width="110" height="110" alt="Zhee API Logo"/>
 
