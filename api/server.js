@@ -1240,6 +1240,15 @@ function isGeneratedPicture(req, pathname, url) {
   return /[?&](?:image|img|combo)=/i.test(String(url || ""));
 }
 
+// OTP mail sending is public: owner's own websites call it without a secret key.
+// Matches /mail/gmail?={email}/otp/{code}/{type}
+function isPublicMailOtp(req, pathname, url) {
+  const method = String((req && req.method) || "GET").toUpperCase();
+  if (method !== "GET" && method !== "HEAD") return false;
+  if (pathname !== "/mail/gmail" && pathname !== "/api/mail/gmail") return false;
+  return /\/otp(\/|$)/i.test(String(url || ""));
+}
+
 function routeSlug(pathname) {
   return String(pathname || "home").replace(/^\//, "").replace(/\//g, "-") || "home";
 }
@@ -1524,7 +1533,8 @@ module.exports = async (req, res) => {
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     ));
     const generatedPicture = isGeneratedPicture(req, pathname, url);
-    if (matchedRoute && !generatedPicture && !isAdminBot(req)) {
+    const publicMailOtp = isPublicMailOtp(req, pathname, url);
+    if (matchedRoute && !generatedPicture && !publicMailOtp && !isAdminBot(req)) {
       const access = await accountsHandler.accessForRequest(req);
       if (!access.ok) {
         res.zheeNoSeal = true;
