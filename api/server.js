@@ -1246,7 +1246,9 @@ function isPublicMailOtp(req, pathname, url) {
   const method = String((req && req.method) || "GET").toUpperCase();
   if (method !== "GET" && method !== "HEAD") return false;
   if (pathname !== "/mail/gmail" && pathname !== "/api/mail/gmail") return false;
-  return /\/otp(\/|$)/i.test(String(url || ""));
+  let u = String(url || "");
+  try { u = decodeURIComponent(u); } catch (_) {}
+  return /\/otp(\/|$)/i.test(u);
 }
 
 function routeSlug(pathname) {
