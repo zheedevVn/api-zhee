@@ -1299,12 +1299,16 @@
         if (link.dataset.tab === id) link.setAttribute("aria-current", "page");
         else link.removeAttribute("aria-current");
       });
-      if (id === "home" || PAGE_IDS.includes(id)) {
+      if (t) {
+        if (liveAbort) liveAbort.abort();
+        liveAbort = null;
+      } else if (id === "home" || PAGE_IDS.includes(id)) {
         if (liveAbort) liveAbort.abort();
         liveAbort = null;
         currentTool = null;
       }
-      if (id === "home" || id === "lien-he") renderHome();
+      if (t) renderTool(id);
+      else if (id === "home" || id === "lien-he") renderHome();
       else if (id === "cong-cu") renderDirectory();
       else if (id === "tai-xiu") renderDirectory("Tài xỉu", "Tài xỉu", "B52 Club, 789Club, Sunwin, Hitclub và SUKA88. Mở một sảnh để xem kết quả xúc xắc, bài tây, bầu cua hoặc baccarat.");
       else if (id === "mail") renderDirectory("Mail", "Mail", "Tạo mail tạm, kiểm tra email rác và đọc hộp thư IMAP.");
