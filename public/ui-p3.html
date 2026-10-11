@@ -939,7 +939,8 @@
     function zheeOAuthSectionHtml() {
       return `
       <style>
-      .oauth-apps-block{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+      .oauth-apps-block,.oauth-apps-block *{box-sizing:border-box}
+      .oauth-apps-block{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);min-width:0;max-width:100%}
       .oauth-apps-head h2{font-size:17px;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:6px}
       .oauth-apps-head p{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6}
       .oauth-apps-head p b{color:var(--text)}
