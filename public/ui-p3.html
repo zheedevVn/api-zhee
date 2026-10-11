@@ -1392,6 +1392,7 @@
         <p class="lead">${esc(t.mo_ta)}</p>
         ${keySoonHtml(billing)}
         ${/\/nasa/i.test(toolMark(t)) ? `<p class="muted" style="margin:-10px 0 16px">${ico("satellite")} apod, neo, epic, donki. Điền action và ngày.</p>` : ''}
+         ${/github/i.test(toolMark(t)) ? `<div style="margin:-6px 0 18px"><a href="/github/treemap" class="act act-dark" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none">${ico("layout-grid")} Phân tích Treemap repo kiểu WizTree</a></div>` : ''}
         <div class="card try-card tool-card" style="--tool-accent:${accentFor(toolMark(t), t.chuyen_muc)}">
           ${billing && billing.secret ? `<label class="key-slot">${ico("key-round")}<input class="field" data-secret-view value="${esc(secretShown ? billing.secret : maskSecret(billing.secret))}" readonly tabindex="-1" aria-label="Secret key đã gắn" autocomplete="off"><button class="act icon-only" type="button" id="toggleSecret" aria-label="Hiện hoặc ẩn secret key">${ico(secretShown ? "eye-off" : "eye")}</button></label>` : ""}
           <div id="tryFields"></div>
