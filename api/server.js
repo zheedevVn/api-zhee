@@ -532,6 +532,7 @@ const telegramBotHandler = require("../lib/telegramBot")
 const licenseGuard = require("../lib/licenseGuard");;
 const telegramAuthHandler = require("../lib/telegramAuth");
 const googleAuthHandler = require("../lib/googleAuth");
+const oauthHandler = require("../lib/oauth");
 const accountsHandler = require("../lib/accounts");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
@@ -1465,6 +1466,35 @@ module.exports = async (req, res) => {
     ) {
       res.zheeNoSeal = true;
       return await accountsHandler(req, res);
+    }
+
+    if (
+      pathname === "/oauth/authorize" ||
+      pathname === "/api/oauth/authorize"
+    ) {
+      res.zheeNoSeal = true;
+      if (req.method === "POST") return await oauthHandler.handleAuthorizeSubmit(req, res);
+      return await oauthHandler.handleAuthorizePage(req, res);
+    }
+
+    if (pathname === "/oauth/token" || pathname === "/api/oauth/token") {
+      res.zheeNoSeal = true;
+      return await oauthHandler.handleToken(req, res);
+    }
+
+    if (pathname === "/oauth/userinfo" || pathname === "/api/oauth/userinfo") {
+      res.zheeNoSeal = true;
+      return await oauthHandler.handleUserInfo(req, res);
+    }
+
+    if (pathname === "/.well-known/openid-configuration") {
+      res.zheeNoSeal = true;
+      return oauthHandler.handleDiscovery(req, res);
+    }
+
+    if (pathname === "/api/oauth/clients" || pathname.startsWith("/api/oauth/clients/")) {
+      res.zheeNoSeal = true;
+      return await oauthHandler.handleClientsApi(req, res);
     }
 
     if (pathname === "/api/run" && req.method === "POST") {
