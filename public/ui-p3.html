@@ -931,7 +931,164 @@
               </div>
             </div>
           </div>
+          ${zheeOAuthSectionHtml()}
         </div>`;
+      if (window.zheeOAuthInit) zheeOAuthInit();
+    }
+
+    function zheeOAuthSectionHtml() {
+      return `
+      <style>
+      .oauth-apps-block{margin-top:22px;background:rgba(255,255,255,.65);border:1px solid #e6e8f0;border-radius:18px;padding:22px}
+      .oauth-apps-head h2{font-size:17px;color:#1b1b3a;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+      .oauth-apps-head p{font-size:13px;color:#8a8fa3;margin-bottom:16px;line-height:1.6}
+      .oauth-create{display:grid;gap:10px;margin-bottom:16px}
+      .oauth-create input,.oauth-create textarea{width:100%;padding:11px 13px;border:1.5px solid #e2e5ef;border-radius:11px;font-size:13.5px;font-family:inherit;background:#fff;color:#1b1b3a}
+      .oauth-create input:focus,.oauth-create textarea:focus{outline:none;border-color:#6366f1}
+      .oauth-app-item{background:#fff;border:1px solid #e6e8f0;border-radius:13px;padding:14px 16px;margin-bottom:10px}
+      .oauth-app-item .nm{font-weight:700;font-size:14px;color:#1b1b3a}
+      .oauth-app-item .cid{font-family:ui-monospace,monospace;font-size:12px;color:#6366f1;background:#eef0ff;border-radius:6px;padding:2px 8px;display:inline-block;margin:6px 0;cursor:pointer}
+      .oauth-app-item .meta{font-size:12px;color:#8a8fa3;margin-bottom:10px}
+      .oauth-app-item .row{display:flex;gap:8px;flex-wrap:wrap}
+      .oauth-btn{padding:8px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid #e2e5ef;background:#f6f7fb;color:#3c3f52;display:inline-flex;align-items:center;gap:6px}
+      .oauth-btn:hover{border-color:#6366f1;color:#4f46e5}
+      .oauth-btn.danger:hover{border-color:#ef4444;color:#ef4444}
+      .oauth-secret-once{background:#fff8ed;border:1.5px dashed #e8a93d;border-radius:13px;padding:16px;margin-bottom:14px}
+      .oauth-secret-once b{color:#9a6b1e;font-size:13.5px;display:block;margin-bottom:10px}
+      .oauth-kv{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f6f7fb;border-radius:9px;padding:9px 12px;margin-bottom:8px;font-size:12.5px}
+      .oauth-kv code{font-family:ui-monospace,monospace;color:#1b1b3a;word-break:break-all}
+      .oauth-guide{background:#141432;color:#d6d6f5;border-radius:13px;padding:16px;font-size:12.5px;line-height:1.7;margin-top:10px}
+      .oauth-guide code{color:#a5b4fc;font-family:ui-monospace,monospace;font-size:11.5px;word-break:break-all}
+      .oauth-guide ol{margin:8px 0 8px 18px}
+      .oauth-err{color:#ef4444;font-size:13px}
+      .oauth-empty{color:#8a8fa3;font-size:13px;text-align:center;padding:18px}
+      </style>
+      <div class="oauth-apps-block">
+        <div class="oauth-apps-head">
+          <h2>${ico("key-round")} Ứng dụng OAuth</h2>
+          <p>Tạo ứng dụng để website khác gắn nút <b>"Đăng nhập bằng Zhee"</b> — user bấm sẽ qua Zhee xác thực rồi quay về web của bạn, y như Google.</p>
+        </div>
+        <div class="oauth-create">
+          <input id="oauthAppName" maxlength="60" placeholder="Tên ứng dụng, vd: Shop của tôi">
+          <textarea id="oauthAppUris" rows="2" placeholder="Redirect URI (mỗi dòng 1 cái), vd: https://shopcuatoi.com/oauth/callback"></textarea>
+          <div><button type="button" class="oauth-btn" data-oauth-create>${ico("plus")} Tạo ứng dụng</button></div>
+        </div>
+        <div id="oauthSecretOnce"></div>
+        <div id="oauthAppsList"><p class="oauth-empty">Đang tải danh sách...</p></div>
+        <div id="oauthGuideBox"></div>
+      </div>`;
+    }
+
+    async function zheeOAuthInit() {
+      const box = document.getElementById("oauthAppsList");
+      if (!box || box.dataset.done === "1") return;
+      box.dataset.done = "1";
+      try {
+        const r = await fetch("/api/oauth/clients", { credentials: "same-origin", cache: "no-store" });
+        const d = await r.json();
+        if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Không tải được");
+        zheeOAuthRenderList(d.ung_dung || []);
+      } catch (e) {
+        box.dataset.done = "";
+        box.innerHTML = '<p class="oauth-err">Lỗi: ' + esc(e.message) + '</p>';
+      }
+    }
+
+    function zheeOAuthRenderList(apps) {
+      const box = document.getElementById("oauthAppsList");
+      if (!box) return;
+      if (!apps.length) {
+        box.innerHTML = '<p class="oauth-empty">Chưa có ứng dụng nào. Tạo một cái ở trên để bắt đầu.</p>';
+        return;
+      }
+      box.innerHTML = apps.map((a) => `
+        <div class="oauth-app-item" data-cid="${esc(a.client_id)}">
+          <div class="nm">${esc(a.name)}</div>
+          <div><span class="cid" data-copy="${esc(a.client_id)}" title="Bấm để copy">${esc(a.client_id)}</span></div>
+          <div class="meta">Tạo: ${esc(new Date(a.created_at).toLocaleString("vi-VN"))} · ${(a.redirect_uris || []).length} redirect URI</div>
+          <div class="row">
+            <button type="button" class="oauth-btn" data-oauth-guide="${esc(a.client_id)}">${ico("book-open")} Hướng dẫn gắn</button>
+            <button type="button" class="oauth-btn" data-oauth-regen="${esc(a.client_id)}">${ico("refresh-cw")} Cấp lại secret</button>
+            <button type="button" class="oauth-btn danger" data-oauth-delete="${esc(a.client_id)}">${ico("trash-2")} Xóa</button>
+          </div>
+        </div>`).join("");
+      if (window.paintIcons) paintIcons();
+    }
+
+    function zheeOAuthShowSecret(clientId, clientSecret, isNew) {
+      const box = document.getElementById("oauthSecretOnce");
+      if (!box) return;
+      box.innerHTML = `
+        <div class="oauth-secret-once">
+          <b>${isNew ? "Tạo thành công! Lưu client_secret ngay — chỉ hiện 1 lần duy nhất." : "Secret mới đã được cấp. Secret cũ không còn hiệu lực."}</b>
+          <div class="oauth-kv"><span>client_id</span><code>${esc(clientId)}</code><button type="button" class="oauth-btn" data-copy="${esc(clientId)}">${ico("copy")}</button></div>
+          <div class="oauth-kv"><span>client_secret</span><code>${esc(clientSecret)}</code><button type="button" class="oauth-btn" data-copy="${esc(clientSecret)}">${ico("copy")}</button></div>
+        </div>`;
+      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      if (window.paintIcons) paintIcons();
+    }
+
+    function zheeOAuthShowGuide(clientId) {
+      const box = document.getElementById("oauthGuideBox");
+      if (!box) return;
+      const origin = location.origin;
+      const authUrl = origin + "/oauth/authorize?client_id=" + encodeURIComponent(clientId) + "&redirect_uri=REDIRECT_URI&response_type=code&scope=openid%20profile%20email&state=RANDOM";
+      box.innerHTML = `
+        <div class="oauth-guide">
+          <b style="color:#fff">Gắn "Đăng nhập bằng Zhee" (3 bước):</b>
+          <ol>
+            <li>Đưa user tới:<br><code>${esc(authUrl)}</code><br><span style="color:#8a8fa3">Thay REDIRECT_URI bằng URI đã đăng ký, state = chuỗi ngẫu nhiên của bạn.</span></li>
+            <li>User đồng ý → Zhee redirect về <code>REDIRECT_URI?code=...&amp;state=...</code></li>
+            <li>Server của bạn POST tới <code>${esc(origin)}/oauth/token</code> với <code>grant_type=authorization_code</code>, <code>code</code>, <code>redirect_uri</code>, <code>client_id</code>, <code>client_secret</code> → nhận <code>access_token</code></li>
+            <li>GET <code>${esc(origin)}/oauth/userinfo</code> kèm header <code>Authorization: Bearer access_token</code> → nhận tên + email user</li>
+          </ol>
+        </div>`;
+      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    async function zheeOAuthCreate() {
+      const nameEl = document.getElementById("oauthAppName");
+      const uriEl = document.getElementById("oauthAppUris");
+      const name = (nameEl.value || "").trim();
+      const uris = (uriEl.value || "").split(/\n+/).map((s) => s.trim()).filter(Boolean);
+      if (name.length < 3) { alert("Tên ứng dụng phải từ 3 ký tự."); return; }
+      if (!uris.length) { alert("Nhập ít nhất 1 redirect URI (https)."); return; }
+      try {
+        const r = await fetch("/api/oauth/clients", {
+          method: "POST", credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, redirect_uris: uris })
+        });
+        const d = await r.json();
+        if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Tạo thất bại");
+        nameEl.value = ""; uriEl.value = "";
+        zheeOAuthShowSecret(d.ung_dung.client_id, d.ung_dung.client_secret, true);
+        const box = document.getElementById("oauthAppsList");
+        if (box) box.dataset.done = "";
+        zheeOAuthInit();
+      } catch (e) { alert("Lỗi: " + e.message); }
+    }
+
+    async function zheeOAuthDelete(clientId) {
+      if (!confirm("Xóa ứng dụng này? Các web đang dùng nó sẽ không đăng nhập được nữa.")) return;
+      try {
+        const r = await fetch("/api/oauth/clients/" + encodeURIComponent(clientId), { method: "DELETE", credentials: "same-origin" });
+        const d = await r.json();
+        if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Xóa thất bại");
+        const box = document.getElementById("oauthAppsList");
+        if (box) box.dataset.done = "";
+        zheeOAuthInit();
+      } catch (e) { alert("Lỗi: " + e.message); }
+    }
+
+    async function zheeOAuthRegen(clientId) {
+      if (!confirm("Cấp lại secret? Secret cũ sẽ hết hiệu lực ngay.")) return;
+      try {
+        const r = await fetch("/api/oauth/clients/" + encodeURIComponent(clientId) + "/secret", { method: "POST", credentials: "same-origin" });
+        const d = await r.json();
+        if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Thất bại");
+        zheeOAuthShowSecret(d.ung_dung.client_id, d.ung_dung.client_secret, false);
+      } catch (e) { alert("Lỗi: " + e.message); }
     }
 
     function renderWallet() {
@@ -1349,6 +1506,15 @@
       }
       const btn = e.target.closest("[data-copy]");
       if (btn) copyText(btn.getAttribute("data-copy"), btn);
+      const oc = e.target.closest("[data-oauth-create],[data-oauth-delete],[data-oauth-regen],[data-oauth-guide]");
+      if (oc) {
+        e.preventDefault();
+        if (oc.hasAttribute("data-oauth-create")) zheeOAuthCreate();
+        else if (oc.hasAttribute("data-oauth-delete")) zheeOAuthDelete(oc.getAttribute("data-oauth-delete"));
+        else if (oc.hasAttribute("data-oauth-regen")) zheeOAuthRegen(oc.getAttribute("data-oauth-regen"));
+        else if (oc.hasAttribute("data-oauth-guide")) zheeOAuthShowGuide(oc.getAttribute("data-oauth-guide"));
+        return;
+      }
     });
     panel.addEventListener("input", (e) => {
       if (e.target.closest(".try-card")) updateTryUrl();
