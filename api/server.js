@@ -537,6 +537,7 @@ const accountsHandler = require("../lib/accounts");
 const videoHandler = require("../lib/video");
 const robloxHandler = require("../lib/roblox");
 const githubHandler = require("../lib/github");
+const ghTreemap = require("../lib/githubTreemap");
 const tiktokHandler = require("../lib/tiktok");
 const twitchHandler = require("../lib/twitch");
 const youtubeHandler = require("../lib/youtube");
@@ -986,7 +987,7 @@ const ROUTES_REGISTRY = [
     prefix: ["/api/mxh/github", "/mxh/github", "/github"],
     ten: "GitHub Info & Repos",
     chuyen_muc: "Mạng Xã Hội",
-    mo_ta: "Lấy thông tin cá nhân và danh sách kho lưu trữ GitHub.",
+    mo_ta: "Lấy thông tin cá nhân và danh sách kho lưu trữ GitHub. Phân tích treemap repo kiểu WizTree tại /github/treemap.",
     vi_du_params: "?=hoducminh123",
     handler: githubHandler
   },
@@ -1475,6 +1476,15 @@ module.exports = async (req, res) => {
       return res.status(200).send(oauthHandler.llmsTxt());
     }
 
+    if (pathname === "/github/treemap" && req.method === "GET") {
+      res.zheeNoSeal = true;
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      return res.status(200).send(ghTreemap.treemapPage());
+    }
+    if (pathname === "/api/github/treemap" && (req.method === "GET" || req.method === "POST")) {
+      return ghTreemap.handleApi(req, res);
+    }
     if (pathname === "/oauth" && req.method === "GET") {
       res.zheeNoSeal = true;
       res.setHeader("Content-Type", "text/html; charset=utf-8");
