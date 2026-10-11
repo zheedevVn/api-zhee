@@ -1468,6 +1468,20 @@ module.exports = async (req, res) => {
       return await accountsHandler(req, res);
     }
 
+    if (pathname === "/oauth" && req.method === "GET") {
+      res.zheeNoSeal = true;
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      return res.status(200).send(oauthHandler.docsHtml());
+    }
+
+    if (pathname === "/oauth/button.svg") {
+      res.zheeNoSeal = true;
+      res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      return res.status(200).send(oauthHandler.buttonSvg());
+    }
+
     if (
       pathname === "/oauth/authorize" ||
       pathname === "/api/oauth/authorize"
