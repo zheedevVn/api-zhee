@@ -1498,6 +1498,18 @@ module.exports = async (req, res) => {
       res.setHeader("Cache-Control", "public, max-age=86400");
       return res.status(200).send(oauthHandler.buttonSvg());
     }
+    if (pathname === "/oauth/button-dark.svg") {
+      res.zheeNoSeal = true;
+      res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      return res.status(200).send(oauthHandler.buttonDarkSvg());
+    }
+    if (pathname === "/oauth/logo.svg") {
+      res.zheeNoSeal = true;
+      res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      return res.status(200).send(oauthHandler.logoSvg());
+    }
 
     if (
       pathname === "/oauth/authorize" ||
