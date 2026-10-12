@@ -25,7 +25,7 @@ const FAVICON_PATH = path.join(__dirname, "..", "public", "favicon.png");
 function serveFavicon(res) {
   const body = fs.readFileSync(FAVICON_PATH);
   res.setHeader("Content-Type", "image/png");
-  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.setHeader("Cache-Control", "public, max-age=3600");
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.statusCode = 200;
   res.end(body);
@@ -470,7 +470,7 @@ function serveRobotsTxt(res) {
   ].join("\n");
 
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
-  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.setHeader("Cache-Control", "public, max-age=3600");
   res.setHeader("X-Content-Type-Options", "nosniff");
   return res.status(200).send(body);
 }
@@ -487,7 +487,7 @@ function serveSitemapXml(res) {
   ].join("\n");
 
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
-  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.setHeader("Cache-Control", "public, max-age=3600");
   res.setHeader("X-Content-Type-Options", "nosniff");
   return res.status(200).send(body);
 }
@@ -1495,19 +1495,19 @@ module.exports = async (req, res) => {
     if (pathname === "/oauth/button.svg") {
       res.zheeNoSeal = true;
       res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
-      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.setHeader("Cache-Control", "public, max-age=3600");
       return res.status(200).send(oauthHandler.buttonSvg());
     }
     if (pathname === "/oauth/button-dark.svg") {
       res.zheeNoSeal = true;
       res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
-      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.setHeader("Cache-Control", "public, max-age=3600");
       return res.status(200).send(oauthHandler.buttonDarkSvg());
     }
     if (pathname === "/oauth/logo.svg") {
       res.zheeNoSeal = true;
       res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
-      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.setHeader("Cache-Control", "public, max-age=3600");
       return res.status(200).send(oauthHandler.logoSvg());
     }
 
@@ -1548,7 +1548,7 @@ module.exports = async (req, res) => {
     if (pathname === "/locket-gold.mobileconfig") {
       res.setHeader("Content-Type", "application/x-apple-aspen-config; charset=utf-8");
       res.setHeader("Content-Disposition", 'attachment; filename="locketgold-zhee.mobileconfig"');
-      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.setHeader("Cache-Control", "public, max-age=3600");
       res.statusCode = 200;
       res.end(LOCKET_GOLD_MOBILECONFIG);
       return;
