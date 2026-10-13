@@ -1100,9 +1100,9 @@
       const cur = prompt("Nhập redirect URI mới (mỗi URI một dòng):", "zheesign://oauth/callback");
       if (cur === null) return;
       try {
-        const fd = new FormData();
-        fd.append("redirect_uris", cur);
-        const r = await fetch("/api/oauth/clients/" + encodeURIComponent(clientId), { method: "PUT", body: fd, credentials: "same-origin" });
+        const params = new URLSearchParams();
+        params.append("redirect_uris", cur);
+        const r = await fetch("/api/oauth/clients/" + encodeURIComponent(clientId), { method: "PUT", body: params, credentials: "same-origin" });
         const d = await r.json();
         if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Thất bại");
         alert("Đã cập nhật redirect URI.");
