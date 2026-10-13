@@ -1,67 +1,21 @@
-GIẤY PHÉP PHẦN MỀM ZHEE API — BẢN QUYỀN THUỘC VỀ TÁC GIẢ
-ZHEE API SOFTWARE LICENSE — PROPRIETARY
-================================================================
+MIT License
 
-Bản quyền (c) 2026 Hồ Đức Minh (Zhee Dev). Bảo lưu mọi quyền.
-Copyright (c) 2026 Ho Duc Minh (Zhee Dev). All rights reserved.
+Copyright (c) 2026 Ho Duc Minh
 
-Mã nguồn thuộc hệ công cụ ZheeDevTool. Mọi file mã nguồn trong
-kho này đều được đánh dấu bản quyền và watermark ZheeDevTool.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-----------------------------------------------------------------
-1. PHẠM VI CẤP PHÉP (GRANT OF LICENSE)
-----------------------------------------------------------------
-- Giấy phép này cho phép BẠN (người dùng cuối) SỬ DỤNG dịch vụ API
-  thông qua địa chỉ chính thức https://api-zhee.vercel.app theo
-  điều khoản dịch vụ và gói key đã đăng ký.
-- Giấy phép này KHÔNG chuyển giao quyền sở hữu mã nguồn.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-----------------------------------------------------------------
-2. CÁC HÀNH VI BỊ CẤM (RESTRICTIONS — CHỐNG COPY / GIAN LẬN)
-----------------------------------------------------------------
-Khi chưa có văn bản cho phép của tác giả, bạn KHÔNG được:
-  a) Sao chép, trích xuất, phân phối lại toàn bộ hoặc một phần
-     mã nguồn, giao diện, tài liệu dưới mọi hình thức;
-  b) Dịch ngược (reverse engineer), gỡ rối (debug), tháo gỡ hoặc
-     vô hiệu hóa các biện pháp bảo vệ, watermark, chữ ký
-     ZheeDevTool được nhúng trong phần mềm;
-  c) Xóa, che giấu, giả mạo thông tin bản quyền, tên tác giả
-     (Hồ Đức Minh / Zhee Dev / ZheeDevTool);
-  d) Mạo danh, giả mạo là tác giả hoặc đại lý phân phối của
-     Zhee API / ZheeDevTool để lừa đảo, thu phí trái phép
-     (hành vi gian lận);
-  đ) Triển khai, vận hành bản sao của dịch vụ này trên domain/
-     máy chủ khác khi chưa được cấp phép bằng văn bản.
-
-----------------------------------------------------------------
-3. XỬ LÝ VI PHẠM (ENFORCEMENT)
-----------------------------------------------------------------
-- Mọi bản sao trái phép đều có thể bị yêu cầu gỡ bỏ (takedown)
-  theo quy định của GitHub, Vercel và pháp luật Việt Nam về
-  sở hữu trí tuệ.
-- Tác giả bảo lưu quyền áp dụng biện pháp kỹ thuật (khóa key,
-  chặn truy cập) đối với hành vi gian lận, lạm dụng API.
-
-----------------------------------------------------------------
-4. MIỄN TRỪ TRÁCH NHIỆM (DISCLAIMER)
-----------------------------------------------------------------
-Phần mềm được cung cấp "NGUYÊN TRẠNG", không bảo đảm tuyệt đối
-về tính liên tục. Tác giả không chịu trách nhiệm cho thiệt hại
-gián tiếp phát sinh từ việc sử dụng hoặc không sử dụng được
-dịch vụ.
-
-----------------------------------------------------------------
-5. LIÊN HỆ CẤP PHÉP (LICENSING CONTACT)
-----------------------------------------------------------------
-  Tác giả : Hồ Đức Minh (Zhee Dev)
-  Telegram: https://t.me/zheevipvl
-  GitHub  : https://github.com/zheedevVn
-  Website : https://api-zhee.vercel.app
-
-================================================================
-LICENSE (ENGLISH SUMMARY — the Vietnamese text above prevails)
-================================================================
-This is proprietary software. You may USE the API service at the
-official address. You may NOT copy, redistribute, reverse engineer,
-remove ZheeDevTool watermarks, impersonate the author, or deploy
-unauthorized copies. All rights reserved by Ho Duc Minh (Zhee Dev).
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
