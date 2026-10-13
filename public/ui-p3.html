@@ -1013,6 +1013,7 @@
           <div class="row">
             <button type="button" class="oauth-btn" data-oauth-guide="${esc(a.client_id)}">${ico("book-open")} Hướng dẫn gắn</button>
             <button type="button" class="oauth-btn" data-oauth-regen="${esc(a.client_id)}">${ico("refresh-cw")} Cấp lại secret</button>
+            <button type="button" class="oauth-btn" data-oauth-edit="${esc(a.client_id)}">${ico("edit-3")} Sửa redirect URI</button>
             <button type="button" class="oauth-btn danger" data-oauth-delete="${esc(a.client_id)}">${ico("trash-2")} Xóa</button>
           </div>
         </div>`).join("");
@@ -1092,6 +1093,22 @@
         const d = await r.json();
         if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Thất bại");
         zheeOAuthShowSecret(d.ung_dung.client_id, d.ung_dung.client_secret, false);
+      } catch (e) { alert("Lỗi: " + e.message); }
+    }
+
+    async function zheeOAuthEditRedirect(clientId) {
+      const cur = prompt("Nhập redirect URI mới (mỗi URI một dòng):", "zheesign://oauth/callback");
+      if (cur === null) return;
+      try {
+        const fd = new FormData();
+        fd.append("redirect_uris", cur);
+        const r = await fetch("/api/oauth/clients/" + encodeURIComponent(clientId), { method: "PUT", body: fd, credentials: "same-origin" });
+        const d = await r.json();
+        if (d.trang_thai !== "thanh_cong") throw new Error(d.thong_bao || "Thất bại");
+        alert("Đã cập nhật redirect URI.");
+        const box = document.getElementById("oauthAppsList");
+        if (box) box.dataset.done = "";
+        zheeOAuthInit();
       } catch (e) { alert("Lỗi: " + e.message); }
     }
 
@@ -1511,12 +1528,13 @@
       }
       const btn = e.target.closest("[data-copy]");
       if (btn) copyText(btn.getAttribute("data-copy"), btn);
-      const oc = e.target.closest("[data-oauth-create],[data-oauth-delete],[data-oauth-regen],[data-oauth-guide]");
+      const oc = e.target.closest("[data-oauth-create],[data-oauth-delete],[data-oauth-regen],[data-oauth-guide],[data-oauth-edit]");
       if (oc) {
         e.preventDefault();
         if (oc.hasAttribute("data-oauth-create")) zheeOAuthCreate();
         else if (oc.hasAttribute("data-oauth-delete")) zheeOAuthDelete(oc.getAttribute("data-oauth-delete"));
         else if (oc.hasAttribute("data-oauth-regen")) zheeOAuthRegen(oc.getAttribute("data-oauth-regen"));
+        else if (oc.hasAttribute("data-oauth-edit")) zheeOAuthEditRedirect(oc.getAttribute("data-oauth-edit"));
         else if (oc.hasAttribute("data-oauth-guide")) zheeOAuthShowGuide(oc.getAttribute("data-oauth-guide"));
         return;
       }
