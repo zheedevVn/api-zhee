@@ -1,5 +1,3 @@
-    .sk-line { height: 14px; width: min(460px, 92%); margin-bottom: 18px; }
-    .sk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .sk-card { height: 120px; }
     @keyframes sk { from { background-position: 100% 0; } to { background-position: -100% 0; } }
     .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid color-mix(in srgb, currentColor 28%, transparent); border-top-color: currentColor; animation: spin .7s linear infinite; display: inline-block; vertical-align: -3px; }
@@ -202,6 +200,13 @@
 </style>
 </head>
 <body>
+  <noscript>
+    <div style="max-width:800px;margin:30px auto;padding:24px;background:#111827;color:#f3f4f6;border-radius:14px;font-family:system-ui,sans-serif;line-height:1.6;">
+      <h1 style="color:#38bdf8;font-size:24px;margin:0 0 12px;">Zhee API — Cổng REST API miễn phí của Hồ Đức Minh</h1>
+      <p style="font-size:15px;margin:0 0 14px;">Zhee API là cổng REST API của Hồ Đức Minh (Zhee Dev): mail tạm, tài xỉu, mạng xã hội, AI, VietQR và hơn 70 công cụ. Đăng ký nhận secret key, dùng thử 10 ngày, gia hạn 10.000đ.</p>
+      <p style="font-size:13px;color:#9ca3af;">Trang web yêu cầu bật JavaScript để sử dụng đầy đủ các tính năng tương tác.</p>
+    </div>
+  </noscript>
   <aside class="sidebar" id="siteNav">
     <div class="brand">
       <div class="brand-mark"><img src="/favicon.png" alt="Zhee API" width="40" height="40"></div>
@@ -1905,10 +1910,3 @@
         const progBox = document.getElementById(`dqcProgBox-${questId}`);
         const timerLbl = document.getElementById(`dqcTimerLabel-${questId}`);
         const fillEl = document.getElementById(`dqcFill-${questId}`);
-        const pctLbl = document.getElementById(`dqcPercentLabel-${questId}`);
-
-        if (progBox) progBox.style.display = "";
-
-        let duration = q.targetSeconds || 30;
-        let elapsed = q.progressSeconds || 0;
-        let left = Math.max(1, duration - elapsed);

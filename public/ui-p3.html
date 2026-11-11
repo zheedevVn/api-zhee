@@ -1,3 +1,10 @@
+        const pctLbl = document.getElementById(`dqcPercentLabel-${questId}`);
+
+        if (progBox) progBox.style.display = "";
+
+        let duration = q.targetSeconds || 30;
+        let elapsed = q.progressSeconds || 0;
+        let left = Math.max(1, duration - elapsed);
 
         if (dqcActiveTimers[questId]) clearInterval(dqcActiveTimers[questId]);
 
