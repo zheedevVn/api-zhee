@@ -1335,6 +1335,34 @@ module.exports = async (req, res) => {
   if (!zheeProtect.guard(req, res)) return;
   applySecurityHeaders(res);
 
+  if (!res.status) {
+    res.status = function(code) {
+      res.statusCode = code;
+      return res;
+    };
+  }
+  if (!res.json) {
+    res.json = function(data) {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.end(JSON.stringify(data));
+      return res;
+    };
+  }
+  if (!res.send) {
+    res.send = function(body) {
+      return res.end(body);
+    };
+  }
+
+  if (!req.query) {
+    try {
+      const u = new URL(req.url || "/", "https://api-zhee.vercel.app");
+      req.query = Object.fromEntries(u.searchParams.entries());
+    } catch (_) {
+      req.query = {};
+    }
+  }
+
   if (res && typeof res.writeHead === "function") {
     const origWriteHead = res.writeHead;
     res.writeHead = function(...args) {
@@ -1565,6 +1593,13 @@ module.exports = async (req, res) => {
     if (pathname === "/video.html") {
       servePageHtml(res, VIDEO_HTML_PATH);
       return;
+    }
+    if (pathname === "/ui-p1.html" || pathname === "/ui-p2.html" || pathname === "/ui-p3.html" || pathname === "/image.html") {
+      const p = path.join(__dirname, "..", "public", pathname.slice(1));
+      if (fs.existsSync(p)) {
+        servePageHtml(res, p);
+        return;
+      }
     }
     if (/\/api\/taixiu\//i.test(pathname) && /[?&](?:image|img)=/i.test(url) && accept.includes("text/html")) {
       return serveTaixiuImagePage(req, res, req.zheePublicUrl || url);

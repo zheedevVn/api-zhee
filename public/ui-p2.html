@@ -1,143 +1,3 @@
-lay: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 14px; background: #26a5e4; color: white; box-shadow: 0 8px 20px rgba(38, 165, 228, .25); }
-    .support-icon img { width: 22px; height: 22px; filter: brightness(0) invert(1); }
-    .support-copy h3 { margin: 0 0 3px; font-size: 15px; }
-    .support-copy p { margin: 0; color: var(--muted); font-size: 12px; }
-    .support-contacts { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
-    .contact-card {
-      display: inline-flex; align-items: center; gap: 8px; width: auto; max-width: 100%; min-width: 0; padding: 5px 5px 5px 7px;
-      border: 1px solid color-mix(in srgb, var(--tool-accent) 32%, var(--line));
-      border-radius: 12px; color: var(--text);
-      background: color-mix(in srgb, var(--card) 82%, transparent);
-      transition: border-color .18s ease, background .18s ease;
-    }
-    html[data-theme="dark"] .contact-card { background: color-mix(in srgb, #070b14 42%, transparent); }
-    .contact-card:hover { border-color: color-mix(in srgb, var(--tool-accent) 58%, var(--line)); }
-    .contact-mark {
-      display: grid; place-items: center; width: 26px; height: 26px; flex: 0 0 26px;
-      border-radius: 8px; background: color-mix(in srgb, var(--tool-accent) 14%, var(--card));
-      border: 1px solid color-mix(in srgb, var(--tool-accent) 28%, var(--line));
-    }
-    .contact-card .contact-mark .ico-brand-img { width: 15px; height: 15px; }
-    .contact-card-copy { display: grid; gap: 0; min-width: 0; }
-    .contact-card-copy strong { font-size: 12px; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
-    .contact-card-copy span { color: var(--muted); font-size: 11px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .contact-main { display: flex; align-items: center; gap: 8px; min-width: 0; color: inherit; text-decoration: none; }
-    button.contact-main { border: 0; background: none; padding: 0; font: inherit; text-align: left; cursor: pointer; }
-    .contact-actions { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; }
-    .contact-copy-icon { width: 24px; height: 24px; display: grid; place-items: center; flex: 0 0 24px; border: 1px solid color-mix(in srgb, var(--tool-accent) 28%, var(--line)); border-radius: 7px; background: transparent; color: var(--text); cursor: pointer; }
-    .contact-copy-icon svg, .contact-copy-icon i { width: 13px; height: 13px; }
-    .contact-copy-icon:hover { background: color-mix(in srgb, var(--tool-accent) 18%, var(--card)); }
-    .qr-chip {
-      display: grid; place-items: center; width: 28px; height: 28px; padding: 2px;
-      border: 0; border-radius: 7px; background: #fff; cursor: pointer;
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, .08);
-    }
-    .qr-chip:hover { box-shadow: 0 0 0 1px rgba(15, 23, 42, .2); }
-    .qr-chip .qr-mini { width: 24px; height: 24px; border-radius: 4px; background: #fff; object-fit: contain; }
-    .qr-backdrop {
-      display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center;
-      padding: 24px; background: rgba(2, 6, 23, .72); backdrop-filter: blur(5px);
-    }
-    .qr-backdrop.show { display: flex; }
-    .qr-dialog { position: relative; width: min(360px, 100%); padding: 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--text); text-align: center; box-shadow: 0 24px 70px rgba(0,0,0,.38); }
-    .qr-dialog h3 { margin: 0 28px 6px; font-size: 17px; }
-    .qr-dialog p { margin: 0 0 16px; color: var(--muted); font-size: 12px; }
-    .qr-dialog img { display: block; width: min(280px, 100%); aspect-ratio: 1; margin: 0 auto; padding: 10px; border-radius: 14px; background: #fff; object-fit: contain; cursor: zoom-out; }
-    .qr-close { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 50%; background: var(--bg); color: var(--text); font-size: 21px; line-height: 1; cursor: pointer; }
-    .qr-close:hover { background: var(--nav-active); color: var(--nav-active-fg); }
-
-    /* Interaction polish: make every clickable surface feel responsive and visible. */
-    html, body { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M4 2 L4 17 L8.2 13.2 L11.4 19.2 L13.6 18.1 L10.3 12.2 L16 12.2 Z' fill='%23111827' stroke='white' stroke-width='1.2' stroke-linejoin='round'/></svg>") 3 2, auto; }
-    a, button, summary, select, label { cursor: pointer; }
-    input, textarea, pre, .secret-value { cursor: text; }
-    a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible {
-      outline: 3px solid color-mix(in srgb, var(--tool-accent, #60a5fa) 58%, transparent);
-      outline-offset: 3px;
-    }
-    .icon-btn, button.act, a.act {
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-    }
-    .icon-btn:hover, button.act:hover, a.act:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(15, 23, 42, .14); }
-    .icon-btn:active, button.act:active, a.act:active { transform: translateY(0) scale(.97); }
-    .drop a { cursor: pointer; }
-    .drop a .nav-label { transition: color .18s ease, transform .18s ease; }
-    .drop a:hover .nav-label { transform: translateX(2px); }
-    .home-tile { cursor: pointer; }
-    .home-tile::before {
-      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
-      background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,.12) 45%, transparent 68%);
-      transform: translateX(-100%); transition: opacity .2s ease, transform .6s ease;
-    }
-    .home-tile:hover::before { opacity: 1; transform: translateX(100%); }
-    .social-link { cursor: pointer; }
-    ::selection { background: color-mix(in srgb, #60a5fa 35%, transparent); color: var(--text); }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-    }
-    @media (max-width: 640px) { .home-hero { padding: 22px 18px 16px; } .support-card { align-items: flex-start; flex-direction: column; } .support-card .act { width: 100%; justify-content: center; } }
-
-    .theme-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; flex-shrink: 0; color: var(--text); font-size: 12px; font-weight: 800; }
-    .theme-switch input {
-      appearance: none; width: 42px; height: 24px; margin: 0; flex: 0 0 42px; border-radius: 999px;
-      border: 1px solid var(--line); background: color-mix(in srgb, var(--text) 12%, var(--card));
-      position: relative; cursor: pointer;
-    }
-    .theme-switch input::after {
-      content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .18s ease;
-    }
-    .theme-switch input:checked { background: #2563eb; border-color: #2563eb; }
-    .theme-switch input:checked::after { transform: translateX(18px); }
-    .hamburger { width: 18px; height: 18px; display: block; }
-    dialog.modal {
-      position: fixed; inset: auto; top: 50%;
-      left: calc(var(--side) + (100% - var(--side)) / 2);
-      translate: -50% -50%;
-      width: min(440px, calc(100vw - var(--side) - 24px)); height: fit-content;
-      max-height: calc(100dvh - 24px); margin: 0; padding: 0; border: 0; background: transparent;
-      color: var(--text); overflow: auto;
-    }
-    dialog.modal[open] .modal-card { animation: dialogIn .2s ease; }
-    dialog.modal.is-closing .modal-card { opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
-    dialog.modal::backdrop { background: rgba(2, 6, 23, .62); backdrop-filter: blur(8px); animation: scrimIn .2s ease; }
-    @keyframes dialogIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    dialog.modal.is-closing::backdrop { animation: scrimOut .18s ease forwards; }
-    dialog.modal .modal-card {
-      background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 18px;
-      box-shadow: 0 24px 70px rgba(0,0,0,.38); padding: 22px 20px 18px;
-    }
-    @keyframes scrimIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes scrimOut { from { opacity: 1; } to { opacity: 0; } }
-    .auth-card { position: relative; }
-    .auth-card h3 { margin: 0 36px 14px 0; font-size: 22px; letter-spacing: -.03em; }
-    .segment { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 14px; }
-    .segment-item {
-      display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px;
-      border: 1px solid var(--line); border-radius: 12px; background: transparent; font-size: 13px; font-weight: 800;
-    }
-    .segment-item input { width: 16px; height: 16px; margin: 0; accent-color: #2563eb; }
-    .segment-item:has(input:checked) { background: var(--nav-active); color: var(--nav-active-fg); border-color: var(--nav-active); }
-    .login-form { display: grid; gap: 12px; }
-    .login-form label { display: grid; gap: 6px; font-size: 12px; font-weight: 800; color: var(--muted); }
-    .login-form input {
-      width: 100%; height: 46px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px;
-      background: var(--bg); color: var(--text); font: inherit; font-size: 14px; font-weight: 600;
-    }
-    .login-form input:focus { border-color: #60a5fa; outline: 3px solid color-mix(in srgb, #60a5fa 35%, transparent); outline-offset: 1px; }
-    .login-form button { width: 100%; min-height: 46px; justify-content: center; border-radius: 12px; }
-    .auth-or { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin: 14px 0 12px; color: var(--muted); font-size: 12px; font-weight: 700; }
-    .auth-or::before, .auth-or::after { content: ""; height: 1px; background: var(--line); }
-    dialog.is-register .login-form, dialog.is-register .auth-or { display: none; }
-    .gate { display: grid; place-items: center; min-height: min(520px, calc(100dvh - 180px)); padding: 8px 0 28px; }
-    .gate-card { width: min(440px, 100%); margin: 0 auto; padding: 22px 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
-    .gate-card h1, .gate-card h2 { margin-top: 0; }
-    .gate-card .lead { margin-bottom: 0; }
-    .gate-card .act { width: 100%; justify-content: center; margin-top: 16px; min-height: 44px; }
-    .scramble-line { display: block; flex: 1 1 12rem; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
-    .scramble { font: inherit; letter-spacing: inherit; white-space: normal; overflow-wrap: anywhere; }
-    .skeleton-wrap { position: relative; }
-    .sk { border-radius: 12px; background: linear-gradient(90deg, color-mix(in srgb, var(--line) 80%, transparent), color-mix(in srgb, var(--card) 55%, var(--text) 8%), color-mix(in srgb, var(--line) 80%, transparent)); background-size: 200% 100%; animation: sk 1.1s ease infinite; }
-    .sk-title { height: 28px; width: min(280px, 72%); margin-bottom: 12px; }
     .sk-line { height: 14px; width: min(460px, 92%); margin-bottom: 18px; }
     .sk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .sk-card { height: 120px; }
@@ -234,7 +94,112 @@ lay: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; borde
       input, select, textarea { font-size: 16px !important; }
     }
 
-  </style>
+  
+    /* Modern UI 2026 Polish by Zhee Dev */
+    :root {
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --card-blur: blur(16px);
+      --transition-smooth: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html[data-theme="dark"] {
+      --bg: #090d16;
+      --sidebar: #0d1322;
+      --card: rgba(17, 24, 39, 0.75);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --pink: #38bdf8;
+      --link: #38bdf8;
+      --code-bg: #030712;
+      --code-fg: #f1f5f9;
+      --nav-active: #1e293b;
+      --nav-active-fg: #38bdf8;
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .main {
+      position: relative;
+    }
+    .main::before {
+      content: "";
+      position: fixed;
+      top: -160px;
+      right: -120px;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(139, 92, 246, 0.04) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .card, .home-tile, .developer-hero-card, .wallet-hero-card, .contact-card {
+      transition: var(--transition-smooth);
+      backdrop-filter: var(--card-blur);
+      -webkit-backdrop-filter: var(--card-blur);
+    }
+    .card:hover, .home-tile:hover, .contact-card:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, #38bdf8 35%, var(--line));
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.35);
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .developer-hero-card {
+      box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.45);
+      border: 1px solid color-mix(in srgb, #f59e0b 30%, var(--line)) !important;
+      position: relative;
+      overflow: hidden;
+    }
+    .developer-hero-card::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent 40%, rgba(255, 215, 0, 0.06) 50%, transparent 60%);
+      transform: rotate(25deg);
+      pointer-events: none;
+      animation: card-shimmer 8s infinite linear;
+    }
+    @keyframes card-shimmer {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      100% { transform: translateX(100%) rotate(25deg); }
+    }
+    .dot-indicator.is-active {
+      box-shadow: 0 0 12px #10b981;
+      animation: pulse-active 2s infinite ease-in-out;
+    }
+    @keyframes pulse-active {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.75; }
+    }
+    .brand-mark {
+      box-shadow: 0 0 16px rgba(180, 83, 9, 0.35);
+    }
+    .act {
+      transition: var(--transition-smooth);
+    }
+    .act:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .act:active {
+      transform: translateY(0);
+    }
+    .tabbar {
+      background: color-mix(in srgb, var(--sidebar) 85%, transparent);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--line);
+    }
+</style>
 </head>
 <body>
   <aside class="sidebar" id="siteNav">
@@ -1564,3 +1529,386 @@ lay: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; borde
         <div class="step-row">
           <div class="step"><b>1. Đăng ký Google</b><span>Mỗi tài khoản nhận một secret key. Một IP tạo tối đa 3 tài khoản.</span></div>
           <div class="step"><b>2. Chạy trên web</b><span>Chọn công cụ và bấm chạy. Key được gắn tự động, trang chỉ hiện kết quả.</span></div>
+          <div class="step"><b>3. Gia hạn</b><span>Sau 10 ngày, nạp MB Bank rồi gia hạn 10.000đ cho 10 ngày tiếp.</span></div>
+        </div>
+        <div class="home-section-head"><div><h2>Mạng xã hội & nền tảng</h2><p>Mở công cụ để xem kết quả. Đường dẫn không hiện trên trang.</p></div></div>
+        <section class="card social-panel"><div class="home-social-grid">${socialTiles}</div></section>
+        <div class="home-section-head"><div><h2>${ico("flame")} Công cụ nổi bật</h2></div></div>
+        <div class="home-grid">${tiles}</div>`;
+    }
+
+    let liveAbort;
+    let currentTool = null;
+    function decodeParam(s) {
+      try { return decodeURIComponent(String(s || "").replace(/\+/g, " ")); } catch (_) { return String(s || ""); }
+    }
+    function keysFromTextList(list) {
+      const keys = [];
+      const seen = new Set();
+      const add = (k) => { if (!seen.has(k)) { seen.add(k); keys.push(k); } };
+      (list || []).forEach((s) => {
+        const str = String(s || "");
+        if (/\?=/.test(str)) add("");
+        str.replace(/[?&]([a-zA-Z0-9_]+)=/g, (_, k) => add(k));
+      });
+      return keys;
+    }
+    function paramKeysFor(t, extra) {
+      const keys = [];
+      const seen = new Set();
+      const add = (k) => { if (k === undefined || seen.has(k)) return; seen.add(k); keys.push(k); };
+      extra && extra.forEach(add);
+      exampleFields(t).forEach((f) => add(f.key));
+      const p = toolMark(t);
+      if (/spotify/i.test(p)) ["", "q", "artist", "url"].forEach(add);
+      else if (/pinterest/i.test(p)) ["", "username", "url", "pin", "q", "site", "page", "action"].forEach(add);
+      else if (/trans/i.test(p)) ["", "text", "to", "from", "giong", "action", "format"].forEach(add);
+      else if (/taomail/i.test(p)) ["kieu", "so", "ten", "mk", "action"].forEach(add);
+      else if (/mail\/check|checkmail/i.test(p)) ["email", "mk", "action", "uid"].forEach(add);
+      else if (/checkkeyai/i.test(p)) ["key"].forEach(add);
+      else if (/downloads/i.test(p)) ["url"].forEach(add);
+      else if (/\/nasa/i.test(p)) {
+        ["action", "rover", "sol", "earth_date", "start_date", "end_date", "date", "count", "feedtype"].forEach(add);
+      } else if (/tiktok/i.test(p)) {
+        ["", "url", "username", "sessionid", "action"].forEach(add);
+      } else if (/discord/i.test(p)) {
+        ["", "token", "quest", "id", "invite"].forEach(add);
+      } else if (/instagram|github|roblox|twitter|facebook|zalo|telegram|ngl|youtube|soundcloud/i.test(p)) {
+        ["", "username", "url"].forEach(add);
+      } else {
+        add("");
+        add("q");
+        add("url");
+      }
+      return keys;
+    }
+    function exampleFields(t) {
+      if (/\/nasa/i.test(toolMark(t))) {
+        return [{ key: "action", value: "action=apod" }];
+      }
+      let search = String(t.params || "");
+      if (!search && t.vi_du) {
+        const i = String(t.vi_du).indexOf("?");
+        if (i >= 0) search = String(t.vi_du).slice(i);
+      }
+      const q = search.replace(/^\?/, "");
+      const fields = [];
+      if (!q) {
+        fields.push({ key: "", value: "" });
+        return fields;
+      }
+      q.split("&").forEach((part) => {
+        if (!part) return;
+        const eq = part.indexOf("=");
+        if (eq === 0) fields.push({ key: "", value: decodeParam(part.slice(1)) });
+        else if (eq < 0) fields.push({ key: decodeParam(part), value: "" });
+        else fields.push({ key: decodeParam(part.slice(0, eq)), value: decodeParam(part.slice(eq + 1)) });
+      });
+      return fields;
+    }
+    function keyLabel(k) {
+      if (k === "") return "link / từ khóa";
+      if (k === "sessionid") return "sessionid (cookie)";
+      if (k === "token") return "token Discord";
+      if (k === "quest") return "mã chạy quest (RUN_QUEST:...)";
+      if (k === "id") return "user ID Discord";
+      if (k === "invite") return "link / mã mời";
+      return k;
+    }
+    function makeTryRow(key, value, keys) {
+      const row = document.createElement("div");
+      row.className = "try-row";
+      const sel = document.createElement("select");
+      sel.setAttribute("data-try-key", "1");
+      (keys || [key || ""]).forEach((k) => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = keyLabel(k);
+        if (k === key) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      if (key && ![...sel.options].some((o) => o.value === key)) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = keyLabel(key);
+        opt.selected = true;
+        sel.appendChild(opt);
+      }
+      const iv = document.createElement("input");
+      iv.setAttribute("data-try-val", "1");
+      const isTikTok = /tiktok/i.test(toolMark(currentTool));
+      iv.placeholder = /\/nasa/i.test(toolMark(currentTool))
+        ? "action=neo&start_date=YYYY-MM-DD&end_date=YYYY-MM-DD"
+        : (isTikTok ? "dán link video, username (@...) hoặc sessionid" : "dán link, username hoặc nội dung");
+      iv.value = value || "";
+      iv.spellcheck = false;
+      row.append(sel, iv);
+      return row;
+    }
+    function fillTryFields(t) {
+      const box = document.getElementById("tryFields");
+      if (!box) return;
+      box.innerHTML = "";
+      const keys = paramKeysFor(t);
+      t._tryKeys = keys;
+      const fields = exampleFields(t);
+      (fields.length ? fields : [{ key: keys[0] || "", value: "" }]).forEach((f) => {
+        box.appendChild(makeTryRow(f.key, f.value, keys));
+      });
+    }
+    function smartKey(val, keys, current) {
+      const list = keys || [];
+      if (/^https?:\/\//i.test(val)) {
+        if (list.includes("url")) return "url";
+        if (list.includes("")) return "";
+        if (list.includes("q")) return "q";
+      }
+      return current;
+    }
+    function collectTryUrl() {
+      if (!currentTool) return "";
+      const keys = currentTool._tryKeys || paramKeysFor(currentTool);
+      const rows = [...panel.querySelectorAll(".try-row")];
+      const parts = [];
+      rows.forEach((row) => {
+        const sel = row.querySelector("[data-try-key]");
+        const val = String((row.querySelector("[data-try-val]") || {}).value || "").trim();
+        if (!val) return;
+        // Keep an explicitly selected parameter name. Previously smartKey()
+        // re-selected `url` whenever the value looked like a URL, so changing
+        // the dropdown to `username` or the raw `link / từ khóa` option had
+        // no visible effect in the generated endpoint.
+        let key = sel ? sel.value : smartKey(val, keys, "");
+        if (/\/nasa/i.test(toolMark(currentTool)) && key === "action" && /^[?]?(?:action|type)=/i.test(val)) {
+          parts.push(val.replace(/^\?/, ""));
+        } else if (!key) parts.push("=" + encodeURIComponent(val));
+        else parts.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
+      });
+      return parts.join("&");
+    }
+    function updateTryUrl() {
+      return collectTryUrl();
+    }
+    const DQC_STORE_KEY = "zhee_discord_quests_session_v1";
+
+    function saveDqcState(state) {
+      try {
+        localStorage.setItem(DQC_STORE_KEY, JSON.stringify({
+          ...state,
+          savedAt: Date.now()
+        }));
+      } catch (_) {}
+    }
+
+    function loadDqcState() {
+      try {
+        const raw = localStorage.getItem(DQC_STORE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (Date.now() - (obj.savedAt || 0) > 48 * 3600 * 1000) {
+          localStorage.removeItem(DQC_STORE_KEY);
+          return null;
+        }
+        return obj;
+      } catch (_) { return null; }
+    }
+
+    function clearDqcState() {
+      try { localStorage.removeItem(DQC_STORE_KEY); } catch (_) {}
+    }
+
+    let dqcActiveTimers = {};
+    let dqcBatchRunning = false;
+
+    function renderDiscordQuestsManager(container, parsedOrState, fallbackToken) {
+      if (!container) return;
+      const isSavedState = Boolean(parsedOrState && parsedOrState.isSavedState);
+      const acc = parsedOrState.thong_tin_tai_khoan || parsedOrState.account || {};
+      const questsRaw = parsedOrState.thong_tin_tai_khoan?.nhiem_vu?.hien_co || parsedOrState.quests || [];
+      const orbs = acc.orbs?.so_du ?? parsedOrState.orbs ?? null;
+      let token = (fallbackToken || parsedOrState.token || "").trim();
+      let currentRegion = parsedOrState.region || parsedOrState.khu_vuc_quet || "US";
+
+      if (!Array.isArray(questsRaw) || questsRaw.length === 0) {
+        container.innerHTML = `
+          <div class="dqc-container">
+            <div class="dqc-head">
+              <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ DISCORD</span>
+              <div class="dqc-region-group">
+                <button type="button" class="dqc-region-btn ${currentRegion === 'US' ? 'active' : ''}" data-dqc-region="US">🇺🇸 Vùng US (VPN)</button>
+                <button type="button" class="dqc-region-btn ${currentRegion === 'VN' ? 'active' : ''}" data-dqc-region="VN">🇻🇳 Vùng VN</button>
+              </div>
+            </div>
+            <div class="dqc-title">Không tìm thấy nhiệm vụ khả dụng ở khu vực hiện tại</div>
+            <div class="dqc-claim-guide">
+              <strong>💡 MẸO SĂN QUEST BẰNG VPN:</strong> Nếu bạn ở Việt Nam, Discord thường không hiện hết nhiệm vụ. Hãy bật VPN (kết nối sang IP Mỹ / US), sau đó nhấn nút <strong>"🇺🇸 Vùng US (VPN)"</strong> ở trên để quét lại!
+            </div>
+          </div>
+        `;
+        markSelfGlyphs(container);
+        bindRegionButtons();
+        return;
+      }
+
+      let quests = questsRaw.map((q, idx) => {
+        const qCode = q.ma_chay_nhiem_vu || (token ? `RUN_QUEST:${q.id}:${token}` : "");
+        const isDone = Boolean(q.da_hoan_thanh || q.da_nhan_thuong || q.user_status?.completed_at);
+        const isClaimed = Boolean(q.da_nhan_thuong || q.user_status?.claimed_at);
+        const isAct = Boolean(q.la_activity || /activity|thành tựu/i.test(q.loai_chay || "") || (Array.isArray(q.tien_do) && q.tien_do.some(t => /ACHIEVEMENT/i.test(t.ma || "") || /thành tựu/i.test(t.don_vi || ""))));
+
+        let targetSec = 30;
+        let taskLabel = "Xem video (30s)";
+        if (isAct) {
+          targetSec = 1;
+          taskLabel = "Activity trong Voice (1 thành tựu)";
+        } else if (Array.isArray(q.tien_do) && q.tien_do.length > 0) {
+          const t0 = q.tien_do[0];
+          targetSec = Number(t0.muc_tieu || t0.target) || 30;
+          if (t0.muc_tieu_chu || t0.target_chu) taskLabel = t0.muc_tieu_chu || t0.target_chu;
+        } else if (q.loai_chay) {
+          taskLabel = q.loai_chay;
+        }
+
+        return {
+          id: String(q.id || idx),
+          ten: q.ten || "Nhiệm vụ Discord",
+          game: q.game || "Discord",
+          orbs: q.orbs || null,
+          trang_thai: isClaimed ? "Đã nhận thưởng" : (isDone ? "DONE (Chưa nhận)" : (q.trang_thai || "Chưa nhận")),
+          da_hoan_thanh: isDone,
+          da_nhan_thuong: isClaimed,
+          ma_chay_nhiem_vu: qCode,
+          targetSeconds: targetSec,
+          taskLabel: taskLabel,
+          isActivity: isAct,
+          progressSeconds: isDone ? targetSec : (q.progressSeconds || 0),
+          percent: isDone ? 100 : (q.percent || 0),
+          isRunning: false
+        };
+      });
+
+      saveDqcState({
+        isSavedState: true,
+        token: token,
+        region: currentRegion,
+        orbs: orbs,
+        account: {
+          username: acc.tai_khoan || acc.username,
+          id: acc.id
+        },
+        quests: quests
+      });
+
+      function renderHtml() {
+        const pendingQuests = quests.filter((q) => !q.da_hoan_thanh && !q.da_nhan_thuong);
+        const pendingCount = pendingQuests.length;
+        const allDone = pendingCount === 0;
+
+        const qRows = quests.map((q) => {
+          const isDone = q.da_hoan_thanh || q.da_nhan_thuong;
+          return `
+            <div class="dqc-item-row ${isDone ? 'is-complete' : ''} ${q.isRunning ? 'is-active-running' : ''}" id="dqcRow-${esc(q.id)}">
+              <div class="dqc-row-left" style="flex: 1 1 240px">
+                <div class="dqc-row-name">${esc(q.ten)}</div>
+                <div class="dqc-row-sub">
+                  <span>${esc(q.game)}</span>
+                  <span style="opacity: 0.85">• ${esc(q.taskLabel)}</span>
+                  ${q.orbs ? `<span class="dqc-tag-orb">${ico("sparkles")} +${q.orbs} Orbs</span>` : ""}
+                  <span class="dqc-tag-status ${isDone ? 'status-done' : 'status-pending'}" id="dqcStatusTag-${esc(q.id)}">${isDone ? 'DONE' : esc(q.trang_thai)}</span>
+                </div>
+                <div class="dqc-progress-box" id="dqcProgBox-${esc(q.id)}" style="${q.isRunning ? '' : (isDone ? '' : 'display:none;')}">
+                  <div class="dqc-progress-info">
+                    <span class="dqc-progress-timer" id="dqcTimerLabel-${esc(q.id)}">
+                      ${q.isRunning ? `${ico(q.isActivity ? "rocket" : "clock")} ${q.isActivity ? 'Đang kích hoạt Activity...' : 'Đang chạy... Còn ' + Math.max(0, q.targetSeconds - q.progressSeconds) + 's'}` : (isDone ? `${ico("circle-check")} Đã hoàn thành 100% (DONE)` : '')}
+                    </span>
+                    <strong id="dqcPercentLabel-${esc(q.id)}">${q.percent}%</strong>
+                  </div>
+                  <div class="dqc-progress-track">
+                    <div class="dqc-progress-fill ${isDone ? 'is-done' : ''}" id="dqcFill-${esc(q.id)}" style="width:${q.percent}%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="dqc-row-actions">
+                ${q.isRunning ? `
+                  <span class="dqc-badge dqc-pulse" style="border-color:#38bdf8;color:#38bdf8">${ico("loader-2")} Đang xử lý…</span>
+                ` : (isDone ? `
+                  <span class="dqc-done-pill">${ico("check")} Đã xong</span>
+                ` : (q.isActivity ? `
+                  <button type="button" class="dqc-btn-copy" data-dqc-copy="${esc(q.ma_chay_nhiem_vu)}" title="Sao chép chuỗi mã chạy">${ico("copy")} Copy mã</button>
+                  <button type="button" class="dqc-btn-run dqc-btn-activity" data-dqc-run="${esc(q.id)}" ${dqcBatchRunning ? 'disabled' : ''} title="Kích hoạt quest & xem hướng dẫn">${ico("rocket")} Mở Activity</button>
+                ` : `
+                  <button type="button" class="dqc-btn-copy" data-dqc-copy="${esc(q.ma_chay_nhiem_vu)}" title="Sao chép chuỗi mã chạy">${ico("copy")} Copy mã</button>
+                  <button type="button" class="dqc-btn-run" data-dqc-run="${esc(q.id)}" ${dqcBatchRunning ? 'disabled' : ''} title="Chạy ngay">${ico("play")} Chạy ngay</button>
+                `))}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        container.innerHTML = `
+          <div class="dqc-list-card">
+            <div class="dqc-head">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="dqc-badge">${ico("gamepad-2")} NHIỆM VỤ ORBS DISCORD (${quests.length})</span>
+                ${orbs != null ? `<span class="dqc-orbs">${ico("coins")} Số dư: ${orbs} Orbs</span>` : ""}
+                ${isSavedState ? `<span class="dqc-restore-badge" title="Dữ liệu lưu tự động, F5 không bị mất!">${ico("save")} Đã lưu phiên</span>` : ""}
+              </div>
+              <div class="dqc-batch-header-actions">
+                <div class="dqc-region-group" title="Chuyển vùng quét IP giữa US và VN">
+                  <button type="button" class="dqc-region-btn ${currentRegion === 'US' ? 'active' : ''}" data-dqc-region="US">🇺🇸 Vùng US (VPN)</button>
+                  <button type="button" class="dqc-region-btn ${currentRegion === 'VN' ? 'active' : ''}" data-dqc-region="VN">🇻🇳 Vùng VN</button>
+                </div>
+                ${!allDone ? (
+                  dqcBatchRunning ? `
+                    <button type="button" class="dqc-btn-stop" id="dqcStopBatchBtn">${ico("square")} Dừng lại</button>
+                  ` : `
+                    <button type="button" class="dqc-btn-batch" id="dqcStartBatchBtn">${ico("zap")} Chạy tất cả (${pendingCount})</button>
+                  `
+                ) : `
+                  <span class="dqc-badge" style="background:rgba(34,197,94,0.18);color:#4ade80;border-color:rgba(34,197,94,0.4)">${ico("sparkles")} Tất cả đã hoàn tất</span>
+                `}
+                <button type="button" class="dqc-btn-copy" id="dqcClearStateBtn" title="Xóa bộ nhớ tạm để quét lại từ đầu">${ico("trash-2")}</button>
+              </div>
+            </div>
+
+            ${allDone ? `
+              <div class="dqc-alert" style="margin-bottom:12px;">
+                ${ico("shield-check")} <div><strong>🎉 TẤT CẢ NHIỆM VỤ ĐÃ HOÀN TẤT 100% (DONE)!</strong> Hãy mở ứng dụng <strong>Discord</strong> > vào <strong>Cài đặt (Settings ⚙️) > Nhiệm vụ (Quests) / Kho quà tặng</strong> để tự tay bấm <strong>"Nhận phần thưởng" (Claim Reward)</strong> lấy Orbs an toàn tuyệt đối!</div>
+              </div>
+            ` : ""}
+
+            <div class="dqc-list-body" id="dqcListItems">
+              ${qRows}
+            </div>
+
+            <div class="dqc-claim-guide">
+              <div style="font-weight:800;color:#f8fafc;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+                ${ico("info")} <strong>HƯỚNG DẪN QUAN TRỌNG:</strong>
+              </div>
+              <div>• <strong>Không bị mất nhiệm vụ:</strong> Sau khi hoàn thành 100%, Discord sẽ chuyển nhiệm vụ vào <strong>Cài đặt (Settings ⚙️) > Nhiệm vụ (Quests) / Kho quà tặng</strong> để bạn tự tay bấm nhận thưởng.</div>
+              <div>• <strong>Nhiệm vụ Discord Activity:</strong> Với nhiệm vụ chơi mini-game trong Kênh thoại (như RuneScape / Dark Queen), hệ thống sẽ hỗ trợ nhận (enroll) nhiệm vụ và hướng dẫn bạn vào Kênh thoại bấm 🚀 Start an Activity để hoàn thành an toàn 100%.</div>
+              <div>• <strong>Mẹo săn thêm nhiệm vụ US:</strong> Bạn bật VPN (chọn server Mỹ/US) trên máy tính/điện thoại, rồi bấm <strong>"🇺🇸 Vùng US (VPN)"</strong> ở trên. Discord sẽ mở khóa thêm nhiều nhiệm vụ độc quyền khu vực Bắc Mỹ!</div>
+              <div>• <strong>Bộ đếm thời gian thực:</strong> Tiến trình đếm ngược trực tiếp từng giây, hệ thống tự lưu vào trình duyệt nên <strong>F5 / reload web không lo bị mất!</strong></div>
+            </div>
+          </div>
+        `;
+        markSelfGlyphs(container);
+        bindEvents();
+      }
+
+      async function runSingleQuest(questId) {
+        const q = quests.find((item) => item.id === questId);
+        if (!q || q.da_hoan_thanh || q.isRunning) return;
+        q.isRunning = true;
+        renderHtml();
+
+        const progBox = document.getElementById(`dqcProgBox-${questId}`);
+        const timerLbl = document.getElementById(`dqcTimerLabel-${questId}`);
+        const fillEl = document.getElementById(`dqcFill-${questId}`);
+        const pctLbl = document.getElementById(`dqcPercentLabel-${questId}`);
+
+        if (progBox) progBox.style.display = "";
+
+        let duration = q.targetSeconds || 30;
+        let elapsed = q.progressSeconds || 0;
+        let left = Math.max(1, duration - elapsed);
